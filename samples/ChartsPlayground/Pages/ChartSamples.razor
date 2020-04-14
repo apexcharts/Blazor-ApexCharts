@@ -1,0 +1,315 @@
+﻿@page "/chart-samples"
+
+@using  ApexCharts
+
+
+<h2>Apex Charts - Blazor Samples</h2>
+
+@*<ApexChart TItem="Person" Items="@GetSampleData()" Options="@GetSparkLineChartOptions()">
+    </ApexChart>
+    <ApexChart  TItem="Person" Options="@GetDateChartOptions()"></ApexChart>
+
+    <ApexChart TItem="Person" Options="@GetPieChartOptions()">
+
+    </ApexChart>
+    </ApexChart>
+    <ApexChart  TItem="Person" Options="@GetLineChartOptions()"></ApexChart>*@
+
+
+
+<ApexChart @ref="chartRef" TItem="Person" Title="Test Chart" Type="ChartType.Bar"  Width="500" Height="300">
+   
+    <ApexSeries TItem="Person"
+                Items="@GetSampleData()"
+                Name="Salary Series"
+                XValue="@(e=>e.BirthDay.Year)"
+                YAggregate="@(e=>e.Sum(e=>e.Salary))"
+                OrderBy="@(e=>e.Salary)"
+                ShowDataLabels="false" />
+
+    <ApexSeries TItem="Person"
+                Items="@GetSampleData()"
+                Name="No of Pets"
+                XValue="@(e=>e.BirthDay.Year)"
+                ShowDataLabels="true"
+                YAggregate="@(e=>e.Sum(e=>e.NumberOfPets))"
+                OrderBy="@(e=>e.Salary)" />
+
+</ApexChart>
+
+<ApexChart TItem="Person" Options="@GetBarChartOptions()" OnDataPointSelection="OnDataPointSelection"></ApexChart>
+
+
+
+
+
+@code {
+
+    private ApexChart<Person> chartRef;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            SetChartOptions();
+        }
+    }
+
+    private void OnDataPointSelection(SelectedData<Person> dataPointSelection)
+    {
+        var test = dataPointSelection;
+    }
+
+    private void SetChartOptions()
+    {
+
+        var options = chartRef.Options;
+        options.Colors = new List<string> { "#4E79A7", "#A0CBE8", "#F28E2B", "#FFBE7D", "#59A14F", "#8CD17D", "#B6992D", "#F1CE63", "#499894", "#86BCB6", "#E15759", "#FF9D9A", "#79706E", "#BAB0AC", "#D37295", "#FABFD2", "#B07AA1", "#D4A6C8", "#9D7660", "#D7B5A6" };
+
+
+        //options.Markers = new ApexChartsApexOptionsMarkers();
+        //options.Markers.Size = 10;
+        //options.Markers.Shape = ShapeEnum.Square;
+        //options.Markers.Hover = new MarkersHover();
+        //options.Markers.Hover.Size = 40;
+
+        options.PlotOptions = new PlotOptions();
+        options.PlotOptions.Pie = new PlotOptionsPie();
+        options.PlotOptions.Pie.Donut = new PlotOptionsDonut();
+        options.PlotOptions.Pie.Donut.Labels = new DonutLabels();
+
+        //options.PlotOptions.Pie.Donut.Labels.Name = new DonutLabelName();
+
+        options.PlotOptions.Pie.Donut.Labels.Total = new DonutLabelTotal();
+        options.PlotOptions.Pie.Donut.Labels.Total.FontSize = "30px";
+        //options.PlotOptions.Pie.Donut.Labels.Total.Color = "#3916E9";
+        //options.PlotOptions.Pie.Donut.Labels.Total.Label = "kolla";
+
+        options.PlotOptions.Pie.Donut.Labels.Value = new DonutLabelValue();
+        // options.PlotOptions.Pie.Donut.Labels.Value.FontSize = "20px";
+
+
+
+
+        //options.DataLabels = new DataLabels();
+        //options.DataLabels.Enabled = true;
+        //options.DataLabels.EnabledOnSeries = new List<double>();
+        ////options.DataLabels.EnabledOnSeries.Add(1);
+
+        options.Xaxis = new XAxis();
+        options.Xaxis.Title = new XaxisTitle { };
+        options.Xaxis.Type = XaxisType.Category;
+
+        options.Yaxis = new List<Yaxis>();
+        var yaxis1 = new Yaxis();
+        yaxis1.Title = new YaxisTitle { Text = "Salary" };
+        options.Yaxis.Add(yaxis1);
+
+
+        var yaxis2 = new Yaxis();
+        yaxis2.Title = new YaxisTitle { Text = "No of pets" };
+        yaxis2.Opposite = true;
+        yaxis2.SeriesName = "No of Pets";
+
+        options.Yaxis.Add(yaxis2);
+
+
+
+
+
+    }
+
+    private ApexChartOptions GetSparkLineChartOptions()
+    {
+
+        var options = new ApexChartOptions();
+        options.Title = new Title { Text = "Sparkline", Align = Align.Left };
+        options.Chart = new Chart { Type = ChartType.Bar, Width = 130, Height = 80 };
+        options.Chart.Id = "SparkLineChart";
+
+
+        options.Chart.Sparkline = new ChartSparkline { Enabled = true };
+        options.PlotOptions = new PlotOptions { Bar = new PlotOptionsBar { ColumnWidth = "85%" } };
+        // options.DataLabels = new DataLabels { Enabled = false };
+
+        options.Xaxis = new XAxis { Type = XaxisType.Datetime };
+
+        options.Series = new List<Series>();
+
+        var series = new Series();
+        series.Name = "Series 1";
+        series.Data = new List<DataPoint>();
+        series.Data.Add(new DataPoint(1487030400000, 54));
+        series.Data.Add(new DataPoint(1486684800000, 10));
+        series.Data.Add(new DataPoint(1486771200000, 44));
+
+        series.Data.Add(new DataPoint(1486857600000, 12));
+        series.Data.Add(new DataPoint(1486944000000, 63));
+        series.Data.Add(new DataPoint(1487544000000, 111));
+
+        options.Series.Add(series);
+
+        return options;
+    }
+
+    private ApexChartOptions GetDateChartOptions()
+    {
+
+        var options = new ApexChartOptions();
+        options.Title = new Title { Text = "Date Chart", Align = Align.Left };
+        options.Chart = new Chart { Type = ChartType.Bar, Width = "400", Height = 300 };
+        options.Chart.Id = "DateChart";
+
+
+        options.DataLabels = new DataLabels { Enabled = true };
+
+        options.Xaxis = new XAxis { Type = XaxisType.Datetime };
+
+        options.Series = new List<Series>();
+
+        var series = new Series();
+        series.Name = "Series 1";
+        series.Data = new List<DataPoint>();
+        series.Data.Add(new DataPoint(1487030400000, 54));
+        series.Data.Add(new DataPoint(1486684800000, 10));
+        series.Data.Add(new DataPoint(1486771200000, 44));
+
+        // series.Data.Add(new DataPoint(1486857600000, 12));
+        series.Data.Add(new DataPoint(1486944000000, 63));
+
+        options.Series.Add(series);
+
+        return options;
+    }
+
+    private ApexChartOptions GetPieChartOptions()
+    {
+
+        var options = new ApexChartOptions();
+        options.Theme = new Theme { Palette = PaletteType.Palette7 };
+        options.Title = new Title { Text = "Line Chart", Align = Align.Left };
+        options.Chart = new Chart { Type = ChartType.Pie, Width = "400", Height = 400 };
+        options.Chart.Id = "PieChart";
+
+
+        //options.SeriesNonXAxis = new List<object>();
+        //options.SeriesNonXAxis.Add(123);
+        //options.SeriesNonXAxis.Add(24);
+        //options.SeriesNonXAxis.Add(45);
+
+        //options.Labels = new List<string>();
+        //options.Labels.Add("kalle");
+        //options.Labels.Add("Anka");
+        //options.Labels.Add("Bertil");
+        return options;
+    }
+
+
+    private ApexChartOptions GetLineChartOptions()
+    {
+
+        var options = new ApexChartOptions();
+        options.Title = new Title { Text = "Line Chart", Align = Align.Left };
+        options.Chart = new Chart { Type = ChartType.Line, Width = 700, Height = 300 };
+        options.Chart.Id = "LineChart";
+
+        //options.Markers = new ApexChartsApexOptionsMarkers { Size = 1 };
+        options.DataLabels = new DataLabels { Enabled = true };
+        //options.Xaxis = new ApexChartsApexOptionsXaxis { Categories = new List<string> { "kalle", "Anka", "Peter", "Anders" } };
+
+        options.Series = new List<Series>();
+
+        var series = new Series();
+        series.Name = "Series 1";
+        series.Data = new List<DataPoint>();
+        series.Data.Add(new DataPoint("Kalle", 10));
+        series.Data.Add(new DataPoint("Anka", 44));
+        series.Data.Add(new DataPoint("Peter", 12));
+        series.Data.Add(new DataPoint("Kerstin", 63));
+        series.Data.Add(new DataPoint("Maja", 54));
+        options.Series.Add(series);
+
+        var series2 = new Series();
+        series2.Name = "Series 2";
+        series2.Data = new List<DataPoint>();
+        series2.Data.Add(new DataPoint("Kalle", 14));
+        series2.Data.Add(new DataPoint("Anka", 12));
+        series2.Data.Add(new DataPoint("Maja", 21));
+        series2.Data.Add(new DataPoint("Kerstin", 32));
+        options.Series.Add(series2);
+
+        return options;
+    }
+
+    private ApexChartOptions GetBarChartOptions()
+    {
+
+        var options = new ApexChartOptions();
+        options.Title = new Title { Text = "Bar Chart" };
+        options.Chart = new Chart { Type = ChartType.Bar, Width = 400, Height = 300 };
+        options.Chart.Id = "BarChart";
+
+
+        //options.Xaxis = new ApexChartsApexOptionsXaxis { Categories = new List<string> { "kalle", "Anka", "Peter", "Anders" } };
+
+        options.Series = new List<Series>();
+
+        var series = new Series();
+        series.Name = "Series 1";
+        series.Data = new List<DataPoint>();
+        series.Data.Add(new DataPoint("Kalle", 10));
+        series.Data.Add(new DataPoint("Anka", 44));
+        series.Data.Add(new DataPoint("Peter", 12));
+        series.Data.Add(new DataPoint("Kerstin", 63));
+        series.Data.Add(new DataPoint("Maja", 54));
+        options.Series.Add(series);
+
+        var series2 = new Series();
+        series2.Name = "Series 2";
+        series2.Data = new List<DataPoint>();
+        series2.Data.Add(new DataPoint("Kalle", 14));
+        series2.Data.Add(new DataPoint("Anka", 12));
+        series2.Data.Add(new DataPoint("Maja", 21));
+        series2.Data.Add(new DataPoint("Kerstin", 32));
+        options.Series.Add(series2);
+
+        return options;
+    }
+
+    private List<Person> GetSampleData()
+    {
+        var persons = new List<Person>();
+        persons.Add(new Person { Name = "Kalle", BirthDay = new DateTimeOffset(1972, 06, 21, 14, 32, 18, new TimeSpan()), FavoritePet = TypeOfPet.Cat, NumberOfPets = 1, Salary = 60000 });
+        persons.Add(new Person { Name = "Peter", BirthDay = new DateTimeOffset(1968, 10, 25, 11, 16, 12, new TimeSpan()), NumberOfPets = 5, Salary = 42000 });
+        persons.Add(new Person { Name = "Anders", BirthDay = new DateTimeOffset(1977, 09, 18, 05, 58, 52, new TimeSpan()), FavoritePet = TypeOfPet.Dog, NumberOfPets = 0, Salary = 32000 });
+        persons.Add(new Person { Name = "Orvar", BirthDay = new DateTimeOffset(1975, 01, 05, 23, 20, 11, new TimeSpan()), FavoritePet = TypeOfPet.Bird, NumberOfPets = 2, Salary = 37000 });
+        persons.Add(new Person { Name = "Nova", BirthDay = new DateTimeOffset(1964, 11, 26, 8, 11, 34, new TimeSpan()), FavoritePet = TypeOfPet.Cat, NumberOfPets = 2, Salary = 10000 });
+        persons.Add(new Person { Name = "Cissi", BirthDay = new DateTimeOffset(1974, 12, 02, 15, 16, 17, new TimeSpan()), FavoritePet = TypeOfPet.Horse, NumberOfPets = 1, Salary = 34000 });
+        persons.Add(new Person { Name = "Beata", BirthDay = new DateTimeOffset(1970, 4, 03, 02, 32, 0, new TimeSpan()), FavoritePet = TypeOfPet.Cat, NumberOfPets = 3, Salary = 49000 });
+        persons.Add(new Person { Name = "Tanya", BirthDay = new DateTimeOffset(1966, 10, 4, 17, 11, 44, new TimeSpan()), FavoritePet = TypeOfPet.Cat, NumberOfPets = 2, Salary = 16000 });
+        persons.Add(new Person { Name = "Nova", BirthDay = new DateTimeOffset(1972, 08, 06, 22, 17, 3, new TimeSpan()), FavoritePet = TypeOfPet.Cat, NumberOfPets = 2, Salary = 20000 });
+
+        //persons.OrderBy(e=>e.Name)
+
+        return persons;
+
+    }
+
+    public class Person
+    {
+        public string Name { get; set; }
+        public DateTimeOffset BirthDay { get; set; }
+
+        public int Salary { get; set; }
+        public int NumberOfPets { get; set; }
+        public TypeOfPet FavoritePet { get; set; }
+    }
+
+    public enum TypeOfPet
+    {
+        Cat,
+        Dog,
+        Bird,
+        Horse
+    }
+}
