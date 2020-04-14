@@ -62,7 +62,7 @@ namespace ApexCharts
         /// Options for the line drawn on line and area charts.
         /// See https://apexcharts.com/docs/options/stroke/
         /// </summary>
-        public ApexChartsApexOptionsStroke Stroke { get; set; }
+        public Stroke Stroke { get; set; }
 
         /// <summary>
         /// Chart Title options
@@ -1132,14 +1132,14 @@ namespace ApexCharts
     /// Options for the line drawn on line and area charts.
     /// See https://apexcharts.com/docs/options/stroke/
     /// </summary>
-    public partial class ApexChartsApexOptionsStroke
+    public partial class Stroke
     {
         public List<string> Colors { get; set; }
         public Curve? Curve { get; set; }
-        public Opacity? DashArray { get; set; }
+        public object DashArray { get; set; }
         public LineCap? LineCap { get; set; }
-        public bool? Show { get; set; }
-        public Opacity? Width { get; set; }
+        public bool Show { get; set; } = true;
+        public object Width { get; set; }
     }
 
     /// <summary>

@@ -15,35 +15,46 @@
     </ApexChart>
     <ApexChart  TItem="Person" Options="@GetLineChartOptions()"></ApexChart>*@
 
+<select @bind="chartType">
+
+    @foreach (ChartType chartType in Enum.GetValues(typeof(ChartType)))
+    {
+        <option>@chartType.ToString()</option>
+
+    }
+
+</select>
 
 
-<ApexChart @ref="chartRef" TItem="Person" Title="Test Chart" Type="ChartType.Bar"  Width="500" Height="300">
-   
+<ApexChart @ref="chartRef" TItem="Person" Title="Test Chart" Type="@chartType" Width="500" Height="300">
+
     <ApexSeries TItem="Person"
                 Items="@GetSampleData()"
                 Name="Salary Series"
-                XValue="@(e=>e.BirthDay.Year)"
+                XValue="@(e=>e.Name)"
                 YAggregate="@(e=>e.Sum(e=>e.Salary))"
                 OrderBy="@(e=>e.Salary)"
                 ShowDataLabels="false" />
 
     <ApexSeries TItem="Person"
                 Items="@GetSampleData()"
-                Name="No of Pets"
-                XValue="@(e=>e.BirthDay.Year)"
-                ShowDataLabels="true"
-                YAggregate="@(e=>e.Sum(e=>e.NumberOfPets))"
-                OrderBy="@(e=>e.Salary)" />
+                Name="Test Series"
+                XValue="@(e=>e.Name)"
+                YAggregate="@(e=>e.Sum(e=>e.Salary)*2-50000)"
+                 OrderBy="@(e=>e.Salary)"
+                ShowDataLabels="true" />
 
 </ApexChart>
 
-<ApexChart TItem="Person" Options="@GetBarChartOptions()" OnDataPointSelection="OnDataPointSelection"></ApexChart>
+@*<ApexChart TItem="Person" Options="@GetBarChartOptions()" OnDataPointSelection="OnDataPointSelection"></ApexChart>*@
 
 
 
 
 
 @code {
+
+    private ChartType chartType = ChartType.Line;
 
     private ApexChart<Person> chartRef;
 
@@ -64,7 +75,13 @@
     {
 
         var options = chartRef.Options;
-        options.Colors = new List<string> { "#4E79A7", "#A0CBE8", "#F28E2B", "#FFBE7D", "#59A14F", "#8CD17D", "#B6992D", "#F1CE63", "#499894", "#86BCB6", "#E15759", "#FF9D9A", "#79706E", "#BAB0AC", "#D37295", "#FABFD2", "#B07AA1", "#D4A6C8", "#9D7660", "#D7B5A6" };
+
+        //options.Stroke = new Stroke();
+        ////options.Stroke.LineCap = LineCap.Butt;
+        ////options.Stroke.Curve = Curve.Smooth;
+        //options.Stroke.Width = 1;
+
+        //options.Colors = new List<string> { "#4E79A7", "#A0CBE8", "#F28E2B", "#FFBE7D", "#59A14F", "#8CD17D", "#B6992D", "#F1CE63", "#499894", "#86BCB6", "#E15759", "#FF9D9A", "#79706E", "#BAB0AC", "#D37295", "#FABFD2", "#B07AA1", "#D4A6C8", "#9D7660", "#D7B5A6" };
 
 
         //options.Markers = new ApexChartsApexOptionsMarkers();
@@ -73,19 +90,19 @@
         //options.Markers.Hover = new MarkersHover();
         //options.Markers.Hover.Size = 40;
 
-        options.PlotOptions = new PlotOptions();
-        options.PlotOptions.Pie = new PlotOptionsPie();
-        options.PlotOptions.Pie.Donut = new PlotOptionsDonut();
-        options.PlotOptions.Pie.Donut.Labels = new DonutLabels();
+        //options.PlotOptions = new PlotOptions();
+        //options.PlotOptions.Pie = new PlotOptionsPie();
+        //options.PlotOptions.Pie.Donut = new PlotOptionsDonut();
+        //options.PlotOptions.Pie.Donut.Labels = new DonutLabels();
 
-        //options.PlotOptions.Pie.Donut.Labels.Name = new DonutLabelName();
+        ////options.PlotOptions.Pie.Donut.Labels.Name = new DonutLabelName();
 
-        options.PlotOptions.Pie.Donut.Labels.Total = new DonutLabelTotal();
-        options.PlotOptions.Pie.Donut.Labels.Total.FontSize = "30px";
+        //options.PlotOptions.Pie.Donut.Labels.Total = new DonutLabelTotal();
+        //options.PlotOptions.Pie.Donut.Labels.Total.FontSize = "30px";
         //options.PlotOptions.Pie.Donut.Labels.Total.Color = "#3916E9";
         //options.PlotOptions.Pie.Donut.Labels.Total.Label = "kolla";
 
-        options.PlotOptions.Pie.Donut.Labels.Value = new DonutLabelValue();
+        // options.PlotOptions.Pie.Donut.Labels.Value = new DonutLabelValue();
         // options.PlotOptions.Pie.Donut.Labels.Value.FontSize = "20px";
 
 
@@ -96,22 +113,21 @@
         //options.DataLabels.EnabledOnSeries = new List<double>();
         ////options.DataLabels.EnabledOnSeries.Add(1);
 
-        options.Xaxis = new XAxis();
-        options.Xaxis.Title = new XaxisTitle { };
-        options.Xaxis.Type = XaxisType.Category;
+        //options.Xaxis = new XAxis();
+        //options.Xaxis.Title = new XaxisTitle { };
+        //options.Xaxis.Type = XaxisType.Category;
 
-        options.Yaxis = new List<Yaxis>();
-        var yaxis1 = new Yaxis();
-        yaxis1.Title = new YaxisTitle { Text = "Salary" };
-        options.Yaxis.Add(yaxis1);
+        //options.Yaxis = new List<Yaxis>();
+        //var yaxis1 = new Yaxis();
+        //yaxis1.Title = new YaxisTitle { Text = "Salary" };
+        //options.Yaxis.Add(yaxis1);
 
 
-        var yaxis2 = new Yaxis();
-        yaxis2.Title = new YaxisTitle { Text = "No of pets" };
-        yaxis2.Opposite = true;
-        yaxis2.SeriesName = "No of Pets";
-
-        options.Yaxis.Add(yaxis2);
+        //var yaxis2 = new Yaxis();
+        //yaxis2.Title = new YaxisTitle { Text = "No of pets" };
+        //yaxis2.Opposite = true;
+        //yaxis2.SeriesName = "No of Pets";
+        //options.Yaxis.Add(yaxis2);
 
 
 

@@ -25,15 +25,21 @@ namespace ApexCharts
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
         private ElementReference ChartContainer { get; set; }
 
+        private bool isReady;
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            //isFirstRender = firstRender;
-            if (firstRender && Options != null)
+
+            if (firstRender)
             {
+                isReady = true;
                 ObjectReference = DotNetObjectReference.Create(this);
-                await UpdateChart();
+
             }
 
+            if (isReady)
+            {
+                await UpdateChart();
+            }
         }
         protected override void OnParametersSet()
         {
@@ -92,17 +98,19 @@ namespace ApexCharts
         {
             if (Options.Chart.Type != ChartType.Pie &&
                 Options.Chart.Type != ChartType.Donut &&
-                Options.Chart.Type != ChartType.RadialBar) { return; };
+                Options.Chart.Type != ChartType.RadialBar)
+            {
+                Options.SeriesNonXAxis = null;
+                Options.Labels = null;
+                return;
+            };
 
             if (Options.Series == null || !Options.Series.Any()) { return; }
 
             var noAxisSeries = Options.Series.First();
 
-            //  Options.Series.Clear();
             Options.SeriesNonXAxis = noAxisSeries.Data.Select(e => e.Y).ToList();
             Options.Labels = noAxisSeries.Data.Select(e => e.X.ToString()).ToList();
-
-
 
         }
         private async Task UpdateChart()

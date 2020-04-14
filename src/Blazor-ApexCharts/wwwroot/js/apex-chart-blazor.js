@@ -59,20 +59,7 @@ window.blazor_apexchart = {
             }
         }
 
-            //var myEvents = [{
-            //    dataPointSelection: function(event, chartContext, config) {
-            //        console.log(chartContext, config)
-            //    }];
-
-
-            //options.chartv
-            //options.chart.events['dataPointSelection'] = function (event, chartContext, config) {
-            //    alert('Kalle');
-            //}
-
-         //  console.log(myHonda);
-
-
+      
 
             var chartFind = this.charts.filter(x => x.opts.chart.id === options.chart.id)
             var chart;
@@ -80,14 +67,16 @@ window.blazor_apexchart = {
             if (chartFind.length > 0) {
                 console.log('Chart Found');
                 chart = chartFind[0];
-                chart.updateOptions(options, true, true, true);
+                chart.destroy();
+                this.charts = this.charts.filter(x => x.opts.chart.id !== options.chart.id);
+                //chart.updateOptions(options, false, true, true);
             }
-            else {
+         //   else {
                 console.log('Chart Not Found');
                 chart = new ApexCharts(container, options);
                 this.charts.push(chart)
                 chart.render();
-            }
+           // }
 
 
 
