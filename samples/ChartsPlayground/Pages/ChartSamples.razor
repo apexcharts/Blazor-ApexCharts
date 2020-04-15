@@ -15,14 +15,14 @@
         </select>
     </div>
     <div class="col-2">
-        <div class="btn btn-primary btn-sm" @onclick="SetChartOptions">Update Chart Options</div>
+        <div class="btn btn-primary btn-sm" @onclick="@(() => SetChartOptions(true))">Update Chart Options</div>
     </div>
 
 </div>
 
 
 
-<ApexChart TItem="Person" Options="chartOptions" Title="Test Chart" Type="@chartType" Width="500" Height="300">
+<ApexChart TItem="Person" Options="chartOptions" Title="Test Chart" Type="@chartType" Width="500" Height="300" OnDataPointSelection="OnDataPointSelection">
 
     <ApexSeries TItem="Person"
                 Items="@GetSampleData()"
@@ -42,6 +42,20 @@
 
 </ApexChart>
 
+
+@if(selectedData != null) {
+<div>Series: @selectedData.Series.Name</div>
+
+@foreach (var item in selectedData.Items)
+{
+    <br />
+    <span>Name: @item.Name Salary: @item.Salary</span>
+}
+
+}
+
+
+
 @*<ApexChart TItem="Person" Options="@GetBarChartOptions()" OnDataPointSelection="OnDataPointSelection"></ApexChart>*@
 
 
@@ -52,7 +66,7 @@
 
     private ChartType chartType = ChartType.Line;
     private ApexChartOptions chartOptions = new ApexChartOptions();
-
+    private SelectedData<Person> selectedData;
     protected override void OnInitialized()
     {
         SetChartOptions();
@@ -62,20 +76,25 @@
 
     private void OnDataPointSelection(SelectedData<Person> dataPointSelection)
     {
-        var test = dataPointSelection;
+        selectedData = dataPointSelection;
     }
 
-    private void SetChartOptions()
+    private void SetChartOptions(bool forceRender = false)
     {
 
         var options = chartOptions;
+        options.ForceRender = true;
 
+        //options.Chart = new Chart();
+        //options.Chart.Toolbar = new Toolbar();
+        //options.Chart.Toolbar.Tools = new Tools();
+        //options.Chart.Toolbar.AutoSelected = AutoSelected.Selection;
         //options.Stroke = new Stroke();
         ////options.Stroke.LineCap = LineCap.Butt;
         ////options.Stroke.Curve = Curve.Smooth;
         //options.Stroke.Width = 5;
 
-      //  options.Colors = new List<string> { "#4E79A7", "#A0CBE8", "#F28E2B", "#FFBE7D", "#59A14F", "#8CD17D", "#B6992D", "#F1CE63", "#499894", "#86BCB6", "#E15759", "#FF9D9A", "#79706E", "#BAB0AC", "#D37295", "#FABFD2", "#B07AA1", "#D4A6C8", "#9D7660", "#D7B5A6" };
+        //  options.Colors = new List<string> { "#4E79A7", "#A0CBE8", "#F28E2B", "#FFBE7D", "#59A14F", "#8CD17D", "#B6992D", "#F1CE63", "#499894", "#86BCB6", "#E15759", "#FF9D9A", "#79706E", "#BAB0AC", "#D37295", "#FABFD2", "#B07AA1", "#D4A6C8", "#9D7660", "#D7B5A6" };
 
 
         //options.Markers = new Markers();
@@ -88,7 +107,6 @@
         options.PlotOptions.Pie = new PlotOptionsPie();
         options.PlotOptions.Pie.DataLabels = new PieDataLabels();
         options.PlotOptions.Pie.DataLabels.MinAngleToShowLabel = 20;
-
 
 
         options.PlotOptions.Pie.Donut = new PlotOptionsDonut();

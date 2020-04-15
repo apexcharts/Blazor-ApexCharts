@@ -23,9 +23,12 @@ namespace ApexCharts
 
 
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
+        //internal bool ReRender { get; set; } = true;
         private ElementReference ChartContainer { get; set; }
 
         private bool isReady;
+
+        
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
 
@@ -33,28 +36,47 @@ namespace ApexCharts
             {
                 isReady = true;
                 ObjectReference = DotNetObjectReference.Create(this);
-
-            }
-
-            if (isReady)
-            {
                 await UpdateChart();
             }
+
+           
         }
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
             if (Options.Chart == null) { Options.Chart = new Chart(); }
+
+            if (Options.Chart.Type.ToString() != Type.ToString() ||
+                Options.Chart.Width.ToString() != Width.ToString() ||
+                Options.Chart.Height.ToString() != Height.ToString() ||
+                Options.Title?.Text != Title)
+            {
+                Options.ForceRender = true;
+            }
+
+            //if (Options.Chart.Type.ToString() != Type.ToString())
+            //{
+            //    ReRender = true;
+            //}
 
             Options.Chart.Type = Type;
             Options.Chart.Width = Width;
             Options.Chart.Height = Height;
 
-            if (!string.IsNullOrEmpty(Title))
+            if (string.IsNullOrEmpty(Title))
+            {
+                Options.Title = null;
+            }
+            else
             {
                 if (Options.Title == null) { Options.Title = new Title(); }
                 Options.Title.Text = Title;
             }
-           // OptionsChanged.InvokeAsync(Options);
+             
+        
+            if (isReady && Options.ForceRender)
+            {
+                await UpdateChart();
+            }
         }
 
         private void SetDatalabels()
@@ -115,8 +137,6 @@ namespace ApexCharts
             SetDatalabels();
             UpdateDataForNoAxisCharts();
 
-//await OptionsChanged.InvokeAsync(Options);
-
             var serializerOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -124,21 +144,24 @@ namespace ApexCharts
             };
             serializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 
-
             var jsonOptions = JsonSerializer.Serialize<ApexChartOptions>(Options, serializerOptions);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
+            await OnDataPointSelection.InvokeAsync(null);
+            Options.ForceRender = false;
         }
 
 
         public void Dispose()
         {
             GC.SuppressFinalize(this);
-
-            //TODO Remove chart from Javacript
+            if (Options.Chart?.ChartId != null)
+            {
+                InvokeAsync(async () => { await JSRuntime.InvokeVoidAsync("blazor_apexchart.destroyChart", Options.Chart.ChartId); });
+                
+            }
 
             if (ObjectReference != null)
             {
-                //Now dispose our object reference so our component can be garbage collected
                 ObjectReference.Dispose();
             }
         }

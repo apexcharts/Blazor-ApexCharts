@@ -41,8 +41,8 @@ namespace ApexCharts
                 var yAggCompiled = YAggregate.Compile();
                 series.Data  = Items.OrderBy(o=> OrderBy.Compile().Invoke(o)).GroupBy(e => xCompiled.Invoke(e)).Select(d => new DataPoint { X = d.Key, Y = yAggCompiled.Invoke(d), Items = d.ToList<object>() }).ToList();
             }
-                       
-         
+
+//            ParentChart.ReRender = true;
         }
 
         protected override void OnInitialized()
