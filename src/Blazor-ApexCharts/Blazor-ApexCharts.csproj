@@ -3,6 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
+    <Version>0.1.0-Alpha</Version>
+    <Authors>Joakim Dangården</Authors>
+    <Company />
+    <Description>A blazor wrapper for Apex Charts</Description>
+    <PackageTags>Blazor Charts ApexCharts</PackageTags>
+    <RepositoryUrl>https://github.com/joadan/Blazor-ApexCharts</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/joadan/Blazor-ApexCharts</PackageProjectUrl>
+    <Copyright>Copyright 2020 (c) Joakim Dangården. All rights reserved.</Copyright>
   </PropertyGroup>
 
 

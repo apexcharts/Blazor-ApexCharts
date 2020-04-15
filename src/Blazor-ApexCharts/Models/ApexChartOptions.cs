@@ -41,7 +41,18 @@ namespace ApexCharts
         /// </summary>
         public Legend Legend { get; set; }
 
-        public ApexChartsApexOptionsMarkers Markers { get; set; }
+        /// <summary>
+        /// Marker configuration options.
+        /// See https://apexcharts.com/docs/options/markers/
+        /// </summary>
+        public Markers Markers { get; set; }
+
+     
+            
+        /// <summary>
+        /// NoData configuration options.
+        /// See https://apexcharts.com/docs/options/nodata/
+        /// </summary>
         public NoData NoData { get; set; }
 
         /// <summary>
@@ -50,8 +61,16 @@ namespace ApexCharts
         /// </summary>
         public PlotOptions PlotOptions { get; set; }
 
+        /// <summary>
+        /// PlotOptions for chart.
+        /// See https://apexcharts.com/docs/options/responsive/
+        /// </summary>
         public List<Responsive> Responsive { get; set; }
 
+        /// <summary>
+        /// Series for specifying chart-type-specific configuration.
+        /// See https://apexcharts.com/docs/options/series/
+        /// </summary>
         public List<Series> Series { get; set; }
 
         public List<object> SeriesNonXAxis { get; internal set; }
@@ -65,7 +84,7 @@ namespace ApexCharts
         public Stroke Stroke { get; set; }
 
         /// <summary>
-        /// Chart Title options
+        /// Chart Sub Title options
         /// See https://apexcharts.com/docs/options/title/
         /// </summary>
         public Subtitle Subtitle { get; set; }
@@ -728,7 +747,7 @@ namespace ApexCharts
         public bool? HighlightDataSeries { get; set; }
     }
 
-    public partial class ApexChartsApexOptionsMarkers
+    public partial class Markers
     {
         public List<string> Colors { get; set; }
         public List<MarkersDiscrete> Discrete { get; set; }
@@ -884,14 +903,14 @@ namespace ApexCharts
     public partial class PlotOptionsPie
     {
         public double? CustomScale { get; set; }
-        public FluffyDataLabels DataLabels { get; set; }
+        public PieDataLabels DataLabels { get; set; }
         public PlotOptionsDonut Donut { get; set; }
         public bool? ExpandOnClick { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
     }
 
-    public partial class FluffyDataLabels
+    public partial class PieDataLabels
     {
         public double? MinAngleToShowLabel { get; set; }
         public double? Offset { get; set; }

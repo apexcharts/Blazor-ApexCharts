@@ -3,46 +3,42 @@
 @using  ApexCharts
 
 
-<h2>Apex Charts - Blazor Samples</h2>
+<h2>Blazor Apex Charts - Samples</h2>
 
-@*<ApexChart TItem="Person" Items="@GetSampleData()" Options="@GetSparkLineChartOptions()">
-    </ApexChart>
-    <ApexChart  TItem="Person" Options="@GetDateChartOptions()"></ApexChart>
+<div class="row">
+    <div class="col-2">
+        <select class="form-control" @bind="chartType">
+            @foreach (ChartType chartType in Enum.GetValues(typeof(ChartType)))
+            {
+                <option>@chartType.ToString()</option>
+            }
+        </select>
+    </div>
+    <div class="col-2">
+        <div class="btn btn-primary btn-sm" @onclick="SetChartOptions">Update Chart Options</div>
+    </div>
 
-    <ApexChart TItem="Person" Options="@GetPieChartOptions()">
-
-    </ApexChart>
-    </ApexChart>
-    <ApexChart  TItem="Person" Options="@GetLineChartOptions()"></ApexChart>*@
-
-<select @bind="chartType">
-
-    @foreach (ChartType chartType in Enum.GetValues(typeof(ChartType)))
-    {
-        <option>@chartType.ToString()</option>
-
-    }
-
-</select>
+</div>
 
 
-<ApexChart @ref="chartRef" TItem="Person" Title="Test Chart" Type="@chartType" Width="500" Height="300">
+
+<ApexChart TItem="Person" Options="chartOptions" Title="Test Chart" Type="@chartType" Width="500" Height="300">
 
     <ApexSeries TItem="Person"
                 Items="@GetSampleData()"
-                Name="Salary Series"
+                Name="Salary"
                 XValue="@(e=>e.Name)"
                 YAggregate="@(e=>e.Sum(e=>e.Salary))"
-                OrderBy="@(e=>e.Salary)"
-                ShowDataLabels="false" />
+                OrderBy="@(e=>e.Name)"
+                ShowDataLabels="true" />
 
     <ApexSeries TItem="Person"
                 Items="@GetSampleData()"
-                Name="Test Series"
+                Name="After Tax"
                 XValue="@(e=>e.Name)"
                 YAggregate="@(e=>e.Sum(e=>e.Salary)*2-50000)"
-                 OrderBy="@(e=>e.Salary)"
-                ShowDataLabels="true" />
+                OrderBy="@(e=>e.Name)"
+                ShowDataLabels="false" />
 
 </ApexChart>
 
@@ -55,16 +51,14 @@
 @code {
 
     private ChartType chartType = ChartType.Line;
+    private ApexChartOptions chartOptions = new ApexChartOptions();
 
-    private ApexChart<Person> chartRef;
-
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnInitialized()
     {
-        if (firstRender)
-        {
-            SetChartOptions();
-        }
+        SetChartOptions();
     }
+
+
 
     private void OnDataPointSelection(SelectedData<Person> dataPointSelection)
     {
@@ -74,30 +68,35 @@
     private void SetChartOptions()
     {
 
-        var options = chartRef.Options;
+        var options = chartOptions;
 
         //options.Stroke = new Stroke();
         ////options.Stroke.LineCap = LineCap.Butt;
         ////options.Stroke.Curve = Curve.Smooth;
-        //options.Stroke.Width = 1;
+        //options.Stroke.Width = 5;
 
-        //options.Colors = new List<string> { "#4E79A7", "#A0CBE8", "#F28E2B", "#FFBE7D", "#59A14F", "#8CD17D", "#B6992D", "#F1CE63", "#499894", "#86BCB6", "#E15759", "#FF9D9A", "#79706E", "#BAB0AC", "#D37295", "#FABFD2", "#B07AA1", "#D4A6C8", "#9D7660", "#D7B5A6" };
+      //  options.Colors = new List<string> { "#4E79A7", "#A0CBE8", "#F28E2B", "#FFBE7D", "#59A14F", "#8CD17D", "#B6992D", "#F1CE63", "#499894", "#86BCB6", "#E15759", "#FF9D9A", "#79706E", "#BAB0AC", "#D37295", "#FABFD2", "#B07AA1", "#D4A6C8", "#9D7660", "#D7B5A6" };
 
 
-        //options.Markers = new ApexChartsApexOptionsMarkers();
+        //options.Markers = new Markers();
         //options.Markers.Size = 10;
         //options.Markers.Shape = ShapeEnum.Square;
         //options.Markers.Hover = new MarkersHover();
         //options.Markers.Hover.Size = 40;
 
-        //options.PlotOptions = new PlotOptions();
-        //options.PlotOptions.Pie = new PlotOptionsPie();
-        //options.PlotOptions.Pie.Donut = new PlotOptionsDonut();
-        //options.PlotOptions.Pie.Donut.Labels = new DonutLabels();
+        options.PlotOptions = new PlotOptions();
+        options.PlotOptions.Pie = new PlotOptionsPie();
+        options.PlotOptions.Pie.DataLabels = new PieDataLabels();
+        options.PlotOptions.Pie.DataLabels.MinAngleToShowLabel = 20;
 
+
+
+        options.PlotOptions.Pie.Donut = new PlotOptionsDonut();
+        options.PlotOptions.Pie.Donut.Labels = new DonutLabels();
+        options.PlotOptions.Pie.Donut.Labels.Total = new DonutLabelTotal();
         ////options.PlotOptions.Pie.Donut.Labels.Name = new DonutLabelName();
 
-        //options.PlotOptions.Pie.Donut.Labels.Total = new DonutLabelTotal();
+
         //options.PlotOptions.Pie.Donut.Labels.Total.FontSize = "30px";
         //options.PlotOptions.Pie.Donut.Labels.Total.Color = "#3916E9";
         //options.PlotOptions.Pie.Donut.Labels.Total.Label = "kolla";

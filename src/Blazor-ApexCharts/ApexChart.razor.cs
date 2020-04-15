@@ -54,14 +54,13 @@ namespace ApexCharts
                 if (Options.Title == null) { Options.Title = new Title(); }
                 Options.Title.Text = Title;
             }
+           // OptionsChanged.InvokeAsync(Options);
         }
 
         private void SetDatalabels()
         {
-
             if (Options.DataLabels == null) { Options.DataLabels = new DataLabels(); }
             if (Options.DataLabels.EnabledOnSeries == null) { Options.DataLabels.EnabledOnSeries = new List<double>(); }
-
 
             foreach (var series in Options.Series)
             {
@@ -80,7 +79,6 @@ namespace ApexCharts
                         Options.DataLabels.EnabledOnSeries.Remove(index);
                     }
                 }
-
             }
 
             if (Options.Series.Any(e => e.ShowDataLabels))
@@ -91,7 +89,6 @@ namespace ApexCharts
             {
                 Options.DataLabels.Enabled = false;
             }
-
         }
 
         private void UpdateDataForNoAxisCharts()
@@ -116,8 +113,9 @@ namespace ApexCharts
         private async Task UpdateChart()
         {
             SetDatalabels();
-
             UpdateDataForNoAxisCharts();
+
+//await OptionsChanged.InvokeAsync(Options);
 
             var serializerOptions = new JsonSerializerOptions
             {
