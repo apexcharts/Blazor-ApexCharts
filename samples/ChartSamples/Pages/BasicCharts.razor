@@ -1,0 +1,102 @@
+﻿@page "/basic-charts"
+
+<h1>Basic Carts</h1>
+
+<div class="row">
+    <div class="col-md-12 col-lg-6">
+        <div>
+            Pie/Donut
+            <select class="form-control" @bind="pieChartType">
+                <option>Pie</option>
+                <option>Donut</option>
+            </select>
+        </div>
+
+        <ApexChart TItem="Person" Title="Test Chart" Height="300" Type="@pieChartType">
+            <ApexSeries TItem="Person"
+                        Items="@GetSampleData()"
+                        Name="Salary"
+                        XValue="@(e=>e.Name)"
+                        YAggregate="@(e=>e.Sum(e=>e.Salary))"
+                        OrderByDescending="@(e=>e.Y)"
+                        ShowDataLabels="true" />
+        </ApexChart>
+    </div>
+   
+    <div class="col-md-12 col-lg-6">
+        <div>
+            X-Y Charts
+            <select class="form-control" @bind="xyChartType">
+                <option>Line</option>
+                <option>Bar</option>
+                <option>Area</option>
+                <option>Radar</option>
+                <option>Scatter</option>
+                <option>Histogram</option>
+            </select>
+
+
+        </div>
+        <ApexChart TItem="Person" Title="Test Chart" Type="@xyChartType">
+            <ApexSeries TItem="Person"
+                        Items="@GetSampleData()"
+                        Name="Salary"
+                        XValue="@(e=>e.Name)"
+                        YAggregate="@(e=>e.Sum(e=>e.Salary))"
+                        OrderByDescending="@(e=>e.Y)"
+                        ShowDataLabels="false" />
+
+            <ApexSeries TItem="Person"
+                        Items="@GetSampleData()"
+                        Name="After Tax"
+                        XValue="@(e=>e.Name)"
+                        YAggregate="@(e=>e.Sum(e=>e.Salary)*2-50000)"
+                        ShowDataLabels="false" />
+        </ApexChart>
+    </div>
+
+</div>
+
+@code {
+    public ApexCharts.ChartType pieChartType { get; set; } = ChartType.Pie;
+    public ApexCharts.ChartType xyChartType { get; set; } = ChartType.Line;
+
+    
+
+    private List<Person> GetSampleData()
+    {
+        var persons = new List<Person>();
+        persons.Add(new Person { Name = "Kalle", BirthDay = new DateTimeOffset(1972, 06, 21, 14, 32, 18, new TimeSpan()), FavoritePet = TypeOfPet.Cat, NumberOfPets = 1, Salary = 60000 });
+        persons.Add(new Person { Name = "Peter", BirthDay = new DateTimeOffset(1968, 10, 25, 11, 16, 12, new TimeSpan()), NumberOfPets = 5, Salary = 42000 });
+        persons.Add(new Person { Name = "Anders", BirthDay = new DateTimeOffset(1977, 09, 18, 05, 58, 52, new TimeSpan()), FavoritePet = TypeOfPet.Dog, NumberOfPets = 0, Salary = 32000 });
+        persons.Add(new Person { Name = "Orvar", BirthDay = new DateTimeOffset(1975, 01, 05, 23, 20, 11, new TimeSpan()), FavoritePet = TypeOfPet.Bird, NumberOfPets = 2, Salary = 37000 });
+        persons.Add(new Person { Name = "Nova", BirthDay = new DateTimeOffset(1964, 11, 26, 8, 11, 34, new TimeSpan()), FavoritePet = TypeOfPet.Cat, NumberOfPets = 2, Salary = 10000 });
+        persons.Add(new Person { Name = "Cissi", BirthDay = new DateTimeOffset(1974, 12, 02, 15, 16, 17, new TimeSpan()), FavoritePet = TypeOfPet.Horse, NumberOfPets = 1, Salary = 34000 });
+        persons.Add(new Person { Name = "Beata", BirthDay = new DateTimeOffset(1970, 4, 03, 02, 32, 0, new TimeSpan()), FavoritePet = TypeOfPet.Cat, NumberOfPets = 3, Salary = 49000 });
+        persons.Add(new Person { Name = "Tanya", BirthDay = new DateTimeOffset(1966, 10, 4, 17, 11, 44, new TimeSpan()), FavoritePet = TypeOfPet.Cat, NumberOfPets = 2, Salary = 16000 });
+        persons.Add(new Person { Name = "Nova", BirthDay = new DateTimeOffset(1972, 08, 06, 22, 17, 3, new TimeSpan()), FavoritePet = TypeOfPet.Cat, NumberOfPets = 2, Salary = 20000 });
+
+        //persons.OrderBy(e=>e.Name)
+
+        return persons;
+
+    }
+
+    public class Person
+    {
+        public string Name { get; set; }
+        public DateTimeOffset BirthDay { get; set; }
+
+        public int Salary { get; set; }
+        public int NumberOfPets { get; set; }
+        public TypeOfPet FavoritePet { get; set; }
+    }
+
+    public enum TypeOfPet
+    {
+        Cat,
+        Dog,
+        Bird,
+        Horse
+    }
+}
