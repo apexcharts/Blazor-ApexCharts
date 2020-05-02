@@ -11,7 +11,7 @@ jobs:
         dotnet-version: 3.1.100
     - name: Publish with dotnet
       run: dotnet publish --configuration Release --output build
-      working-directory: ./src/Blazor-ApexCharts
+      working-directory: ./samples/ChartSamples
     - name: Deploy to Github Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
