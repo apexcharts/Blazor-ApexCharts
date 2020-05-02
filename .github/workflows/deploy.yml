@@ -8,7 +8,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.100
+        dotnet-version: 3.2.0-rc1.20223.4
     - name: Publish with dotnet
       run: dotnet publish --configuration Release --output build
       working-directory: ./samples/ChartSamples
