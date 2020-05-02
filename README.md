@@ -1,4 +1,9 @@
 ![.NET Core](https://github.com/joadan/Blazor-ApexCharts/workflows/.NET%20Core/badge.svg?branch=master)
 
 # Blazor-ApexCharts
-This is a test
+A wrapper for ApexCharts.js.
+View it in action [here](https://joadan.github.io/Blazor-ApexCharts/basic-charts)
+
+## Nuget
+[Blazor-ApexCharts](https://www.nuget.org/packages/Blazor-ApexCharts/)
+
