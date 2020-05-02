@@ -5,6 +5,83 @@
 
 <h2>Blazor Apex Charts - Samples</h2>
 
+
+
+<div class="row">
+
+    <div class="col-md-12 col-lg-6">
+        <div>
+            Pie Dounut
+            <select class="form-control" @bind="pieChartType">
+                <option>Pie</option>
+                <option>Donut</option>
+            </select>
+
+
+        </div>
+        <ApexChart TItem="Person" Title="Test Chart" Height="300" Type="@pieChartType">
+            <ApexSeries TItem="Person"
+                        Items="@GetSampleData()"
+                        Name="Salary"
+                        XValue="@(e=>e.Name)"
+                        YAggregate="@(e=>e.Sum(e=>e.Salary))"
+                        OrderByDescending="@(e=>e.Y)"
+                        ShowDataLabels="true"
+                       />
+        </ApexChart>
+    </div>
+
+
+    <div class="col-md-12 col-lg-6">
+        <div>
+            X-Y Charts
+            <select class="form-control" @bind="xyChartType">
+                <option>Line</option>
+                <option>Bar</option>
+                <option>Area</option>
+                <option>Radar</option>
+                <option>Scatter</option>
+                <option>Histogram</option>
+            </select>
+
+
+        </div>
+        <ApexChart TItem="Person" Title="Test Chart" Type="@xyChartType">
+            <ApexSeries TItem="Person"
+                        Items="@GetSampleData()"
+                        Name="Salary"
+                        XValue="@(e=>e.Name)"
+                        YAggregate="@(e=>e.Sum(e=>e.Salary))"
+                        OrderByDescending="@(e=>e.Y)"
+                        ShowDataLabels="false" />
+
+            <ApexSeries TItem="Person"
+                        Items="@GetSampleData()"
+                        Name="After Tax"
+                        XValue="@(e=>e.Name)"
+                        YAggregate="@(e=>e.Sum(e=>e.Salary)*2-50000)"
+                        ShowDataLabels="false" />
+        </ApexChart>
+    </div>
+
+    <div class="col-md-12 col-lg-6">
+        <h4>Bubble Chart</h4>
+        <ApexChart TItem="Person" Title="Test Chart" Type="@ChartType.Bubble">
+
+            <ApexBubbleSeries TItem="Person"
+                              Items="@GetSampleData()"
+                              Name="Salary"
+                              XValue="@(e=>e.Name)"
+                              YAggregate="@(e=>e.Sum(e=>e.Salary))"
+                              ZAggregate="@(e=>e.Count())"
+                              OrderByDescending="@(e=>e.Y)"
+                              ShowDataLabels="false" />
+
+        </ApexChart>
+    </div>
+
+</div>
+
 <div class="row">
     <div class="col-2">
         <select class="form-control" @bind="chartType">
@@ -20,8 +97,6 @@
 
 </div>
 
-
-
 <ApexChart TItem="Person" Options="chartOptions" Title="Test Chart" Type="@chartType" Width="500" Height="300" OnDataPointSelection="OnDataPointSelection">
 
     <ApexSeries TItem="Person"
@@ -29,7 +104,7 @@
                 Name="Salary"
                 XValue="@(e=>e.Name)"
                 YAggregate="@(e=>e.Sum(e=>e.Salary))"
-                OrderBy="@(e=>e.Name)"
+                OrderByDescending="@(e=>e.Y)"
                 ShowDataLabels="true" />
 
     <ApexSeries TItem="Person"
@@ -37,20 +112,20 @@
                 Name="After Tax"
                 XValue="@(e=>e.Name)"
                 YAggregate="@(e=>e.Sum(e=>e.Salary)*2-50000)"
-                OrderBy="@(e=>e.Name)"
                 ShowDataLabels="false" />
 
 </ApexChart>
 
 
-@if(selectedData != null) {
-<div>Series: @selectedData.Series.Name</div>
-
-@foreach (var item in selectedData.Items)
+@if (selectedData != null)
 {
-    <br />
-    <span>Name: @item.Name Salary: @item.Salary</span>
-}
+    <div>Series: @selectedData.Series.Name</div>
+
+    @foreach (var item in selectedData.Items)
+    {
+        <br />
+        <span>Name: @item.Name Salary: @item.Salary</span>
+    }
 
 }
 
@@ -63,7 +138,9 @@
 
 
 @code {
-
+    
+        private ChartType pieChartType = ChartType.Pie;
+    private ChartType xyChartType = ChartType.Bar;
     private ChartType chartType = ChartType.Line;
     private ApexChartOptions chartOptions = new ApexChartOptions();
     private SelectedData<Person> selectedData;
@@ -170,15 +247,15 @@
         options.Series = new List<Series>();
 
         var series = new Series();
-        series.Name = "Series 1";
-        series.Data = new List<DataPoint>();
-        series.Data.Add(new DataPoint(1487030400000, 54));
-        series.Data.Add(new DataPoint(1486684800000, 10));
-        series.Data.Add(new DataPoint(1486771200000, 44));
+        //series.Name = "Series 1";
+        //series.Data = new List<DataPoint>();
+        //series.Data.Add(new DataPoint(1487030400000, 54));
+        //series.Data.Add(new DataPoint(1486684800000, 10));
+        //series.Data.Add(new DataPoint(1486771200000, 44));
 
-        series.Data.Add(new DataPoint(1486857600000, 12));
-        series.Data.Add(new DataPoint(1486944000000, 63));
-        series.Data.Add(new DataPoint(1487544000000, 111));
+        //series.Data.Add(new DataPoint(1486857600000, 12));
+        //series.Data.Add(new DataPoint(1486944000000, 63));
+        //series.Data.Add(new DataPoint(1487544000000, 111));
 
         options.Series.Add(series);
 
@@ -203,111 +280,22 @@
         var series = new Series();
         series.Name = "Series 1";
         series.Data = new List<DataPoint>();
-        series.Data.Add(new DataPoint(1487030400000, 54));
-        series.Data.Add(new DataPoint(1486684800000, 10));
-        series.Data.Add(new DataPoint(1486771200000, 44));
+        //series.Data.Add(new DataPoint(1487030400000, 54));
+        //series.Data.Add(new DataPoint(1486684800000, 10));
+        //series.Data.Add(new DataPoint(1486771200000, 44));
 
-        // series.Data.Add(new DataPoint(1486857600000, 12));
-        series.Data.Add(new DataPoint(1486944000000, 63));
+        //// series.Data.Add(new DataPoint(1486857600000, 12));
+        //series.Data.Add(new DataPoint(1486944000000, 63));
 
         options.Series.Add(series);
 
         return options;
     }
 
-    private ApexChartOptions GetPieChartOptions()
-    {
-
-        var options = new ApexChartOptions();
-        options.Theme = new Theme { Palette = PaletteType.Palette7 };
-        options.Title = new Title { Text = "Line Chart", Align = Align.Left };
-        options.Chart = new Chart { Type = ChartType.Pie, Width = "400", Height = 400 };
-        options.Chart.Id = "PieChart";
 
 
-        //options.SeriesNonXAxis = new List<object>();
-        //options.SeriesNonXAxis.Add(123);
-        //options.SeriesNonXAxis.Add(24);
-        //options.SeriesNonXAxis.Add(45);
-
-        //options.Labels = new List<string>();
-        //options.Labels.Add("kalle");
-        //options.Labels.Add("Anka");
-        //options.Labels.Add("Bertil");
-        return options;
-    }
 
 
-    private ApexChartOptions GetLineChartOptions()
-    {
-
-        var options = new ApexChartOptions();
-        options.Title = new Title { Text = "Line Chart", Align = Align.Left };
-        options.Chart = new Chart { Type = ChartType.Line, Width = 700, Height = 300 };
-        options.Chart.Id = "LineChart";
-
-        //options.Markers = new ApexChartsApexOptionsMarkers { Size = 1 };
-        options.DataLabels = new DataLabels { Enabled = true };
-        //options.Xaxis = new ApexChartsApexOptionsXaxis { Categories = new List<string> { "kalle", "Anka", "Peter", "Anders" } };
-
-        options.Series = new List<Series>();
-
-        var series = new Series();
-        series.Name = "Series 1";
-        series.Data = new List<DataPoint>();
-        series.Data.Add(new DataPoint("Kalle", 10));
-        series.Data.Add(new DataPoint("Anka", 44));
-        series.Data.Add(new DataPoint("Peter", 12));
-        series.Data.Add(new DataPoint("Kerstin", 63));
-        series.Data.Add(new DataPoint("Maja", 54));
-        options.Series.Add(series);
-
-        var series2 = new Series();
-        series2.Name = "Series 2";
-        series2.Data = new List<DataPoint>();
-        series2.Data.Add(new DataPoint("Kalle", 14));
-        series2.Data.Add(new DataPoint("Anka", 12));
-        series2.Data.Add(new DataPoint("Maja", 21));
-        series2.Data.Add(new DataPoint("Kerstin", 32));
-        options.Series.Add(series2);
-
-        return options;
-    }
-
-    private ApexChartOptions GetBarChartOptions()
-    {
-
-        var options = new ApexChartOptions();
-        options.Title = new Title { Text = "Bar Chart" };
-        options.Chart = new Chart { Type = ChartType.Bar, Width = 400, Height = 300 };
-        options.Chart.Id = "BarChart";
-
-
-        //options.Xaxis = new ApexChartsApexOptionsXaxis { Categories = new List<string> { "kalle", "Anka", "Peter", "Anders" } };
-
-        options.Series = new List<Series>();
-
-        var series = new Series();
-        series.Name = "Series 1";
-        series.Data = new List<DataPoint>();
-        series.Data.Add(new DataPoint("Kalle", 10));
-        series.Data.Add(new DataPoint("Anka", 44));
-        series.Data.Add(new DataPoint("Peter", 12));
-        series.Data.Add(new DataPoint("Kerstin", 63));
-        series.Data.Add(new DataPoint("Maja", 54));
-        options.Series.Add(series);
-
-        var series2 = new Series();
-        series2.Name = "Series 2";
-        series2.Data = new List<DataPoint>();
-        series2.Data.Add(new DataPoint("Kalle", 14));
-        series2.Data.Add(new DataPoint("Anka", 12));
-        series2.Data.Add(new DataPoint("Maja", 21));
-        series2.Data.Add(new DataPoint("Kerstin", 32));
-        options.Series.Add(series2);
-
-        return options;
-    }
 
     private List<Person> GetSampleData()
     {

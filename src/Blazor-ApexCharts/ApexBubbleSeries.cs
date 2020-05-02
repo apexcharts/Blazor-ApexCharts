@@ -9,34 +9,38 @@ namespace ApexCharts
     /// <summary>
     /// Adds a data series to the enclosing <see cref="Chart"/> component.
     /// </summary>
-    public class ApexSeries<TItem> : ComponentBase, IDisposable where TItem : class
+    public class ApexBubbleSeries<TItem> : ComponentBase, IDisposable where TItem : class
     {
         [CascadingParameter(Name = "Chart")] public ApexChart<TItem> Chart { get; set; }
         [Parameter] public string Name { get; set; }
         [Parameter] public Expression<Func<TItem, object>> XValue { get; set; }
         [Parameter] public Expression<Func<TItem, decimal>> YValue { get; set; }
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> YAggregate { get; set; }
-        [Parameter] public Expression<Func<DataPoint, object>> OrderBy { get; set; }
-        [Parameter] public Expression<Func<DataPoint, object>> OrderByDescending { get; set; }
+        [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> ZAggregate { get; set; }
+        [Parameter] public Expression<Func<BubblePoint, object>> OrderBy { get; set; }
+        [Parameter] public Expression<Func<BubblePoint, object>> OrderByDescending { get; set; }
         [Parameter] public bool ShowDataLabels { get; set; }
         [Parameter] public IEnumerable<TItem> Items { get; set; }
         private readonly Series series = new Series();
         protected override void OnParametersSet()
         {
+          
+
             series.Name = Name;
             series.ShowDataLabels = ShowDataLabels;
 
             var xCompiled = XValue.Compile();
-            IEnumerable<DataPoint> datalist;
+            IEnumerable<BubblePoint> datalist;
             if (YAggregate == null)
             {
                 var yCompiled = YValue.Compile();
-                datalist = Items.Select(e => new DataPoint { X = xCompiled.Invoke(e), Y = yCompiled.Invoke(e), Items = new List<object> { e } });
+                datalist = Items.Select(e => new BubblePoint { X = xCompiled.Invoke(e), Y = yCompiled.Invoke(e), Items = new List<object> { e } });
             }
             else
             {
                 var yAggCompiled = YAggregate.Compile();
-                datalist = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new DataPoint { X = d.Key, Y = yAggCompiled.Invoke(d), Items = d.ToList<object>() });
+                var zAggCompiled = ZAggregate.Compile();
+                datalist = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BubblePoint { X = d.Key, Y = yAggCompiled.Invoke(d), Z = zAggCompiled.Invoke(d), Items = d.ToList<object>() });
             }
 
             if (OrderBy != null)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using ApexCharts.Models;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -28,35 +29,32 @@ namespace ApexCharts
 
         private bool isReady;
 
-        
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-
             if (firstRender)
             {
                 isReady = true;
                 ObjectReference = DotNetObjectReference.Create(this);
+            }
+
+            if (isReady && Options.ForceRender)
+            {
                 await UpdateChart();
             }
 
-           
         }
         protected override async Task OnParametersSetAsync()
         {
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
             if (Options.Chart.Type.ToString() != Type.ToString() ||
-                Options.Chart.Width.ToString() != Width.ToString() ||
-                Options.Chart.Height.ToString() != Height.ToString() ||
+                Options.Chart.Width?.ToString() != Width?.ToString() ||
+                Options.Chart.Height?.ToString() != Height?.ToString() ||
                 Options.Title?.Text != Title)
             {
                 Options.ForceRender = true;
             }
-
-            //if (Options.Chart.Type.ToString() != Type.ToString())
-            //{
-            //    ReRender = true;
-            //}
 
             Options.Chart.Type = Type;
             Options.Chart.Width = Width;
@@ -71,12 +69,9 @@ namespace ApexCharts
                 if (Options.Title == null) { Options.Title = new Title(); }
                 Options.Title.Text = Title;
             }
-             
-        
-            if (isReady && Options.ForceRender)
-            {
-                await UpdateChart();
-            }
+
+
+
         }
 
         private void SetDatalabels()
@@ -128,8 +123,10 @@ namespace ApexCharts
 
             var noAxisSeries = Options.Series.First();
 
-            Options.SeriesNonXAxis = noAxisSeries.Data.Select(e => e.Y).ToList();
-            Options.Labels = noAxisSeries.Data.Select(e => e.X.ToString()).ToList();
+            var data = noAxisSeries.Data.Cast<DataPoint>().ToList();
+            //var data = (List<DataPoint>)noAxisSeries.Data.ToList();
+            Options.SeriesNonXAxis = data.Select(e => e.Y).ToList();
+            Options.Labels = data.Select(e => e.X.ToString()).ToList();
 
         }
         private async Task UpdateChart()
@@ -143,6 +140,7 @@ namespace ApexCharts
                 IgnoreNullValues = true,
             };
             serializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            serializerOptions.Converters.Add(new DataPointConverter());
 
             var jsonOptions = JsonSerializer.Serialize<ApexChartOptions>(Options, serializerOptions);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
@@ -154,10 +152,10 @@ namespace ApexCharts
         public void Dispose()
         {
             GC.SuppressFinalize(this);
-            if (Options.Chart?.ChartId != null)
+            if (Options.Chart?.ChartId != null && isReady)
             {
                 InvokeAsync(async () => { await JSRuntime.InvokeVoidAsync("blazor_apexchart.destroyChart", Options.Chart.ChartId); });
-                
+
             }
 
             if (ObjectReference != null)
@@ -174,8 +172,8 @@ namespace ApexCharts
 
             var selection = new SelectedData<TItem>();
             selection.Series = series;
-            selection.X = dataPoint.X;
-            selection.Y = dataPoint.Y;
+            //selection.X = dataPoint.X;
+            //selection.Y = dataPoint.Y;
             selection.Items = dataPoint.Items?.Cast<TItem>().ToList();
 
             if (OnDataPointSelection.HasDelegate)

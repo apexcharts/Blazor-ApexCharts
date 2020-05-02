@@ -15,7 +15,7 @@ window.blazor_apexchart = {
     },
 
     renderChart(dotNetObject, container, options) {
-        //console.log(options);
+        console.log(options);
         var options = JSON.parse(options);
 
         if (options.seriesNonXAxis != undefined) {

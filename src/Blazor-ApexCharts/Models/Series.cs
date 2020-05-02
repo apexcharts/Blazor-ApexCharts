@@ -23,35 +23,11 @@ namespace ApexCharts
     /// </summary>
     public class Series
     {
-        public List<DataPoint> Data { get; set; }
+        public IEnumerable<IDataPoint> Data { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
 
         [JsonIgnore]
         public bool ShowDataLabels { get; set; }
-    }
-
-    public class DataPoint
-    {
-
-        public DataPoint() { }
-
-        public DataPoint(object x)
-        {
-            X = x;
-        }
-
-        public DataPoint(object x, decimal? y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public object X { get; set; }
-        public object Y{ get; set; }
-
-        [JsonIgnore]
-        public List<object> Items { get; set; }
-
     }
 }
