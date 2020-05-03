@@ -44,7 +44,7 @@ namespace ApexCharts
             }
 
         }
-        protected override async Task OnParametersSetAsync()
+        protected override void OnParametersSet()
         {
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
