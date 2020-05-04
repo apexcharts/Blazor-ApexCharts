@@ -22,13 +22,10 @@ namespace ApexCharts
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
 
-
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
-        //internal bool ReRender { get; set; } = true;
         private ElementReference ChartContainer { get; set; }
 
         private bool isReady;
-
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -124,16 +121,12 @@ namespace ApexCharts
             var noAxisSeries = Options.Series.First();
 
             var data = noAxisSeries.Data.Cast<DataPoint>().ToList();
-            //var data = (List<DataPoint>)noAxisSeries.Data.ToList();
             Options.SeriesNonXAxis = data.Select(e => e.Y).ToList();
             Options.Labels = data.Select(e => e.X.ToString()).ToList();
-
         }
-
 
         public void FixLineDataSelection()
         {
-                        //tooltip.intersect: true & tooltip.shared: false along with markers.size has to
             if (Options.Chart.Type == ChartType.Line && OnDataPointSelection.HasDelegate)
             {
 
@@ -200,15 +193,13 @@ namespace ApexCharts
             selection.Series = series;
             //selection.X = dataPoint.X;
             //selection.Y = dataPoint.Y;
+            selection.DataPoint = dataPoint;
             selection.Items = dataPoint.Items?.Cast<TItem>().ToList();
 
             if (OnDataPointSelection.HasDelegate)
             {
                 OnDataPointSelection.InvokeAsync(selection);
             }
-
         }
-
-
     }
 }

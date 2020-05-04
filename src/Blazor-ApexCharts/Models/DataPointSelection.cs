@@ -19,8 +19,8 @@ namespace ApexCharts
     public class SelectedData<TItem>
     {
         public Series Series { get; set; }
-        public object X { get; set; }
-        public object Y { get; set; }
+
+        public IDataPoint DataPoint { get; set; }
         public List<TItem> Items { get; set; }
     }
 
