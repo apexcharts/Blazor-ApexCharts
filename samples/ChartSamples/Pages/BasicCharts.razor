@@ -12,7 +12,9 @@
             </select>
         </div>
 
-        <ApexChart TItem="Order" Title="Orders Net Value By Type" OnDataPointSelection="DataPointSelected" ChartType="@pieChartType">
+        <ApexChart TItem="Order" Title="Orders Net Value By Type"
+                   OnDataPointSelection="DataPointSelected"
+                   ChartType="@pieChartType">
             <ApexSeries TItem="Order"
                         Items="Orders"
                         Name="Order Value"
@@ -20,7 +22,11 @@
                         YAggregate="@(e => e.Sum(e => e.NetValue))"
                         ShowDataLabels="true" />
         </ApexChart>
+
+
     </div>
+
+
 
     <div class="col-md-12 col-lg-6">
         <div>
@@ -36,7 +42,10 @@
 
 
         </div>
-        <ApexChart TItem="Order" Title="Order Net Value" ChartType="@xyChartType" OnDataPointSelection="DataPointSelected">
+        <ApexChart TItem="Order"
+                   Title="Order Net Value"
+                   ChartType="@xyChartType"
+                   OnDataPointSelection="DataPointSelected">
 
             <ApexSeries TItem="Order"
                         Items="Orders"
@@ -59,16 +68,16 @@
 
 @if (selectedData != null)
 {
-    <div class="card">
+    <div class="card" style="background-color:whitesmoke">
         <div class="card-body">
             <h5 class="card-title">Selected Data</h5>
-         
-            <dl class="row">
-                <dt class="col-sm-3">Series:</dt>
-                <dd class="col-sm-9">@selectedData.Series.Name</dd>
 
-                <dt class="col-sm-3">X-Value:</dt>
-                <dd class="col-sm-9">
+            <dl class="row">
+                <dt class="col-sm-2">Series:</dt>
+                <dd class="col-sm-10">@selectedData.Series.Name</dd>
+
+                <dt class="col-sm-2">X-Value:</dt>
+                <dd class="col-sm-10">
                     @selectedData.DataPoint.X
                 </dd>
             </dl>

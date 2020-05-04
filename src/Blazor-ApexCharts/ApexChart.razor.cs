@@ -127,7 +127,7 @@ namespace ApexCharts
 
         public void FixLineDataSelection()
         {
-            if (Options.Chart.Type == ChartType.Line && OnDataPointSelection.HasDelegate)
+            if ((Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area) && OnDataPointSelection.HasDelegate)
             {
 
                 if (Options.Tooltip == null) { Options.Tooltip = new ApexChartsApexOptionsTooltip(); }
@@ -135,7 +135,7 @@ namespace ApexCharts
 
                 if (Options.Markers.Size == null || Options.Markers.Size <= 0)
                 {
-                    Options.Markers.Size = 4;
+                    Options.Markers.Size = 5;
                 }
                 
                 Options.Tooltip.Intersect = true;
