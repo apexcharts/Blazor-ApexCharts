@@ -129,9 +129,35 @@ namespace ApexCharts
             Options.Labels = data.Select(e => e.X.ToString()).ToList();
 
         }
+
+
+        public void FixLineDataSelection()
+        {
+                        //tooltip.intersect: true & tooltip.shared: false along with markers.size has to
+            if (Options.Chart.Type == ChartType.Line && OnDataPointSelection.HasDelegate)
+            {
+
+                if (Options.Tooltip == null) { Options.Tooltip = new ApexChartsApexOptionsTooltip(); }
+                if (Options.Markers == null) { Options.Markers = new Markers(); }
+
+                if (Options.Markers.Size <= 0)
+                {
+                    Options.Markers.Size = 1;
+                }
+
+                Options.Markers.Size = 1;
+                Options.Tooltip.Intersect = true;
+                Options.Tooltip.Shared = false;
+
+            }
+
+
+        }
+
         private async Task UpdateChart()
         {
             SetDatalabels();
+            FixLineDataSelection();
             UpdateDataForNoAxisCharts();
 
             var serializerOptions = new JsonSerializerOptions
