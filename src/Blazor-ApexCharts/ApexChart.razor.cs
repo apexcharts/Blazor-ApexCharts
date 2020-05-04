@@ -15,9 +15,9 @@ namespace ApexCharts
     {
         [Inject] public IJSRuntime JSRuntime { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public ApexChartOptions Options { get; set; } = new ApexChartOptions();
+        [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
-        [Parameter] public ChartType Type { get; set; } = ChartType.Bar;
+        [Parameter] public ChartType ChartType { get; set; } = ChartType.Bar;
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
@@ -45,15 +45,15 @@ namespace ApexCharts
         {
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
-            if (Options.Chart.Type.ToString() != Type.ToString() ||
-                Options.Chart.Width?.ToString() != Width?.ToString() ||
-                Options.Chart.Height?.ToString() != Height?.ToString() ||
-                Options.Title?.Text != Title)
+            if (Options.Chart.Type != ChartType ||
+           Options.Chart.Width?.ToString() != Width?.ToString() ||
+           Options.Chart.Height?.ToString() != Height?.ToString() ||
+           Options.Title?.Text != Title)
             {
                 Options.ForceRender = true;
             }
 
-            Options.Chart.Type = Type;
+            Options.Chart.Type = ChartType;
             Options.Chart.Width = Width;
             Options.Chart.Height = Height;
 
@@ -120,7 +120,7 @@ namespace ApexCharts
 
             var noAxisSeries = Options.Series.First();
 
-            var data = noAxisSeries.Data.Cast<DataPoint>().ToList();
+            var data = noAxisSeries.Data.Cast<DataPoint<TItem>>().ToList();
             Options.SeriesNonXAxis = data.Select(e => e.Y).ToList();
             Options.Labels = data.Select(e => e.X.ToString()).ToList();
         }
@@ -133,22 +133,20 @@ namespace ApexCharts
                 if (Options.Tooltip == null) { Options.Tooltip = new ApexChartsApexOptionsTooltip(); }
                 if (Options.Markers == null) { Options.Markers = new Markers(); }
 
-                if (Options.Markers.Size <= 0)
+                if (Options.Markers.Size == null || Options.Markers.Size <= 0)
                 {
-                    Options.Markers.Size = 1;
+                    Options.Markers.Size = 4;
                 }
-
-                Options.Markers.Size = 1;
+                
                 Options.Tooltip.Intersect = true;
                 Options.Tooltip.Shared = false;
 
             }
-
-
         }
 
         private async Task UpdateChart()
         {
+            Options.ForceRender = false;
             SetDatalabels();
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
@@ -159,12 +157,12 @@ namespace ApexCharts
                 IgnoreNullValues = true,
             };
             serializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-            serializerOptions.Converters.Add(new DataPointConverter());
+            serializerOptions.Converters.Add(new DataPointConverter<TItem>());
 
-            var jsonOptions = JsonSerializer.Serialize<ApexChartOptions>(Options, serializerOptions);
+            var jsonOptions = JsonSerializer.Serialize(Options, serializerOptions);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
             await OnDataPointSelection.InvokeAsync(null);
-            Options.ForceRender = false;
+
         }
 
 
@@ -184,20 +182,19 @@ namespace ApexCharts
         }
 
         [JSInvokable]
-        public void DataPointSelected(DataPointSelection selectedDataPoints)
+        public void DataPointSelected(DataPointSelection<TItem> selectedDataPoints)
         {
-            var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-            var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
-
-            var selection = new SelectedData<TItem>();
-            selection.Series = series;
-            //selection.X = dataPoint.X;
-            //selection.Y = dataPoint.Y;
-            selection.DataPoint = dataPoint;
-            selection.Items = dataPoint.Items?.Cast<TItem>().ToList();
-
             if (OnDataPointSelection.HasDelegate)
             {
+                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
+                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+
+                var selection = new SelectedData<TItem>
+                {
+                    Series = series,
+                    DataPoint = dataPoint
+                };
+
                 OnDataPointSelection.InvokeAsync(selection);
             }
         }

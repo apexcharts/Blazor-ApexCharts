@@ -21,9 +21,9 @@ namespace ApexCharts
     /// And according to the demos, data can contain null.
     /// https://apexcharts.com/javascript-chart-demos/line-charts/null-values/
     /// </summary>
-    public class Series
+    public class Series<TItem>
     {
-        public IEnumerable<IDataPoint> Data { get; set; }
+        public IEnumerable<IDataPoint<TItem>> Data { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
 

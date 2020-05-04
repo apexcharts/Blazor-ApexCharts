@@ -16,27 +16,27 @@ namespace ApexCharts
         [Parameter] public Expression<Func<TItem, object>> XValue { get; set; }
         [Parameter] public Expression<Func<TItem, decimal>> YValue { get; set; }
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> YAggregate { get; set; }
-        [Parameter] public Expression<Func<DataPoint, object>> OrderBy { get; set; }
-        [Parameter] public Expression<Func<DataPoint, object>> OrderByDescending { get; set; }
+        [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderBy { get; set; }
+        [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderByDescending { get; set; }
         [Parameter] public bool ShowDataLabels { get; set; }
         [Parameter] public IEnumerable<TItem> Items { get; set; }
-        private readonly Series series = new Series();
+        private readonly Series<TItem> series = new Series<TItem>();
         protected override void OnParametersSet()
         {
             series.Name = Name;
             series.ShowDataLabels = ShowDataLabels;
 
             var xCompiled = XValue.Compile();
-            IEnumerable<DataPoint> datalist;
+            IEnumerable<DataPoint<TItem>> datalist;
             if (YAggregate == null)
             {
                 var yCompiled = YValue.Compile();
-                datalist = Items.Select(e => new DataPoint { X = xCompiled.Invoke(e), Y = yCompiled.Invoke(e), Items = new List<object> { e } });
+                datalist = Items.Select(e => new DataPoint<TItem> { X = xCompiled.Invoke(e), Y = yCompiled.Invoke(e), Items = new List<TItem> { e } });
             }
             else
             {
                 var yAggCompiled = YAggregate.Compile();
-                datalist = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new DataPoint { X = d.Key, Y = yAggCompiled.Invoke(d), Items = d.ToList<object>() });
+                datalist = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new DataPoint<TItem> { X = d.Key, Y = yAggCompiled.Invoke(d), Items = d.ToList<TItem>() });
             }
 
             if (OrderBy != null)
@@ -55,7 +55,7 @@ namespace ApexCharts
 
         protected override void OnInitialized()
         {
-            if (Chart.Options.Series == null) { Chart.Options.Series = new List<Series>(); }
+            if (Chart.Options.Series == null) { Chart.Options.Series = new List<Series<TItem>>(); }
             Chart.Options.Series.Add(series);
         }
 

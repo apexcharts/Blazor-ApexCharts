@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ApexCharts
 {
 
-    public class BubblePoint : IDataPoint
+    public class BubblePoint<TItem> : IDataPoint<TItem>
     {
      
 
@@ -16,7 +16,7 @@ namespace ApexCharts
         public object Z { get; set; } 
 
         [JsonIgnore]
-        public IList<object> Items { get; set; }
+        public IList<TItem> Items { get; set; }
 
     }
 }

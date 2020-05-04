@@ -12,7 +12,7 @@
             </select>
         </div>
 
-        <ApexChart TItem="Order" Title="Orders Net Value By Type" OnDataPointSelection="DataPointSelected"  Type="@pieChartType">
+        <ApexChart TItem="Order" Title="Orders Net Value By Type" OnDataPointSelection="DataPointSelected" ChartType="@pieChartType">
             <ApexSeries TItem="Order"
                         Items="Orders"
                         Name="Order Value"
@@ -21,7 +21,7 @@
                         ShowDataLabels="true" />
         </ApexChart>
     </div>
-   
+
     <div class="col-md-12 col-lg-6">
         <div>
             X-Y Charts
@@ -36,70 +36,77 @@
 
 
         </div>
-        <ApexChart TItem="Order" Title="Order Net Value" Type="@xyChartType" OnDataPointSelection="DataPointSelected">
+        <ApexChart TItem="Order" Title="Order Net Value" ChartType="@xyChartType" OnDataPointSelection="DataPointSelected">
 
             <ApexSeries TItem="Order"
                         Items="Orders"
                         Name="Gross Value"
                         XValue="@(e => e.Country)"
                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                        OrderByDescending="e=>e.Y"
-                        />
+                        OrderByDescending="e=>e.Y" />
 
             <ApexSeries TItem="Order"
                         Items="Orders"
                         Name="Net Value"
                         XValue="@(e => e.Country)"
                         YAggregate="@(e => e.Sum(e => e.NetValue))"
-                        OrderByDescending="e=>e.Y"
-                         />
+                        OrderByDescending="e=>e.Y" />
 
         </ApexChart>
     </div>
 </div>
 
-<div class="row">
 
-    @if (selectedData != null)
-    {
-        <div>Data Point Selected</div><br />
-        <div>Series: @selectedData.Series.Name</div><br />
+@if (selectedData != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Selected Data</h5>
+         
+            <dl class="row">
+                <dt class="col-sm-3">Series:</dt>
+                <dd class="col-sm-9">@selectedData.Series.Name</dd>
 
-        <table class="table table-sm">
-            <thead>
-                <tr>
-                    <th>OrderId</th>
-                    <th>Customer</th>
-                    <th>Order Date</th>
-                    <th>Country</th>
-                    <th>Type</th>
-                    <th>Gross Value</th>
-                    <th>Net Value</th>
-                </tr>
-            </thead>
+                <dt class="col-sm-3">X-Value:</dt>
+                <dd class="col-sm-9">
+                    @selectedData.DataPoint.X
+                </dd>
+            </dl>
 
-            <tbody>
-                @foreach (var order in selectedData.Items)
-                {
-                <tr>
-                    <td>@order.OrderId</td>
-                    <td>@order.CustomerName</td>
-                    <td>@order.OrderDate</td>
-                    <td>@order.Country</td>
-                    <td>@order.OrderType</td>
-                    <td>@order.GrossValue</td>
-                    <td>@order.NetValue</td>
-                </tr>
-                }
-            </tbody>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>OrderId</th>
+                        <th>Customer</th>
+                        <th>Order Date</th>
+                        <th>Country</th>
+                        <th>Type</th>
+                        <th>Gross Value</th>
+                        <th>Net Value</th>
+                    </tr>
+                </thead>
 
-        </table>
+                <tbody>
+                    @foreach (var order in selectedData.DataPoint.Items)
+                    {
+                        <tr>
+                            <td>@order.OrderId</td>
+                            <td>@order.CustomerName</td>
+                            <td>@order.OrderDate</td>
+                            <td>@order.Country</td>
+                            <td>@order.OrderType</td>
+                            <td>@order.GrossValue</td>
+                            <td>@order.NetValue</td>
+                        </tr>
+                    }
+                </tbody>
 
-    
+            </table>
+        </div>
+    </div>
+}
 
-    }
 
-</div>
 
 @code {
     public ApexCharts.ChartType pieChartType { get; set; } = ChartType.Pie;
@@ -107,7 +114,7 @@
 
     private SelectedData<Order> selectedData;
 
-    private List<Order> Orders {get; set;}
+    private List<Order> Orders { get; set; }
 
     protected override void OnInitialized()
     {

@@ -4,11 +4,12 @@ using System.Text.Json.Serialization;
 namespace ApexCharts
 {
 
-    public interface IDataPoint {
-        IList<object> Items { get; set; }
+    public interface IDataPoint<TItem> {
+        IList<TItem> Items { get; set; }
+        object X { get; set; }
     }
 
-    public class DataPoint: IDataPoint
+    public class DataPoint<TItem>: IDataPoint<TItem>
     {
 
         public DataPoint() { }
@@ -29,7 +30,7 @@ namespace ApexCharts
         
 
         [JsonIgnore]
-        public IList<object> Items { get; set; }
+        public IList<TItem> Items { get; set; }
 
     }
 }

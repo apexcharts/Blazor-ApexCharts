@@ -3,7 +3,7 @@ using System;
 
 namespace ApexCharts
 {
-    public class ApexChartOptions
+    public class ApexChartOptions<TItem>
     {
        
         public bool ForceRender { get; set; }
@@ -69,7 +69,7 @@ namespace ApexCharts
         /// Series for specifying chart-type-specific configuration.
         /// See https://apexcharts.com/docs/options/series/
         /// </summary>
-        public List<Series> Series { get; set; }
+        public List<Series<TItem>> Series { get; set; }
 
         public List<object> SeriesNonXAxis { get; internal set; }
 
@@ -1234,7 +1234,7 @@ namespace ApexCharts
     /// </summary>
     public class ApexChartsApexOptionsTooltip
     {
-        public Custom? Custom { get; set; }
+        //public Custom? Custom { get; set; }
         public bool Enabled { get; set; } = true;
         public List<double> EnabledOnSeries { get; set; }
         public bool? FillSeriesColor { get; set; }
@@ -2967,7 +2967,7 @@ namespace ApexCharts
 
     public class ApexTooltip
     {
-        public Custom? Custom { get; set; }
+        //public Custom? Custom { get; set; }
         public bool Enabled { get; set; } = true;
         public List<double> EnabledOnSeries { get; set; }
         public bool? FillSeriesColor { get; set; }
@@ -3462,35 +3462,35 @@ namespace ApexCharts
         public bool IsNull => UnionArray == null && Double == null;
     }
 
-    public struct SeriesDatum
-    {
-        public List<DatumDatum> AnythingArray;
-        public double? Double;
-        public PurpleDatum PurpleDatum;
+    //public struct SeriesDatum
+    //{
+    //    public List<DatumDatum> AnythingArray;
+    //    public double? Double;
+    //    public PurpleDatum PurpleDatum;
 
-        public static implicit operator SeriesDatum(List<DatumDatum> AnythingArray) => new SeriesDatum { AnythingArray = AnythingArray };
-        public static implicit operator SeriesDatum(double Double) => new SeriesDatum { Double = Double };
-        public static implicit operator SeriesDatum(PurpleDatum PurpleDatum) => new SeriesDatum { PurpleDatum = PurpleDatum };
-        public bool IsNull => AnythingArray == null && PurpleDatum == null && Double == null;
-    }
+    //    public static implicit operator SeriesDatum(List<DatumDatum> AnythingArray) => new SeriesDatum { AnythingArray = AnythingArray };
+    //    public static implicit operator SeriesDatum(double Double) => new SeriesDatum { Double = Double };
+    //    public static implicit operator SeriesDatum(PurpleDatum PurpleDatum) => new SeriesDatum { PurpleDatum = PurpleDatum };
+    //    public bool IsNull => AnythingArray == null && PurpleDatum == null && Double == null;
+    //}
 
-    public struct SeriesElement
-    {
-        public double? Double;
-        public Series SeriesClass;
+    //public struct SeriesElement
+    //{
+    //    public double? Double;
+    //    public Series SeriesClass;
 
-        public static implicit operator SeriesElement(double Double) => new SeriesElement { Double = Double };
-        public static implicit operator SeriesElement(Series SeriesClass) => new SeriesElement { SeriesClass = SeriesClass };
-    }
+    //    public static implicit operator SeriesElement(double Double) => new SeriesElement { Double = Double };
+    //    public static implicit operator SeriesElement(Series SeriesClass) => new SeriesElement { SeriesClass = SeriesClass };
+    //}
 
-    public struct Custom
-    {
-        public Dictionary<string, object> AnythingMap;
-        public List<Dictionary<string, object>> AnythingMapArray;
+    //public struct Custom
+    //{
+    //    public Dictionary<string, object> AnythingMap;
+    //    public List<Dictionary<string, object>> AnythingMapArray;
 
-        public static implicit operator Custom(Dictionary<string, object> AnythingMap) => new Custom { AnythingMap = AnythingMap };
-        public static implicit operator Custom(List<Dictionary<string, object>> AnythingMapArray) => new Custom { AnythingMapArray = AnythingMapArray };
-    }
+    //    public static implicit operator Custom(Dictionary<string, object> AnythingMap) => new Custom { AnythingMap = AnythingMap };
+    //    public static implicit operator Custom(List<Dictionary<string, object>> AnythingMapArray) => new Custom { AnythingMapArray = AnythingMapArray };
+    //}
 
     public struct TooltipY
     {
