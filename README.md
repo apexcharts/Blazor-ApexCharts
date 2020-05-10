@@ -35,7 +35,7 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 ```html
  <ApexChart TItem="Order" Title="Orders Net Value By Type"  ChartType="ChartType.Pie">
             <ApexSeries TItem="Order"
-                        Items="Orders"
+                        Items="SampleData.GetOrders()"
                         Name="Order Value"
                         XValue="@(e => e.OrderType)"
                         YAggregate="@(e => e.Sum(e => e.NetValue))"
