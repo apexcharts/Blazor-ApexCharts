@@ -15,14 +15,10 @@ namespace ChartSamples
         public decimal GrossValue { get; set; }
         public decimal NetValue { get =>  GrossValue * (1 - (DiscountPrecentage / 100)) ; }
         public decimal DiscountPrecentage { get; set; }
-
     }
 
     public enum OrderType
     {
-        Web,
-        Contract,
-        Mail,
-        Phone
+        Web, Contract, Mail, Phone
     }
 }
