@@ -31,3 +31,36 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 ```csharp
 @using ApexCharts;
 ```
+### Minimal Chart
+```html
+ <ApexChart TItem="Order" Title="Orders Net Value By Type"  ChartType="ChartType.Pie">
+            <ApexSeries TItem="Order"
+                        Items="Orders"
+                        Name="Order Value"
+                        XValue="@(e => e.OrderType)"
+                        YAggregate="@(e => e.Sum(e => e.NetValue))" />
+        </ApexChart>
+```
+
+**Order Class**
+```csharp
+    public class Order
+    {
+        public Guid OrderId { get; set; } = Guid.NewGuid();
+        public string CustomerName { get; set; }
+        public string Country { get; set; }
+        public DateTimeOffset OrderDate { get; set; }
+        public OrderType OrderType { get; set; }
+        public decimal GrossValue { get; set; }
+        public decimal NetValue { get =>  GrossValue * (1 - (DiscountPrecentage / 100)) ; }
+        public decimal DiscountPrecentage { get; set; }
+    }
+
+    public enum OrderType
+    {
+        Web,
+        Contract,
+        Mail,
+        Phone
+    }
+```
