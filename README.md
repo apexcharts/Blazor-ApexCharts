@@ -38,7 +38,8 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
                         Items="Orders"
                         Name="Order Value"
                         XValue="@(e => e.OrderType)"
-                        YAggregate="@(e => e.Sum(e => e.NetValue))" />
+                        YAggregate="@(e => e.Sum(e => e.NetValue))"
+                        ShowDataLabels="true" />
         </ApexChart>
 ```
 
@@ -56,11 +57,8 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
         public decimal DiscountPrecentage { get; set; }
     }
 
-    public enum OrderType
+   public enum OrderType
     {
-        Web,
-        Contract,
-        Mail,
-        Phone
+        Web, Contract, Mail, Phone
     }
 ```
