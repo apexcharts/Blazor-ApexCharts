@@ -19,7 +19,7 @@ dotnet add package Blazor-ApexCharts
 ## Usage
 
 ### Assets
-In your `_Host.cshtml` (server-side) or in your `index.html` (client-side) add the following lines to the `body` tag **after** the `_framework` reference
+In `_Host.cshtml` (server-side) or in `index.html` (client-side) add the following lines to the `body` tag **after** the `_framework` reference
 
 ```html
 <script src="_content/Blazor-ApexCharts/js/apex-charts.min.js"></script>
@@ -27,7 +27,7 @@ In your `_Host.cshtml` (server-side) or in your `index.html` (client-side) add t
 ```
 
 ### Imports
-Now add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
+Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 ```csharp
 @using ApexCharts;
 ```
