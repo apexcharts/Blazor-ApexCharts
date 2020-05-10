@@ -31,7 +31,7 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 ```csharp
 @using ApexCharts;
 ```
-### Minimal Chart
+### Basic Pie Chart
 ```html
  <ApexChart TItem="Order" Title="Orders Net Value By Type"  ChartType="ChartType.Pie">
             <ApexSeries TItem="Order"
@@ -43,7 +43,6 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
         </ApexChart>
 ```
 
-Outputs
 ![Image](BasicPieChart.png)
 
 
