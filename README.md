@@ -43,7 +43,7 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
         </ApexChart>
 ```
 
-![Image](BasicPieChart.png)
+![Image](BasicPieChart.png | width=300)
 
 
 **Order Class**
