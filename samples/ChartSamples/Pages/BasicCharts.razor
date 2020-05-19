@@ -15,6 +15,7 @@
         <ApexChart TItem="Order" Title="Orders Net Value By Type"
                    OnDataPointSelection="DataPointSelected"
                    ChartType="@pieChartType">
+ 
             <ApexSeries TItem="Order"
                         Items="Orders"
                         Name="Order Value"
@@ -79,6 +80,8 @@
     {
         Orders = SampleData.GetOrders();
     }
+
+  
 
     private void DataPointSelected(SelectedData<Order> selected)
     {

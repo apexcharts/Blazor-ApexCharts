@@ -8,7 +8,7 @@
         <ApexChart TItem="Order" Title="Orders Value"
                    OnDataPointSelection="DataPointSelected"
                    ChartType="ChartType.Bar"
-                   XAxisType ="XaxisType.Datetime"
+                   XAxisType="XaxisType.Datetime"
                    Options="options">
 
             <ApexSeries TItem="Order"
@@ -41,12 +41,13 @@
 
     protected override void OnInitialized()
     {
-     
+
         options.Tooltip = new Tooltip();
         options.Tooltip.X = new TooltipX();
         options.Tooltip.X.Format = @"MMMM \ yyyy";
 
     }
+      
 
     private void DataPointSelected(SelectedData<Order> selected)
     {
