@@ -1,11 +1,10 @@
 ![.NET Core](https://github.com/joadan/Blazor-ApexCharts/workflows/.NET%20Core/badge.svg?branch=master)
 
 # Blazor-ApexCharts
-A wrapper for ApexCharts.js.
+A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
+## [Demo](https://joadan.github.io/Blazor-ApexCharts/basic-charts)
 
-View it in action [here](https://joadan.github.io/Blazor-ApexCharts/basic-charts)
-
-**Please note: Not production ready.**
+**Please note: Not (yet) production ready.**
 
 
 ## Installation
@@ -31,7 +30,7 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 ```csharp
 @using ApexCharts;
 ```
-### Basic Pie Chart
+### Basic  Chart
 ```html
  <ApexChart TItem="Order" Title="Orders Net Value By Type"  ChartType="ChartType.Pie">
             <ApexSeries TItem="Order"
@@ -44,6 +43,31 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 ```
 
 <img src="BasicPieChart.png" width="500">
+
+### Chart Options
+Apex Chart options is available in the ApexChartOptions class that can be passed to the chart.
+Below is an example to show labels for a donut chart. More info in Apex documentation [ApexCharts Docs](https://apexcharts.com/docs/options/)
+
+```csharp
+  private ApexChartOptions<Order> GetChartOptions()
+    {
+        var options = new ApexChartOptions<Order>
+        {
+            PlotOptions = new PlotOptions
+            {
+                Pie = new PlotOptionsPie
+                {
+                    Donut = new PlotOptionsDonut
+                    {
+                        Labels = new DonutLabels { Show = true }
+                    }
+                }
+            }
+        };
+
+        return options;
+    }
+```
 
 
 **Order Class**
