@@ -18,6 +18,7 @@ namespace ApexCharts
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
         [Parameter] public ChartType ChartType { get; set; } = ChartType.Bar;
+        [Parameter] public XaxisType? XAxisType { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
@@ -48,6 +49,7 @@ namespace ApexCharts
             if (Options.Chart.Type != ChartType ||
            Options.Chart.Width?.ToString() != Width?.ToString() ||
            Options.Chart.Height?.ToString() != Height?.ToString() ||
+           Options.Xaxis?.Type != XAxisType ||
            Options.Title?.Text != Title)
             {
                 Options.ForceRender = true;
@@ -56,6 +58,12 @@ namespace ApexCharts
             Options.Chart.Type = ChartType;
             Options.Chart.Width = Width;
             Options.Chart.Height = Height;
+
+            if (XAxisType != null)
+            {
+                if (Options.Xaxis == null) { Options.Xaxis = new XAxis(); }
+                Options.Xaxis.Type = XAxisType;
+            }
 
             if (string.IsNullOrEmpty(Title))
             {
@@ -130,14 +138,14 @@ namespace ApexCharts
             if ((Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area) && OnDataPointSelection.HasDelegate)
             {
 
-                if (Options.Tooltip == null) { Options.Tooltip = new ApexChartsApexOptionsTooltip(); }
+                if (Options.Tooltip == null) { Options.Tooltip = new Tooltip(); }
                 if (Options.Markers == null) { Options.Markers = new Markers(); }
 
                 if (Options.Markers.Size == null || Options.Markers.Size <= 0)
                 {
                     Options.Markers.Size = 5;
                 }
-                
+
                 Options.Tooltip.Intersect = true;
                 Options.Tooltip.Shared = false;
 

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor-ApexCharts", "src\Bl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChartsPlayground", "samples\ChartsPlayground\ChartsPlayground.csproj", "{84AD28BD-4C2A-4C15-81D8-255D2887268A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChartSamples", "samples\ChartSamples\ChartSamples.csproj", "{0EA8C13B-FD72-4A65-81A3-51D5537608FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChartSamples", "samples\ChartSamples\ChartSamples.csproj", "{0EA8C13B-FD72-4A65-81A3-51D5537608FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

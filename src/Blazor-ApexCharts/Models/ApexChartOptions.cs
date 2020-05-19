@@ -99,7 +99,7 @@ namespace ApexCharts
         /// Chart Tooltip options
         /// See https://apexcharts.com/docs/options/tooltip/
         /// </summary>
-        public ApexChartsApexOptionsTooltip Tooltip { get; set; }
+        public Tooltip Tooltip { get; set; }
 
         /// <summary>
         /// X Axis options
@@ -1232,7 +1232,7 @@ namespace ApexCharts
     /// Chart Tooltip options
     /// See https://apexcharts.com/docs/options/tooltip/
     /// </summary>
-    public class ApexChartsApexOptionsTooltip
+    public class Tooltip
     {
         //public Custom? Custom { get; set; }
         public bool Enabled { get; set; } = true;
