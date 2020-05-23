@@ -7,6 +7,11 @@ namespace ApexCharts
     {
         public bool Debug { get; set; }
         public bool ForceRender { get; set; }
+
+        /// <summary>
+        /// Annotations options
+        /// See https://apexcharts.com/docs/options/annotations/
+        /// </summary>
         public Annotations Annotations { get; set; }
 
         /// <summary>
@@ -23,7 +28,7 @@ namespace ApexCharts
         /// </summary>
         public DataLabels DataLabels { get; set; }
 
-        public ApexChartsApexOptionsFill Fill { get; set; }
+        public Fill Fill { get; set; }
 
         /// <summary>
         /// Plot X and Y grid options
@@ -44,9 +49,7 @@ namespace ApexCharts
         /// See https://apexcharts.com/docs/options/markers/
         /// </summary>
         public Markers Markers { get; set; }
-
-     
-            
+ 
         /// <summary>
         /// NoData configuration options.
         /// See https://apexcharts.com/docs/options/nodata/
@@ -111,7 +114,7 @@ namespace ApexCharts
         /// Y Axis options
         /// See https://apexcharts.com/docs/options/yaxis/
         /// </summary>
-        public List<Yaxis> Yaxis { get; set; }
+        public List<YAxis> Yaxis { get; set; }
     }
 
     public class Annotations
@@ -122,7 +125,7 @@ namespace ApexCharts
         public List<AnnotationsShape> Shapes { get; set; }
         public List<AnnotationsText> Texts { get; set; }
         public List<AnnotationsXaxi> Xaxis { get; set; }
-        public List<AnnotationsYaxi> Yaxis { get; set; }
+        public List<AnnotationsYAxis> Yaxis { get; set; }
     }
 
     public class AnnotationsImage
@@ -138,9 +141,9 @@ namespace ApexCharts
     {
         public PurpleImage Image { get; set; }
         public PurpleLabel Label { get; set; }
-        public PurpleMarker Marker { get; set; }
+        public AnnotationMarker Marker { get; set; }
         public double? SeriesIndex { get; set; }
-        public FontWeight? X { get; set; }
+        public object X { get; set; }
         public double? Y { get; set; }
         public double? YAxisIndex { get; set; }
     }
@@ -174,7 +177,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public PurplePadding Padding { get; set; }
     }
 
@@ -186,7 +189,7 @@ namespace ApexCharts
         public double? Top { get; set; }
     }
 
-    public class PurpleMarker
+    public class AnnotationMarker
     {
         public string CssClass { get; set; }
         public string FillColor { get; set; }
@@ -208,7 +211,7 @@ namespace ApexCharts
         public double? Height { get; set; }
         public double? Opacity { get; set; }
         public string Type { get; set; }
-        public FontWeight? Width { get; set; }
+        public object Width { get; set; }
         public double? X { get; set; }
         public double? Y { get; set; }
     }
@@ -220,8 +223,8 @@ namespace ApexCharts
         public double? BorderRadius { get; set; }
         public double? BorderWidth { get; set; }
         public string FontFamily { get; set; }
-        public FontWeight? FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontSize { get; set; }
+        public object FontWeight { get; set; }
         public string ForeColor { get; set; }
         public double? PaddingBottom { get; set; }
         public double? PaddingLeft { get; set; }
@@ -243,8 +246,8 @@ namespace ApexCharts
         public double? OffsetY { get; set; }
         public double? Opacity { get; set; }
         public double? StrokeDashArray { get; set; }
-        public X? X { get; set; }
-        public X? X2 { get; set; }
+        public object X { get; set; }
+        public object X2 { get; set; }
     }
 
     public class FluffyLabel
@@ -267,7 +270,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public FluffyPadding Padding { get; set; }
     }
 
@@ -279,22 +282,22 @@ namespace ApexCharts
         public double? Top { get; set; }
     }
 
-    public class AnnotationsYaxi
+    public class AnnotationsYAxis
     {
         public string BorderColor { get; set; }
         public double? BorderWidth { get; set; }
         public string FillColor { get; set; }
-        public TentacledLabel Label { get; set; }
+        public AnnotationsYAxisLabel Label { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
         public double? Opacity { get; set; }
         public double? StrokeDashArray { get; set; }
-        public X? Y { get; set; }
-        public X? Y2 { get; set; }
+        public object Y { get; set; }
+        public object Y2 { get; set; }
         public double? YAxisIndex { get; set; }
     }
 
-    public class TentacledLabel
+    public class AnnotationsYAxisLabel
     {
         public string BorderColor { get; set; }
         public double? BorderWidth { get; set; }
@@ -314,7 +317,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public TentacledPadding Padding { get; set; }
     }
 
@@ -580,20 +583,20 @@ namespace ApexCharts
         public List<string> Colors { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
-    public class ApexChartsApexOptionsFill
+    public class Fill
     {
         public List<object> Colors { get; set; }
-        public PurpleGradient Gradient { get; set; }
+        public FillGradient Gradient { get; set; }
         public FillImage Image { get; set; }
         public Opacity? Opacity { get; set; }
         public FillPattern Pattern { get; set; }
         public Color? Type { get; set; }
     }
 
-    public class PurpleGradient
+    public class FillGradient
     {
         public List<string> GradientToColors { get; set; }
         public bool? InverseColors { get; set; }
@@ -691,7 +694,7 @@ namespace ApexCharts
         public bool? Floating { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public double? Height { get; set; }
         public Align? HorizontalAlign { get; set; }
         public bool? InverseOrder { get; set; }
@@ -820,32 +823,32 @@ namespace ApexCharts
     public class PlotOptionsBar
     {
         public string BarHeight { get; set; }
-        public PurpleColors Colors { get; set; }
+        public PlotOptionsBarColors Colors { get; set; }
         public string ColumnWidth { get; set; }
-        public PurpleDataLabels DataLabels { get; set; }
+        public PlotOptionsBarDataLabels DataLabels { get; set; }
         public bool? Distributed { get; set; }
-        public IngShape? EndingShape { get; set; }
+        public Shape? EndingShape { get; set; }
         public bool? Horizontal { get; set; }
         public bool? RangeBarOverlap { get; set; }
-        public IngShape? StartingShape { get; set; }
+        public Shape? StartingShape { get; set; }
     }
 
-    public class PurpleColors
+    public class PlotOptionsBarColors
     {
         public List<string> BackgroundBarColors { get; set; }
         public double? BackgroundBarOpacity { get; set; }
         public double? BackgroundBarRadius { get; set; }
-        public List<PurpleRange> Ranges { get; set; }
+        public List<PlotOptionsBarColorRange> Ranges { get; set; }
     }
 
-    public class PurpleRange
+    public class PlotOptionsBarColorRange
     {
         public string Color { get; set; }
         public double? From { get; set; }
         public double? To { get; set; }
     }
 
-    public class PurpleDataLabels
+    public class PlotOptionsBarDataLabels
     {
         public bool? HideOverflowingLabels { get; set; }
         public double? MaxItems { get; set; }
@@ -861,24 +864,24 @@ namespace ApexCharts
 
     public class PlotOptionsCandlestick
     {
-        public FluffyColors Colors { get; set; }
-        public PurpleWick Wick { get; set; }
+        public PlotOptionsCandlestickColors Colors { get; set; }
+        public PlotOptionsCandlestickWick Wick { get; set; }
     }
 
-    public class FluffyColors
+    public class PlotOptionsCandlestickColors
     {
         public string Downward { get; set; }
         public string Upward { get; set; }
     }
 
-    public class PurpleWick
+    public class PlotOptionsCandlestickWick
     {
         public bool? UseFillColor { get; set; }
     }
 
     public class PlotOptionsHeatmap
     {
-        public PurpleColorScale ColorScale { get; set; }
+        public PlotOptionsHeatmapColorScale ColorScale { get; set; }
         public bool? Distributed { get; set; }
         public bool? EnableShades { get; set; }
         public double? Radius { get; set; }
@@ -887,15 +890,15 @@ namespace ApexCharts
         public bool? UseFillColorAsStroke { get; set; }
     }
 
-    public class PurpleColorScale
+    public class PlotOptionsHeatmapColorScale
     {
         public bool? Inverse { get; set; }
         public double? Max { get; set; }
         public double? Min { get; set; }
-        public List<FluffyRange> Ranges { get; set; }
+        public List<PlotOptionsHeatmapColorScaleRange> Ranges { get; set; }
     }
 
-    public class FluffyRange
+    public class PlotOptionsHeatmapColorScaleRange
     {
         public string Color { get; set; }
         public string ForeColor { get; set; }
@@ -940,7 +943,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public double? OffsetY { get; set; }
         public bool Show { get; set; } = true;
     }
@@ -950,7 +953,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public string Label { get; set; }
         public bool Show { get; set; } = true;
         public bool? ShowAlways { get; set; }
@@ -961,7 +964,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public double? OffsetY { get; set; }
         public bool Show { get; set; } = true;
     }
@@ -1023,7 +1026,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public double? OffsetY { get; set; }
         public bool? Show { get; set; }
     }
@@ -1033,7 +1036,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public string Label { get; set; }
         public bool? Show { get; set; }
     }
@@ -1043,7 +1046,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public double? OffsetY { get; set; }
         public bool? Show { get; set; }
     }
@@ -1185,7 +1188,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class Theme
@@ -1225,7 +1228,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     /// <summary>
@@ -1323,7 +1326,7 @@ namespace ApexCharts
         public string Position { get; set; }
         public double? Range { get; set; }
         public bool? Sorted { get; set; }
-        public TickAmountUnion? TickAmount { get; set; }
+        public object TickAmount { get; set; }
         public string TickPlacement { get; set; }
         public XaxisTitle Title { get; set; }
         public XaxisTooltip Tooltip { get; set; }
@@ -1357,7 +1360,7 @@ namespace ApexCharts
         public string Position { get; set; }
         public bool? Show { get; set; }
         public TentacledStroke Stroke { get; set; }
-        public FontWeight? Width { get; set; }
+        public object Width { get; set; }
     }
 
     public class StickyDropShadow
@@ -1426,51 +1429,51 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class XaxisTitle
     {
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
-        public HilariousStyle Style { get; set; }
+        public XAxistTitleStyle Style { get; set; }
         public string Text { get; set; }
     }
 
-    public class HilariousStyle
+    public class XAxistTitleStyle
     {
         public string Color { get; set; }
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class XaxisTooltip
     {
         public bool Enabled { get; set; } = true;
         public double? OffsetY { get; set; }
-        public AmbitiousStyle Style { get; set; }
+        public XAxisTooltipStyle Style { get; set; }
     }
 
-    public class AmbitiousStyle
+    public class XAxisTooltipStyle
     {
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
     }
 
-    public class Yaxis
+    public class YAxis
     {
         public YaxiAxisBorder AxisBorder { get; set; }
         public YaxiAxisTicks AxisTicks { get; set; }
-        public YaxiCrosshairs Crosshairs { get; set; }
+        public YAxisCrosshairs Crosshairs { get; set; }
         public double? DecimalsInFloat { get; set; }
         public bool? Floating { get; set; }
         public bool? ForceNiceScale { get; set; }
-        public YaxiLabels Labels { get; set; }
+        public YAxisLabels Labels { get; set; }
         public bool? Logarithmic { get; set; }
-        public Max? Max { get; set; }
-        public Max? Min { get; set; }
+        public object Max { get; set; }
+        public object Min { get; set; }
         public bool? Opposite { get; set; }
         public bool? Reversed { get; set; }
         public string SeriesName { get; set; }
@@ -1500,21 +1503,21 @@ namespace ApexCharts
         public double? Width { get; set; }
     }
 
-    public class YaxiCrosshairs
+    public class YAxisCrosshairs
     {
         public string Position { get; set; }
         public bool? Show { get; set; }
-        public StickyStroke Stroke { get; set; }
+        public YAxisCrosshairsStroke Stroke { get; set; }
     }
 
-    public class StickyStroke
+    public class YAxisCrosshairsStroke
     {
         public string Color { get; set; }
         public double? DashArray { get; set; }
         public double? Width { get; set; }
     }
 
-    public class YaxiLabels
+    public class YAxisLabels
     {
         public Align? Align { get; set; }
         public double? MaxWidth { get; set; }
@@ -1524,16 +1527,16 @@ namespace ApexCharts
         public double? Padding { get; set; }
         public double? Rotate { get; set; }
         public bool? Show { get; set; }
-        public CunningStyle Style { get; set; }
+        public YAxisLabelStyle Style { get; set; }
     }
 
-    public class CunningStyle
+    public class YAxisLabelStyle
     {
         public string Colors { get; set; }
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class YaxiTitle
@@ -1551,7 +1554,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class YaxiTooltip
@@ -1570,8 +1573,8 @@ namespace ApexCharts
         public bool? ForceNiceScale { get; set; }
         public YaxisLabels Labels { get; set; }
         public bool? Logarithmic { get; set; }
-        public Max? Max { get; set; }
-        public Max? Min { get; set; }
+        public object Max { get; set; }
+        public object Min { get; set; }
         public bool? Opposite { get; set; }
         public bool? Reversed { get; set; }
         public string SeriesName { get; set; }
@@ -1634,7 +1637,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class YaxisTitle
@@ -1642,17 +1645,17 @@ namespace ApexCharts
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
         public double? Rotate { get; set; }
-        public MischievousStyle Style { get; set; }
+        public YAxisTitleStyle Style { get; set; }
         public string Text { get; set; }
     }
 
-    public class MischievousStyle
+    public class YAxisTitleStyle
     {
         public string Color { get; set; }
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class YaxisTooltip
@@ -1682,7 +1685,7 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string ForeColor { get; set; }
         public string Group { get; set; }
-        public FontWeight? Height { get; set; }
+        public object Height { get; set; }
         public string Id { get; set; }
         public List<ApexChartLocale> Locales { get; set; }
         public double? OffsetX { get; set; }
@@ -1695,7 +1698,7 @@ namespace ApexCharts
         public StackType? StackType { get; set; }
         public ApexChartToolbar Toolbar { get; set; }
         public ChartType? Type { get; set; }
-        public FontWeight? Width { get; set; }
+        public object Width { get; set; }
         public ApexChartZoom Zoom { get; set; }
     }
 
@@ -1917,7 +1920,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     /// <summary>
@@ -1985,7 +1988,7 @@ namespace ApexCharts
         public StickyLabel Label { get; set; }
         public FluffyMarker Marker { get; set; }
         public double? SeriesIndex { get; set; }
-        public FontWeight? X { get; set; }
+        public object X { get; set; }
         public double? Y { get; set; }
         public double? YAxisIndex { get; set; }
     }
@@ -2019,7 +2022,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public StickyPadding Padding { get; set; }
     }
 
@@ -2053,7 +2056,7 @@ namespace ApexCharts
         public double? Height { get; set; }
         public double? Opacity { get; set; }
         public string Type { get; set; }
-        public FontWeight? Width { get; set; }
+        public object Width { get; set; }
         public double? X { get; set; }
         public double? Y { get; set; }
     }
@@ -2065,8 +2068,8 @@ namespace ApexCharts
         public double? BorderRadius { get; set; }
         public double? BorderWidth { get; set; }
         public string FontFamily { get; set; }
-        public FontWeight? FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontSize { get; set; }
+        public object FontWeight { get; set; }
         public string ForeColor { get; set; }
         public double? PaddingBottom { get; set; }
         public double? PaddingLeft { get; set; }
@@ -2088,8 +2091,8 @@ namespace ApexCharts
         public double? OffsetY { get; set; }
         public double? Opacity { get; set; }
         public double? StrokeDashArray { get; set; }
-        public X? X { get; set; }
-        public X? X2 { get; set; }
+        public object X { get; set; }
+        public object X2 { get; set; }
     }
 
     public class IndigoLabel
@@ -2112,7 +2115,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public IndigoPadding Padding { get; set; }
     }
 
@@ -2134,8 +2137,8 @@ namespace ApexCharts
         public double? OffsetY { get; set; }
         public double? Opacity { get; set; }
         public double? StrokeDashArray { get; set; }
-        public X? Y { get; set; }
-        public X? Y2 { get; set; }
+        public object Y { get; set; }
+        public object Y2 { get; set; }
         public double? YAxisIndex { get; set; }
     }
 
@@ -2159,7 +2162,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public IndecentPadding Padding { get; set; }
     }
 
@@ -2191,7 +2194,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public HilariousPadding Padding { get; set; }
     }
 
@@ -2210,7 +2213,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public AnnotationStylePadding Padding { get; set; }
     }
 
@@ -2232,8 +2235,8 @@ namespace ApexCharts
         public double? OffsetY { get; set; }
         public double? Opacity { get; set; }
         public double? StrokeDashArray { get; set; }
-        public X? X { get; set; }
-        public X? X2 { get; set; }
+        public object X { get; set; }
+        public object X2 { get; set; }
     }
 
     public class XAxisAnnotationsLabel
@@ -2256,7 +2259,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public AmbitiousPadding Padding { get; set; }
     }
 
@@ -2278,8 +2281,8 @@ namespace ApexCharts
         public double? OffsetY { get; set; }
         public double? Opacity { get; set; }
         public double? StrokeDashArray { get; set; }
-        public X? Y { get; set; }
-        public X? Y2 { get; set; }
+        public object Y { get; set; }
+        public object Y2 { get; set; }
         public double? YAxisIndex { get; set; }
     }
 
@@ -2303,7 +2306,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public CunningPadding Padding { get; set; }
     }
 
@@ -2321,7 +2324,7 @@ namespace ApexCharts
         public PointAnnotationsLabel Label { get; set; }
         public PointAnnotationsMarker Marker { get; set; }
         public double? SeriesIndex { get; set; }
-        public FontWeight? X { get; set; }
+        public object X { get; set; }
         public double? Y { get; set; }
         public double? YAxisIndex { get; set; }
     }
@@ -2355,7 +2358,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public MagentaPadding Padding { get; set; }
     }
 
@@ -2389,7 +2392,7 @@ namespace ApexCharts
         public double? Height { get; set; }
         public double? Opacity { get; set; }
         public string Type { get; set; }
-        public FontWeight? Width { get; set; }
+        public object Width { get; set; }
         public double? X { get; set; }
         public double? Y { get; set; }
     }
@@ -2401,8 +2404,8 @@ namespace ApexCharts
         public double? BorderRadius { get; set; }
         public double? BorderWidth { get; set; }
         public string FontFamily { get; set; }
-        public FontWeight? FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontSize { get; set; }
+        public object FontWeight { get; set; }
         public string ForeColor { get; set; }
         public double? PaddingBottom { get; set; }
         public double? PaddingLeft { get; set; }
@@ -2468,10 +2471,10 @@ namespace ApexCharts
         public string ColumnWidth { get; set; }
         public StickyDataLabels DataLabels { get; set; }
         public bool? Distributed { get; set; }
-        public IngShape? EndingShape { get; set; }
+        public Shape? EndingShape { get; set; }
         public bool? Horizontal { get; set; }
         public bool? RangeBarOverlap { get; set; }
-        public IngShape? StartingShape { get; set; }
+        public Shape? StartingShape { get; set; }
     }
 
     public class TentacledColors
@@ -2584,7 +2587,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public double? OffsetY { get; set; }
         public bool? Show { get; set; }
     }
@@ -2594,7 +2597,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public string Label { get; set; }
         public bool? Show { get; set; }
         public bool? ShowAlways { get; set; }
@@ -2605,7 +2608,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public double? OffsetY { get; set; }
         public bool? Show { get; set; }
     }
@@ -2667,7 +2670,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public double? OffsetY { get; set; }
         public bool? Show { get; set; }
     }
@@ -2677,7 +2680,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public string Label { get; set; }
         public bool? Show { get; set; }
     }
@@ -2687,7 +2690,7 @@ namespace ApexCharts
         public string Color { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public double? OffsetY { get; set; }
         public bool? Show { get; set; }
     }
@@ -2782,7 +2785,7 @@ namespace ApexCharts
         public bool? Floating { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
         public double? Height { get; set; }
         public Align? HorizontalAlign { get; set; }
         public bool? InverseOrder { get; set; }
@@ -2951,7 +2954,7 @@ namespace ApexCharts
         public List<string> Colors { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class ApexResponsive
@@ -3052,7 +3055,7 @@ namespace ApexCharts
         public string Position { get; set; }
         public double? Range { get; set; }
         public bool? Sorted { get; set; }
-        public TickAmountUnion? TickAmount { get; set; }
+        public object TickAmount { get; set; }
         public string TickPlacement { get; set; }
         public ApexXAxisTitle Title { get; set; }
         public ApexXAxisTooltip Tooltip { get; set; }
@@ -3086,7 +3089,7 @@ namespace ApexCharts
         public string Position { get; set; }
         public bool? Show { get; set; }
         public AmbitiousStroke Stroke { get; set; }
-        public FontWeight? Width { get; set; }
+        public object Width { get; set; }
     }
 
     public class AmbitiousDropShadow
@@ -3155,7 +3158,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class ApexXAxisTitle
@@ -3172,7 +3175,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class ApexXAxisTooltip
@@ -3262,7 +3265,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class ApexYAxisTitle
@@ -3280,7 +3283,7 @@ namespace ApexCharts
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
-        public FontWeight? FontWeight { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class ApexYAxisTooltip
@@ -3385,7 +3388,7 @@ namespace ApexCharts
 
     public enum Orientation { Horizontal, Vertical };
 
-    public enum IngShape { Flat, Rounded };
+    public enum Shape { Flat, Rounded };
 
     public enum Curve { Smooth, Stepline, Straight };
 
@@ -3397,24 +3400,24 @@ namespace ApexCharts
 
     public enum XaxisType { Category, Datetime, Numeric };
 
-    public struct FontWeight
-    {
-        public double? Double;
-        public string String;
+    //public struct FontWeight
+    //{
+    //    public double? Double;
+    //    public string String;
 
-        public static implicit operator FontWeight(double Double) => new FontWeight { Double = Double };
-        public static implicit operator FontWeight(string String) => new FontWeight { String = String };
-    }
+    //    public static implicit operator FontWeight(double Double) => new FontWeight { Double = Double };
+    //    public static implicit operator FontWeight(string String) => new FontWeight { String = String };
+    //}
 
-    public struct X
-    {
-        public double? Double;
-        public string String;
+    //public struct X
+    //{
+    //    public double? Double;
+    //    public string String;
 
-        public static implicit operator X(double Double) => new X { Double = Double };
-        public static implicit operator X(string String) => new X { String = String };
-        public bool IsNull => Double == null && String == null;
-    }
+    //    public static implicit operator X(double Double) => new X { Double = Double };
+    //    public static implicit operator X(string String) => new X { String = String };
+    //    public bool IsNull => Double == null && String == null;
+    //}
 
     public struct Download
     {
@@ -3501,23 +3504,23 @@ namespace ApexCharts
         public static implicit operator TooltipY(List<PurpleY> PurpleYArray) => new TooltipY { PurpleYArray = PurpleYArray };
     }
 
-    public struct TickAmountUnion
-    {
-        public double? Double;
-        public TickAmountEnum? Enum;
+    //public struct TickAmountUnion
+    //{
+    //    public double? Double;
+    //    public TickAmountEnum? Enum;
 
-        public static implicit operator TickAmountUnion(double Double) => new TickAmountUnion { Double = Double };
-        public static implicit operator TickAmountUnion(TickAmountEnum Enum) => new TickAmountUnion { Enum = Enum };
-    }
+    //    public static implicit operator TickAmountUnion(double Double) => new TickAmountUnion { Double = Double };
+    //    public static implicit operator TickAmountUnion(TickAmountEnum Enum) => new TickAmountUnion { Enum = Enum };
+    //}
 
-    public struct Max
-    {
-        public Dictionary<string, object> AnythingMap;
-        public double? Double;
+    //public struct Max
+    //{
+    //    public Dictionary<string, object> AnythingMap;
+    //    public double? Double;
 
-        public static implicit operator Max(Dictionary<string, object> AnythingMap) => new Max { AnythingMap = AnythingMap };
-        public static implicit operator Max(double Double) => new Max { Double = Double };
-    }
+    //    public static implicit operator Max(Dictionary<string, object> AnythingMap) => new Max { AnythingMap = AnythingMap };
+    //    public static implicit operator Max(double Double) => new Max { Double = Double };
+    //}
 
     //public struct Yaxis_Old
     //{
