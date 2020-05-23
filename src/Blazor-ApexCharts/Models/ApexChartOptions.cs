@@ -5,7 +5,7 @@ namespace ApexCharts
 {
     public class ApexChartOptions<TItem>
     {
-       
+        public bool Debug { get; set; }
         public bool ForceRender { get; set; }
         public Annotations Annotations { get; set; }
 

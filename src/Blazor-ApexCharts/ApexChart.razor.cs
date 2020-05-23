@@ -18,6 +18,7 @@ namespace ApexCharts
         [Parameter] public string Title { get; set; }
         [Parameter] public ChartType ChartType { get; set; } = ChartType.Bar;
         [Parameter] public XaxisType? XAxisType { get; set; }
+        [Parameter] public bool Debug { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
@@ -54,6 +55,7 @@ namespace ApexCharts
                 Options.ForceRender = true;
             }
 
+            Options.Debug = Debug;
             Options.Chart.Type = ChartType;
             Options.Chart.Width = Width;
             Options.Chart.Height = Height;

@@ -5,40 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace ApexCharts.Models
-{
-
-    //public class CategoryJsonConverter<T> : JsonConverter<Category<T>>
-    //{
-    //    public override Category<T> Read(ref Utf8JsonReader reader,
-    //                                     Type typeToConvert,
-    //                                     JsonSerializerOptions options)
-    //    {
-    //        var converter = GetKeyConverter(options);
-    //        var key = converter.Read(ref reader, typeToConvert, options);
-
-    //        return new Category<T>(key);
-    //    }
-
-    //    public override void Write(Utf8JsonWriter writer,
-    //                               Category<T> value,
-    //                               JsonSerializerOptions options)
-    //    {
-    //        var converter = GetKeyConverter(options);
-    //        converter.Write(writer, value.Key, options);
-    //    }
-
-    //    private static JsonConverter<T> GetKeyConverter(JsonSerializerOptions options)
-    //    {
-    //        var converter = options.GetConverter(typeof(T)) as JsonConverter<T>;
-
-    //        if (converter is null)
-    //            throw new JsonException("...");
-
-    //        return converter;
-    //    }
-    //}
-
-
+{ 
     public class DataPointConverter<T> : JsonConverter<IDataPoint<T>>
     {
         public override IDataPoint<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
