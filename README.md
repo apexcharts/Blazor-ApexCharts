@@ -49,8 +49,53 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
 
 ### Chart Events
 
+### Basic  Chart
 ```csharp
- 
+ @page "/datetime-chart"
+
+<h3>DateTime Chart</h3>
+
+<div class="row">
+    <div class="col-md-12 col-lg-6">
+        <ApexChart TItem="Order" Title="Orders Value"
+                   OnDataPointSelection="DataPointSelected"
+                   ChartType="ChartType.Bar"
+                   XAxisType="XaxisType.Datetime"
+                   Options="options">
+
+            <ApexSeries TItem="Order"
+                        Items="SampleData.GetOrders()"
+                        Name="Net Value"
+                        XValue="@(e => e.OrderDate.FirstDayOfMonth())"
+                        YAggregate="@(e => e.Sum(e => e.NetValue))"
+                        OrderBy="e=>e.X" />
+
+            <ApexSeries TItem="Order"
+                        Items="SampleData.GetOrders()"
+                        Name="Gross Value"
+                        XValue="@(e => e.OrderDate.FirstDayOfMonth())"
+                        YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                        OrderBy="e=>e.X" />
+        </ApexChart>
+    </div>
+</div>
+
+<SelectedData Data="selectedData" />
+
+@code {
+    private ApexChartOptions<Order> options = new ApexCharts.ApexChartOptions<Order>();
+    private SelectedData<Order> selectedData;
+
+    protected override void OnInitialized()
+    {
+        options.Tooltip = new Tooltip { X = new TooltipX { Format = @"MMMM \ yyyy" } };
+    }
+
+    private void DataPointSelected(SelectedData<Order> selected)
+    {
+        selectedData = selected;
+    }
+}
 ```
 
 
@@ -114,5 +159,5 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
     }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTg4MDUyMjc3N119
+eyJoaXN0b3J5IjpbLTExNDc3MDgyOTJdfQ==
 -->
