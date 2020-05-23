@@ -50,7 +50,7 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
 ### Chart Events
 
 ### Advanced  Chart
-```csharp
+```html
  @page "/datetime-chart"
 
 <h3>DateTime Chart</h3>
@@ -159,5 +159,5 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
     }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTg0MjQxMDIwXX0=
+eyJoaXN0b3J5IjpbMTE4MjExNTIwLDE4NDI0MTAyMF19
 -->
