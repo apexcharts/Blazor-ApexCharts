@@ -81,7 +81,8 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
 </div>
 
 <SelectedData Data="selectedData" />
-
+```
+```csharp
 @code {
     private ApexChartOptions<Order> options = new ApexCharts.ApexChartOptions<Order>();
     private SelectedData<Order> selectedData;
@@ -159,5 +160,5 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
     }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE4MjExNTIwLDE4NDI0MTAyMF19
+eyJoaXN0b3J5IjpbOTc3NTg4NzU3LDE4NDI0MTAyMF19
 -->
