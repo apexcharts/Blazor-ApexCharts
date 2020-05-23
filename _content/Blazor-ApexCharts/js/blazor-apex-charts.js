@@ -7,13 +7,15 @@
             var chart = chartFind[0];
             chart.destroy();
             this.charts = this.charts.filter(x => x.opts.chart.chartId !== chartId);
-            console.log('Chart ' + chartId + ' destroyed');
         }
     },
 
     renderChart(dotNetObject, container, options) {
-        console.log(options);
         var options = JSON.parse(options);
+
+        if (options.debug == true) {
+            console.log(options);
+        }
 
         if (options.seriesNonXAxis != undefined) {
 
@@ -35,10 +37,12 @@
 
         //Always destry chart
         this.destroyChart(options.chart.chartId);
-    
+
         chart = new ApexCharts(container, options);
         this.charts.push(chart)
         chart.render();
-        console.log('Chart ' + options.chart.chartId + ' rendered');
+        if (options.debug == true) {
+            console.log('Chart ' + options.chart.chartId + ' rendered');
+        }
     }
 }
