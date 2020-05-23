@@ -45,28 +45,12 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 <img src="BasicPieChart.png" width="500">
 
 ### Chart Options
-Apex Chart options is available in the ApexChartOptions class that can be passed to the chart.
-Below is an example to show labels for a donut chart. More info in Apex documentation [ApexCharts Docs](https://apexcharts.com/docs/options/)
+Apex Chart options is available in the ApexChartOptions class that can be passed to the chart. More info in Apex documentation [ApexCharts Docs](https://apexcharts.com/docs/options/). See sample below
+
+### Chart Events
 
 ```csharp
-  private ApexChartOptions<Order> GetChartOptions()
-    {
-        var options = new ApexChartOptions<Order>
-        {
-            PlotOptions = new PlotOptions
-            {
-                Pie = new PlotOptionsPie
-                {
-                    Donut = new PlotOptionsDonut
-                    {
-                        Labels = new DonutLabels { Show = true }
-                    }
-                }
-            }
-        };
-
-        return options;
-    }
+ 
 ```
 
 
@@ -129,3 +113,6 @@ Below is an example to show labels for a donut chart. More info in Apex document
         }
     }
 ```
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTg4MDUyMjc3N119
+-->
