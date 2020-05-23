@@ -8,7 +8,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-
 namespace ApexCharts
 {
     public partial class ApexChart<TItem> : IDisposable where TItem : class
@@ -47,10 +46,10 @@ namespace ApexCharts
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
             if (Options.Chart.Type != ChartType ||
-           Options.Chart.Width?.ToString() != Width?.ToString() ||
-           Options.Chart.Height?.ToString() != Height?.ToString() ||
-           Options.Xaxis?.Type != XAxisType ||
-           Options.Title?.Text != Title)
+            Options.Chart.Width?.ToString() != Width?.ToString() ||
+            Options.Chart.Height?.ToString() != Height?.ToString() ||
+            Options.Xaxis?.Type != XAxisType ||
+            Options.Title?.Text != Title)
             {
                 Options.ForceRender = true;
             }
@@ -74,13 +73,12 @@ namespace ApexCharts
                 if (Options.Title == null) { Options.Title = new Title(); }
                 Options.Title.Text = Title;
             }
-
-
-
         }
 
         private void SetDatalabels()
         {
+            if (Options?.Series == null) { return; }
+
             if (Options.DataLabels == null) { Options.DataLabels = new DataLabels(); }
             if (Options.DataLabels.EnabledOnSeries == null) { Options.DataLabels.EnabledOnSeries = new List<double>(); }
 
@@ -137,7 +135,6 @@ namespace ApexCharts
         {
             if ((Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area) && OnDataPointSelection.HasDelegate)
             {
-
                 if (Options.Tooltip == null) { Options.Tooltip = new Tooltip(); }
                 if (Options.Markers == null) { Options.Markers = new Markers(); }
 
@@ -148,7 +145,6 @@ namespace ApexCharts
 
                 Options.Tooltip.Intersect = true;
                 Options.Tooltip.Shared = false;
-
             }
         }
 
@@ -170,9 +166,7 @@ namespace ApexCharts
             var jsonOptions = JsonSerializer.Serialize(Options, serializerOptions);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
             await OnDataPointSelection.InvokeAsync(null);
-
         }
-
 
         public void Dispose()
         {
@@ -180,7 +174,6 @@ namespace ApexCharts
             if (Options.Chart?.ChartId != null && isReady)
             {
                 InvokeAsync(async () => { await JSRuntime.InvokeVoidAsync("blazor_apexchart.destroyChart", Options.Chart.ChartId); });
-
             }
 
             if (ObjectReference != null)

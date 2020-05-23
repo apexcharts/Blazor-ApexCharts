@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29521.150
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor-ApexCharts", "src\Blazor-ApexCharts\Blazor-ApexCharts.csproj", "{4AE79EC9-B419-430D-A70F-FE9AF8A1A4B3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChartsPlayground", "samples\ChartsPlayground\ChartsPlayground.csproj", "{84AD28BD-4C2A-4C15-81D8-255D2887268A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChartSamples", "samples\ChartSamples\ChartSamples.csproj", "{0EA8C13B-FD72-4A65-81A3-51D5537608FC}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{4AE79EC9-B419-430D-A70F-FE9AF8A1A4B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AE79EC9-B419-430D-A70F-FE9AF8A1A4B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AE79EC9-B419-430D-A70F-FE9AF8A1A4B3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{84AD28BD-4C2A-4C15-81D8-255D2887268A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{84AD28BD-4C2A-4C15-81D8-255D2887268A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{84AD28BD-4C2A-4C15-81D8-255D2887268A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{84AD28BD-4C2A-4C15-81D8-255D2887268A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0EA8C13B-FD72-4A65-81A3-51D5537608FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0EA8C13B-FD72-4A65-81A3-51D5537608FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EA8C13B-FD72-4A65-81A3-51D5537608FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
