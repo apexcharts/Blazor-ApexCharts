@@ -47,9 +47,8 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 ### Chart Options
 Apex Chart options is available in the ApexChartOptions class that can be passed to the chart. More info in Apex documentation [ApexCharts Docs](https://apexcharts.com/docs/options/). See sample below
 
-### Chart Events
 
-### Basic  Chart
+### Advanced  Chart
 ```csharp
  @page "/datetime-chart"
 
@@ -159,5 +158,5 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
     }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExNDc3MDgyOTJdfQ==
+eyJoaXN0b3J5IjpbLTQ3MjM4Mzk4Ml19
 -->
