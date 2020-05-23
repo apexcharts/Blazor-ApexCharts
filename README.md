@@ -2,6 +2,9 @@
 
 * [Blazor-ApexCharts](https://github.com/joadan/Blazor-ApexCharts) - ![GitHub stars](https://img.shields.io/github/stars/joadan/Blazor-ApexCharts??style=flat-square&cacheSeconds=604800) ![last commit](https://img.shields.io/github/last-commit/joadan/Blazor-ApexCharts?style=flat-square&cacheSeconds=86400) Blazor wrapper for ApexCharts. [Demo](https://joadan.github.io/Blazor-ApexCharts/basic-charts).
 
+* [Blazor-ApexCharts](https://github.com/joadan/Blazor-ApexCharts) - ![last commit](https://img.shields.io/github/last-commit/joadan/Blazor-ApexCharts?style=flat-square&cacheSeconds=86400) Blazor wrapper for ApexCharts. [Demo](https://joadan.github.io/Blazor-ApexCharts/basic-charts).
+
+
 # Blazor-ApexCharts
 A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
 ## [Demo](https://joadan.github.io/Blazor-ApexCharts/basic-charts)
