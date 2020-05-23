@@ -90,6 +90,32 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
     protected override void OnInitialized()
     {
         options.Tooltip = new Tooltip { X = new TooltipX { Format = @"MMMM \ yyyy" } };
+        options.Subtitle = new Subtitle { OffsetY = 15, Text = "DateTime sample with options" };
+        options.Xaxis = new XAxis
+        {
+            Title = new XaxisTitle
+            {
+                OffsetY = 5,
+                Text = "Month",
+                Style = new XAxistTitleStyle { FontSize = "14px", Color = "lightgrey" }
+            }
+        };
+        options.Yaxis = new List<YAxis>();
+        options.Yaxis.Add(new YAxis
+        {
+            Labels = new YAxisLabels { Rotate = -45, Style = new YAxisLabelStyle { FontSize = "10px" } },
+            Title = new YaxisTitle { Text = "Value", Style = new YAxisTitleStyle { FontSize = "14px", Color = "lightgrey" } }
+        });
+
+        options.Annotations = new Annotations { Yaxis = new List<AnnotationsYAxis>() };
+        options.Annotations.Yaxis.Add(new AnnotationsYAxis
+        {
+            Y = 50000,
+            BorderWidth = 2,
+            StrokeDashArray = 5,
+            BorderColor = "red",
+            Label = new AnnotationsYAxisLabel { Text = "Monthly Target" }
+        });
     }
 
     private void DataPointSelected(SelectedData<Order> selected)
