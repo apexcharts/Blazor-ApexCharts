@@ -1,0 +1,16 @@
+﻿@namespace ApexCharts
+
+
+<ApexChart @ref="chart" TItem="GaugeValue" Title="@Title"
+           ChartType="ChartType.RadialBar"
+           Options="options">
+
+    <ApexSeries TItem="GaugeValue"
+                Items=GetItems()
+                Name=@Label
+                XValue="@(e => e.Label)"
+                YValue="@(e => e.Precentage)" />
+</ApexChart>
+
+
+
