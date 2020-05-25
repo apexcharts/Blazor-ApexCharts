@@ -2,17 +2,42 @@
 
 <h3>Gauge</h3>
 
-<input type="text" @bind="precentage" />
-
 
 <div class="row">
-    <div class="col-md-12 col-lg-6">
-        <ApexGauge Label="Jocke" Precentage="precentage" />
+    <div class="col-sm-12 col-md-8 col-lg-4">
+        <div class="form-group">
+            <label for="precentage">Precentage</label>
+            <input class="form-control" type="number" min="0" max="100" @bind="precentage" @bind:event="oninput" />
+            <small class="form-text text-muted">Enter a value between 0 and 100 to update the gauge</small>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 col-md-8 col-lg-4">
+        <ApexGauge Options="options" Label="Progress" Precentage="precentage" />
     </div>
 </div>
 
 @code {
+    private ApexChartOptions<GaugeValue> options = new ApexChartOptions<GaugeValue>();
+    private decimal precentage = 34;
 
-    private decimal precentage = 10;
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart { Sparkline = new ChartSparkline() };
 
+        options.PlotOptions = new PlotOptions
+        {
+            RadialBar = new PlotOptionsRadialBar
+            {
+                DataLabels = new RadialBarDataLabels
+                {
+                    Name = new RadialBarDataLabelsName { FontSize = "26px", OffsetY=-20 },
+                    Value = new RadialBarDataLabelsValue { FontSize = "36px", FontWeight = "bold", Color = "lightgray" }
+                }
+            }
+        };
+
+    }
 }

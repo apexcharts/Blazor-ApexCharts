@@ -11,7 +11,6 @@ namespace ApexCharts
 
     public class DataPoint<TItem>: IDataPoint<TItem>
     {
-
         public DataPoint() { }
 
         public DataPoint(object x)
@@ -26,11 +25,13 @@ namespace ApexCharts
         }
 
         public object X { get; set; }
-        public object Y{ get; set; }
+        public decimal? Y{ get; set; }
         
 
         [JsonIgnore]
         public IList<TItem> Items { get; set; }
 
     }
+    
+
 }

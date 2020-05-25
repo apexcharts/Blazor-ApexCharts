@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -21,7 +22,9 @@ namespace ApexCharts
         [Parameter] public bool ShowDataLabels { get; set; }
         [Parameter] public IEnumerable<TItem> Items { get; set; }
         private readonly Series<TItem> series = new Series<TItem>();
-        protected override void OnParametersSet()
+        private IEnumerable<DataPoint<TItem>> currentDatalist;
+
+        protected override async Task OnParametersSetAsync()
         {
             series.Name = Name;
             series.ShowDataLabels = ShowDataLabels;
@@ -43,14 +46,21 @@ namespace ApexCharts
             {
                 datalist = datalist.OrderBy(o => OrderBy.Compile().Invoke(o));
             }
-            else if(OrderByDescending != null)
+            else if (OrderByDescending != null)
             {
                 datalist = datalist.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
             }
 
+            datalist = datalist.ToList();
             series.Data = datalist;
 
-          
+            //TODO Fix this, right now just a naive implementation to get samples going
+            if (currentDatalist != null && currentDatalist.Sum(e => e.Y) != datalist.Sum(e => e.Y))
+            {
+                await Chart.UpdateChart();
+            }
+
+            currentDatalist = datalist;
         }
 
         protected override void OnInitialized()

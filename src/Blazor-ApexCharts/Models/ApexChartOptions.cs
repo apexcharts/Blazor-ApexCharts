@@ -1003,7 +1003,7 @@ namespace ApexCharts
 
     public class PlotOptionsRadialBar
     {
-        public TentacledDataLabels DataLabels { get; set; }
+        public RadialBarDataLabels DataLabels { get; set; }
         public double? EndAngle { get; set; }
         public PurpleHollow Hollow { get; set; }
         public bool? InverseOrder { get; set; }
@@ -1013,15 +1013,15 @@ namespace ApexCharts
         public PurpleTrack Track { get; set; }
     }
 
-    public class TentacledDataLabels
+    public class RadialBarDataLabels
     {
-        public FluffyName Name { get; set; }
+        public RadialBarDataLabelsName Name { get; set; }
         public bool? Show { get; set; }
-        public FluffyTotal Total { get; set; }
-        public FluffyValue Value { get; set; }
+        public RadialBarDataLabelsTotal Total { get; set; }
+        public RadialBarDataLabelsValue Value { get; set; }
     }
 
-    public class FluffyName
+    public class RadialBarDataLabelsName
     {
         public string Color { get; set; }
         public string FontFamily { get; set; }
@@ -1031,7 +1031,7 @@ namespace ApexCharts
         public bool? Show { get; set; }
     }
 
-    public class FluffyTotal
+    public class RadialBarDataLabelsTotal
     {
         public string Color { get; set; }
         public string FontFamily { get; set; }
@@ -1041,7 +1041,7 @@ namespace ApexCharts
         public bool? Show { get; set; }
     }
 
-    public class FluffyValue
+    public class RadialBarDataLabelsValue
     {
         public string Color { get; set; }
         public string FontFamily { get; set; }

@@ -129,13 +129,13 @@ namespace ApexCharts
             var noAxisSeries = Options.Series.First();
 
             var data = noAxisSeries.Data.Cast<DataPoint<TItem>>().ToList();
-            Options.SeriesNonXAxis = data.Select(e => e.Y).ToList();
+            Options.SeriesNonXAxis = data.Select(e => e.Y).Cast<object>().ToList();
             Options.Labels = data.Select(e => e.X.ToString()).ToList();
         }
 
         public void FixLineDataSelection()
         {
-            if ((Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area) && OnDataPointSelection.HasDelegate)
+            if ((Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area || Options.Chart.Type == ChartType.Radar) && OnDataPointSelection.HasDelegate)
             {
                 if (Options.Tooltip == null) { Options.Tooltip = new Tooltip(); }
                 if (Options.Markers == null) { Options.Markers = new Markers(); }
@@ -150,7 +150,7 @@ namespace ApexCharts
             }
         }
 
-        private async Task UpdateChart()
+        public async Task UpdateChart()
         {
             Options.ForceRender = false;
             SetDatalabels();
