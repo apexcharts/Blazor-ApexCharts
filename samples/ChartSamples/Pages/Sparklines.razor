@@ -1,0 +1,89 @@
+﻿@page "/sparklines"
+
+<h3>Sparklines</h3>
+
+<div class="row">
+    <div class="col-md-12 col-lg-6">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Country</th>
+                    <th>Net  Value</th>
+                    <th>By Type</th>
+                    <th>By Month</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var countryGroup in orders.GroupBy(e => e.Country))
+                {
+                    <tr>
+                        <td>@countryGroup.Key</td>
+                        <td>@countryGroup.Sum(e => e.NetValue)</td>
+                        <td>
+                            <ApexChart TItem="Order"
+                                       ChartType="ChartType.Pie"
+                                       Width="50"
+                                       Options="GetPieOptions()">
+
+                                <ApexSeries TItem="Order"
+                                            Items="countryGroup.ToList()"
+                                            Name="Net Value"
+                                            XValue="@(e => e.OrderType)"
+                                            YAggregate="@(e => e.Sum(e => e.NetValue))" />
+
+                            </ApexChart>
+                        </td>
+                        <td>
+                            <ApexChart TItem="Order"
+                                       ChartType="ChartType.Bar"
+                                       XAxisType="XaxisType.Datetime"
+                                       Options="GetBarOptions()"
+                                       Height="30"
+                                       Width="150">
+
+                                <ApexSeries TItem="Order"
+                                            Items="countryGroup.ToList()"
+                                            Name="Net Value"
+                                            XValue="@(e => e.OrderDate.FirstDayOfMonth())"
+                                            YAggregate="@(e => e.Sum(e => e.NetValue))"
+                                            OrderBy="e=>e.X" />
+                            </ApexChart>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+
+    private List<Order> orders;
+    private SelectedData<Order> selectedData;
+
+    protected override void OnInitialized()
+    {
+        orders = SampleData.GetOrders();
+    }
+
+    private ApexChartOptions<Order> GetPieOptions()
+    {
+        var options = new ApexCharts.ApexChartOptions<Order>();
+        options.Chart = new Chart { Sparkline = new ChartSparkline() };
+        options.PlotOptions = new PlotOptions { Pie = new PlotOptionsPie { ExpandOnClick = false } };
+        return options;
+    }
+
+    private ApexChartOptions<Order> GetBarOptions()
+    {
+        var options = new ApexCharts.ApexChartOptions<Order>();
+        options.Chart = new Chart { Sparkline = new ChartSparkline(), Background = "#F8F8F8" };
+
+        options.PlotOptions = new PlotOptions { Bar = new PlotOptionsBar { ColumnWidth = "85%", } };
+        options.Tooltip = new Tooltip { X = new TooltipX { Format = @"MMMM \ yyyy" } };
+
+        return options;
+    }
+
+}
