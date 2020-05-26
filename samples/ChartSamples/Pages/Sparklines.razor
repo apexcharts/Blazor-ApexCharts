@@ -4,7 +4,7 @@
 
 <div class="row">
     <div class="col-md-12 col-lg-6">
-        <table class="table">
+        <table class="table table-sm">
             <thead>
                 <tr>
                     <th>Country</th>
@@ -23,7 +23,8 @@
                         <td>
                             <ApexChart TItem="Order"
                                        ChartType="ChartType.Pie"
-                                       Width="50"
+                                       Width="30"
+                                       Height="30"
                                        Options="GetPieOptions()">
 
                                 <ApexSeries TItem="Order"
@@ -58,9 +59,7 @@
 </div>
 
 @code {
-
     private List<Order> orders;
-    private SelectedData<Order> selectedData;
 
     protected override void OnInitialized()
     {
@@ -70,6 +69,8 @@
     private ApexChartOptions<Order> GetPieOptions()
     {
         var options = new ApexCharts.ApexChartOptions<Order>();
+        options.Stroke = new Stroke { Width = 1 };
+        options.Tooltip = new Tooltip { Fixed = new TooltipFixed { Enabled = false } };
         options.Chart = new Chart { Sparkline = new ChartSparkline() };
         options.PlotOptions = new PlotOptions { Pie = new PlotOptionsPie { ExpandOnClick = false } };
         return options;
@@ -79,7 +80,6 @@
     {
         var options = new ApexCharts.ApexChartOptions<Order>();
         options.Chart = new Chart { Sparkline = new ChartSparkline(), Background = "#F8F8F8" };
-
         options.PlotOptions = new PlotOptions { Bar = new PlotOptionsBar { ColumnWidth = "85%", } };
         options.Tooltip = new Tooltip { X = new TooltipX { Format = @"MMMM \ yyyy" } };
 
