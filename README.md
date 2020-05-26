@@ -39,7 +39,7 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
                         XValue="@(e => e.OrderType)"
                         YAggregate="@(e => e.Sum(e => e.NetValue))"
                         ShowDataLabels="true" />
-        </ApexChart>
+ </ApexChart>
 ```
 
 <img src="BasicPieChart.png" width="500">
@@ -140,7 +140,7 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
         public decimal DiscountPrecentage { get; set; }
     }
 
-   public enum OrderType
+    public enum OrderType
     {
         Web, Contract, Mail, Phone
     }
@@ -149,7 +149,7 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
 **Order Data**
 ```csharp
   public static class SampleData
-    {
+  {
         public static List<Order> GetOrders()
         {
             var orders = new List<Order>();
