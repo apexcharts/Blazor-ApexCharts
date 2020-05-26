@@ -49,7 +49,7 @@ namespace ApexCharts
         /// See https://apexcharts.com/docs/options/markers/
         /// </summary>
         public Markers Markers { get; set; }
- 
+
         /// <summary>
         /// NoData configuration options.
         /// See https://apexcharts.com/docs/options/nodata/
@@ -124,7 +124,7 @@ namespace ApexCharts
         public string Position { get; set; }
         public List<AnnotationsShape> Shapes { get; set; }
         public List<AnnotationsText> Texts { get; set; }
-        public List<AnnotationsXaxi> Xaxis { get; set; }
+        public List<AnnotationsXAxis> Xaxis { get; set; }
         public List<AnnotationsYAxis> Yaxis { get; set; }
     }
 
@@ -139,8 +139,8 @@ namespace ApexCharts
 
     public class AnnotationsPoint
     {
-        public PurpleImage Image { get; set; }
-        public PurpleLabel Label { get; set; }
+        public AnnotationsPointImage Image { get; set; }
+        public Label Label { get; set; }
         public AnnotationMarker Marker { get; set; }
         public double? SeriesIndex { get; set; }
         public object X { get; set; }
@@ -148,7 +148,7 @@ namespace ApexCharts
         public double? YAxisIndex { get; set; }
     }
 
-    public class PurpleImage
+    public class AnnotationsPointImage
     {
         public double? Height { get; set; }
         public double? OffsetX { get; set; }
@@ -157,7 +157,7 @@ namespace ApexCharts
         public double? Width { get; set; }
     }
 
-    public class PurpleLabel
+    public class Label
     {
         public string BorderColor { get; set; }
         public double? BorderWidth { get; set; }
@@ -165,12 +165,12 @@ namespace ApexCharts
         public double? OffsetY { get; set; }
         public string Orientation { get; set; }
         public string Position { get; set; }
-        public PurpleStyle Style { get; set; }
+        public Style Style { get; set; }
         public string Text { get; set; }
         public string TextAnchor { get; set; }
     }
 
-    public class PurpleStyle
+    public class Style
     {
         public string Background { get; set; }
         public string Color { get; set; }
@@ -178,10 +178,10 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
         public object FontWeight { get; set; }
-        public PurplePadding Padding { get; set; }
+        public Padding Padding { get; set; }
     }
 
-    public class PurplePadding
+    public class Padding
     {
         public double? Bottom { get; set; }
         public double? Left { get; set; }
@@ -236,12 +236,12 @@ namespace ApexCharts
         public double? Y { get; set; }
     }
 
-    public class AnnotationsXaxi
+    public class AnnotationsXAxis
     {
         public string BorderColor { get; set; }
         public double? BorderWidth { get; set; }
         public string FillColor { get; set; }
-        public FluffyLabel Label { get; set; }
+        public Label Label { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
         public double? Opacity { get; set; }
@@ -250,44 +250,14 @@ namespace ApexCharts
         public object X2 { get; set; }
     }
 
-    public class FluffyLabel
-    {
-        public string BorderColor { get; set; }
-        public double? BorderWidth { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public string Orientation { get; set; }
-        public string Position { get; set; }
-        public FluffyStyle Style { get; set; }
-        public string Text { get; set; }
-        public string TextAnchor { get; set; }
-    }
 
-    public class FluffyStyle
-    {
-        public string Background { get; set; }
-        public string Color { get; set; }
-        public string CssClass { get; set; }
-        public string FontFamily { get; set; }
-        public string FontSize { get; set; }
-        public object FontWeight { get; set; }
-        public FluffyPadding Padding { get; set; }
-    }
-
-    public class FluffyPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
 
     public class AnnotationsYAxis
     {
         public string BorderColor { get; set; }
         public double? BorderWidth { get; set; }
         public string FillColor { get; set; }
-        public AnnotationsYAxisLabel Label { get; set; }
+        public Label Label { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
         public double? Opacity { get; set; }
@@ -297,37 +267,9 @@ namespace ApexCharts
         public double? YAxisIndex { get; set; }
     }
 
-    public class AnnotationsYAxisLabel
-    {
-        public string BorderColor { get; set; }
-        public double? BorderWidth { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public string Orientation { get; set; }
-        public string Position { get; set; }
-        public TentacledStyle Style { get; set; }
-        public string Text { get; set; }
-        public string TextAnchor { get; set; }
-    }
 
-    public class TentacledStyle
-    {
-        public string Background { get; set; }
-        public string Color { get; set; }
-        public string CssClass { get; set; }
-        public string FontFamily { get; set; }
-        public string FontSize { get; set; }
-        public object FontWeight { get; set; }
-        public TentacledPadding Padding { get; set; }
-    }
 
-    public class TentacledPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
+
 
     /// <summary>
     /// Main Chart options
@@ -350,8 +292,8 @@ namespace ApexCharts
         public string ForeColor { get; set; }
         public string Group { get; set; }
 
-        public Guid ChartId { get;  set; }
-        public string Id { get; set; } 
+        public Guid ChartId { get; set; }
+        public string Id { get; set; }
         public List<ChartLocale> Locales { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
@@ -507,22 +449,22 @@ namespace ApexCharts
         public bool? AutoScaleYaxis { get; set; }
         public bool Enabled { get; set; } = true;
         public ZoomType? Type { get; set; }
-        public PurpleZoomedArea ZoomedArea { get; set; }
+        public ZoomedArea ZoomedArea { get; set; }
     }
 
-    public class PurpleZoomedArea
+    public class ZoomedArea
     {
-        public FluffyFill Fill { get; set; }
-        public FluffyStroke Stroke { get; set; }
+        public ZoomedAreaFill Fill { get; set; }
+        public ZoomedAreaStroke Stroke { get; set; }
     }
 
-    public class FluffyFill
+    public class ZoomedAreaFill
     {
         public string Color { get; set; }
         public double? Opacity { get; set; }
     }
 
-    public class FluffyStroke
+    public class ZoomedAreaStroke
     {
         public string Color { get; set; }
         public double? Opacity { get; set; }
@@ -537,7 +479,7 @@ namespace ApexCharts
     {
         public DataLabelsBackground Background { get; set; }
         public bool? Distributed { get; set; }
-        public DataLabelsDropShadow DropShadow { get; set; }
+        public DropShadow DropShadow { get; set; }
         public bool Enabled { get; set; } = true;
         public List<double> EnabledOnSeries { get; set; }
         public double? OffsetX { get; set; }
@@ -551,32 +493,15 @@ namespace ApexCharts
         public string BorderColor { get; set; }
         public double? BorderRadius { get; set; }
         public double? BorderWidth { get; set; }
-        public PurpleDropShadow DropShadow { get; set; }
+        public DropShadow DropShadow { get; set; }
         public bool Enabled { get; set; } = true;
         public string ForeColor { get; set; }
         public double? Opacity { get; set; }
         public double? Padding { get; set; }
     }
 
-    public class PurpleDropShadow
-    {
-        public double? Blur { get; set; }
-        public string Color { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? Left { get; set; }
-        public double? Opacity { get; set; }
-        public double? Top { get; set; }
-    }
 
-    public class DataLabelsDropShadow
-    {
-        public double? Blur { get; set; }
-        public string Color { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? Left { get; set; }
-        public double? Opacity { get; set; }
-        public double? Top { get; set; }
-    }
+
 
     public class DataLabelsStyle
     {
@@ -631,13 +556,13 @@ namespace ApexCharts
     {
         public string BorderColor { get; set; }
         public GridColumn Column { get; set; }
-        public GridPadding Padding { get; set; }
+        public Padding Padding { get; set; }
         public GridPosition? Position { get; set; }
         public GridRow Row { get; set; }
         public bool? Show { get; set; }
         public double? StrokeDashArray { get; set; }
         public GridXaxis Xaxis { get; set; }
-        public GridYaxis Yaxis { get; set; }
+        public GridYAxis Yaxis { get; set; }
     }
 
     public class GridColumn
@@ -646,13 +571,6 @@ namespace ApexCharts
         public double? Opacity { get; set; }
     }
 
-    public class GridPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
 
     public class GridRow
     {
@@ -662,26 +580,19 @@ namespace ApexCharts
 
     public class GridXaxis
     {
-        public PurpleLines Lines { get; set; }
+        public Lines Lines { get; set; }
     }
 
-    public class PurpleLines
+    public class Lines
     {
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
         public bool? Show { get; set; }
     }
 
-    public class GridYaxis
+    public class GridYAxis
     {
-        public FluffyLines Lines { get; set; }
-    }
-
-    public class FluffyLines
-    {
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public bool? Show { get; set; }
+        public Lines Lines { get; set; }
     }
 
     /// <summary>
@@ -1005,12 +916,12 @@ namespace ApexCharts
     {
         public RadialBarDataLabels DataLabels { get; set; }
         public double? EndAngle { get; set; }
-        public PurpleHollow Hollow { get; set; }
+        public Hollow Hollow { get; set; }
         public bool? InverseOrder { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
         public double? StartAngle { get; set; }
-        public PurpleTrack Track { get; set; }
+        public Track Track { get; set; }
     }
 
     public class RadialBarDataLabels
@@ -1051,10 +962,10 @@ namespace ApexCharts
         public bool? Show { get; set; }
     }
 
-    public class PurpleHollow
+    public class Hollow
     {
         public string Background { get; set; }
-        public FluffyDropShadow DropShadow { get; set; }
+        public DropShadow DropShadow { get; set; }
         public string Image { get; set; }
         public bool? ImageClipped { get; set; }
         public double? ImageHeight { get; set; }
@@ -1066,36 +977,17 @@ namespace ApexCharts
         public string Size { get; set; }
     }
 
-    public class FluffyDropShadow
-    {
-        public double? Blur { get; set; }
-        public string Color { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? Left { get; set; }
-        public double? Opacity { get; set; }
-        public double? Top { get; set; }
-    }
 
-    public class PurpleTrack
+    public class Track
     {
         public string Background { get; set; }
-        public TentacledDropShadow DropShadow { get; set; }
+        public DropShadow DropShadow { get; set; }
         public double? EndAngle { get; set; }
         public double? Margin { get; set; }
         public double? Opacity { get; set; }
         public bool? Show { get; set; }
         public double? StartAngle { get; set; }
         public string StrokeWidth { get; set; }
-    }
-
-    public class TentacledDropShadow
-    {
-        public double? Blur { get; set; }
-        public string Color { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? Left { get; set; }
-        public double? Opacity { get; set; }
-        public double? Top { get; set; }
     }
 
     public class Responsive
@@ -1198,7 +1090,7 @@ namespace ApexCharts
         public PaletteType Palette { get; set; }
     }
 
-   
+
 
     public class ThemeMonochrome
     {
@@ -1252,7 +1144,7 @@ namespace ApexCharts
         public IndigoStyle Style { get; set; }
         public string Theme { get; set; }
         public TooltipX X { get; set; }
-        public TooltipY? Y { get; set; }
+        public object Y { get; set; }
         public TooltipZ Z { get; set; }
     }
 
@@ -1297,11 +1189,7 @@ namespace ApexCharts
         public Dictionary<string, object> Title { get; set; }
     }
 
-    public class FluffyY
-    {
-        public Dictionary<string, object> Title { get; set; }
-    }
-
+   
     public class TooltipZ
     {
         public string Title { get; set; }
@@ -1311,7 +1199,7 @@ namespace ApexCharts
     /// X Axis options
     /// See https://apexcharts.com/docs/options/xaxis/
     /// </summary>
-    public  class XAxis
+    public class XAxis
     {
         public XaxisAxisBorder AxisBorder { get; set; }
         public XaxisAxisTicks AxisTicks { get; set; }
@@ -1680,7 +1568,7 @@ namespace ApexCharts
         public string Background { get; set; }
         public ApexChartBrush Brush { get; set; }
         public string DefaultLocale { get; set; }
-        public ApexChartDropShadow DropShadow { get; set; }
+        public DropShadow DropShadow { get; set; }
         public Dictionary<string, object> Events { get; set; }
         public string FontFamily { get; set; }
         public string ForeColor { get; set; }
@@ -1730,16 +1618,6 @@ namespace ApexCharts
         public string Target { get; set; }
     }
 
-    public class ApexChartDropShadow
-    {
-        public double? Blur { get; set; }
-        public string Color { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? Left { get; set; }
-        public double? Opacity { get; set; }
-        public double? Top { get; set; }
-        public List<double> EnabledOnSeries { get; set; }
-    }
 
     public class ApexChartLocale
     {
@@ -1970,7 +1848,7 @@ namespace ApexCharts
         public List<ApexAnnotationsShape> Shapes { get; set; }
         public List<ApexAnnotationsText> Texts { get; set; }
         public List<ApexAnnotationsXaxi> Xaxis { get; set; }
-        public List<ApexAnnotationsYaxi> Yaxis { get; set; }
+        public List<ApexAnnotationsYAxis> Yaxis { get; set; }
     }
 
     public class ApexAnnotationsImage
@@ -2023,16 +1901,9 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
         public object FontWeight { get; set; }
-        public StickyPadding Padding { get; set; }
+        public Padding Padding { get; set; }
     }
 
-    public class StickyPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
 
     public class FluffyMarker
     {
@@ -2116,18 +1987,11 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
         public object FontWeight { get; set; }
-        public IndigoPadding Padding { get; set; }
+        public Padding Padding { get; set; }
     }
 
-    public class IndigoPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
 
-    public class ApexAnnotationsYaxi
+    public class ApexAnnotationsYAxis
     {
         public string BorderColor { get; set; }
         public double? BorderWidth { get; set; }
@@ -2163,16 +2027,10 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
         public object FontWeight { get; set; }
-        public IndecentPadding Padding { get; set; }
+        public Padding Padding { get; set; }
     }
 
-    public class IndecentPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
+
 
     public class AnnotationLabel
     {
@@ -2195,16 +2053,9 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
         public object FontWeight { get; set; }
-        public HilariousPadding Padding { get; set; }
+        public Padding Padding { get; set; }
     }
 
-    public class HilariousPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
 
     public class AnnotationStyle
     {
@@ -2214,16 +2065,9 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
         public object FontWeight { get; set; }
-        public AnnotationStylePadding Padding { get; set; }
+        public Padding Padding { get; set; }
     }
 
-    public class AnnotationStylePadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
 
     public class XAxisAnnotations
     {
@@ -2260,16 +2104,9 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
         public object FontWeight { get; set; }
-        public AmbitiousPadding Padding { get; set; }
+        public Padding Padding { get; set; }
     }
 
-    public class AmbitiousPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
 
     public class YAxisAnnotations
     {
@@ -2307,16 +2144,10 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
         public object FontWeight { get; set; }
-        public CunningPadding Padding { get; set; }
+        public Padding Padding { get; set; }
     }
 
-    public class CunningPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
+
 
     public class PointAnnotations
     {
@@ -2359,16 +2190,9 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
         public object FontWeight { get; set; }
-        public MagentaPadding Padding { get; set; }
+        public Padding Padding { get; set; }
     }
 
-    public class MagentaPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
 
     public class PointAnnotationsMarker
     {
@@ -2654,7 +2478,7 @@ namespace ApexCharts
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
         public double? StartAngle { get; set; }
-        public FluffyTrack Track { get; set; }
+        public Track Track { get; set; }
     }
 
     public class IndecentDataLabels
@@ -2698,7 +2522,7 @@ namespace ApexCharts
     public class FluffyHollow
     {
         public string Background { get; set; }
-        public IndigoDropShadow DropShadow { get; set; }
+        public DropShadow DropShadow { get; set; }
         public string Image { get; set; }
         public bool? ImageClipped { get; set; }
         public double? ImageHeight { get; set; }
@@ -2710,37 +2534,7 @@ namespace ApexCharts
         public string Size { get; set; }
     }
 
-    public class IndigoDropShadow
-    {
-        public double? Blur { get; set; }
-        public string Color { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? Left { get; set; }
-        public double? Opacity { get; set; }
-        public double? Top { get; set; }
-    }
 
-    public class FluffyTrack
-    {
-        public string Background { get; set; }
-        public IndecentDropShadow DropShadow { get; set; }
-        public double? EndAngle { get; set; }
-        public double? Margin { get; set; }
-        public double? Opacity { get; set; }
-        public bool? Show { get; set; }
-        public double? StartAngle { get; set; }
-        public string StrokeWidth { get; set; }
-    }
-
-    public class IndecentDropShadow
-    {
-        public double? Blur { get; set; }
-        public string Color { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? Left { get; set; }
-        public double? Opacity { get; set; }
-        public double? Top { get; set; }
-    }
 
     public class ApexFill
     {
@@ -3296,7 +3090,7 @@ namespace ApexCharts
     {
         public string BorderColor { get; set; }
         public ApexGridColumn Column { get; set; }
-        public ApexGridPadding Padding { get; set; }
+        public Padding Padding { get; set; }
         public GridPosition? Position { get; set; }
         public ApexGridRow Row { get; set; }
         public bool? Show { get; set; }
@@ -3311,14 +3105,6 @@ namespace ApexCharts
         public double? Opacity { get; set; }
     }
 
-    public class ApexGridPadding
-    {
-        public double? Bottom { get; set; }
-        public double? Left { get; set; }
-        public double? Right { get; set; }
-        public double? Top { get; set; }
-    }
-
     public class ApexGridRow
     {
         public List<string> Colors { get; set; }
@@ -3327,26 +3113,12 @@ namespace ApexCharts
 
     public class ApexGridXaxis
     {
-        public TentacledLines Lines { get; set; }
+        public Lines Lines { get; set; }
     }
-
-    public class TentacledLines
-    {
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public bool? Show { get; set; }
-    }
-
+  
     public class ApexGridYaxis
     {
-        public StickyLines Lines { get; set; }
-    }
-
-    public class StickyLines
-    {
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public bool? Show { get; set; }
+        public Lines Lines { get; set; }
     }
 
     public class ApexTheme
@@ -3495,14 +3267,14 @@ namespace ApexCharts
     //    public static implicit operator Custom(List<Dictionary<string, object>> AnythingMapArray) => new Custom { AnythingMapArray = AnythingMapArray };
     //}
 
-    public struct TooltipY
-    {
-        public FluffyY FluffyY;
-        public List<PurpleY> PurpleYArray;
+    //public struct TooltipY
+    //{
+    //    public FluffyY FluffyY;
+    //    public List<PurpleY> PurpleYArray;
 
-        public static implicit operator TooltipY(FluffyY FluffyY) => new TooltipY { FluffyY = FluffyY };
-        public static implicit operator TooltipY(List<PurpleY> PurpleYArray) => new TooltipY { PurpleYArray = PurpleYArray };
-    }
+    //    public static implicit operator TooltipY(FluffyY FluffyY) => new TooltipY { FluffyY = FluffyY };
+    //    public static implicit operator TooltipY(List<PurpleY> PurpleYArray) => new TooltipY { PurpleYArray = PurpleYArray };
+    //}
 
     //public struct TickAmountUnion
     //{

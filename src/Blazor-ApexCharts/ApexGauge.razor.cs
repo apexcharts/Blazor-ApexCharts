@@ -16,14 +16,11 @@ namespace ApexCharts
         [Parameter] public ApexChartOptions<GaugeValue> Options { get; set; } = new ApexChartOptions<GaugeValue>();
 
         private ApexChartOptions<GaugeValue> options;
-        private ApexChart<GaugeValue> chart;
-
+        
         protected override void OnInitialized()
         {
             options = Options;
         }
-
-      
 
         private List<GaugeValue> GetItems()
         {

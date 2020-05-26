@@ -39,7 +39,7 @@ namespace ApexCharts
             else
             {
                 var yAggCompiled = YAggregate.Compile();
-                datalist = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new DataPoint<TItem> { X = d.Key, Y = yAggCompiled.Invoke(d), Items = d.ToList<TItem>() });
+                datalist = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new DataPoint<TItem> { X = d.Key, Y = yAggCompiled.Invoke(d), Items = d.ToList() });
             }
 
             if (OrderBy != null)
@@ -69,15 +69,12 @@ namespace ApexCharts
             Chart.Options.Series.Add(series);
         }
 
-
         void IDisposable.Dispose()
         {
             if (Chart.Options.Series != null && Chart.Options.Series.Contains(series))
             {
                 Chart.Options.Series.Remove(series);
             }
-
         }
-
     }
 }

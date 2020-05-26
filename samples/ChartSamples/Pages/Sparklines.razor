@@ -2,6 +2,8 @@
 
 <h3>Sparklines</h3>
 
+<button @onclick="TestMethod">Test</button>
+
 <div class="row">
     <div class="col-md-12 col-lg-6">
         <table class="table table-sm">
@@ -64,6 +66,11 @@
     protected override void OnInitialized()
     {
         orders = SampleData.GetOrders();
+    }
+
+    private void TestMethod()
+    {
+
     }
 
     private ApexChartOptions<Order> GetPieOptions()

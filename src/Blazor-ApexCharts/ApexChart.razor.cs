@@ -27,6 +27,7 @@ namespace ApexCharts
         private ElementReference ChartContainer { get; set; }
 
         private bool isReady;
+        private bool forceRender = true;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -40,8 +41,8 @@ namespace ApexCharts
             {
                 await UpdateChart();
             }
-
         }
+
         protected override void OnParametersSet()
         {
             if (Options.Chart == null) { Options.Chart = new Chart(); }
