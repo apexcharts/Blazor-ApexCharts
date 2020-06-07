@@ -49,6 +49,9 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
 
 ### Chart Events
 
+### Chart Render
+The chart will automatically re-render if data changes. It's possible to turn this of by setting ManualRender to tru
+
 ### Advanced  Chart
 ```html
  @page "/datetime-chart"
@@ -186,6 +189,6 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
     }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5NjE5NzQwODUsOTc3NTg4NzU3LDE4ND
-I0MTAyMF19
+eyJoaXN0b3J5IjpbLTY0MTQ4MzQ2LDk3NzU4ODc1NywxODQyND
+EwMjBdfQ==
 -->
