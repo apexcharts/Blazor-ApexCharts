@@ -186,5 +186,6 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
     }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTc3NTg4NzU3LDE4NDI0MTAyMF19
+eyJoaXN0b3J5IjpbLTE5NjE5NzQwODUsOTc3NTg4NzU3LDE4ND
+I0MTAyMF19
 -->
