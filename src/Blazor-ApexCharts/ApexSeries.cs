@@ -54,10 +54,9 @@ namespace ApexCharts
             datalist = datalist.ToList();
             series.Data = datalist;
 
-            //TODO Fix this, right now just a naive implementation to get samples going
-            if (currentDatalist != null && currentDatalist.Sum(e => e.Y) != datalist.Sum(e => e.Y))
+            if (!Chart.ManualRender && Chart.ForceRender == false && currentDatalist != null && !currentDatalist.SequenceEqual(datalist, new DataPointComparer<TItem>()))
             {
-                await Chart.UpdateChart();
+                Chart.ForceRender = true;
             }
 
             currentDatalist = datalist;

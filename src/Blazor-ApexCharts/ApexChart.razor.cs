@@ -16,9 +16,23 @@ namespace ApexCharts
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
-        [Parameter] public ChartType ChartType { get; set; } = ChartType.Bar;
+        
+        [Parameter]
+        public ChartType ChartType
+        {
+            get => chartType;
+            set
+            {
+                if (chartType != value)
+                {
+                    ForceRender = true;
+                }
+                chartType = value;
+            }
+        }
         [Parameter] public XaxisType? XAxisType { get; set; }
         [Parameter] public bool Debug { get; set; }
+        [Parameter] public bool ManualRender { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
@@ -27,7 +41,8 @@ namespace ApexCharts
         private ElementReference ChartContainer { get; set; }
 
         private bool isReady;
-        private bool forceRender = true;
+        internal bool ForceRender = true;
+        private ChartType chartType = ChartType.Bar;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -37,24 +52,15 @@ namespace ApexCharts
                 ObjectReference = DotNetObjectReference.Create(this);
             }
 
-            if (isReady && Options.ForceRender)
+            if (isReady && ForceRender && !ManualRender)
             {
-                await UpdateChart();
+                await Render();
             }
         }
 
         protected override void OnParametersSet()
         {
             if (Options.Chart == null) { Options.Chart = new Chart(); }
-
-            if (Options.Chart.Type != ChartType ||
-            Options.Chart.Width?.ToString() != Width?.ToString() ||
-            Options.Chart.Height?.ToString() != Height?.ToString() ||
-            Options.Xaxis?.Type != XAxisType ||
-            Options.Title?.Text != Title)
-            {
-                Options.ForceRender = true;
-            }
 
             Options.Debug = Debug;
             Options.Chart.Type = ChartType;
@@ -151,9 +157,9 @@ namespace ApexCharts
             }
         }
 
-        public async Task UpdateChart()
+        public async Task Render()
         {
-            Options.ForceRender = false;
+            ForceRender = false;
             SetDatalabels();
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();

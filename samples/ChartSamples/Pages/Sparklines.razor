@@ -2,7 +2,6 @@
 
 <h3>Sparklines</h3>
 
-<button @onclick="TestMethod">Test</button>
 
 <div class="row">
     <div class="col-md-12 col-lg-6">
@@ -68,11 +67,7 @@
         orders = SampleData.GetOrders();
     }
 
-    private void TestMethod()
-    {
-
-    }
-
+  
     private ApexChartOptions<Order> GetPieOptions()
     {
         var options = new ApexCharts.ApexChartOptions<Order>();

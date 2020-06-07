@@ -6,8 +6,7 @@ namespace ApexCharts
     public class ApexChartOptions<TItem>
     {
         public bool Debug { get; set; }
-        public bool ForceRender { get; set; }
-
+        
         /// <summary>
         /// Annotations options
         /// See https://apexcharts.com/docs/options/annotations/
@@ -1207,8 +1206,8 @@ namespace ApexCharts
         public XaxisCrosshairs Crosshairs { get; set; }
         public bool? Floating { get; set; }
         public XaxisLabels Labels { get; set; }
-        public double? Max { get; set; }
-        public double? Min { get; set; }
+        public object Max { get; set; }
+        public object Min { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
         public string Position { get; set; }
