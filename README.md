@@ -50,7 +50,7 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
 ### Chart Events
 
 ### Chart Render
-The chart will automatically re-render if data changes. It's possible to turn this of by setting ManualRender to true on the chart and then use the chart method Render() to render the chart. See the sample [render chart https://joadan.github.io/Blazor-ApexCharts/basic-charts
+The chart will automatically re-render if data changes. It's possible to turn this of by setting ManualRender to true on the chart and then use the chart method Render() to render the chart. See the sample [render chart](https://joadan.github.io/Blazor-ApexCharts/render-chart)
 
 ### Advanced  Chart
 ```html
@@ -189,6 +189,6 @@ The chart will automatically re-render if data changes. It's possible to turn th
     }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjUxNDY3MTM1LDk3NzU4ODc1NywxODQyND
-EwMjBdfQ==
+eyJoaXN0b3J5IjpbMTYwNjQ5MjEwMiw5Nzc1ODg3NTcsMTg0Mj
+QxMDIwXX0=
 -->
