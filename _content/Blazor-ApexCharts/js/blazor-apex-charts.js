@@ -13,7 +13,6 @@
     renderChart(dotNetObject, container, options) {
         var options = JSON.parse(options);
 
-        console.log(options);
         if (options.debug == true) {
             console.log(options);
         }
