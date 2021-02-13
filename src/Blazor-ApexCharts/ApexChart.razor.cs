@@ -16,7 +16,7 @@ namespace ApexCharts
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
-        
+
         [Parameter]
         public ChartType ChartType
         {
@@ -82,6 +82,29 @@ namespace ApexCharts
                 if (Options.Title == null) { Options.Title = new Title(); }
                 Options.Title.Text = Title;
             }
+        }
+
+        private void SetStroke()
+        {
+            if (Options?.Series == null) { return; }
+            if (Options.Series.All(e => (e.Stroke == null))) { return; }
+
+            if (Options.Stroke == null) { Options.Stroke = new Stroke(); }
+
+            var strokeWidths = new List<int>();
+            var strokeColors = new List<string>();
+            var strokeDash = new List<int>();
+            foreach (var series in Options.Series)
+            {
+                strokeWidths.Add(series.Stroke?.Width ?? 4); // 
+                strokeColors.Add(series.Stroke?.Color ?? "#d3d3d3"); //Default is light gray
+                strokeDash.Add(series.Stroke?.DashSpace ?? 0);
+            }
+
+            Options.Colors = strokeColors;
+            Options.Stroke.Width = strokeWidths;
+            Options.Stroke.Colors = strokeColors;
+            Options.Stroke.DashArray = strokeDash;
         }
 
         private void SetDatalabels()
@@ -160,6 +183,7 @@ namespace ApexCharts
         public async Task Render()
         {
             ForceRender = false;
+            SetStroke();
             SetDatalabels();
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();

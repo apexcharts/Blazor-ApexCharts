@@ -1,0 +1,45 @@
+﻿@page "/series-options"
+
+<h3>Series Options</h3>
+
+<p class="mb-3">
+
+    <ul>
+        <li>Use the Stroke setting on the series to control color, width and dash settings</li>
+        <li>Use ShowDataLabels to show the datalabels on each value</li>
+    </ul>
+
+    
+    Please note that the color must be either hex or rgb/rgba format. Color names are not accepted at the moment in apexchart.js.
+</p>
+
+<ApexChart TItem="Order"
+           Title="Order Net Value"
+           ChartType="@ChartType.Line">
+
+    <ApexSeries TItem="Order"
+                Items="Orders"
+                Name="Gross Value"
+                XValue="@(e => e.Country)"
+                YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                OrderByDescending="e=>e.Y"
+                Stroke="@(new ApexCharts.SeriesStroke { Color = "#FF0000", DashSpace = 0, Width = 5 })"
+                ShowDataLabels
+                />
+    
+
+    <ApexSeries TItem="Order"
+                Items="Orders"
+                Name="Net Value"
+                XValue="@(e => e.Country)"
+                YAggregate="@(e => e.Sum(e => e.NetValue))"
+                OrderByDescending="e=>e.Y"
+                Stroke="@(new ApexCharts.SeriesStroke { Color = "#000080", DashSpace = 3, Width = 3 })" />
+
+</ApexChart>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+
+
+}

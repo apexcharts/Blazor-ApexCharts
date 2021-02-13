@@ -20,6 +20,7 @@ namespace ApexCharts
         [Parameter] public Expression<Func<BubblePoint<TItem>, object>> OrderBy { get; set; }
         [Parameter] public Expression<Func<BubblePoint<TItem>, object>> OrderByDescending { get; set; }
         [Parameter] public bool ShowDataLabels { get; set; }
+        [Parameter] public string Color { get; set; }
         [Parameter] public IEnumerable<TItem> Items { get; set; }
         private readonly Series<TItem> series = new Series<TItem>();
         protected override void OnParametersSet()
@@ -28,7 +29,7 @@ namespace ApexCharts
 
             series.Name = Name;
             series.ShowDataLabels = ShowDataLabels;
-
+            
             //var xCompiled = XValue.Compile();
             //IEnumerable<BubblePoint<TItem>> datalist;
             //if (YAggregate == null)

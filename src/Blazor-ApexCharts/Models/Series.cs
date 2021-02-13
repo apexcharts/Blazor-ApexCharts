@@ -29,5 +29,7 @@ namespace ApexCharts
 
         [JsonIgnore]
         public bool ShowDataLabels { get; set; }
+        [JsonIgnore]
+        public SeriesStroke Stroke { get; set; }
     }
 }

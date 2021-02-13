@@ -21,6 +21,8 @@ namespace ApexCharts
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderByDescending { get; set; }
         [Parameter] public bool ShowDataLabels { get; set; }
         [Parameter] public IEnumerable<TItem> Items { get; set; }
+        [Parameter] public SeriesStroke Stroke { get; set; }
+
         private readonly Series<TItem> series = new Series<TItem>();
         private IEnumerable<DataPoint<TItem>> currentDatalist;
 
@@ -28,7 +30,7 @@ namespace ApexCharts
         {
             series.Name = Name;
             series.ShowDataLabels = ShowDataLabels;
-
+            series.Stroke = Stroke;
             var xCompiled = XValue.Compile();
             IEnumerable<DataPoint<TItem>> datalist;
             if (YAggregate == null)
