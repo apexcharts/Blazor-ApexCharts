@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Runtime.Serialization;
 
 namespace ApexCharts
 {
@@ -3137,7 +3138,10 @@ namespace ApexCharts
 
     public enum Easing { Easein, Easeinout, Easeout, Linear };
 
-    public enum StackType { Normal, The100 };
+    public enum StackType { 
+        Normal,
+        [EnumMember(Value = "100%")]
+        Percent100 };
 
     public enum AutoSelected { Pan, Selection, Zoom };
 

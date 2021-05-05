@@ -26,7 +26,7 @@ namespace ApexCharts
         private readonly Series<TItem> series = new Series<TItem>();
         private IEnumerable<DataPoint<TItem>> currentDatalist;
 
-        protected override async Task OnParametersSetAsync()
+        protected override void OnParametersSet()
         {
             series.Name = Name;
             series.ShowDataLabels = ShowDataLabels;

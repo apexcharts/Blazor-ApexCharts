@@ -2,9 +2,11 @@
 
 <h3>DateTime Chart</h3>
 
+
+
 <div class="row">
     <div class="col-md-12 col-lg-6">
-        <ApexChart TItem="Order" Title="Orders Value"
+        <ApexChart TItem="Order" Title="Orders Value" Debug
                    OnDataPointSelection="DataPointSelected"
                    ChartType="ChartType.Bar"
                    XAxisType="XaxisType.Datetime"
@@ -32,9 +34,12 @@
 @code {
     private ApexChartOptions<Order> options = new ApexCharts.ApexChartOptions<Order>();
     private SelectedData<Order> selectedData;
-
     protected override void OnInitialized()
     {
+
+        //Stacked 100% test
+        options.Chart = new Chart { Stacked = true, Type = ChartType.Bar, StackType = StackType.Percent100 };
+
         options.Tooltip = new Tooltip { X = new TooltipX { Format = @"MMMM \ yyyy" } };
 
         options.Subtitle = new Subtitle { OffsetY = 15, Text = "DateTime sample with options" };
