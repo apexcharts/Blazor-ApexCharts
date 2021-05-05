@@ -24,7 +24,7 @@ jobs:
     - name: Dotnet Nuget Push   
       working-directory: ./src/Blazor-ApexCharts/bin/Release
       run: dotnet nuget push Blazor-ApexCharts.*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
-      continue-on-error: true
+      continue-on-error: false
 
     - name: Create Release
       uses: actions/create-release@master
