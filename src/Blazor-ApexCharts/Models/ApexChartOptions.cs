@@ -1287,7 +1287,7 @@ namespace ApexCharts
     public class XaxisLabels
     {
         public PurpleDatetimeFormatter DatetimeFormatter { get; set; }
-        public bool? DatetimeUtc { get; set; }
+        public bool? DatetimeUTC { get; set; }
         public string Format { get; set; }
         public bool? HideOverlappingLabels { get; set; }
         public double? MaxHeight { get; set; }
