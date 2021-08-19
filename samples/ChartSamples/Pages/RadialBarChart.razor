@@ -1,0 +1,37 @@
+﻿@page "/radialbar-chart"
+
+<h3>RadialBar Chart</h3>
+
+<div class="row">
+    <div class="col-md-12 col-lg-6">
+        <ApexChart TItem="PrecentValue" Title="Radial Bar Sample"
+                   ChartType="@ChartType.RadialBar">
+
+            <ApexSeries TItem="PrecentValue"
+                        Items="values"
+                        XValue="@(e => e.Label)"
+                        YAggregate="@(e => e.Sum(e => e.Value))"
+                        ShowDataLabels="true" />
+        </ApexChart>
+    </div>
+</div>
+
+@code {
+    private List<PrecentValue> values = new List<PrecentValue>();
+
+    protected override void OnInitialized()
+    {
+
+        values.Add(new PrecentValue { Label = "Data 1", Value = 22 });
+        values.Add(new PrecentValue { Label = "Data 2", Value = 83 });
+        values.Add(new PrecentValue { Label = "Data 3", Value = 47 });
+    }
+
+    public class PrecentValue
+    {
+        public string Label { get; set; }
+        public int Value { get; set; }
+
+    }
+
+}
