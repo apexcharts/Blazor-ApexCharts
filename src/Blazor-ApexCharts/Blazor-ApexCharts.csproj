@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <RazorLangVersion>3.0</RazorLangVersion>
+    <TargetFramework>net5.0</TargetFramework>
+    
     <Version>0.1.0-Alpha</Version>
     <Authors>Joakim Dangården</Authors>
     <Company />
@@ -15,8 +15,8 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.9" />
   </ItemGroup>
 
 

@@ -1,0 +1,54 @@
+﻿@page "/render-chart"
+
+<h3>Render Chart</h3>
+
+<div class="row">
+
+    <div class="col-sm-12 col-md-8 col-lg-4">
+        <button class="btn btn-primary" @onclick="GenerateData">Automatic Render</button>
+        <ApexChart TItem="Order" Title="Automatic Render"
+                   ChartType="@ChartType.Pie">
+
+            <ApexSeries TItem="Order"
+                        Items="orders"
+                        Name="Order Value"
+                        XValue="@(e => e.OrderType)"
+                        YAggregate="@(e => e.Sum(e => e.NetValue))" />
+
+        </ApexChart>
+    </div>
+
+    <div class="col-sm-12 col-md-8 col-lg-4">
+        <button class="btn btn-primary" @onclick="RenderManually">Manual Render</button>
+        <ApexChart @ref="chart" TItem="Order" Title="Manual Render"
+                   ChartType="@ChartType.Pie"
+                   ManualRender="true">
+
+            <ApexSeries TItem="Order"
+                        Items="SampleData.GetRandomOrders()"
+                        Name="Order Value"
+                        XValue="@(e => e.OrderType)"
+                        YAggregate="@(e => e.Sum(e => e.NetValue))" />
+
+        </ApexChart>
+    </div>
+
+</div>
+
+
+
+
+@code {
+    private List<Order> orders = new List<Order>();
+    private ApexChart<Order> chart;
+    private void GenerateData()
+    {
+        orders = SampleData.GetRandomOrders();
+    }
+
+    private async Task RenderManually()
+    {
+        await chart.Render();
+    }
+
+}
