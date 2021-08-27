@@ -11,13 +11,9 @@ jobs:
         dotnet-version: 5.0.400
         
     - name: Publish with dotnet
-      run: dotnet publish --configuration Release --output build
+      run: dotnet publish --configuration Release --output build p:GHPages=true
       working-directory: ./samples/DemoCharts
 
-# changes the base-tag in index.html from '/' to 'Blazor-ApexCharts' to match GitHub Pages repository subdirectory
-    - name: Change base-tag in index.html from / to Blazor-ApexCharts
-      run: sed -i 's/<base href="\/" \/>/<base href="\/Blazor-ApexCharts\/" \/>/g' release/wwwroot/index.html
-      
     - name: Deploy to Github Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
