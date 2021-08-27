@@ -1,5 +1,8 @@
 name: Build and Deploy Net5 Samples
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
