@@ -11,7 +11,7 @@ jobs:
         dotnet-version: 5.0.400
         
     - name: Publish with dotnet
-      run: dotnet publish --configuration Release --output public -p:GHPages=true
+      run: dotnet publish -c Release -o public -p:GHPages=true
       working-directory: ./samples/DemoCharts
 
     - name: Deploy to Github Pages
