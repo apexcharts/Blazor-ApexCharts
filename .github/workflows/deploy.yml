@@ -1,6 +1,5 @@
 name: Build and Deploy Net5 Samples
 on: workflow_dispatch
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
