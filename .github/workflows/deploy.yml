@@ -1,5 +1,6 @@
-name: Build and Deploy Samples
-on: [push]
+name: Build and Deploy Net5 Samples
+on: workflow_dispatch
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -8,15 +9,16 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.201
+        dotnet-version: 5.0.400
     - name: Publish with dotnet
       run: dotnet publish --configuration Release --output build
-      working-directory: ./samples/ChartSamples
+      working-directory: ./samples/DemoCharts
     - name: Deploy to Github Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BASE_BRANCH: master
         BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: samples/ChartSamples/build/wwwroot # The folder the action should deploy.
+        FOLDER: samples/DemoCharts/build/wwwroot # The folder the action should deploy.
         CLEAN: true
+
