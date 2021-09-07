@@ -1227,7 +1227,7 @@ namespace ApexCharts
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
         public bool? Show { get; set; }
-        public double? StrokeWidth { get; set; }
+        public double? Height { get; set; }
     }
 
     public class XaxisAxisTicks
