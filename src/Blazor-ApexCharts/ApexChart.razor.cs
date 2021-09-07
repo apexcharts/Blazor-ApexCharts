@@ -193,13 +193,15 @@ namespace ApexCharts
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 IgnoreNullValues = true,
             };
-           
+
             serializerOptions.Converters.Add(new DataPointConverter<TItem>());
             serializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
             var jsonOptions = JsonSerializer.Serialize(Options, serializerOptions);
+          
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
             await OnDataPointSelection.InvokeAsync(null);
         }
+            
 
         public void Dispose()
         {

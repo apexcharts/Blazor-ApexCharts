@@ -34,7 +34,12 @@
                 DataLabels = new RadialBarDataLabels
                 {
                     Name = new RadialBarDataLabelsName { FontSize = "26px", OffsetY=-20 },
-                    Value = new RadialBarDataLabelsValue { FontSize = "36px", FontWeight = "bold", Color = "lightgray" }
+                    Value = new RadialBarDataLabelsValue { 
+                        FontSize = "36px",
+                        FontWeight = "bold", 
+                        Color = "lightgray",
+                        Formatter = @"function (val) { return val + '%' }"
+                    }
                 }
             }
         };

@@ -11,7 +11,17 @@
     },
 
     renderChart(dotNetObject, container, options) {
-        var options = JSON.parse(options);
+
+        if (options.debug == true) {
+            console.log(options);
+        }
+
+        var options = JSON.parse(options, (key, value) =>
+            key === 'formatter' && value.length !== 0 ? eval("(" + value + ")") : value
+    
+);
+
+       
 
         if (options.debug == true) {
             console.log(options);

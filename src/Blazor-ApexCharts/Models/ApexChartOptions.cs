@@ -7,7 +7,7 @@ namespace ApexCharts
     public class ApexChartOptions<TItem>
     {
         public bool Debug { get; set; }
-        
+
         /// <summary>
         /// Annotations options
         /// See https://apexcharts.com/docs/options/annotations/
@@ -486,6 +486,7 @@ namespace ApexCharts
         public double? OffsetY { get; set; }
         public DataLabelsStyle Style { get; set; }
         public TextAnchor? TextAnchor { get; set; }
+        public string Formatter { get; set; }
     }
 
     public class DataLabelsBackground
@@ -959,6 +960,7 @@ namespace ApexCharts
         public string FontSize { get; set; }
         public object FontWeight { get; set; }
         public double? OffsetY { get; set; }
+        public string Formatter { get; set; }
         public bool? Show { get; set; }
     }
 
@@ -1144,7 +1146,7 @@ namespace ApexCharts
         public IndigoStyle Style { get; set; }
         public string Theme { get; set; }
         public TooltipX X { get; set; }
-        public object Y { get; set; }
+        public TooltipY Y { get; set; }
         public TooltipZ Z { get; set; }
     }
 
@@ -1182,17 +1184,28 @@ namespace ApexCharts
     {
         public string Format { get; set; }
         public bool? Show { get; set; }
+        public string Formatter { get; set; }
     }
 
     public class PurpleY
     {
         public Dictionary<string, object> Title { get; set; }
     }
+    public class TooltipYTitle
+    {
+        public string Formatter { get; set; }
+    }
 
-   
+    public class TooltipY
+    {
+        public TooltipYTitle Title { get; set; }
+        public string Formatter { get; set; }
+    }
+
     public class TooltipZ
     {
         public string Title { get; set; }
+        public string Formatter { get; set; }
     }
 
     /// <summary>
@@ -1289,6 +1302,7 @@ namespace ApexCharts
         public PurpleDatetimeFormatter DatetimeFormatter { get; set; }
         public bool? DatetimeUTC { get; set; }
         public string Format { get; set; }
+        public string Formatter { get; set; }
         public bool? HideOverlappingLabels { get; set; }
         public double? MaxHeight { get; set; }
         public double? MinHeight { get; set; }
@@ -1415,6 +1429,7 @@ namespace ApexCharts
         public double? Padding { get; set; }
         public double? Rotate { get; set; }
         public bool? Show { get; set; }
+        public string Formatter { get; set; }
         public YAxisLabelStyle Style { get; set; }
     }
 
@@ -3115,7 +3130,7 @@ namespace ApexCharts
     {
         public Lines Lines { get; set; }
     }
-  
+
     public class ApexGridYaxis
     {
         public Lines Lines { get; set; }
@@ -3138,10 +3153,12 @@ namespace ApexCharts
 
     public enum Easing { Easein, Easeinout, Easeout, Linear };
 
-    public enum StackType { 
+    public enum StackType
+    {
         Normal,
         [EnumMember(Value = "100%")]
-        Percent100 };
+        Percent100
+    };
 
     public enum AutoSelected { Pan, Selection, Zoom };
 
