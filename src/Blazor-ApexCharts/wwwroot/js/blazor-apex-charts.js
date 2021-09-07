@@ -17,11 +17,9 @@
         }
 
         var options = JSON.parse(options, (key, value) =>
-            key === 'formatter' && value.length !== 0 ? eval("(" + value + ")") : value
-    
-);
+            (key === 'formatter' || key === 'custom') && value.length !== 0 ? eval("(" + value + ")") : value
+        );
 
-       
 
         if (options.debug == true) {
             console.log(options);

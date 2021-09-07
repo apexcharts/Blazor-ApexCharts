@@ -42,11 +42,16 @@
 
         options.Subtitle = new Subtitle { OffsetY = 15, Text = "DateTime sample with options" };
 
-        options.Tooltip = new Tooltip {
-            Enabled = true,
-            Y = new TooltipY { 
-                Title = new TooltipYTitle {Formatter = @"function(name) { return name + ':' }" },
-                Formatter = @"function(value, { series, seriesIndex, dataPointIndex, w }) { return '$' + value }" },
+        //options.Tooltip = new Tooltip { Custom = "function({series, seriesIndex, dataPointIndex, w}) { return '<div> <span>' + series[seriesIndex][dataPointIndex] + '-Test </span></div>' }" };
+
+
+        options.Tooltip = new Tooltip
+        {
+            Y = new TooltipY
+            {
+                Title = new TooltipYTitle { Formatter = @"function(name) { return name + ':' }" },
+                Formatter = @"function(value, { series, seriesIndex, dataPointIndex, w }) { return '$' + value }"
+            },
         };
 
 

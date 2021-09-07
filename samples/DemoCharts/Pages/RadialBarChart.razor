@@ -25,6 +25,7 @@
     {
         options.Chart = new Chart { Sparkline = new ChartSparkline() };
 
+     
         options.PlotOptions = new PlotOptions
         {
             RadialBar = new PlotOptionsRadialBar
@@ -32,7 +33,10 @@
                 DataLabels = new RadialBarDataLabels
                 {
                     Name = new RadialBarDataLabelsName { FontSize = "26px", OffsetY = -20 },
-                    Value = new RadialBarDataLabelsValue { FontSize = "36px", FontWeight = "bold", Color = "lightgray" }
+                    Value = new RadialBarDataLabelsValue {
+                        Formatter = @"function (val) { return val + '%'}",
+                        FontSize = "36px", FontWeight = "bold",
+                        Color = "lightgray" }
                 }
             }
         };

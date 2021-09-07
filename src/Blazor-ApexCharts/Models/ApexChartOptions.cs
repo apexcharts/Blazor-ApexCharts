@@ -1131,7 +1131,7 @@ namespace ApexCharts
     /// </summary>
     public class Tooltip
     {
-        //public Custom? Custom { get; set; }
+        public string Custom { get; set; }
         public bool Enabled { get; set; } = true;
         public List<double> EnabledOnSeries { get; set; }
         public bool? FillSeriesColor { get; set; }
