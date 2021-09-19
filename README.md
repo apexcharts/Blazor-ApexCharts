@@ -2,7 +2,7 @@
 
 # Blazor-ApexCharts
 A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
-## [Demo](https://joadan.github.io/Blazor-ApexCharts/basic-charts)
+## [Demo](https://apexcharts.github.io/Blazor-ApexCharts/basic-charts)
 
 **Please note: Not (yet) production ready.**
 
@@ -50,7 +50,7 @@ Apex Chart options is available in the ApexChartOptions class that can be passed
 ### Chart Events
 
 ### Chart Render
-The chart will automatically re-render if data changes. It's possible to turn this of by setting ManualRender to true on the chart and then use the chart method Render() to render the chart. See the sample [render chart](https://joadan.github.io/Blazor-ApexCharts/render-chart)
+The chart will automatically re-render if data changes. It's possible to turn this of by setting ManualRender to true on the chart and then use the chart method Render() to render the chart. See the sample [render chart](https://apexcharts.github.io/Blazor-ApexCharts/render-chart)
 
 ### Advanced  Chart
 ```html
