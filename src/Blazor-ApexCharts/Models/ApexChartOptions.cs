@@ -117,6 +117,54 @@ namespace ApexCharts
         public List<YAxis> Yaxis { get; set; }
     }
 
+    public class PlotOptionsTreemap
+    {
+        public bool? EnableShades { get; set; }
+        public double? ShadeIntensity { get; set; }
+        public bool? Distributed { get; set; }
+        public bool? ReverseNegativeShade { get; set; }
+        public bool? UseFillColorAsStroke { get; set; }
+        public TreemapColorScale ColorScale { get; set; }
+    }
+
+    public class TreemapColorScale
+    {
+        public bool? Inverse { get; set; }
+        public List<TreemapRanges> Ranges { get; set; }
+        public double? Min { get; set; }
+        public double? Max { get; set; }
+    }
+
+    public class TreemapRanges
+    {
+        public double? From { get; set; }
+        public double? To { get; set; }
+        public string Color { get; set; }
+        public string ForeColor { get; set; }
+        public string Name { get; set; }
+    }
+//        treemap?: {
+//    enableShades?: boolean
+//    shadeIntensity?: number
+//    distributed?: boolean
+//    reverseNegativeShade?: boolean
+//    useFillColorAsStroke?: boolean
+//    colorScale?: {
+//      inverse?: boolean
+//      ranges?: {
+//        from?: number
+//        to?: number
+//        color?: string
+//        foreColor?: string
+//        name?: string
+//    }
+//    [];
+//      min?: number
+//      max?: number
+//};
+//  }
+//    }
+
     public class Annotations
     {
         public List<AnnotationsImage> Images { get; set; }
@@ -730,6 +778,7 @@ namespace ApexCharts
         public PlotOptionsPolarArea PolarArea { get; set; }
         public PlotOptionsRadar Radar { get; set; }
         public PlotOptionsRadialBar RadialBar { get; set; }
+        public PlotOptionsTreemap Treemap { get; set; }
     }
 
     public class PlotOptionsBar
@@ -3162,7 +3211,7 @@ namespace ApexCharts
 
     public enum AutoSelected { Pan, Selection, Zoom };
 
-    public enum ChartType { Area, Bar, Bubble, Candlestick, Donut, Heatmap, Histogram, Line, Pie, PolarArea, Radar, RadialBar, RangeBar, Scatter };
+    public enum ChartType { Area, Bar, Bubble, Candlestick, Donut, Heatmap, Histogram, Line, Pie, PolarArea, Radar, RadialBar, RangeBar, Scatter, Treemap };
 
     public enum ZoomType { X, Xy, Y };
 
@@ -3257,72 +3306,7 @@ namespace ApexCharts
         public bool IsNull => UnionArray == null && Double == null;
     }
 
-    //public struct SeriesDatum
-    //{
-    //    public List<DatumDatum> AnythingArray;
-    //    public double? Double;
-    //    public PurpleDatum PurpleDatum;
-
-    //    public static implicit operator SeriesDatum(List<DatumDatum> AnythingArray) => new SeriesDatum { AnythingArray = AnythingArray };
-    //    public static implicit operator SeriesDatum(double Double) => new SeriesDatum { Double = Double };
-    //    public static implicit operator SeriesDatum(PurpleDatum PurpleDatum) => new SeriesDatum { PurpleDatum = PurpleDatum };
-    //    public bool IsNull => AnythingArray == null && PurpleDatum == null && Double == null;
-    //}
-
-    //public struct SeriesElement
-    //{
-    //    public double? Double;
-    //    public Series SeriesClass;
-
-    //    public static implicit operator SeriesElement(double Double) => new SeriesElement { Double = Double };
-    //    public static implicit operator SeriesElement(Series SeriesClass) => new SeriesElement { SeriesClass = SeriesClass };
-    //}
-
-    //public struct Custom
-    //{
-    //    public Dictionary<string, object> AnythingMap;
-    //    public List<Dictionary<string, object>> AnythingMapArray;
-
-    //    public static implicit operator Custom(Dictionary<string, object> AnythingMap) => new Custom { AnythingMap = AnythingMap };
-    //    public static implicit operator Custom(List<Dictionary<string, object>> AnythingMapArray) => new Custom { AnythingMapArray = AnythingMapArray };
-    //}
-
-    //public struct TooltipY
-    //{
-    //    public FluffyY FluffyY;
-    //    public List<PurpleY> PurpleYArray;
-
-    //    public static implicit operator TooltipY(FluffyY FluffyY) => new TooltipY { FluffyY = FluffyY };
-    //    public static implicit operator TooltipY(List<PurpleY> PurpleYArray) => new TooltipY { PurpleYArray = PurpleYArray };
-    //}
-
-    //public struct TickAmountUnion
-    //{
-    //    public double? Double;
-    //    public TickAmountEnum? Enum;
-
-    //    public static implicit operator TickAmountUnion(double Double) => new TickAmountUnion { Double = Double };
-    //    public static implicit operator TickAmountUnion(TickAmountEnum Enum) => new TickAmountUnion { Enum = Enum };
-    //}
-
-    //public struct Max
-    //{
-    //    public Dictionary<string, object> AnythingMap;
-    //    public double? Double;
-
-    //    public static implicit operator Max(Dictionary<string, object> AnythingMap) => new Max { AnythingMap = AnythingMap };
-    //    public static implicit operator Max(double Double) => new Max { Double = Double };
-    //}
-
-    //public struct Yaxis_Old
-    //{
-    //    public List<YaxisYaxi> YaxisYaxiArray;
-    //    public YaxisYaxis YaxisYaxis;
-
-    //    public static implicit operator Yaxis(List<YaxisYaxi> YaxisYaxiArray) => new Yaxis { YaxisYaxiArray = YaxisYaxiArray };
-    //    public static implicit operator Yaxis(YaxisYaxis YaxisYaxis) => new Yaxis { YaxisYaxis = YaxisYaxis };
-    //}
-
+ 
     public struct ApexAxisChartSeryDatum
     {
         public List<DatumDatum> AnythingArray;
