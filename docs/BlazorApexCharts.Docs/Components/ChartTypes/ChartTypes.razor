@@ -1,0 +1,61 @@
+﻿@page "/chart-types"
+<h3>Chart Types</h3>
+
+<Row class="row-deck row-cards">
+    <RowCol Lg=3 Sm=6 Xs=12>
+        <OrderChart ChartType=ChartType.Line Orders=orders />
+    </RowCol>
+
+    <RowCol Lg=3 Sm=6 Xs=12>
+        <ChartCard>
+            <OrderChart ChartType=ChartType.Bar Orders=orders />
+        </ChartCard>
+    </RowCol>
+
+    <RowCol Lg=3 Sm=6 Xs=12>
+        <ChartCard>
+            <OrderChart ChartType=ChartType.Area Orders=orders />
+        </ChartCard>
+    </RowCol>
+
+     <RowCol Lg=3 Sm=6 Xs=12>
+        <ChartCard>
+            <OrderChart ChartType=ChartType.Scatter Orders=orders />
+        </ChartCard>
+    </RowCol>
+
+      <RowCol Lg=3 Sm=6 Xs=12>
+        <ChartCard>
+            <OrderChart ChartType=ChartType.Pie Orders=orders />
+        </ChartCard>
+    </RowCol>
+
+      <RowCol Lg=3 Sm=6 Xs=12>
+        <ChartCard>
+            <OrderChart ChartType=ChartType.Donut Orders=orders />
+        </ChartCard>
+    </RowCol>
+
+     <RowCol Lg=3 Sm=6 Xs=12>
+        <ChartCard>
+            <OrderChart ChartType=ChartType.Treemap Orders=orders />
+        </ChartCard>
+    </RowCol>
+
+    <RowCol Lg=6 Sm=12>
+        <ChartCard>
+            <OrderChart ChartType=ChartType.Histogram Orders=orders />
+        </ChartCard>
+    </RowCol>
+    <RowCol Lg=6 Sm=12>
+        <ChartCard>
+            <OrderChart ChartType=ChartType.Radar Orders=orders />
+        </ChartCard>
+    </RowCol>
+
+</Row>
+
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+}

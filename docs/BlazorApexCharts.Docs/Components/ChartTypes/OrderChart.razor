@@ -1,0 +1,31 @@
+﻿<ChartCard>
+            <ApexChart TItem="Order"
+                       Title="@ChartType.ToString()"
+                       ChartType="@ChartType"
+            Options=options>
+
+            @if(IsXYChart()) {
+                <ApexSeries TItem="Order"
+                            Items="Orders"
+                            Name="Gross Value"
+                            XValue="@(e => e.Country)"
+                            YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                            OrderByDescending="e=>e.Y" />
+           
+              <ApexSeries TItem="Order"
+                            Items="Orders"
+                            Name="Net Value"
+                            XValue="@(e => e.Country)"
+                            YAggregate="@(e => e.Sum(e => e.NetValue))"
+                            OrderByDescending="e=>e.Y" />
+        }
+        else
+        {
+             <ApexSeries TItem="Order"
+                        Items="Orders"
+                        Name="Order Value"
+                        XValue="@(e => e.OrderType)"
+                        YAggregate="@(e => e.Sum(e => e.NetValue))" />
+        }
+    </ApexChart>
+        </ChartCard>

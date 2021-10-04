@@ -2,13 +2,38 @@
 
 <h3>Line Charts</h3>
 
-<div style="max-width:400px">
-    <ApexChart></ApexChart>
+<div style="max-width:600px">
+
+    <Card>
+        <CardBody>
+             <ApexChart TItem="Order"
+               Title="Order Net Value"
+               ChartType="@ChartType.Line">
+
+        <ApexSeries TItem="Order"
+                    Items="Orders"
+                    Name="Gross Value"
+                    XValue="@(e => e.Country)"
+                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                    OrderByDescending="e=>e.Y"
+                    ShowDataLabels />
 
 
+        <ApexSeries TItem="Order"
+                    Items="Orders"
+                    Name="Net Value"
+                    XValue="@(e => e.Country)"
+                    YAggregate="@(e => e.Sum(e => e.NetValue))"
+                    OrderByDescending="e=>e.Y"
+                     />
+
+    </ApexChart>
+        </CardBody>
+    </Card>
+
+   
 </div>
 
-
 @code {
-
-}
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    }
