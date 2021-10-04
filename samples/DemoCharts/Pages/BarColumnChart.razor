@@ -3,7 +3,6 @@
 
 <h3>Bar/Column Chart</h3>
 
-<input type="checkbox" class="form-check" />
 
 <div style="max-width:500px">
 
@@ -27,9 +26,8 @@
                     Name="Net Value"
                     XValue="@(e => e.Country)"
                     YAggregate="@(e => e.Sum(e => e.NetValue))"
-                    OrderByDescending="e=>e.Y" 
-                    ShowDataLabels
-                    />
+                    OrderByDescending="e=>e.Y"
+                    ShowDataLabels />
 
     </ApexChart>
 </div>
@@ -42,21 +40,20 @@
     private ApexChartOptions<Order> GetChartOptions()
     {
         var options = new ApexChartOptions<Order>();
-
         options.Chart = new Chart
             {
+                Type = ChartType.Bar,
                 Stacked = true,
                 StackType = StackType.Percent100
             };
 
-    options.PlotOptions = new PlotOptions
-    {
-        Bar = new PlotOptionsBar
-        {
-            Horizontal = true
-
-        }
-    };
+        options.PlotOptions = new PlotOptions
+            {
+                Bar = new PlotOptionsBar
+                {
+                    Horizontal = true
+                }
+            };
 
         return options;
 
