@@ -7,6 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor-ApexCharts", "src\Bl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemoCharts", "samples\DemoCharts\DemoCharts.csproj", "{CD91D833-2029-40DF-9C53-70D39FF0BE51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApexCharts.Docs", "docs\BlazorApexCharts.Docs\BlazorApexCharts.Docs.csproj", "{49430D54-CF3A-4BC5-8DD0-537794757E9B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{7975A7BE-CE73-49D9-8ED3-FF3585EA21EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApexCharts.Docs.Server", "docs\BlazorApexCharts.Docs.Server\BlazorApexCharts.Docs.Server.csproj", "{BF31D068-076F-48BC-9E68-8C12826114CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,9 +27,21 @@ Global
 		{CD91D833-2029-40DF-9C53-70D39FF0BE51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD91D833-2029-40DF-9C53-70D39FF0BE51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD91D833-2029-40DF-9C53-70D39FF0BE51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49430D54-CF3A-4BC5-8DD0-537794757E9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49430D54-CF3A-4BC5-8DD0-537794757E9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49430D54-CF3A-4BC5-8DD0-537794757E9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49430D54-CF3A-4BC5-8DD0-537794757E9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF31D068-076F-48BC-9E68-8C12826114CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF31D068-076F-48BC-9E68-8C12826114CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF31D068-076F-48BC-9E68-8C12826114CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF31D068-076F-48BC-9E68-8C12826114CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{49430D54-CF3A-4BC5-8DD0-537794757E9B} = {7975A7BE-CE73-49D9-8ED3-FF3585EA21EE}
+		{BF31D068-076F-48BC-9E68-8C12826114CA} = {7975A7BE-CE73-49D9-8ED3-FF3585EA21EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1C7AB450-7E79-495C-BEA4-60D6DC9482FC}
