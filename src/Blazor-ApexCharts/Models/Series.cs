@@ -25,11 +25,16 @@ namespace ApexCharts
     {
         public IEnumerable<IDataPoint<TItem>> Data { get; set; }
         public string Name { get; set; }
-        public string Type { get; set; }
+        public MixedType? Type { get; set; }
 
         [JsonIgnore]
         public bool ShowDataLabels { get; set; }
         [JsonIgnore]
         public SeriesStroke Stroke { get; set; }
+    }
+
+    public enum MixedType
+    {
+        Line, Column, Area
     }
 }

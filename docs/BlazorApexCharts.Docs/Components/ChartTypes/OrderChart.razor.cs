@@ -6,11 +6,12 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
 {
     public partial class OrderChart
     {
-        [Parameter] public List<Order> Orders { get; set; }
+        //[Parameter] public List<Order> Orders { get; set; }
         [Parameter] public ChartType ChartType { get; set; }
 
 
         private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
+        private List<Order> orders { get; set; } = SampleData.GetOrders();
 
         private bool IsXYChart()
         {
@@ -29,7 +30,7 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
             {
                 Sparkline = new ChartSparkline
                 {
-                    Enabled = ChartType != ChartType.Histogram && ChartType != ChartType.Radar
+                    Enabled = ChartType != ChartType.Histogram //; //&& ChartType //!= ChartType.Radar
                 }
             };
 

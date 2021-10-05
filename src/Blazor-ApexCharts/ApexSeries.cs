@@ -14,6 +14,7 @@ namespace ApexCharts
     {
         [CascadingParameter(Name = "Chart")] public ApexChart<TItem> Chart { get; set; }
         [Parameter] public string Name { get; set; }
+        [Parameter] public MixedType? MixedType { get; set; }
         [Parameter] public Expression<Func<TItem, object>> XValue { get; set; }
         [Parameter] public Expression<Func<TItem, decimal>> YValue { get; set; }
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> YAggregate { get; set; }
@@ -31,6 +32,7 @@ namespace ApexCharts
             series.Name = Name;
             series.ShowDataLabels = ShowDataLabels;
             series.Stroke = Stroke;
+            series.Type = MixedType;
             var xCompiled = XValue.Compile();
             IEnumerable<DataPoint<TItem>> datalist;
             if (YAggregate == null)
