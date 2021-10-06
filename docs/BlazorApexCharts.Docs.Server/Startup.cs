@@ -1,3 +1,4 @@
+using BlazorApexCharts.Docs.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -28,6 +29,7 @@ namespace BlazorApexCharts.Docs.Server
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddDocs();
+            services.AddScoped<ICodeSnippetService, LocalSnippetService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
