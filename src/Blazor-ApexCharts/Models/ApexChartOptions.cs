@@ -1263,12 +1263,12 @@ namespace ApexCharts
     /// </summary>
     public class XAxis
     {
-        public XaxisAxisBorder AxisBorder { get; set; }
-        public XaxisAxisTicks AxisTicks { get; set; }
+        public AxisBorder AxisBorder { get; set; }
+        public AxisTicks AxisTicks { get; set; }
         public object Categories { get; set; }
-        public XaxisCrosshairs Crosshairs { get; set; }
+        public AxisCrosshairs Crosshairs { get; set; }
         public bool? Floating { get; set; }
-        public XaxisLabels Labels { get; set; }
+        public AxisLabels Labels { get; set; }
         public object Max { get; set; }
         public object Min { get; set; }
         public double? OffsetX { get; set; }
@@ -1278,12 +1278,12 @@ namespace ApexCharts
         public bool? Sorted { get; set; }
         public object TickAmount { get; set; }
         public string TickPlacement { get; set; }
-        public XaxisTitle Title { get; set; }
-        public XaxisTooltip Tooltip { get; set; }
+        public AxisTitle Title { get; set; }
+        public AxisTooltip Tooltip { get; set; }
         public XaxisType? Type { get; set; }
     }
 
-    public class XaxisAxisBorder
+    public class AxisBorder
     {
         public string Color { get; set; }
         public double? OffsetX { get; set; }
@@ -1292,7 +1292,7 @@ namespace ApexCharts
         public double? Height { get; set; }
     }
 
-    public class XaxisAxisTicks
+    public class AxisTicks
     {
         public string BorderType { get; set; }
         public string Color { get; set; }
@@ -1302,7 +1302,7 @@ namespace ApexCharts
         public bool? Show { get; set; }
     }
 
-    public class XaxisCrosshairs
+    public class AxisCrosshairs
     {
         public StickyDropShadow DropShadow { get; set; }
         public StickyFill Fill { get; set; }
@@ -1346,7 +1346,7 @@ namespace ApexCharts
         public double? Width { get; set; }
     }
 
-    public class XaxisLabels
+    public class AxisLabels
     {
         public PurpleDatetimeFormatter DatetimeFormatter { get; set; }
         public bool? DatetimeUTC { get; set; }
@@ -1361,7 +1361,7 @@ namespace ApexCharts
         public bool? RotateAlways { get; set; }
         public bool? Show { get; set; }
         public bool? ShowDuplicates { get; set; }
-        public IndecentStyle Style { get; set; }
+        public AxisLabelStyle Style { get; set; }
         public bool? Trim { get; set; }
     }
 
@@ -1374,7 +1374,7 @@ namespace ApexCharts
         public string Year { get; set; }
     }
 
-    public class IndecentStyle
+    public class AxisLabelStyle
     {
         public Color? Colors { get; set; }
         public string CssClass { get; set; }
@@ -1383,24 +1383,18 @@ namespace ApexCharts
         public object FontWeight { get; set; }
     }
 
-    public class XaxisTitle
-    {
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public XAxistTitleStyle Style { get; set; }
-        public string Text { get; set; }
-    }
+  
 
-    public class XAxistTitleStyle
-    {
-        public string Color { get; set; }
-        public string CssClass { get; set; }
-        public string FontFamily { get; set; }
-        public string FontSize { get; set; }
-        public object FontWeight { get; set; }
-    }
+    //public class XAxistTitleStyle
+    //{
+    //    public string Color { get; set; }
+    //    public string CssClass { get; set; }
+    //    public string FontFamily { get; set; }
+    //    public string FontSize { get; set; }
+    //    public object FontWeight { get; set; }
+    //}
 
-    public class XaxisTooltip
+    public class AxisTooltip
     {
         public bool Enabled { get; set; } = true;
         public double? OffsetY { get; set; }
@@ -1415,13 +1409,13 @@ namespace ApexCharts
 
     public class YAxis
     {
-        public YaxiAxisBorder AxisBorder { get; set; }
-        public YaxiAxisTicks AxisTicks { get; set; }
-        public YAxisCrosshairs Crosshairs { get; set; }
+        public AxisBorder AxisBorder { get; set; }
+        public AxisTicks AxisTicks { get; set; }
+        public AxisCrosshairs Crosshairs { get; set; }
         public double? DecimalsInFloat { get; set; }
         public bool? Floating { get; set; }
         public bool? ForceNiceScale { get; set; }
-        public YAxisLabels Labels { get; set; }
+        public AxisLabels Labels { get; set; }
         public bool? Logarithmic { get; set; }
         public object Max { get; set; }
         public object Min { get; set; }
@@ -1432,75 +1426,21 @@ namespace ApexCharts
         public bool? ShowAlways { get; set; }
         public bool? ShowForNullSeries { get; set; }
         public double? TickAmount { get; set; }
-        public YaxisTitle Title { get; set; }
-        public YaxiTooltip Tooltip { get; set; }
+        public AxisTitle Title { get; set; }
+        public AxisTooltip Tooltip { get; set; }
     }
 
-    public class YaxiAxisBorder
-    {
-        public string Color { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public bool? Show { get; set; }
-        public double? Width { get; set; }
-    }
 
-    public class YaxiAxisTicks
-    {
-        public string Color { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public bool? Show { get; set; }
-        public double? Width { get; set; }
-    }
-
-    public class YAxisCrosshairs
-    {
-        public string Position { get; set; }
-        public bool? Show { get; set; }
-        public YAxisCrosshairsStroke Stroke { get; set; }
-    }
-
-    public class YAxisCrosshairsStroke
-    {
-        public string Color { get; set; }
-        public double? DashArray { get; set; }
-        public double? Width { get; set; }
-    }
-
-    public class YAxisLabels
-    {
-        public Align? Align { get; set; }
-        public double? MaxWidth { get; set; }
-        public double? MinWidth { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public double? Padding { get; set; }
-        public double? Rotate { get; set; }
-        public bool? Show { get; set; }
-        public string Formatter { get; set; }
-        public YAxisLabelStyle Style { get; set; }
-    }
-
-    public class YAxisLabelStyle
-    {
-        public string Colors { get; set; }
-        public string CssClass { get; set; }
-        public string FontFamily { get; set; }
-        public string FontSize { get; set; }
-        public object FontWeight { get; set; }
-    }
-
-    public class YaxiTitle
+    public class AxisTitle
     {
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
         public double? Rotate { get; set; }
-        public MagentaStyle Style { get; set; }
+        public AxisTitleStyle Style { get; set; }
         public string Text { get; set; }
     }
 
-    public class MagentaStyle
+    public class AxisTitleStyle
     {
         public string Color { get; set; }
         public string CssClass { get; set; }
@@ -1509,205 +1449,6 @@ namespace ApexCharts
         public object FontWeight { get; set; }
     }
 
-    public class YaxiTooltip
-    {
-        public bool Enabled { get; set; } = true;
-        public double? OffsetX { get; set; }
-    }
-
-    public class YaxisYaxis
-    {
-        public YaxisAxisBorder AxisBorder { get; set; }
-        public YaxisAxisTicks AxisTicks { get; set; }
-        public YaxisCrosshairs Crosshairs { get; set; }
-        public double? DecimalsInFloat { get; set; }
-        public bool? Floating { get; set; }
-        public bool? ForceNiceScale { get; set; }
-        public YaxisLabels Labels { get; set; }
-        public bool? Logarithmic { get; set; }
-        public object Max { get; set; }
-        public object Min { get; set; }
-        public bool? Opposite { get; set; }
-        public bool? Reversed { get; set; }
-        public string SeriesName { get; set; }
-        public bool? Show { get; set; }
-        public bool? ShowAlways { get; set; }
-        public bool? ShowForNullSeries { get; set; }
-        public double? TickAmount { get; set; }
-        public YaxisTitle Title { get; set; }
-        public YaxisTooltip Tooltip { get; set; }
-    }
-
-    public class YaxisAxisBorder
-    {
-        public string Color { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public bool? Show { get; set; }
-        public double? Width { get; set; }
-    }
-
-    public class YaxisAxisTicks
-    {
-        public string Color { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public bool? Show { get; set; }
-        public double? Width { get; set; }
-    }
-
-    public class YaxisCrosshairs
-    {
-        public string Position { get; set; }
-        public bool? Show { get; set; }
-        public IndigoStroke Stroke { get; set; }
-    }
-
-    public class IndigoStroke
-    {
-        public string Color { get; set; }
-        public double? DashArray { get; set; }
-        public double? Width { get; set; }
-    }
-
-    public class YaxisLabels
-    {
-        public Align? Align { get; set; }
-        public double? MaxWidth { get; set; }
-        public double? MinWidth { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public double? Padding { get; set; }
-        public double? Rotate { get; set; }
-        public bool? Show { get; set; }
-        public FriskyStyle Style { get; set; }
-    }
-
-    public class FriskyStyle
-    {
-        public string Colors { get; set; }
-        public string CssClass { get; set; }
-        public string FontFamily { get; set; }
-        public string FontSize { get; set; }
-        public object FontWeight { get; set; }
-    }
-
-    public class YaxisTitle
-    {
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public double? Rotate { get; set; }
-        public YAxisTitleStyle Style { get; set; }
-        public string Text { get; set; }
-    }
-
-    public class YAxisTitleStyle
-    {
-        public string Color { get; set; }
-        public string CssClass { get; set; }
-        public string FontFamily { get; set; }
-        public string FontSize { get; set; }
-        public object FontWeight { get; set; }
-    }
-
-    public class YaxisTooltip
-    {
-        public bool Enabled { get; set; } = true;
-        public double? OffsetX { get; set; }
-    }
-
-    public class ApexDropShadow
-    {
-        public double? Blur { get; set; }
-        public string Color { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? Left { get; set; }
-        public double? Opacity { get; set; }
-        public double? Top { get; set; }
-    }
-
-    public class ApexChart
-    {
-        public ApexChartAnimations Animations { get; set; }
-        public string Background { get; set; }
-        public ApexChartBrush Brush { get; set; }
-        public string DefaultLocale { get; set; }
-        public DropShadow DropShadow { get; set; }
-        public Dictionary<string, object> Events { get; set; }
-        public string FontFamily { get; set; }
-        public string ForeColor { get; set; }
-        public string Group { get; set; }
-        public object Height { get; set; }
-        public string Id { get; set; }
-        public List<ApexChartLocale> Locales { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public double? ParentHeightOffset { get; set; }
-        public bool? RedrawOnParentResize { get; set; }
-        public ApexChartSelection Selection { get; set; }
-        public ApexChartSparkline Sparkline { get; set; }
-        public bool? Stacked { get; set; }
-        public StackType? StackType { get; set; }
-        public ApexChartToolbar Toolbar { get; set; }
-        public ChartType? Type { get; set; }
-        public object Width { get; set; }
-        public ApexChartZoom Zoom { get; set; }
-    }
-
-    public class ApexChartAnimations
-    {
-        public FluffyAnimateGradually AnimateGradually { get; set; }
-        public FluffyDynamicAnimation DynamicAnimation { get; set; }
-        public Easing? Easing { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? Speed { get; set; }
-    }
-
-    public class FluffyAnimateGradually
-    {
-        public double? Delay { get; set; }
-        public bool Enabled { get; set; } = true;
-    }
-
-    public class FluffyDynamicAnimation
-    {
-        public bool Enabled { get; set; } = true;
-        public double? Speed { get; set; }
-    }
-
-    public class ApexChartBrush
-    {
-        public bool? AutoScaleYaxis { get; set; }
-        public bool Enabled { get; set; } = true;
-        public string Target { get; set; }
-    }
-
-
-    public class ApexChartLocale
-    {
-        public string Name { get; set; }
-        public FluffyOptions Options { get; set; }
-    }
-
-    public class FluffyOptions
-    {
-        public List<string> Days { get; set; }
-        public List<string> Months { get; set; }
-        public List<string> ShortDays { get; set; }
-        public List<string> ShortMonths { get; set; }
-        public FluffyToolbar Toolbar { get; set; }
-    }
-
-    public class FluffyToolbar
-    {
-        public string Download { get; set; }
-        public string Pan { get; set; }
-        public string Reset { get; set; }
-        public string Selection { get; set; }
-        public string SelectionZoom { get; set; }
-        public string ZoomIn { get; set; }
-        public string ZoomOut { get; set; }
-    }
 
     public class ApexChartSelection
     {
@@ -2898,67 +2639,7 @@ namespace ApexCharts
         public string Title { get; set; }
     }
 
-    public class ApexXAxis
-    {
-        public ApexXAxisAxisBorder AxisBorder { get; set; }
-        public ApexXAxisAxisTicks AxisTicks { get; set; }
-        public object Categories { get; set; }
-        public ApexXAxisCrosshairs Crosshairs { get; set; }
-        public bool? Floating { get; set; }
-        public ApexXAxisLabels Labels { get; set; }
-        public double? Max { get; set; }
-        public double? Min { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public string Position { get; set; }
-        public double? Range { get; set; }
-        public bool? Sorted { get; set; }
-        public object TickAmount { get; set; }
-        public string TickPlacement { get; set; }
-        public ApexXAxisTitle Title { get; set; }
-        public ApexXAxisTooltip Tooltip { get; set; }
-        public XaxisType? Type { get; set; }
-    }
-
-    public class ApexXAxisAxisBorder
-    {
-        public string Color { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public bool? Show { get; set; }
-        public double? StrokeWidth { get; set; }
-    }
-
-    public class ApexXAxisAxisTicks
-    {
-        public string BorderType { get; set; }
-        public string Color { get; set; }
-        public double? Height { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public bool? Show { get; set; }
-    }
-
-    public class ApexXAxisCrosshairs
-    {
-        public AmbitiousDropShadow DropShadow { get; set; }
-        public AmbitiousFill Fill { get; set; }
-        public double? Opacity { get; set; }
-        public string Position { get; set; }
-        public bool? Show { get; set; }
-        public AmbitiousStroke Stroke { get; set; }
-        public object Width { get; set; }
-    }
-
-    public class AmbitiousDropShadow
-    {
-        public double? Blur { get; set; }
-        public string Color { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? Left { get; set; }
-        public double? Opacity { get; set; }
-        public double? Top { get; set; }
-    }
+   
 
     public class AmbitiousFill
     {

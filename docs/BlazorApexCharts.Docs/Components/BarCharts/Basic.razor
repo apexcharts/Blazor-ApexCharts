@@ -1,6 +1,4 @@
-﻿
-
-<ApexChart TItem="Order"
+﻿<ApexChart TItem="Order"
            Title="Order Net Value"
            ChartType="@ChartType.Bar">
 
@@ -17,11 +15,8 @@
                 XValue="@(e => e.Country)"
                 YAggregate="@(e => e.Sum(e => e.NetValue))"
                 OrderByDescending="e=>e.Y" />
-
 </ApexChart>
-
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
     }
-

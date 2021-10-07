@@ -8,14 +8,16 @@
                 Name="Gross Value"
                 XValue="@(e => e.Country)"
                 YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                OrderByDescending="e=>e.Y" />
+                OrderByDescending="e=>e.Y"
+                ShowDataLabels/>
 
     <ApexSeries TItem="Order"
                 Items="Orders"
                 Name="Net Value"
                 XValue="@(e => e.Country)"
                 YAggregate="@(e => e.Sum(e => e.NetValue))"
-                OrderByDescending="e=>e.Y" />
+                OrderByDescending="e=>e.Y" 
+                ShowDataLabels/>
 </ApexChart>
 
 @code {
@@ -26,6 +28,10 @@
     {
         options = new ApexChartOptions<Order>
             {
+                Chart = new Chart
+                {
+                    Stacked = true,                  
+                },
                 PlotOptions = new PlotOptions
                 {
                     Bar = new PlotOptionsBar
@@ -33,8 +39,8 @@
                         Horizontal = true
                     }
                 },
-                Colors = new List<string> { "#003399", "#e62e00" }
-
+                Colors = new List<string> { "#5cb85c",  "#d9534f" }
             };
     }
-}
+    }
+

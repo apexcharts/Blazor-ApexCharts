@@ -6,21 +6,17 @@
     <CardBody>
         @Description
 
-        <div class="p-3 @ExampleBackground()">
+        <div class="p-3 @ExampleBackground()" style="max-width:500px">
             @Snippet
         </div>
 
         <div class="card-code">
             <figure class="highlight">
-                <div style="max-width:600px">
-                    <Card>
-                        <CardBody>
-                            @((MarkupString)@Code)
-                        </CardBody>
-                    </Card>
-
-
-                </div>
+                <Card>
+                    <CardBody>
+                        @((MarkupString)@Code)
+                    </CardBody>
+                </Card>
             </figure>
         </div>
 

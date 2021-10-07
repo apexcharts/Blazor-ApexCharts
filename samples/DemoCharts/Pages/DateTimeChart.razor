@@ -57,13 +57,13 @@
 
         options.Xaxis = new XAxis
         {
-            Title = new XaxisTitle
+            Title = new AxisTitle
             {
                 OffsetY = 5,
                 Text = "Month",
-                Style = new XAxistTitleStyle { FontSize = "14px", Color = "lightgrey" }
+                Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" }
             },
-            AxisBorder = new XaxisAxisBorder
+            AxisBorder = new AxisBorder
             {
                 Height = 2
             }
@@ -72,8 +72,8 @@
         options.Yaxis = new List<YAxis>();
         options.Yaxis.Add(new YAxis
         {
-            Labels = new YAxisLabels { Rotate = -45, Style = new YAxisLabelStyle { FontSize = "10px" } },
-            Title = new YaxisTitle { Text = "Value", Style = new YAxisTitleStyle { FontSize = "14px", Color = "lightgrey" } }
+            Labels = new AxisLabels { Rotate = -45, Style = new AxisLabelStyle { FontSize = "10px" } },
+            Title = new AxisTitle { Text = "Value", Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" } }
         });
 
         options.Annotations = new Annotations { Yaxis = new List<AnnotationsYAxis>() };
