@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,7 +21,9 @@ namespace BlazorApexCharts.Docs.Wasm
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddDocs();
-            builder.Services.AddScoped<ICodeSnippetService, FakeSnippetService>();
+ 
+            builder.Services.AddHttpClient("GitHub", client => client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("TabBlazor", "1")));
+            builder.Services.AddScoped<ICodeSnippetService, GitHubSnippetService>();
             await builder.Build().RunAsync();
         }
     }

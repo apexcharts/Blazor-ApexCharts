@@ -43,9 +43,7 @@ namespace BlazorApexCharts.Docs.Services
 
     public class GitHubSnippetService : ICodeSnippetService
     {
-        const string repo = "joadan/Blazor-Tabler";
-        //const string baseUrl = "https://raw.githubusercontent.com/joadan/TabBlazor/master/docs/Tabler.Docs";
-        const string baseUrl = "https://tabblazor.com/_content/razor_source";
+       const string baseUrl = "https://apexcharts.github.io/Blazor-ApexCharts/_content/razor_source";
      
         private readonly IHttpClientFactory httpClientFactory;
 

@@ -15,4 +15,15 @@
     <ProjectReference Include="..\BlazorApexCharts.Docs\BlazorApexCharts.Docs.csproj" />
   </ItemGroup>
 
+	<Target Name="BuildClientAssets" AfterTargets="ComputeFilesToPublish">
+		<ItemGroup>
+			<DistFiles Include="..\BlazorApexCharts.Docs\**\*.razor"  />
+			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+				<RelativePath>wwwroot\_content\razor_source\%(DistFiles.RecursiveDir)%(DistFiles.Filename)%(DistFiles.Extension)</RelativePath>
+				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+				<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			</ResolvedFileToPublish>
+		</ItemGroup>
+	</Target>
+
 </Project>
