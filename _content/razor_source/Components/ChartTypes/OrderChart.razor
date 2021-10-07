@@ -1,0 +1,52 @@
+﻿<Card>
+    <CardBody>
+        <ApexChart TItem="Order"
+                   Title="@ChartType.ToString()"
+                   ChartType="@ChartType"
+                   Options=options>
+
+            @if (ChartType == ChartType.Scatter)
+            {
+                <ApexSeries TItem="Order"
+                        Items="orders"
+                        Name="Gross Value"
+                        XValue="@(e => e.DiscountPrecentage)"
+                        YValue="@(e => e.GrossValue)"
+                        OrderByDescending="e=>e.X" />
+
+                <ApexSeries TItem="Order"
+                        Items="orders"
+                        Name="Net Value"
+                        XValue="@(e => e.DiscountPrecentage)"
+                        YValue="@(e => e.NetValue)"
+                        OrderByDescending="e=>e.X" />
+            }
+
+
+            else if (IsXYChart())
+            {
+                <ApexSeries TItem="Order"
+                        Items="orders"
+                        Name="Gross Value"
+                        XValue="@(e => e.Country)"
+                        YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                        OrderByDescending="e=>e.Y" />
+
+                <ApexSeries TItem="Order"
+                        Items="orders"
+                        Name="Net Value"
+                        XValue="@(e => e.Country)"
+                        YAggregate="@(e => e.Sum(e => e.NetValue))"
+                        OrderByDescending="e=>e.Y" />
+            }
+            else
+            {
+                <ApexSeries TItem="Order"
+                        Items="orders"
+                        Name="Order Value"
+                        XValue="@(e => e.OrderType)"
+                        YAggregate="@(e => e.Sum(e => e.NetValue))" />
+            }
+        </ApexChart>
+    </CardBody>
+</Card>

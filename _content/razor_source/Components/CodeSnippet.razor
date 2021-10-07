@@ -1,0 +1,29 @@
+﻿<Card class="mb-3">
+    <CardHeader id="@Id">
+        <h4 class="card-title">@Title</h4>
+    </CardHeader>
+
+    <CardBody>
+        @Description
+
+        <div class="p-3 @ExampleBackground()">
+            @Snippet
+        </div>
+
+        <div class="card-code">
+            <figure class="highlight">
+                <div style="max-width:600px">
+                    <Card>
+                        <CardBody>
+                            @((MarkupString)@Code)
+                        </CardBody>
+                    </Card>
+
+
+                </div>
+            </figure>
+        </div>
+
+    </CardBody>
+</Card>
+
