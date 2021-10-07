@@ -2,7 +2,7 @@
 
 # Blazor-ApexCharts
 A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
-## [Demo](https://apexcharts.github.io/Blazor-ApexCharts/basic-charts)
+## [Demo](https://apexcharts.github.io/Blazor-ApexCharts)
 
 **Please note: Not (yet) production ready.**
 
