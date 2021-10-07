@@ -1,0 +1,26 @@
+name: Build and Deploy Net5 Docs
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.400
+        
+    - name: Publish with dotnet
+      run: dotnet publish -c Release -o public -p:GHPages=true
+      working-directory: ./docs/BlazorApexCharts.Docs.Wasm
+    - name: Deploy to Github Pages
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        BASE_BRANCH: master
+        BRANCH: gh-pages # The branch the action should deploy to.
+        FOLDER: docs/BlazorApexCharts.Docs.Wasm/public/wwwroot # The folder the action should deploy.
+        CLEAN: true
