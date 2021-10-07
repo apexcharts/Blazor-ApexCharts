@@ -1,0 +1,128 @@
+@import '';
+
+/* _content/TabBlazor/Components/Forms/Datepickers/Datepicker.razor.rz.scp.css */
+
+.datepicker[b-lumjoiahh4] {
+    width: 384px;
+    color: rgb(93 96 100);
+}
+
+.datepicker-dropdown[b-lumjoiahh4] {
+    width: 250px;
+}
+
+.datepicker-month[b-lumjoiahh4] {
+    text-align: center;
+    font-weight: 500;
+    font-size: large;
+  
+}
+
+.datepicker-day[b-lumjoiahh4] {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    justify-content: center;
+    height: 39px;
+    border-radius: 4px;
+    line-height: 1;
+    cursor: pointer
+}
+
+.datepicker-day-dropdown[b-lumjoiahh4] {
+    height: 30px;
+ }
+
+    .datepicker-day:hover[b-lumjoiahh4] {
+        background: rgba(101,109,119,.06);
+        border-color: transparent;
+    }
+
+.datepicker-not-month[b-lumjoiahh4] {
+    opacity: 0.5;
+}
+
+
+
+.datepicker-weekdays[b-lumjoiahh4],
+.datepicker-days[b-lumjoiahh4] {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+
+/*// Styles for the weekday/weekend header*/
+.datepicker-weekdays[b-lumjoiahh4] {
+    margin-top: 1.25em;
+}
+
+.datepicker-weekdays[b-lumjoiahh4] {
+    text-align: center;
+    font-size: .625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    line-height: 1.6;
+    color: #656d77;
+    
+}
+
+/* Dates */
+.datepicker-days[b-lumjoiahh4] {
+    margin-top: 0.5em;
+}
+/* _content/TabBlazor/Components/Popovers/Popover.razor.rz.scp.css */
+.popover-container[b-ln8dyv3yn7] {
+    position: relative;
+    display: inline-block;
+}
+
+.popover[b-ln8dyv3yn7] {
+    /* //top: 23px;*/
+    left: 98px;
+    min-height: 70px;
+    min-width: 100px;
+}
+
+.popover.arrow[b-ln8dyv3yn7] {
+        left: 100px;
+    }
+/* _content/TabBlazor/Components/Tooltips/Tooltip.razor.rz.scp.css */
+.tooltip-wrapper[b-qwrsjj0686] {
+    position: relative;
+    display: inline-block;
+}
+
+span[b-qwrsjj0686] {
+    visibility: hidden;
+    position: absolute;
+    width: 120px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+    background-color: #363636;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    z-index: 1;
+}
+
+    span[b-qwrsjj0686]::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+    }
+
+.tooltip-wrapper:hover span[b-qwrsjj0686] {
+    visibility: visible;
+}
