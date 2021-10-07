@@ -1,29 +1,25 @@
-﻿
+﻿<ApexChart TItem="Order"
+           Title="Order Net Value"
+           ChartType="@ChartType.Line"
+           Options="@options"
+           Debug>
 
-        <ApexChart TItem="Order"
-                   Title="Order Net Value"
-                   ChartType="@ChartType.Line"
-                   Options="@options"
-                   Debug>
+    <ApexSeries TItem="Order"
+                Items="Orders"
+                Name="Gross Value"
+                XValue="@(e => e.Country)"
+                YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                OrderByDescending="e=>e.Y"
+                ShowDataLabels />
 
-            <ApexSeries TItem="Order"
-                        Items="Orders"
-                        Name="Gross Value"
-                        XValue="@(e => e.Country)"
-                        YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                        OrderByDescending="e=>e.Y"
-                        ShowDataLabels />
-
-            <ApexSeries TItem="Order"
-                        Items="Orders"
-                        Name="Net Value"
-                        XValue="@(e => e.Country)"
-                        YAggregate="@(e => e.Sum(e => e.NetValue))"
-                        OrderByDescending="e=>e.Y"
-                        ShowDataLabels />
-
-        </ApexChart>
-
+    <ApexSeries TItem="Order"
+                Items="Orders"
+                Name="Net Value"
+                XValue="@(e => e.Country)"
+                YAggregate="@(e => e.Sum(e => e.NetValue))"
+                OrderByDescending="e=>e.Y"
+                ShowDataLabels />
+</ApexChart>
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
@@ -64,7 +60,7 @@
                 },
 
                 Colors = new List<string> { "#77B6EA", "#545454" },
-                Markers = new Markers { Shape = ShapeEnum.Circle, Size = 5},
+                Markers = new Markers { Shape = ShapeEnum.Circle, Size = 5 },
                 Stroke = new Stroke { Curve = Curve.Smooth },
                 Legend = new Legend
                 {
@@ -76,8 +72,6 @@
                 },
 
             };
-
     }
-
 }
 

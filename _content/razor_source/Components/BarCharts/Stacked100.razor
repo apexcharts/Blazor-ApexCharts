@@ -1,0 +1,88 @@
+﻿<ApexChart TItem="Order"
+           Title="Order Net Value"
+           ChartType="@ChartType.Bar"
+           Options=options>
+
+    <ApexSeries TItem="Order"
+                Items="Orders"
+                Name="Gross Value"
+                XValue="@(e => e.Country)"
+                YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                OrderByDescending="e=>e.Y"
+                ShowDataLabels />
+
+    <ApexSeries TItem="Order"
+                Items="Orders"
+                Name="Net Value"
+                XValue="@(e => e.Country)"
+                YAggregate="@(e => e.Sum(e => e.NetValue))"
+                OrderByDescending="e=>e.Y"
+                ShowDataLabels />
+</ApexChart>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Order>
+            {
+                Chart = new Chart
+                {
+                    Stacked = true,
+                    StackType = StackType.Percent100,
+                    Toolbar = new Toolbar
+                    {
+                        Show = false
+                    }
+                },
+                PlotOptions = new PlotOptions
+                {
+                    Bar = new PlotOptionsBar
+                    {
+                        Horizontal = true,
+                    }
+                },
+                Theme = new Theme { Mode = Mode.Light, Palette = PaletteType.Palette8 },
+
+                Xaxis = new XAxis
+                {
+                    Title = new AxisTitle
+                    {
+                        Text = "Percentage",
+                        Style = new AxisTitleStyle
+                        {
+                            FontSize = "14px"
+                        }
+                    },
+                    Labels = new AxisLabels
+                    {
+                        Style = new AxisLabelStyle
+                        {
+                            FontSize = "14px"
+                        }
+                    }
+                },
+                Yaxis = new List<YAxis> { new YAxis
+                {
+                     Title = new AxisTitle
+                    {
+                        Text = "Country",
+                        Style = new AxisTitleStyle {
+                            FontSize = "14px"
+                        }
+                    },
+                    Labels = new AxisLabels {
+                        Style = new AxisLabelStyle {
+                            FontSize = "14px"
+                        } }
+
+                }},
+                Legend = new Legend
+                {
+                    Position = LegendPosition.Right
+                }
+            };
+    }
+    }
