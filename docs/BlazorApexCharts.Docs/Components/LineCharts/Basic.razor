@@ -1,7 +1,5 @@
 ﻿
-<div style="max-width:600px">
 
-    <ChartCard>
         <ApexChart TItem="Order"
                    Title="Order Net Value"
                    ChartType="@ChartType.Line">
@@ -21,9 +19,7 @@
                         OrderByDescending="e=>e.Y" />
 
         </ApexChart>
-    </ChartCard>
-
-</div>
+ 
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
