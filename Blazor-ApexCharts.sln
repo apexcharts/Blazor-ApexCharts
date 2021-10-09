@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{7975A7BE-C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApexCharts.Docs.Server", "docs\BlazorApexCharts.Docs.Server\BlazorApexCharts.Docs.Server.csproj", "{BF31D068-076F-48BC-9E68-8C12826114CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApexCharts.Docs.Wasm", "docs\BlazorApexCharts.Docs.Wasm\BlazorApexCharts.Docs.Wasm.csproj", "{0D192E1C-8DBE-42C0-B025-22249168C66D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApexCharts.Docs.Wasm", "docs\BlazorApexCharts.Docs.Wasm\BlazorApexCharts.Docs.Wasm.csproj", "{0D192E1C-8DBE-42C0-B025-22249168C66D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
