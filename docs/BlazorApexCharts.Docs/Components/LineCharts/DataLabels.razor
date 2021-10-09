@@ -1,25 +1,27 @@
-﻿<ApexChart TItem="Order"
-           Title="Order Net Value"
-           ChartType="@ChartType.Line"
-           Options="@options"
-           Debug>
+﻿<ChartContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               ChartType="@ChartType.Line"
+               Options="@options"
+               Debug>
 
-    <ApexSeries TItem="Order"
-                Items="Orders"
-                Name="Gross Value"
-                XValue="@(e => e.Country)"
-                YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                OrderByDescending="e=>e.Y"
-                ShowDataLabels />
+        <ApexSeries TItem="Order"
+                    Items="Orders"
+                    Name="Gross Value"
+                    XValue="@(e => e.Country)"
+                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                    OrderByDescending="e=>e.Y"
+                    ShowDataLabels />
 
-    <ApexSeries TItem="Order"
-                Items="Orders"
-                Name="Net Value"
-                XValue="@(e => e.Country)"
-                YAggregate="@(e => e.Sum(e => e.NetValue))"
-                OrderByDescending="e=>e.Y"
-                ShowDataLabels />
-</ApexChart>
+        <ApexSeries TItem="Order"
+                    Items="Orders"
+                    Name="Net Value"
+                    XValue="@(e => e.Country)"
+                    YAggregate="@(e => e.Sum(e => e.NetValue))"
+                    OrderByDescending="e=>e.Y"
+                    ShowDataLabels />
+    </ApexChart>
+</ChartContainer>
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();

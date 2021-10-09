@@ -1,0 +1,49 @@
+﻿<ChartContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               ChartType="@ChartType.Line"
+               OnDataPointSelection=DataPointsSelected>
+
+        <ApexSeries TItem="Order"
+                    Items="Orders"
+                    Name="Gross Value"
+                    XValue="@(e => e.Country)"
+                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                    OrderByDescending="e=>e.Y" />
+
+        <ApexSeries TItem="Order"
+                    Items="Orders"
+                    Name="Net Value"
+                    XValue="@(e => e.Country)"
+                    YAggregate="@(e => e.Sum(e => e.NetValue))"
+                    OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</ChartContainer>
+
+@if (selectedData != null)
+{
+    <Table Items=selectedData.DataPoint.Items>
+        <HeaderTemplate>
+            <strong> Series:@selectedData.Series.Name X:@selectedData.DataPoint.X</strong>
+        </HeaderTemplate>
+        <ChildContent>
+            <Column Item=Order Property="e => e.Country" Searchable Sortable />
+            <Column Item=Order Property="e => e.CustomerName" Title="Customer" Searchable Sortable Groupable />
+            <Column Item=Order Property="e => e.OrderType" Title="Type" Searchable Sortable Groupable/>
+            <Column Item=Order Property="e => e.GrossValue" Title="Gross" Searchable Sortable />
+            <Column Item=Order Property="e => e.NetValue" Title="Net"  Searchable Sortable />
+        </ChildContent>
+    </Table>
+    }
+
+
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private SelectedData<Order> selectedData;
+
+    private void DataPointsSelected(SelectedData<Order> selectedData)
+    {
+        this.selectedData = selectedData;
+    }
+    }

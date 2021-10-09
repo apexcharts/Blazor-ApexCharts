@@ -1143,7 +1143,7 @@ namespace ApexCharts
     {
         public Mode? Mode { get; set; }
         public ThemeMonochrome Monochrome { get; set; }
-        public PaletteType Palette { get; set; }
+        public PaletteType? Palette { get; set; }
     }
 
 

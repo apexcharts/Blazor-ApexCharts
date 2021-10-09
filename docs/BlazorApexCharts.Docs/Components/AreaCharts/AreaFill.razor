@@ -1,23 +1,24 @@
-﻿<ApexChart TItem="Order"
-           Title="Scatter Sample"
-           ChartType="@ChartType.Area"
-           Options=options>
+﻿<ChartContainer>
+    <ApexChart TItem="Order"
+               Title="Scatter Sample"
+               ChartType="@ChartType.Area"
+               Options=options>
 
-    <ApexSeries TItem="Order"
-                Items="orders"
-                Name="Gross Value"
-                XValue="@(e => e.Country)"
-                YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                OrderByDescending="e=>e.Y" />
+        <ApexSeries TItem="Order"
+                    Items="orders"
+                    Name="Gross Value"
+                    XValue="@(e => e.Country)"
+                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                    OrderByDescending="e=>e.Y" />
 
-    <ApexSeries TItem="Order"
-                Items="orders"
-                Name="Net Value"
-                XValue="@(e => e.Country)"
-                YAggregate="@(e => e.Sum(e => e.NetValue))"
-                OrderByDescending="e=>e.Y" />
-</ApexChart>
-
+        <ApexSeries TItem="Order"
+                    Items="orders"
+                    Name="Net Value"
+                    XValue="@(e => e.Country)"
+                    YAggregate="@(e => e.Sum(e => e.NetValue))"
+                    OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</ChartContainer>
 @code {
     private List<Order> orders = SampleData.GetOrders();
     private ApexChartOptions<Order> options = new ApexChartOptions<Order>();

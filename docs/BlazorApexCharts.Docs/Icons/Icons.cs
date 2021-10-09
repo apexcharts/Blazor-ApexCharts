@@ -31,6 +31,8 @@ namespace BlazorApexCharts.Docs
         public static string Chart_pie_4 { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><path d='M12 12l-6.5 5.5' /><path d='M12 3v9h9' /><circle cx='12' cy='12' r='9' /><path d='M12 12l5 7.5' />"; }
         public static string Chart_pie { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><path d='M10 3.2a9 9 0 1 0 10.8 10.8a1 1 0 0 0 -1 -1h-6.8a2 2 0 0 1 -2 -2v-7a0.9 .9 0 0 0 -1 -.8' /><path d='M15 3.5a9 9 0 0 1 5.5 5.5h-4.5a1 1 0 0 1 -1 -1v-4.5' />"; }
         public static string Chart_radar { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><path d='M12 3l9.5 7l-3.5 11h-12l-3.5 -11z' /><path d='M12 7.5l5.5 4l-2.5 5.5h-6.5l-2 -5.5z' /><path d='M2.5 10l9.5 3l9.5 -3' /><path d='M12 3v10l6 8' /><path d='M6 21l6 -8' />"; }
+        public static string Bolt { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><polyline points='13 3 13 10 19 10 11 21 11 14 5 14 13 3' />"; }
+        public static string Color_swatch { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><path d='M19 3h-4a2 2 0 0 0 -2 2v12a4 4 0 0 0 8 0v-12a2 2 0 0 0 -2 -2' /><path d='M13 7.35l-2 -2a2 2 0 0 0 -2.828 0l-2.828 2.828a2 2 0 0 0 0 2.828l9 9' /><path d='M7.3 13h-2.3a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h12' /><line x1='17' y1='17' x2='17' y2='17.01' />"; }
 
     }
 }

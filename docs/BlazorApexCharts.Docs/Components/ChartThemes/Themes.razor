@@ -1,0 +1,56 @@
+﻿
+<Row class="mb-3">
+    <RowCol class="me-2" Auto>
+
+        <ItemSelect Label="Theme Mode" TItem="Mode?" TValue="Mode?"
+                    Items="EnumHelper.GetNullableList<Mode>()" @bind-SelectedValue="options.Theme.Mode" Changed=UpdateChart />
+
+    </RowCol>
+    <RowCol class="me-2" Auto>
+
+        <ItemSelect Label="Palette" TItem="PaletteType?" TValue="PaletteType?"
+                    Items="EnumHelper.GetNullableList<PaletteType>()" @bind-SelectedValue="options.Theme.Palette" Changed=UpdateChart />
+
+    </RowCol>
+</Row>
+
+<ChartContainer>
+    <ApexChart TItem="Order"
+               Title="Order Gross Value"
+               ChartType="@ChartType.Pie"
+               Options=options
+               @ref=chart>
+
+        <ApexSeries TItem="Order"
+                    Items="Orders"
+                    Name="Gross Value"
+                    XValue="@(e => e.Country)"
+                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                    OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</ChartContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options;
+    private ApexChart<Order> chart;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Order>
+            {
+                Theme = new Theme
+                {
+                    Mode = Mode.Light,
+                    Palette = PaletteType.Palette1
+                }
+            };
+
+    }
+
+    private void UpdateChart()
+    {
+        chart.Render();
+    }
+
+    }
