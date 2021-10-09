@@ -1,0 +1,73 @@
+﻿<ApexChart TItem="Order" Title="Orders Value"
+           ChartType="ChartType.Line"
+           XAxisType="XaxisType.Datetime"
+           Options="options">
+
+    <ApexSeries TItem="Order"
+                Items="SampleData.GetOrders()"
+                Name="Net Value"
+                XValue="@(e => e.OrderDate.FirstDayOfMonth())"
+                YAggregate="@(e => e.Sum(e => e.NetValue))"
+                OrderBy="e=>e.X" />
+
+    <ApexSeries TItem="Order"
+                Items="SampleData.GetOrders()"
+                Name="Gross Value"
+                XValue="@(e => e.OrderDate.FirstDayOfMonth())"
+                YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                OrderBy="e=>e.X" />
+</ApexChart>
+
+@code {
+    private ApexChartOptions<Order> options = new ApexCharts.ApexChartOptions<Order>();
+    protected override void OnInitialized()
+    {
+
+        options.Debug = true;
+        options.Tooltip = new ApexCharts.Tooltip { X = new TooltipX { Format = @"MMMM \ yyyy" } };
+
+        options.Subtitle = new Subtitle { OffsetY = 15, Text = "DateTime sample with options" };
+
+
+        options.Tooltip = new ApexCharts.Tooltip
+            {
+                Y = new TooltipY
+                {
+                    Title = new TooltipYTitle { Formatter = @"function(name) { return name + ':' }" },
+                    Formatter = @"function(value, { series, seriesIndex, dataPointIndex, w }) { return '$' + value }"
+                },
+            };
+
+
+        options.Xaxis = new XAxis
+            {
+                Title = new AxisTitle
+                {
+                    OffsetY = 5,
+                    Text = "Month",
+                    Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" }
+                },
+                AxisBorder = new AxisBorder
+                {
+                    Height = 2
+                }
+
+            };
+        options.Yaxis = new List<YAxis>();
+        options.Yaxis.Add(new YAxis
+            {
+                Labels = new AxisLabels { Rotate = -45, Style = new AxisLabelStyle { FontSize = "10px" } },
+                Title = new AxisTitle { Text = "Value", Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" } }
+            });
+
+        options.Annotations = new Annotations { Yaxis = new List<AnnotationsYAxis>() };
+        options.Annotations.Yaxis.Add(new AnnotationsYAxis
+            {
+                Y = 50000,
+                BorderWidth = 2,
+                StrokeDashArray = 5,
+                BorderColor = "red",
+                Label = new Label { Text = "Monthly Target" }
+            });
+    }
+}
