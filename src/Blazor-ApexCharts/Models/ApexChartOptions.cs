@@ -143,27 +143,27 @@ namespace ApexCharts
         public string ForeColor { get; set; }
         public string Name { get; set; }
     }
-//        treemap?: {
-//    enableShades?: boolean
-//    shadeIntensity?: number
-//    distributed?: boolean
-//    reverseNegativeShade?: boolean
-//    useFillColorAsStroke?: boolean
-//    colorScale?: {
-//      inverse?: boolean
-//      ranges?: {
-//        from?: number
-//        to?: number
-//        color?: string
-//        foreColor?: string
-//        name?: string
-//    }
-//    [];
-//      min?: number
-//      max?: number
-//};
-//  }
-//    }
+    //        treemap?: {
+    //    enableShades?: boolean
+    //    shadeIntensity?: number
+    //    distributed?: boolean
+    //    reverseNegativeShade?: boolean
+    //    useFillColorAsStroke?: boolean
+    //    colorScale?: {
+    //      inverse?: boolean
+    //      ranges?: {
+    //        from?: number
+    //        to?: number
+    //        color?: string
+    //        foreColor?: string
+    //        name?: string
+    //    }
+    //    [];
+    //      min?: number
+    //      max?: number
+    //};
+    //  }
+    //    }
 
     public class Annotations
     {
@@ -562,12 +562,33 @@ namespace ApexCharts
 
     public class Fill
     {
-        public List<object> Colors { get; set; }
+        public List<string> Colors { get; set; }
         public FillGradient Gradient { get; set; }
         public FillImage Image { get; set; }
-        public Opacity? Opacity { get; set; }
+        public List<double> Opacity { get; set; }
         public FillPattern Pattern { get; set; }
-        public Color? Type { get; set; }
+        public List<FillType> Type { get; set; }
+    }
+
+    public enum FillType
+    {
+        Solid,
+        Gradient,
+        Pattern,
+        Image
+    }
+    public enum GradientShade
+    {
+        Light,
+        Dark
+    }
+
+    public enum GradientType
+    {
+        Horizontal,
+        Vertical,
+        Diagonal1,
+        Diagonal2
     }
 
     public class FillGradient
@@ -576,16 +597,16 @@ namespace ApexCharts
         public bool? InverseColors { get; set; }
         public double? OpacityFrom { get; set; }
         public double? OpacityTo { get; set; }
-        public string Shade { get; set; }
+        public GradientShade? Shade { get; set; }
         public double? ShadeIntensity { get; set; }
         public List<double> Stops { get; set; }
-        public string Type { get; set; }
+        public GradientType Type { get; set; }
     }
 
     public class FillImage
     {
         public double? Height { get; set; }
-        public Color? Src { get; set; }
+        public List<string> Src { get; set; }
         public double? Width { get; set; }
     }
 
@@ -593,8 +614,17 @@ namespace ApexCharts
     {
         public double? Height { get; set; }
         public double? StrokeWidth { get; set; }
-        public Color? Style { get; set; }
+        public FillPatternStyle? Style { get; set; }
         public double? Width { get; set; }
+    }
+
+    public enum FillPatternStyle
+    {
+        VerticalLines,
+        HorizontalLines,
+        SlantedLines,
+        Squares,
+        Circles
     }
 
     /// <summary>
@@ -1383,7 +1413,7 @@ namespace ApexCharts
         public object FontWeight { get; set; }
     }
 
-  
+
 
     //public class XAxistTitleStyle
     //{
@@ -2639,7 +2669,7 @@ namespace ApexCharts
         public string Title { get; set; }
     }
 
-   
+
 
     public class AmbitiousFill
     {
@@ -2987,7 +3017,7 @@ namespace ApexCharts
         public bool IsNull => UnionArray == null && Double == null;
     }
 
- 
+
     public struct ApexAxisChartSeryDatum
     {
         public List<DatumDatum> AnythingArray;
