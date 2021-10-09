@@ -143,28 +143,7 @@ namespace ApexCharts
         public string ForeColor { get; set; }
         public string Name { get; set; }
     }
-    //        treemap?: {
-    //    enableShades?: boolean
-    //    shadeIntensity?: number
-    //    distributed?: boolean
-    //    reverseNegativeShade?: boolean
-    //    useFillColorAsStroke?: boolean
-    //    colorScale?: {
-    //      inverse?: boolean
-    //      ranges?: {
-    //        from?: number
-    //        to?: number
-    //        color?: string
-    //        foreColor?: string
-    //        name?: string
-    //    }
-    //    [];
-    //      min?: number
-    //      max?: number
-    //};
-    //  }
-    //    }
-
+    
     public class Annotations
     {
         public List<AnnotationsImage> Images { get; set; }
@@ -314,10 +293,6 @@ namespace ApexCharts
         public object Y2 { get; set; }
         public double? YAxisIndex { get; set; }
     }
-
-
-
-
 
     /// <summary>
     /// Main Chart options
@@ -640,7 +615,7 @@ namespace ApexCharts
         public GridRow Row { get; set; }
         public bool? Show { get; set; }
         public double? StrokeDashArray { get; set; }
-        public GridXaxis Xaxis { get; set; }
+        public GridXAxis Xaxis { get; set; }
         public GridYAxis Yaxis { get; set; }
     }
 
@@ -657,7 +632,7 @@ namespace ApexCharts
         public double? Opacity { get; set; }
     }
 
-    public class GridXaxis
+    public class GridXAxis
     {
         public Lines Lines { get; set; }
     }
@@ -2730,186 +2705,9 @@ namespace ApexCharts
         public object FontWeight { get; set; }
     }
 
-    public class ApexXAxisTitle
-    {
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public Style7 Style { get; set; }
-        public string Text { get; set; }
-    }
+   
 
-    public class Style7
-    {
-        public string Color { get; set; }
-        public string CssClass { get; set; }
-        public string FontFamily { get; set; }
-        public string FontSize { get; set; }
-        public object FontWeight { get; set; }
-    }
-
-    public class ApexXAxisTooltip
-    {
-        public bool Enabled { get; set; } = true;
-        public double? OffsetY { get; set; }
-        public Style8 Style { get; set; }
-    }
-
-    public class Style8
-    {
-        public string FontFamily { get; set; }
-        public string FontSize { get; set; }
-    }
-
-    //public class ApexYAxis
-    //{
-    //    public ApexYAxisAxisBorder AxisBorder { get; set; }
-    //    public ApexYAxisAxisTicks AxisTicks { get; set; }
-    //    public ApexYAxisCrosshairs Crosshairs { get; set; }
-    //    public double? DecimalsInFloat { get; set; }
-    //    public bool? Floating { get; set; }
-    //    public bool? ForceNiceScale { get; set; }
-    //    public ApexYAxisLabels Labels { get; set; }
-    //    public bool? Logarithmic { get; set; }
-    //    public Max? Max { get; set; }
-    //    public Max? Min { get; set; }
-    //    public bool? Opposite { get; set; }
-    //    public bool? Reversed { get; set; }
-    //    public string SeriesName { get; set; }
-    //    public bool? Show { get; set; }
-    //    public bool? ShowAlways { get; set; }
-    //    public bool? ShowForNullSeries { get; set; }
-    //    public double? TickAmount { get; set; }
-    //    public ApexYAxisTitle Title { get; set; }
-    //    public ApexYAxisTooltip Tooltip { get; set; }
-    //}
-
-    //public class ApexYAxisAxisBorder
-    //{
-    //    public string Color { get; set; }
-    //    public double? OffsetX { get; set; }
-    //    public double? OffsetY { get; set; }
-    //    public bool? Show { get; set; }
-    //    public double? Width { get; set; }
-    //}
-
-    //public class ApexYAxisAxisTicks
-    //{
-    //    public string Color { get; set; }
-    //    public double? OffsetX { get; set; }
-    //    public double? OffsetY { get; set; }
-    //    public bool? Show { get; set; }
-    //    public double? Width { get; set; }
-    //}
-
-    //public class ApexYAxisCrosshairs
-    //{
-    //    public string Position { get; set; }
-    //    public bool? Show { get; set; }
-    //    public CunningStroke Stroke { get; set; }
-    //}
-
-    public class CunningStroke
-    {
-        public string Color { get; set; }
-        public double? DashArray { get; set; }
-        public double? Width { get; set; }
-    }
-
-    public class ApexYAxisLabels
-    {
-        public Align? Align { get; set; }
-        public double? MaxWidth { get; set; }
-        public double? MinWidth { get; set; }
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public double? Padding { get; set; }
-        public double? Rotate { get; set; }
-        public bool? Show { get; set; }
-        public Style9 Style { get; set; }
-    }
-
-    public class Style9
-    {
-        public string Colors { get; set; }
-        public string CssClass { get; set; }
-        public string FontFamily { get; set; }
-        public string FontSize { get; set; }
-        public object FontWeight { get; set; }
-    }
-
-    public class ApexYAxisTitle
-    {
-        public double? OffsetX { get; set; }
-        public double? OffsetY { get; set; }
-        public double? Rotate { get; set; }
-        public Style10 Style { get; set; }
-        public string Text { get; set; }
-    }
-
-    public class Style10
-    {
-        public string Color { get; set; }
-        public string CssClass { get; set; }
-        public string FontFamily { get; set; }
-        public string FontSize { get; set; }
-        public object FontWeight { get; set; }
-    }
-
-    public class ApexYAxisTooltip
-    {
-        public bool Enabled { get; set; } = true;
-        public double? OffsetX { get; set; }
-    }
-
-    public class ApexGrid
-    {
-        public string BorderColor { get; set; }
-        public ApexGridColumn Column { get; set; }
-        public Padding Padding { get; set; }
-        public GridPosition? Position { get; set; }
-        public ApexGridRow Row { get; set; }
-        public bool? Show { get; set; }
-        public double? StrokeDashArray { get; set; }
-        public ApexGridXaxis Xaxis { get; set; }
-        public ApexGridYaxis Yaxis { get; set; }
-    }
-
-    public class ApexGridColumn
-    {
-        public List<string> Colors { get; set; }
-        public double? Opacity { get; set; }
-    }
-
-    public class ApexGridRow
-    {
-        public List<string> Colors { get; set; }
-        public double? Opacity { get; set; }
-    }
-
-    public class ApexGridXaxis
-    {
-        public Lines Lines { get; set; }
-    }
-
-    public class ApexGridYaxis
-    {
-        public Lines Lines { get; set; }
-    }
-
-    public class ApexTheme
-    {
-        public Mode? Mode { get; set; }
-        public ApexThemeMonochrome Monochrome { get; set; }
-        public string Palette { get; set; }
-    }
-
-    public class ApexThemeMonochrome
-    {
-        public string Color { get; set; }
-        public bool Enabled { get; set; } = true;
-        public double? ShadeIntensity { get; set; }
-        public Mode? ShadeTo { get; set; }
-    }
+  
 
     public enum Easing { Easein, Easeinout, Easeout, Linear };
 
@@ -2952,25 +2750,7 @@ namespace ApexCharts
 
     public enum XaxisType { Category, Datetime, Numeric };
 
-    //public struct FontWeight
-    //{
-    //    public double? Double;
-    //    public string String;
-
-    //    public static implicit operator FontWeight(double Double) => new FontWeight { Double = Double };
-    //    public static implicit operator FontWeight(string String) => new FontWeight { String = String };
-    //}
-
-    //public struct X
-    //{
-    //    public double? Double;
-    //    public string String;
-
-    //    public static implicit operator X(double Double) => new X { Double = Double };
-    //    public static implicit operator X(string String) => new X { String = String };
-    //    public bool IsNull => Double == null && String == null;
-    //}
-
+  
     public struct Download
     {
         public bool? Bool;
