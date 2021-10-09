@@ -22,6 +22,17 @@
                         OrderByDescending="e=>e.X" />
             }
 
+             else if (ChartType == ChartType.RadialBar)
+            {
+                <ApexSeries TItem="Order"
+                        Items="orders"
+                        Name="Gross Value"
+                        XValue="@(e => e.Country)"
+                        YAggregate="@(e => decimal.Round(e.Average(e => e.DiscountPrecentage)))"
+                        OrderByDescending="e=>e.Y" />
+
+             
+            }
 
             else if (IsXYChart())
             {
