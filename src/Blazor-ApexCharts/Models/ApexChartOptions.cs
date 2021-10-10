@@ -75,6 +75,7 @@ namespace ApexCharts
         public List<Series<TItem>> Series { get; set; }
 
         public List<object> SeriesNonXAxis { get; internal set; }
+        public ForecastDataPoints ForecastDataPoints { get; set; }
 
         public States States { get; set; }
 
@@ -117,6 +118,16 @@ namespace ApexCharts
         public List<YAxis> Yaxis { get; set; }
     }
 
+    public class ForecastDataPoints
+    {
+        public int Count { get; set; }
+        public double? FillOpacity { get; set; }
+        public double? StrokeWidth { get; set; }
+        public double? DashArray { get; set; }
+    }
+
+
+
     public class PlotOptionsTreemap
     {
         public bool? EnableShades { get; set; }
@@ -143,7 +154,7 @@ namespace ApexCharts
         public string ForeColor { get; set; }
         public string Name { get; set; }
     }
-    
+
     public class Annotations
     {
         public List<AnnotationsImage> Images { get; set; }
@@ -1273,6 +1284,7 @@ namespace ApexCharts
         public object Categories { get; set; }
         public AxisCrosshairs Crosshairs { get; set; }
         public bool? Floating { get; set; }
+        public int? DecimalsInFloat { get; set; }
         public AxisLabels Labels { get; set; }
         public object Max { get; set; }
         public object Min { get; set; }
@@ -1417,7 +1429,7 @@ namespace ApexCharts
         public AxisBorder AxisBorder { get; set; }
         public AxisTicks AxisTicks { get; set; }
         public AxisCrosshairs Crosshairs { get; set; }
-        public double? DecimalsInFloat { get; set; }
+        public int? DecimalsInFloat { get; set; }
         public bool? Floating { get; set; }
         public bool? ForceNiceScale { get; set; }
         public AxisLabels Labels { get; set; }
@@ -2705,9 +2717,9 @@ namespace ApexCharts
         public object FontWeight { get; set; }
     }
 
-   
 
-  
+
+
 
     public enum Easing { Easein, Easeinout, Easeout, Linear };
 
@@ -2750,7 +2762,7 @@ namespace ApexCharts
 
     public enum XaxisType { Category, Datetime, Numeric };
 
-  
+
     public struct Download
     {
         public bool? Bool;
