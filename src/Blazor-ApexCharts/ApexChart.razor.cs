@@ -147,7 +147,8 @@ namespace ApexCharts
         {
             if (Options.Chart.Type != ChartType.Pie &&
                 Options.Chart.Type != ChartType.Donut &&
-                Options.Chart.Type != ChartType.RadialBar)
+                Options.Chart.Type != ChartType.RadialBar &&
+                Options.Chart.Type != ChartType.PolarArea)
             {
                 Options.SeriesNonXAxis = null;
                 Options.Labels = null;
@@ -160,7 +161,7 @@ namespace ApexCharts
 
             var data = noAxisSeries.Data.Cast<DataPoint<TItem>>().ToList();
             Options.SeriesNonXAxis = data.Select(e => e.Y).Cast<object>().ToList();
-            Options.Labels = data.Select(e => e.X.ToString()).ToList();
+            Options.Labels = data.Select(e => e.X?.ToString()).ToList();
         }
 
         public void FixLineDataSelection()

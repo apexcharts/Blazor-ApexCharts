@@ -17,7 +17,7 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
         {
             return ChartType switch
             {
-                ChartType.Pie or ChartType.Donut or ChartType.Treemap => false,
+                ChartType.Pie or ChartType.Donut or ChartType.Treemap or ChartType.RadialBar or ChartType.PolarArea => false,
                 _ => true,
             };
         }
