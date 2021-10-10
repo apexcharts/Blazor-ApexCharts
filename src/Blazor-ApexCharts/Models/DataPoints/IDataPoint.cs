@@ -6,5 +6,7 @@ namespace ApexCharts
     {
         IList<TItem> Items { get; set; }
         object X { get; set; }
+        object YObject { get;}
+       
     }
 }

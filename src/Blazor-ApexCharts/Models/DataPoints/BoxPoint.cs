@@ -11,7 +11,9 @@ namespace ApexCharts
     {
         public object X { get; set; }
         public List<decimal> Y { get; set; }
-
+      
+        [JsonIgnore]
+        public object YObject => Y;
 
         [JsonIgnore]
         public IList<TItem> Items { get; set; }

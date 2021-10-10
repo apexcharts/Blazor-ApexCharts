@@ -25,7 +25,7 @@ namespace ApexCharts
         [Parameter] public SeriesStroke Stroke { get; set; }
 
         private readonly Series<TItem> series = new();
-        private IEnumerable<DataPoint<TItem>> currentDatalist;
+        private IEnumerable<IDataPoint<TItem>> currentDatalist;
 
         protected override void OnParametersSet()
         {
@@ -35,6 +35,8 @@ namespace ApexCharts
             series.Type = MixedType;
             var xCompiled = XValue.Compile();
             IEnumerable<DataPoint<TItem>> datalist;
+
+
             if (YAggregate == null)
             {
                 var yCompiled = YValue.Compile();

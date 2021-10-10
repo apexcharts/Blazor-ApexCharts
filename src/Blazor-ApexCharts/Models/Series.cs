@@ -35,6 +35,6 @@ namespace ApexCharts
 
     public enum MixedType
     {
-        Line, Column, Area
+        Line, Column, Area, Scatter
     }
 }

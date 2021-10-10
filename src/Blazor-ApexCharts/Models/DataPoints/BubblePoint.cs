@@ -8,7 +8,10 @@ namespace ApexCharts
     {
         public object X { get; set; }
         public decimal Y{ get; set; }
-        public decimal Z { get; set; } 
+        public decimal Z { get; set; }
+
+        [JsonIgnore]
+        public object YObject => Y;
 
         [JsonIgnore]
         public IList<TItem> Items { get; set; }
