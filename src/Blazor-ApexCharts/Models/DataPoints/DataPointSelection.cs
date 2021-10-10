@@ -11,7 +11,7 @@ namespace ApexCharts
         public int DataPointIndex { get; set; }
         public int SeriesIndex { get; set; }
 
-        public DataPoint<TItem> DataPoint { get; set; }
+        public IDataPoint<TItem> DataPoint { get; set; }
         public object Label { get; set; }
     }
 

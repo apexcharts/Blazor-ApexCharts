@@ -24,7 +24,7 @@ namespace ApexCharts
         [Parameter] public IEnumerable<TItem> Items { get; set; }
         [Parameter] public SeriesStroke Stroke { get; set; }
 
-        private readonly Series<TItem> series = new Series<TItem>();
+        private readonly Series<TItem> series = new();
         private IEnumerable<DataPoint<TItem>> currentDatalist;
 
         protected override void OnParametersSet()

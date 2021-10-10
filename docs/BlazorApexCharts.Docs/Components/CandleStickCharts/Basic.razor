@@ -1,15 +1,15 @@
 ﻿<ChartContainer>
     <ApexChart TItem="Order"
                Title="Order Net Value"
-               ChartType="@ChartType.Line"
+               ChartType="@ChartType.Candlestick"
     Debug>
 
-        <ApexSeries TItem="Order"
+        <ApexBoxSeries TItem="Order"
                     Items="Orders"
                     Name="Gross Value"
-                    XValue="@(e => e.OrderDate.FirstDayOfMonth())"
+                    XValue="@(e => e.OrderDate.Year)"
                     YValue = "@(e => e.DiscountPrecentage)"
-                    OrderByDescending="e=>e.X" />
+                     />
 
     
     </ApexChart>
