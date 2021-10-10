@@ -4,8 +4,7 @@
 A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
 ## [Demo](https://apexcharts.github.io/Blazor-ApexCharts)
 
-**Please note: Not (yet) production ready.**
-
+**Please note: Development in progress, expect breaking changes.**
 
 ## Installation
 ### Nuget
