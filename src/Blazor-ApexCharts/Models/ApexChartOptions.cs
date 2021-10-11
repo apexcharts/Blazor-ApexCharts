@@ -2732,7 +2732,25 @@ namespace ApexCharts
 
     public enum AutoSelected { Pan, Selection, Zoom };
 
-    public enum ChartType { Area, Bar, Bubble, Candlestick, Donut, Heatmap, Histogram, Line, Pie, PolarArea, Radar, RadialBar, RangeBar, Scatter, Treemap };
+    public enum ChartType
+    {
+        Area,
+        Bar, 
+        Bubble, 
+        Candlestick, 
+        Donut, 
+        Heatmap, 
+        Histogram, 
+        Line, 
+        Pie, 
+        PolarArea, 
+        Radar, 
+        RadialBar, 
+        RangeBar, 
+        Scatter, 
+        Treemap,
+        BoxPlot,
+    };
 
     public enum ZoomType { X, Xy, Y };
 

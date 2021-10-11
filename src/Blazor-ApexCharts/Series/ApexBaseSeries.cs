@@ -31,10 +31,10 @@ namespace ApexCharts
 
             //var xCompiled = XValue.Compile();
 
-            if (!Chart.ManualRender && Chart.ForceRender == false) // && currentDatalist != null && !currentDatalist.SequenceEqual(datalist, new DataPointComparer<TItem>()))
-            {
-                Chart.ForceRender = true;
-            }
+            //if (!Chart.ManualRender && Chart.ForceRender == false) // && currentDatalist != null && !currentDatalist.SequenceEqual(datalist, new DataPointComparer<TItem>()))
+            //{
+            //    Chart.ForceRender = true;
+            //}
 
             //currentDatalist = datalist;
         }

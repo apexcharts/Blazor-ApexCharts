@@ -25,7 +25,6 @@ namespace ApexCharts
         [Parameter] public SeriesStroke Stroke { get; set; }
 
         private readonly Series<TItem> series = new();
-        private IEnumerable<IDataPoint<TItem>> currentDatalist;
 
         protected override void OnParametersSet()
         {
@@ -33,10 +32,46 @@ namespace ApexCharts
             series.ShowDataLabels = ShowDataLabels;
             series.Stroke = Stroke;
             series.Type = MixedType;
+
+            //datalist = datalist.ToList();
+            series.Data = GetData();
+
+        }
+
+        protected override void OnInitialized()
+        {
+            if (Chart.Options.Series == null) { Chart.Options.Series = new List<Series<TItem>>(); }
+            Chart.Options.Series.Add(series);
+        }
+
+        private IEnumerable<IDataPoint<TItem>> GetData()
+        {
+
+            if (Chart.DataCategory == DataCategory.Point ||
+                Chart.DataCategory == DataCategory.NoAxis ||
+                MixedType == ApexCharts.MixedType.Scatter)
+            {
+                return GetPointData();
+            }
+
+            if (Chart.DataCategory == DataCategory.Box)
+            {
+                return GetBoxData();
+            }
+
+            return null;
+        }
+
+        private IEnumerable<IDataPoint<TItem>> GetBoxData()
+        {
+            var xCompiled = XValue.Compile();
+            return Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BoxPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue).ToList(), Items = d.ToList() });
+        }
+
+        private IEnumerable<IDataPoint<TItem>> GetPointData()
+        {
             var xCompiled = XValue.Compile();
             IEnumerable<DataPoint<TItem>> datalist;
-
-
             if (YAggregate == null)
             {
                 var yCompiled = YValue.Compile();
@@ -57,21 +92,7 @@ namespace ApexCharts
                 datalist = datalist.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
             }
 
-            datalist = datalist.ToList();
-            series.Data = datalist;
-
-            if (!Chart.ManualRender && Chart.ForceRender == false && currentDatalist != null && !currentDatalist.SequenceEqual(datalist, new DataPointComparer<TItem>()))
-            {
-                Chart.ForceRender = true;
-            }
-
-            currentDatalist = datalist;
-        }
-
-        protected override void OnInitialized()
-        {
-            if (Chart.Options.Series == null) { Chart.Options.Series = new List<Series<TItem>>(); }
-            Chart.Options.Series.Add(series);
+            return datalist;
         }
 
         void IDisposable.Dispose()

@@ -15,7 +15,7 @@ namespace ApexCharts
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
-       
+
 
         [Parameter]
         public ChartType ChartType
@@ -25,14 +25,13 @@ namespace ApexCharts
             {
                 if (chartType != value)
                 {
-                    ForceRender = true;
+                    forceRender = true;
                 }
                 chartType = value;
             }
         }
         [Parameter] public XaxisType? XAxisType { get; set; }
         [Parameter] public bool Debug { get; set; }
-        [Parameter] public bool ManualRender { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
@@ -41,7 +40,7 @@ namespace ApexCharts
         private ElementReference ChartContainer { get; set; }
 
         private bool isReady;
-        internal bool ForceRender = true;
+        private bool forceRender = true;
         private ChartType chartType = ChartType.Bar;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -52,7 +51,7 @@ namespace ApexCharts
                 ObjectReference = DotNetObjectReference.Create(this);
             }
 
-            if (isReady && ForceRender && !ManualRender)
+            if (isReady && forceRender)
             {
                 await Render();
             }
@@ -81,6 +80,28 @@ namespace ApexCharts
             {
                 if (Options.Title == null) { Options.Title = new Title(); }
                 Options.Title.Text = Title;
+            }
+        }
+
+        public DataCategory DataCategory
+        {
+            get
+            {
+                switch (ChartType)
+                {
+                    case ChartType.Candlestick:
+                    case ChartType.BoxPlot:
+                        return DataCategory.Box;
+
+                    case ChartType.Pie:
+                    case ChartType.Donut:
+                    case ChartType.RadialBar:
+                    case ChartType.PolarArea:
+                        return DataCategory.NoAxis;
+
+                    default:
+                        return DataCategory.Point;
+                }
             }
         }
 
@@ -145,10 +166,7 @@ namespace ApexCharts
 
         private void UpdateDataForNoAxisCharts()
         {
-            if (Options.Chart.Type != ChartType.Pie &&
-                Options.Chart.Type != ChartType.Donut &&
-                Options.Chart.Type != ChartType.RadialBar &&
-                Options.Chart.Type != ChartType.PolarArea)
+            if (DataCategory != DataCategory.NoAxis)
             {
                 Options.SeriesNonXAxis = null;
                 Options.Labels = null;
@@ -183,7 +201,7 @@ namespace ApexCharts
 
         public async Task Render()
         {
-            ForceRender = false;
+            forceRender = false;
             SetStroke();
             SetDatalabels();
             FixLineDataSelection();
@@ -198,11 +216,11 @@ namespace ApexCharts
             serializerOptions.Converters.Add(new DataPointConverter<TItem>());
             serializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
             var jsonOptions = JsonSerializer.Serialize(Options, serializerOptions);
-          
+
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
             await OnDataPointSelection.InvokeAsync(null);
         }
-            
+
 
         public void Dispose()
         {
