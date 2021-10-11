@@ -83,15 +83,18 @@ namespace ApexCharts
             }
         }
 
-        public DataCategory DataCategory
+        internal DataCategory DataCategory
         {
             get
             {
                 switch (ChartType)
                 {
                     case ChartType.Candlestick:
+                        return DataCategory.Candle;
+                    case ChartType.RangeBar:
+                        return DataCategory.Range;
                     case ChartType.BoxPlot:
-                        return DataCategory.Box;
+                        return DataCategory.BoxPlot;
 
                     case ChartType.Pie:
                     case ChartType.Donut:

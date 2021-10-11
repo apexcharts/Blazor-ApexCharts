@@ -49,26 +49,50 @@ namespace ApexCharts
 
             if (Chart.DataCategory == DataCategory.Point ||
                 Chart.DataCategory == DataCategory.NoAxis ||
-                MixedType == ApexCharts.MixedType.Scatter)
+                MixedType != null)
             {
                 return GetPointData();
             }
 
-            if (Chart.DataCategory == DataCategory.Box)
+            if (Chart.DataCategory == DataCategory.BoxPlot)
             {
-                return GetBoxData();
+                return GetBoxPlotData();
+            }
+
+            if (Chart.DataCategory == DataCategory.Candle)
+            {
+                return GetCandleData();
+            }
+
+            if (Chart.DataCategory == DataCategory.Range)
+            {
+                return GetRangeData();
             }
 
             return null;
         }
 
-        private IEnumerable<IDataPoint<TItem>> GetBoxData()
+        private IEnumerable<IDataPoint<TItem>> GetRangeData()
         {
             var xCompiled = XValue.Compile();
-            var result = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BoxPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue).OrderBy(o=>o).ToList(), Items = d.ToList() });
+            return Items.GroupBy(e => xCompiled.Invoke(e))
+                .Select(d => new BoxPoint<TItem>
+                {
+                    X = d.Key,
+                    Y = new List<decimal> { d.AsQueryable().Min(YValue), d.AsQueryable().Max(YValue) },
+                    Items = d
+                });
+        }
 
-            return result;
-        
+        private IEnumerable<IDataPoint<TItem>> GetBoxPlotData()
+        {
+            var xCompiled = XValue.Compile();
+            return Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BoxPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue).OrderBy(o => o), Items = d });
+        }
+        private IEnumerable<IDataPoint<TItem>> GetCandleData()
+        {
+            var xCompiled = XValue.Compile();
+            return Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BoxPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue), Items = d });
         }
 
         private IEnumerable<IDataPoint<TItem>> GetPointData()

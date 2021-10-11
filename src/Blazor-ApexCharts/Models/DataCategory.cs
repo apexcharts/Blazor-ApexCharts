@@ -4,7 +4,9 @@
     {
         NoAxis,
         Point,
-        Box,
-        MinMax
+        BoxPlot,
+        Candle,
+        MinMax,
+        Range
     }
 }

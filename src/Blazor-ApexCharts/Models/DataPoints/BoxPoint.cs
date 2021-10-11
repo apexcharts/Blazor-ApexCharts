@@ -10,7 +10,7 @@ namespace ApexCharts
     public class BoxPoint<TItem> : IDataPoint<TItem>
     {
         public object X { get; set; }
-        public List<decimal> Y { get; set; }
+        public IEnumerable<decimal> Y { get; set; }
       
         [JsonIgnore]
         public object YObject => Y;

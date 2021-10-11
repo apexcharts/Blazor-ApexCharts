@@ -12,9 +12,9 @@ namespace BlazorApexCharts.Docs
             var rnd = new Random();
             var orders = new List<Order>();
 
-            for (int i = 0; i < rnd.Next(5,20); i++)
+            for (int i = 0; i < rnd.Next(5, 20); i++)
             {
-                orders.Add(new Order { CustomerName = "Odio Corporation", Country = "Sweden", OrderDate = DateTimeOffset.Now.AddDays(-12), GrossValue = rnd.Next(2000,50000), DiscountPrecentage = rnd.Next(10, 50), OrderType = (OrderType)rnd.Next(0,4) });
+                orders.Add(new Order { CustomerName = "Odio Corporation", Country = "Sweden", OrderDate = DateTimeOffset.Now.AddDays(-12), GrossValue = rnd.Next(2000, 50000), DiscountPrecentage = rnd.Next(10, 50), OrderType = (OrderType)rnd.Next(0, 4) });
             }
 
             return orders;
@@ -55,7 +55,7 @@ namespace BlazorApexCharts.Docs
             return orders;
         }
 
-        public static List<SupportIncident> GetSupportIncidents(int severityMin = 0, int severityMax=100)
+        public static List<SupportIncident> GetSupportIncidents(int severityMin = 0, int severityMax = 100)
         {
             var fakeIncidents = new Faker<SupportIncident>()
             .RuleFor(o => o.Severity, f => f.Random.Number(severityMin, severityMax))
@@ -66,5 +66,21 @@ namespace BlazorApexCharts.Docs
             return test;
 
         }
+
+        public static List<SupportIncident> GetSupportIncidentsForRange()
+        {
+            return new List<SupportIncident>
+           {
+               new SupportIncident { Source = IncidentSource.Customer, Severity = 20},
+               new SupportIncident { Source = IncidentSource.Customer, Severity = 35},
+               new SupportIncident { Source = IncidentSource.Integration, Severity = 5},
+               new SupportIncident { Source = IncidentSource.Integration, Severity = 70},
+               new SupportIncident { Source = IncidentSource.Internal, Severity = 55},
+               new SupportIncident { Source = IncidentSource.Internal, Severity = 83},
+               new SupportIncident { Source = IncidentSource.ThridParty, Severity = 12},
+               new SupportIncident { Source = IncidentSource.ThridParty, Severity = 24},
+           };
+        }
+
     }
 }
