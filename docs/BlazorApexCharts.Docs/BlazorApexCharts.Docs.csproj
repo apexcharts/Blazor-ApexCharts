@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="33.1.1" />
     <PackageReference Include="ColorCode.HTML" Version="2.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.9" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />

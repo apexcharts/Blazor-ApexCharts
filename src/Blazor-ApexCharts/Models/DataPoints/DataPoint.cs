@@ -14,7 +14,7 @@ namespace ApexCharts
         public object YObject => Y;
 
         [JsonIgnore]
-        public IList<TItem> Items { get; set; }
+        public IEnumerable<TItem> Items { get; set; }
 
     }
 

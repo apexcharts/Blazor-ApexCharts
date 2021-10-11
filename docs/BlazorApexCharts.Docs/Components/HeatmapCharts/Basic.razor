@@ -1,20 +1,31 @@
 ﻿<ChartContainer>
-    <ApexChart TItem="Order"
-               Title="Order Net Value"
+    <ApexChart TItem="SupportIncident"
+               Title="Incident Severity"
                ChartType="@ChartType.Heatmap"
-    Debug>
+               Options="options"
+               Debug>
 
-        <ApexSeries TItem="Order"
-                    Items="Orders"
-                    Name="Gross Value"
-                    XValue="@(e => e.OrderDate.Year)"
-                    YValue = "@(e => e.DiscountPrecentage)"
-                     />
+        @foreach (var source in incidents.GroupBy(e => e.Source))
+        {
+            <ApexSeries TItem="SupportIncident"
+                    Items="source.OrderBy(e=>e.WeekNumber)"
+                    Name="@source.Key.ToString()"
+                    XValue="@(e => e.WeekName)"
+                    YAggregate="@(e => (int)e.Average(a=>a.Severity))" />
+        }
 
-    
     </ApexChart>
 </ChartContainer>
 
 @code {
-    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents();
+    private ApexChartOptions<SupportIncident> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<SupportIncident>
+            {
+                Colors = new List<string> { "#008FFB" }
+            };
+    }
     }

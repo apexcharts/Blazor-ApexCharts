@@ -24,7 +24,7 @@
 
 @if (selectedData != null)
 {
-    <Table Items=selectedData.DataPoint.Items>
+    <Table Items=selectedData.DataPoint.Items.ToList()>
         <HeaderTemplate>
             <strong> Series:@selectedData.Series.Name X:@selectedData.DataPoint.X</strong>
         </HeaderTemplate>

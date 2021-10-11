@@ -1,20 +1,17 @@
 ﻿<ChartContainer>
-    <ApexChart TItem="Order"
-               Title="Order Net Value"
-               ChartType="@ChartType.Candlestick"
-    Debug>
+    <ApexChart TItem="SupportIncident"
+               ChartType="@ChartType.Candlestick">
 
-        <ApexSeries TItem="Order"
-                    Items="Orders"
-                    Name="Gross Value"
-                    XValue="@(e => e.OrderDate.Year)"
-                    YValue = "@(e => e.DiscountPrecentage)"
-                     />
+        <ApexSeries TItem="SupportIncident"
+                    Items="incidents.OrderBy(e=>e.WeekNumber)"
+                    Name="incidents"
+                    XValue="@(e => e.WeekName)"
+                    YValue="@(e => e.Severity)" />
 
-    
+
     </ApexChart>
 </ChartContainer>
 
 @code {
-    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(40,50);
     }

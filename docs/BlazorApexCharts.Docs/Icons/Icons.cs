@@ -33,6 +33,8 @@ namespace BlazorApexCharts.Docs
         public static string Chart_radar { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><path d='M12 3l9.5 7l-3.5 11h-12l-3.5 -11z' /><path d='M12 7.5l5.5 4l-2.5 5.5h-6.5l-2 -5.5z' /><path d='M2.5 10l9.5 3l9.5 -3' /><path d='M12 3v10l6 8' /><path d='M6 21l6 -8' />"; }
         public static string Bolt { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><polyline points='13 3 13 10 19 10 11 21 11 14 5 14 13 3' />"; }
         public static string Color_swatch { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><path d='M19 3h-4a2 2 0 0 0 -2 2v12a4 4 0 0 0 8 0v-12a2 2 0 0 0 -2 -2' /><path d='M13 7.35l-2 -2a2 2 0 0 0 -2.828 0l-2.828 2.828a2 2 0 0 0 0 2.828l9 9' /><path d='M7.3 13h-2.3a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h12' /><line x1='17' y1='17' x2='17' y2='17.01' />"; }
+        public static string Chart_candle { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><rect x='4' y='6' width='4' height='5' rx='1' /><line x1='6' y1='4' x2='6' y2='6' /><line x1='6' y1='11' x2='6' y2='20' /><rect x='10' y='14' width='4' height='5' rx='1' /><line x1='12' y1='4' x2='12' y2='14' /><line x1='12' y1='19' x2='12' y2='20' /><rect x='16' y='5' width='4' height='6' rx='1' /><line x1='18' y1='4' x2='18' y2='5' /><line x1='18' y1='11' x2='18' y2='20' />"; }
+        public static string Grid_dots { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><circle cx='5' cy='5' r='1' /><circle cx='12' cy='5' r='1' /><circle cx='19' cy='5' r='1' /><circle cx='5' cy='12' r='1' /><circle cx='12' cy='12' r='1' /><circle cx='19' cy='12' r='1' /><circle cx='5' cy='19' r='1' /><circle cx='12' cy='19' r='1' /><circle cx='19' cy='19' r='1' />"; }
 
     }
 }

@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlazorApexCharts.Docs.Data
+namespace BlazorApexCharts.Docs
 {
     public class SupportIncident
     {
-        public string WeekNumber { get; set; }
+        public string WeekName => $"W{WeekNumber}";
+        public int WeekNumber { get; set; }
         public int Severity { get; set; }
         public IncidentSource Source { get; set; }
 

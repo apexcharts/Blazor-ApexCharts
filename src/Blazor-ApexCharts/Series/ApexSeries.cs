@@ -65,7 +65,10 @@ namespace ApexCharts
         private IEnumerable<IDataPoint<TItem>> GetBoxData()
         {
             var xCompiled = XValue.Compile();
-            return Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BoxPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue).ToList(), Items = d.ToList() });
+            var result = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BoxPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue).OrderBy(o=>o).ToList(), Items = d.ToList() });
+
+            return result;
+        
         }
 
         private IEnumerable<IDataPoint<TItem>> GetPointData()
