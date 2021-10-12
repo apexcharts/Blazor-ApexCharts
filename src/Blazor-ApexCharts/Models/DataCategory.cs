@@ -6,7 +6,7 @@
         Point,
         BoxPlot,
         Candle,
-        MinMax,
+        XYZ,
         Range
     }
 }

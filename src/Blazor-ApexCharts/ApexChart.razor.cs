@@ -95,7 +95,8 @@ namespace ApexCharts
                         return DataCategory.Range;
                     case ChartType.BoxPlot:
                         return DataCategory.BoxPlot;
-
+                    case ChartType.Bubble:
+                        return DataCategory.XYZ;
                     case ChartType.Pie:
                     case ChartType.Donut:
                     case ChartType.RadialBar:

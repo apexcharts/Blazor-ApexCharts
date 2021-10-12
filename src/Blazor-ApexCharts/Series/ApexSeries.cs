@@ -18,6 +18,7 @@ namespace ApexCharts
         [Parameter] public Expression<Func<TItem, object>> XValue { get; set; }
         [Parameter] public Expression<Func<TItem, decimal>> YValue { get; set; }
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> YAggregate { get; set; }
+        [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> ZAggregate { get; set; }
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderBy { get; set; }
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderByDescending { get; set; }
         [Parameter] public bool ShowDataLabels { get; set; }
@@ -69,6 +70,11 @@ namespace ApexCharts
                 return GetRangeData();
             }
 
+            if (Chart.DataCategory == DataCategory.XYZ)
+            {
+                return GetRangeData();
+            }
+
             return null;
         }
 
@@ -93,6 +99,35 @@ namespace ApexCharts
         {
             var xCompiled = XValue.Compile();
             return Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BoxPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue), Items = d });
+        }
+
+        private IEnumerable<IDataPoint<TItem>> GetXYZData()
+        {
+            //var xCompiled = XValue.Compile();
+            //IEnumerable<BoxPoint<TItem>> datalist;
+            //if (YAggregate == null)
+            //{
+            //    var yCompiled = YValue.Compile();
+            //    datalist = Items.Select(e => new BoxPoint<TItem> { X = xCompiled.Invoke(e), Y = yCompiled.Invoke(e), Items = new List<TItem> { e } });
+            //}
+            //else
+            //{
+            //    var yAggCompiled = YAggregate.Compile();
+            //    datalist = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BoxPoint<TItem> { X = d.Key, Y = yAggCompiled.Invoke(d), Items = d.ToList() });
+            //}
+
+            //if (OrderBy != null)
+            //{
+            //    datalist = datalist.OrderBy(o => OrderBy.Compile().Invoke(o));
+            //}
+            //else if (OrderByDescending != null)
+            //{
+            //    datalist = datalist.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
+            //}
+
+            //return datalist;
+
+            return null;
         }
 
         private IEnumerable<IDataPoint<TItem>> GetPointData()
