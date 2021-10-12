@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace ApexCharts
 {
-    public class BubblePoint<TItem> : IDataPoint<TItem>
+    public class XYZPoint<TItem> : IDataPoint<TItem>
     {
         public object X { get; set; }
         public decimal Y{ get; set; }
