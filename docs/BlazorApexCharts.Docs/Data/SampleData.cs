@@ -82,5 +82,25 @@ namespace BlazorApexCharts.Docs
            };
         }
 
+        public static List<StockPrice> GetStockPrices()
+        {
+            return new List<StockPrice>
+            {
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-10), Open = 10.1m, High = 13.4m, Low = 9.5m, Close = 12.6m, Volume = 13021 },
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-9), Open = 12.6m, High = 13.1m, Low = 11.3m, Close = 13.2m, Volume = 8562 },
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-8), Open = 13.2m, High = 13.9m, Low = 11.1m, Close = 11.8m, Volume = 5932 },
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-7), Open = 11.8m, High = 12.4m, Low = 9.5m, Close = 12.6m, Volume = 13021 },
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-6), Open = 12.6m, High = 13.1m, Low = 12.3m, Close = 13.2m, Volume = 8562 },
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-5), Open = 13.2m, High = 12.9m, Low = 10.1m, Close = 11.8m, Volume = 5932 },
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-4), Open = 10.1m, High = 13.4m, Low = 9.5m, Close = 12.6m, Volume = 13021 },
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-3), Open = 12.6m, High = 13.1m, Low = 11.3m, Close = 13.2m, Volume = 8562 },
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-2), Open = 13.2m, High = 13.9m, Low = 11.1m, Close = 11.8m, Volume = 5932 },
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-1), Open = 11.8m, High = 12.4m, Low = 9.5m, Close = 12.6m, Volume = 13021 },
+                new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(0), Open = 12.6m, High = 13.1m, Low = 12.3m, Close = 13.2m, Volume = 8562 },
+            };
+
+
+        }
+
     }
 }

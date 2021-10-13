@@ -30,7 +30,7 @@ namespace ApexCharts
                 chartType = value;
             }
         }
-        [Parameter] public XaxisType? XAxisType { get; set; }
+        [Parameter] public XAxisType? XAxisType { get; set; }
         [Parameter] public bool Debug { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
@@ -55,6 +55,16 @@ namespace ApexCharts
             {
                 await Render();
             }
+        }
+
+        internal void SetChartType(ChartType? chartType)
+        {
+            if (chartType != null)
+            {
+                if (Options.Chart == null) { Options.Chart = new Chart(); }
+                Options.Chart.Type = (ChartType)chartType;
+            }
+
         }
 
         protected override void OnParametersSet()

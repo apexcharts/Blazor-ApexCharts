@@ -1297,7 +1297,7 @@ namespace ApexCharts
         public string TickPlacement { get; set; }
         public AxisTitle Title { get; set; }
         public AxisTooltip Tooltip { get; set; }
-        public XaxisType? Type { get; set; }
+        public XAxisType? Type { get; set; }
     }
 
     public class AxisBorder
@@ -2778,7 +2778,7 @@ namespace ApexCharts
 
     public enum TickAmountEnum { DataPoints };
 
-    public enum XaxisType { Category, Datetime, Numeric };
+    public enum XAxisType { Category, Datetime, Numeric };
 
 
     public struct Download

@@ -1,17 +1,24 @@
 ﻿<ChartContainer>
-    <ApexChart TItem="SupportIncident"
-               ChartType="@ChartType.Candlestick">
+    <ApexChart TItem="StockPrice"
+               
+               XAxisType="XAxisType.Datetime"
+               ChartType="ChartType.Candlestick">
+        <ApexCandleSeries TItem="StockPrice"
+                          Items="stockPrices"
+                          
+                          Name="Apex Stock Price"
+                          XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
+                          Open="@(e => e.Open)"
+                          High="@(e => e.High)"
+                          Low="@(e => e.Low)"
+                          Close="@(e => e.Close)" />
 
-        <ApexSeries TItem="SupportIncident"
-                    Items="incidents.OrderBy(e=>e.WeekNumber)"
-                    Name="incidents"
-                    XValue="@(e => e.WeekName)"
-                    YValue="@(e => e.Severity)" />
+
 
 
     </ApexChart>
 </ChartContainer>
 
 @code {
-    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(40,50);
+    private List<StockPrice> stockPrices { get; set; } = SampleData.GetStockPrices();
     }
