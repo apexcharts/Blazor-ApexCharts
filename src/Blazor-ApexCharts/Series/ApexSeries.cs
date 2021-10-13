@@ -80,7 +80,7 @@ namespace ApexCharts
         {
             var xCompiled = XValue.Compile();
             return Items.GroupBy(e => xCompiled.Invoke(e))
-                .Select(d => new BoxPoint<TItem>
+                .Select(d => new ListPoint<TItem>
                 {
                     X = d.Key,
                     Y = new List<decimal> { d.AsQueryable().Min(YValue), d.AsQueryable().Max(YValue) },
@@ -91,22 +91,22 @@ namespace ApexCharts
         private IEnumerable<IDataPoint<TItem>> GetBoxPlotData()
         {
             var xCompiled = XValue.Compile();
-            return Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BoxPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue).OrderBy(o => o), Items = d });
+            return Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new ListPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue).OrderBy(o => o), Items = d });
         }
         private IEnumerable<IDataPoint<TItem>> GetCandleData()
         {
             var xCompiled = XValue.Compile();
-            return Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BoxPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue), Items = d });
+            return Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new ListPoint<TItem> { X = d.Key, Y = d.AsQueryable().Select(YValue), Items = d });
         }
 
         private IEnumerable<IDataPoint<TItem>> GetXYZData()
         {
             var xCompiled = XValue.Compile();
-            IEnumerable<XYZPoint<TItem>> datalist;
+            IEnumerable<BubblePoint<TItem>> datalist;
            
             var yAggCompiled = YAggregate.Compile();
             var zAggCompiled = ZAggregate.Compile();
-            datalist = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new XYZPoint<TItem>
+            datalist = Items.GroupBy(e => xCompiled.Invoke(e)).Select(d => new BubblePoint<TItem>
             {
                 X = d.Key,
                 Y =  yAggCompiled.Invoke(d),

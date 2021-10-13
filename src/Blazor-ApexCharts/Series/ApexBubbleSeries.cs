@@ -17,8 +17,8 @@ namespace ApexCharts
         [Parameter] public Expression<Func<TItem, decimal>> YValue { get; set; }
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> YAggregate { get; set; }
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> ZAggregate { get; set; }
-        [Parameter] public Expression<Func<XYZPoint<TItem>, object>> OrderBy { get; set; }
-        [Parameter] public Expression<Func<XYZPoint<TItem>, object>> OrderByDescending { get; set; }
+        [Parameter] public Expression<Func<BubblePoint<TItem>, object>> OrderBy { get; set; }
+        [Parameter] public Expression<Func<BubblePoint<TItem>, object>> OrderByDescending { get; set; }
         [Parameter] public bool ShowDataLabels { get; set; }
         [Parameter] public string Color { get; set; }
         [Parameter] public IEnumerable<TItem> Items { get; set; }

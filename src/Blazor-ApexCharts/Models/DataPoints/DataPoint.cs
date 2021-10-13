@@ -10,8 +10,6 @@ namespace ApexCharts
         public object X { get; set; }
         public decimal? Y { get; set; }
 
-        [JsonIgnore]
-        public object YObject => Y;
 
         [JsonIgnore]
         public IEnumerable<TItem> Items { get; set; }

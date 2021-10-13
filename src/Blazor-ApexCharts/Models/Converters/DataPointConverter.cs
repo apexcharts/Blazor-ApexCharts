@@ -15,10 +15,10 @@ namespace ApexCharts.Models
         {
             if (value is DataPoint<T> dataPoint)
                 JsonSerializer.Serialize(writer, dataPoint, typeof(DataPoint<T>), options);
-            else if (value is XYZPoint<T> bubblePoint)
-                JsonSerializer.Serialize(writer, bubblePoint, typeof(XYZPoint<T>), options);
-            else if (value is BoxPoint<T> boxPoint)
-                JsonSerializer.Serialize(writer, boxPoint, typeof(BoxPoint<T>), options);
+            else if (value is BubblePoint<T> bubblePoint)
+                JsonSerializer.Serialize(writer, bubblePoint, typeof(BubblePoint<T>), options);
+            else if (value is ListPoint<T> listPoint)
+                JsonSerializer.Serialize(writer, listPoint, typeof(ListPoint<T>), options);
 
             else
                 throw new ArgumentOutOfRangeException(nameof(value), $"Unknown implementation of the interface {nameof(IDataPoint<T>)} for the parameter {nameof(value)}. Unknown implementation: {value?.GetType().Name}");

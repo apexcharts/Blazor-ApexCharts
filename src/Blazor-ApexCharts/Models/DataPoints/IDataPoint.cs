@@ -6,7 +6,6 @@ namespace ApexCharts
     {
         IEnumerable<TItem> Items { get; set; }
         object X { get; set; }
-        object YObject { get;}
-       
+              
     }
 }
