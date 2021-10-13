@@ -16,20 +16,8 @@ namespace ApexCharts
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
 
-
-        [Parameter]
-        public ChartType ChartType
-        {
-            get => chartType;
-            set
-            {
-                if (chartType != value)
-                {
-                    forceRender = true;
-                }
-                chartType = value;
-            }
-        }
+        [Parameter] public ChartType ChartType { get; set; }
+        
         [Parameter] public XAxisType? XAxisType { get; set; }
         [Parameter] public bool Debug { get; set; }
         [Parameter] public object Width { get; set; }
@@ -41,7 +29,7 @@ namespace ApexCharts
 
         private bool isReady;
         private bool forceRender = true;
-        private ChartType chartType = ChartType.Bar;
+       
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

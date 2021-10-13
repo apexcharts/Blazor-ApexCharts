@@ -16,16 +16,19 @@ namespace ApexCharts
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            SetData();
+         
+        }
 
-            IEnumerable<ListPoint<TItem>> datalist = new List<ListPoint<TItem>>();
-
+        private void SetData()
+        {
             var xCompile = XValue.Compile();
             var openCompile = Open.Compile();
             var highCompile = High.Compile();
             var lowCompile = Low.Compile();
             var closeCompile = Close.Compile();
 
-            datalist = Items
+            series.Data = Items
                .Select(d => new ListPoint<TItem>
                {
                    X = xCompile.Invoke(d),
@@ -38,9 +41,6 @@ namespace ApexCharts
                    },
                    Items = Items
                });
-
-            series.Data = datalist;
         }
-
     }
 }
