@@ -6,12 +6,9 @@ using System.Linq.Expressions;
 
 namespace ApexCharts
 {
-    public class ApexCandleSeries<TItem> : ApexBaseSeries<TItem> where TItem : class
+    public class ApexRangeSeries<TItem> : ApexBaseSeries<TItem> where TItem : class
     {
-        [Parameter] public Expression<Func<TItem, decimal>> Open { get; set; }
-        [Parameter] public Expression<Func<TItem, decimal>> High { get; set; }
-        [Parameter] public Expression<Func<TItem, decimal>> Low { get; set; }
-        [Parameter] public Expression<Func<TItem, decimal>> Close { get; set; }
+        [Parameter] public Expression<Func<TItem, decimal>> YValue { get; set; }
         [Parameter] public Expression<Func<ListPoint<TItem>, object>> OrderBy { get; set; }
         [Parameter] public Expression<Func<ListPoint<TItem>, object>> OrderByDescending { get; set; }
 
@@ -24,19 +21,14 @@ namespace ApexCharts
 
         private void SetData()
         {
-           var data = Items
-          .Select(d => new ListPoint<TItem>
-          {
-              X = XValue.Compile().Invoke(d),
-              Y = new List<decimal>
-              {
-                         Open.Compile().Invoke(d),
-                         High.Compile().Invoke(d),
-                         Low.Compile().Invoke(d),
-                       Close.Compile().Invoke(d)
-              },
-              Items = Items
-          });
+            var data = Items
+                    .GroupBy(e => XValue.Compile().Invoke(e))
+                    .Select(d => new ListPoint<TItem>
+                    {
+                        X = d.Key,
+                        Y = new List<decimal> { d.AsQueryable().Min(YValue), d.AsQueryable().Max(YValue) },
+                        Items = d
+                    });
 
             if (OrderBy != null)
             {

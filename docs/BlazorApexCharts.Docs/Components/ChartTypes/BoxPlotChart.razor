@@ -1,0 +1,17 @@
+﻿    <ApexChart TItem="SupportIncident"
+               ChartType="@ChartType.BoxPlot"
+    Title="BoxPlot">
+
+        <ApexSeries TItem="SupportIncident"
+                    Items="incidents.OrderBy(e=>e.WeekNumber)"
+                    Name="incidents"
+                    XValue="@(e => e.WeekName)"
+                    YValue="@(e => e.Severity)" />
+
+
+    </ApexChart>
+
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(30,60);
+    }

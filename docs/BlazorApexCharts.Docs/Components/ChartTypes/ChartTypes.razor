@@ -3,7 +3,9 @@
 
 <Row class="row-deck row-cards">
     <RowCol Lg=3 Sm=6 Xs=12>
+         <ChartCard>
         <OrderChart ChartType=ChartType.Line />
+    </ChartCard>
     </RowCol>
 
     <RowCol Lg=3 Sm=6 Xs=12>
@@ -40,6 +42,12 @@
         <GaugeChart />
     </RowCol>
 
+     <RowCol Lg=3 Sm=6 Xs=12>
+         <ChartCard>
+        <HeatMapChart />
+        </ChartCard>
+    </RowCol>
+
     <RowCol Lg=3 Sm=6 Xs=12>
         <ChartCard>
             <OrderChart ChartType=ChartType.RadialBar />
@@ -67,23 +75,35 @@
 
 
 
+     <RowCol Lg=6 Sm=12>
+        <ChartCard>
+            <BoxPlotChart />
+        </ChartCard>
+    </RowCol>
 
+      <RowCol Lg=6 Sm=12>
+        <ChartCard>
+           <CandlestickChart />
+        </ChartCard>
+    </RowCol>
 
+     <RowCol Lg=6 Sm=12>
+        <ChartCard>
+            <RangeBarChart />
+        </ChartCard>
+    </RowCol>
+
+     <RowCol Lg=6 Sm=12>
+        <ChartCard>
+            <OrderChart ChartType=ChartType.Radar />
+        </ChartCard>
+    </RowCol>
 
     <RowCol Lg=6 Sm=12>
         <ChartCard>
             <OrderChart ChartType=ChartType.Histogram />
         </ChartCard>
     </RowCol>
-    <RowCol Lg=6 Sm=12>
-        <ChartCard>
-            <OrderChart ChartType=ChartType.Radar />
-        </ChartCard>
-    </RowCol>
+   
 
 </Row>
-
-
-@code {
-    private List<Order> orders { get; set; } = SampleData.GetOrders();
-}

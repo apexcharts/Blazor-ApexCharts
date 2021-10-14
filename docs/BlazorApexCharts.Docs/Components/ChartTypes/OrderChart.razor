@@ -1,5 +1,4 @@
-﻿<Card Size="CardSize.Small">
-    <CardBody>
+﻿
         <ApexChart TItem="Order"
                    Title="@ChartType.ToString()"
                    ChartType="@ChartType"
@@ -59,5 +58,4 @@
                         YAggregate="@(e => e.Sum(e => e.NetValue))" />
             }
         </ApexChart>
-    </CardBody>
-</Card>
+

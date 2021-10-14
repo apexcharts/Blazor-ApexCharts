@@ -1,0 +1,21 @@
+﻿
+<ApexChart TItem="StockPrice"
+           Title="Candlestick"
+           XAxisType="XAxisType.Datetime"
+           ChartType="ChartType.Candlestick">
+    <ApexCandleSeries TItem="StockPrice"
+                      Items="stockPrices"
+                      Name="Apex Stock Price"
+                      XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
+                      Open="@(e => e.Open)"
+                      High="@(e => e.High)"
+                      Low="@(e => e.Low)"
+                      Close="@(e => e.Close)" />
+
+</ApexChart>
+
+
+@code {
+    private List<StockPrice> stockPrices { get; set; } = SampleData.GetStockPrices();
+
+    }

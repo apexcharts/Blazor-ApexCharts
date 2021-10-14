@@ -7,16 +7,13 @@
                           Items="stockPrices"
                           
                           Name="Apex Stock Price"
-                          XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
+                          XValue="@(e => e.Date.DayOnly().ToUnixTimeMilliseconds())"
                           Open="@(e => e.Open)"
                           High="@(e => e.High)"
                           Low="@(e => e.Low)"
-                          Close="@(e => e.Close)" />
-
-
-
-
-    </ApexChart>
+                          Close="@(e => e.Close)" 
+                          OrderByDescending="e=> e.X" />
+ </ApexChart>
 </ChartContainer>
 
 @code {
