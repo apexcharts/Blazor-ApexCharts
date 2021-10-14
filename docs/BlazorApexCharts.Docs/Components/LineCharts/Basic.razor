@@ -3,14 +3,14 @@
                Title="Order Net Value"
                ChartType="@ChartType.Line">
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="Orders"
                     Name="Gross Value"
                     XValue="@(e => e.Country)"
                     YAggregate="@(e => e.Sum(e => e.GrossValue))"
                     OrderByDescending="e=>e.Y" />
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="Orders"
                     Name="Net Value"
                     XValue="@(e => e.Country)"

@@ -5,14 +5,14 @@
                OnDataPointSelection=DataPointsSelected
                Debug>
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="Orders"
                     Name="Gross Value"
                     XValue="@(e => e.Country)"
                     YAggregate="@(e => e.Sum(e => e.GrossValue))"
                     OrderByDescending="e=>e.X" />
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="Orders"
                     Name="Net Value"
                     XValue="@(e => e.Country)"

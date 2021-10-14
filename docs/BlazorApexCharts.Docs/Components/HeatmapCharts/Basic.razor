@@ -7,7 +7,7 @@
 
         @foreach (var source in incidents.GroupBy(e => e.Source))
         {
-            <ApexSeries TItem="SupportIncident"
+            <ApexPointSeries TItem="SupportIncident"
                     Items="source.OrderBy(e=>e.WeekNumber)"
                     Name="@source.Key.ToString()"
                     XValue="@(e => e.WeekName)"

@@ -2,7 +2,7 @@
                ChartType="@ChartType.BoxPlot"
     Title="BoxPlot">
 
-        <ApexSeries TItem="SupportIncident"
+        <ApexBoxPlotSeries TItem="SupportIncident"
                     Items="incidents.OrderBy(e=>e.WeekNumber)"
                     Name="incidents"
                     XValue="@(e => e.WeekName)"

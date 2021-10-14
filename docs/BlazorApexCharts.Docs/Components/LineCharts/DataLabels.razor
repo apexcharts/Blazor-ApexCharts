@@ -5,7 +5,7 @@
                Options="@options">
                
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="Orders"
                     Name="Gross Value"
                     XValue="@(e => e.Country)"
@@ -13,7 +13,7 @@
                     OrderByDescending="e=>e.Y"
                     ShowDataLabels />
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="Orders"
                     Name="Net Value"
                     XValue="@(e => e.Country)"

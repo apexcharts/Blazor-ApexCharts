@@ -3,14 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace ApexCharts
 {
     /// <summary>
     /// Adds a data series to the enclosing <see cref="Chart"/> component.
     /// </summary>
-    public class ApexSeries<TItem> : ComponentBase, IDisposable where TItem : class
+    public class ApexSeries_Old<TItem> : ComponentBase, IDisposable where TItem : class
     {
         [CascadingParameter(Name = "Chart")] public ApexChart<TItem> Chart { get; set; }
         [Parameter] public string Name { get; set; }

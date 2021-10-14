@@ -3,14 +3,14 @@
            Title="Scatter Sample"
            ChartType="@ChartType.Area">
 
-    <ApexSeries TItem="Order"
+    <ApexPointSeries TItem="Order"
                 Items="orders"
                 Name="Gross Value"
                 XValue="@(e => e.Country)"
                 YAggregate="@(e => e.Sum(e => e.GrossValue))"
                 OrderByDescending="e=>e.Y" />
 
-    <ApexSeries TItem="Order"
+    <ApexPointSeries TItem="Order"
                 Items="orders"
                 Name="Net Value"
                 XValue="@(e => e.Country)"

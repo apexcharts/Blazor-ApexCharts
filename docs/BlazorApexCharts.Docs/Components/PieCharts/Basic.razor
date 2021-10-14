@@ -3,7 +3,7 @@
                Title="Order Gross Value"
                ChartType="@ChartType.Pie">
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="Orders"
                     Name="Gross Value"
                     XValue="@(e => e.Country)"

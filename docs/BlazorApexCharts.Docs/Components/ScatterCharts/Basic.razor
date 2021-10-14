@@ -3,14 +3,14 @@
                Title="Scatter Sample"
                ChartType="@ChartType.Scatter">
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="orders"
                     Name="% Gross"
                     XValue="@(e => e.DiscountPrecentage)"
                     YValue="@(e => e.GrossValue)"
                     OrderByDescending="e=>e.X" />
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="orders"
                     Name="% Net"
                     XValue="@(e => e.DiscountPrecentage)"

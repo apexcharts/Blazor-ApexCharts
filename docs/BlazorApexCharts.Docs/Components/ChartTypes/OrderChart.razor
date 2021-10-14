@@ -6,14 +6,14 @@
 
             @if (ChartType == ChartType.Scatter)
             {
-                <ApexSeries TItem="Order"
+                <ApexPointSeries TItem="Order"
                         Items="orders"
                         Name="Gross Value"
                         XValue="@(e => e.DiscountPrecentage)"
                         YValue="@(e => e.GrossValue)"
                         OrderByDescending="e=>e.X" />
 
-                <ApexSeries TItem="Order"
+                <ApexPointSeries TItem="Order"
                         Items="orders"
                         Name="Net Value"
                         XValue="@(e => e.DiscountPrecentage)"
@@ -23,7 +23,7 @@
 
              else if (ChartType == ChartType.RadialBar)
             {
-                <ApexSeries TItem="Order"
+                <ApexPointSeries TItem="Order"
                         Items="orders"
                         Name="Gross Value"
                         XValue="@(e => e.Country)"
@@ -35,14 +35,14 @@
 
             else if (IsXYChart())
             {
-                <ApexSeries TItem="Order"
+                <ApexPointSeries TItem="Order"
                         Items="orders"
                         Name="Gross Value"
                         XValue="@(e => e.Country)"
                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
                         OrderByDescending="e=>e.Y" />
 
-                <ApexSeries TItem="Order"
+                <ApexPointSeries TItem="Order"
                         Items="orders"
                         Name="Net Value"
                         XValue="@(e => e.Country)"
@@ -51,7 +51,7 @@
             }
             else
             {
-                <ApexSeries TItem="Order"
+                <ApexPointSeries TItem="Order"
                         Items="orders"
                         Name="Order Value"
                         XValue="@(e => e.OrderType)"
