@@ -1,7 +1,7 @@
 ﻿
     <ApexChart TItem="SupportIncident"
                Title="HeatMap"
-               ChartType="@ChartType.Heatmap"
+               
                Options="options"
                Debug>
 
@@ -10,6 +10,7 @@
             <ApexPointSeries TItem="SupportIncident"
                     Items="source.OrderBy(e=>e.WeekNumber)"
                     Name="@source.Key.ToString()"
+                    SeriesType="PointType.Heatmap"
                     XValue="@(e => e.WeekName)"
                     YAggregate="@(e => (int)e.Average(a=>a.Severity))" />
         }

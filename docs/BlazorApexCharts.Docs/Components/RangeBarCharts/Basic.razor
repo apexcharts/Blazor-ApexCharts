@@ -1,15 +1,14 @@
 ﻿<ChartContainer>
     <ApexChart TItem="SupportIncident"
                Title="Incident Severity"
-               ChartType="@ChartType.RangeBar"
                Options=options>
 
-    
-            <ApexRangeSeries TItem="SupportIncident"
-                    Items="incidents"
-                    XValue="@(e => e.Source.ToString())"
-                    YValue="@(e =>e.Severity)" />
-      
+
+        <ApexRangeSeries TItem="SupportIncident"
+                         Items="incidents"
+                         XValue="@(e => e.Source.ToString())"
+                         YValue="@(e =>e.Severity)" />
+
 
     </ApexChart>
 </ChartContainer>
@@ -22,7 +21,7 @@
     {
         options = new ApexChartOptions<SupportIncident>
             {
-                 PlotOptions = new PlotOptions
+                PlotOptions = new PlotOptions
                 {
                     Bar = new PlotOptionsBar
                     {

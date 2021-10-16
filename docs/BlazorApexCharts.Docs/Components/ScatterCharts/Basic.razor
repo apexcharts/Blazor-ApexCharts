@@ -1,21 +1,22 @@
 ﻿<ChartContainer>
     <ApexChart TItem="Order"
-               Title="Scatter Sample"
-               ChartType="@ChartType.Scatter">
+               Title="Scatter Sample">
 
         <ApexPointSeries TItem="Order"
-                    Items="orders"
-                    Name="% Gross"
-                    XValue="@(e => e.DiscountPrecentage)"
-                    YValue="@(e => e.GrossValue)"
-                    OrderByDescending="e=>e.X" />
+                         Items="orders"
+                         Name="% Gross"
+                         SeriesType="PointType.Scatter"
+                         XValue="@(e => e.DiscountPrecentage)"
+                         YValue="@(e => e.GrossValue)"
+                         OrderByDescending="e=>e.X" />
 
         <ApexPointSeries TItem="Order"
-                    Items="orders"
-                    Name="% Net"
-                    XValue="@(e => e.DiscountPrecentage)"
-                    YValue="@(e => e.NetValue)"
-                    OrderByDescending="e=>e.X" />
+                         Items="orders"
+                         SeriesType="PointType.Scatter"
+                         Name="% Net"
+                         XValue="@(e => e.DiscountPrecentage)"
+                         YValue="@(e => e.NetValue)"
+                         OrderByDescending="e=>e.X" />
     </ApexChart>
 </ChartContainer>
 

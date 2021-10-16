@@ -17,16 +17,16 @@
 <ChartContainer>
     <ApexChart TItem="Order"
                Title="Order Gross Value"
-               ChartType="@ChartType.Pie"
                Options=options
                @ref=chart>
 
         <ApexPointSeries TItem="Order"
-                    Items="Orders"
-                    Name="Gross Value"
-                    XValue="@(e => e.Country)"
-                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                    OrderByDescending="e=>e.Y" />
+                         Items="Orders"
+                         SeriesType="PointType.Pie"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
     </ApexChart>
 </ChartContainer>
 

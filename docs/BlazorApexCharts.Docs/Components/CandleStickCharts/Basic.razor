@@ -1,19 +1,17 @@
 ﻿<ChartContainer>
     <ApexChart TItem="StockPrice"
-               
-               XAxisType="XAxisType.Datetime"
-               ChartType="ChartType.Candlestick">
+               XAxisType="XAxisType.Datetime">
+
         <ApexCandleSeries TItem="StockPrice"
                           Items="stockPrices"
-                          
                           Name="Apex Stock Price"
                           XValue="@(e => e.Date.DayOnly().ToUnixTimeMilliseconds())"
                           Open="@(e => e.Open)"
                           High="@(e => e.High)"
                           Low="@(e => e.Low)"
-                          Close="@(e => e.Close)" 
+                          Close="@(e => e.Close)"
                           OrderByDescending="e=> e.X" />
- </ApexChart>
+    </ApexChart>
 </ChartContainer>
 
 @code {

@@ -18,7 +18,7 @@ namespace ApexCharts
         {
             base.OnInitialized();
             SetData();
-
+            Chart.SetChartType(ChartType.Bubble);
         }
 
         private void SetData()
@@ -40,6 +40,8 @@ namespace ApexCharts
             {
                 data = data.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
             }
+
+            series.Data = data;
         }
     }
 }

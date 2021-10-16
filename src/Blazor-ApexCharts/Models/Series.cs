@@ -25,7 +25,7 @@ namespace ApexCharts
     {
         public IEnumerable<IDataPoint<TItem>> Data { get; set; }
         public string Name { get; set; }
-        public MixedType? Type { get; set; }
+        public ChartType? Type { get; set; }
 
         [JsonIgnore]
         public bool ShowDataLabels { get; set; }

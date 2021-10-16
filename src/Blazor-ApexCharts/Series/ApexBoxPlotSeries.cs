@@ -15,8 +15,9 @@ namespace ApexCharts
         {
             base.OnInitialized();
             SetData();
-
+            Chart.SetChartType(ChartType.BoxPlot);
         }
+   
 
         private void SetData()
         {

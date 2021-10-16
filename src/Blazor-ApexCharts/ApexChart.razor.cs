@@ -16,7 +16,7 @@ namespace ApexCharts
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
 
-        [Parameter] public ChartType ChartType { get; set; }
+        //[Parameter] public ChartType ChartType { get; set; }
         
         [Parameter] public XAxisType? XAxisType { get; set; }
         [Parameter] public bool Debug { get; set; }
@@ -26,6 +26,7 @@ namespace ApexCharts
 
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
         private ElementReference ChartContainer { get; set; }
+        private ChartType? chartType;
 
         private bool isReady;
         private bool forceRender = true;
@@ -49,6 +50,7 @@ namespace ApexCharts
         {
             if (chartType != null)
             {
+                this.chartType = chartType;
                 if (Options.Chart == null) { Options.Chart = new Chart(); }
                 Options.Chart.Type = (ChartType)chartType;
             }
@@ -60,7 +62,7 @@ namespace ApexCharts
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
             Options.Debug = Debug;
-            Options.Chart.Type = ChartType;
+           // Options.Chart.Type = chartType;
             Options.Chart.Width = Width;
             Options.Chart.Height = Height;
 
@@ -85,7 +87,7 @@ namespace ApexCharts
         {
             get
             {
-                switch (ChartType)
+                switch (chartType)
                 {
                     case ChartType.Candlestick:
                         return DataCategory.Candle;
@@ -176,9 +178,7 @@ namespace ApexCharts
             };
 
             if (Options.Series == null || !Options.Series.Any()) { return; }
-
             var noAxisSeries = Options.Series.First();
-
             var data = noAxisSeries.Data.Cast<DataPoint<TItem>>().ToList();
             Options.SeriesNonXAxis = data.Select(e => e.Y).Cast<object>().ToList();
             Options.Labels = data.Select(e => e.X?.ToString()).ToList();
