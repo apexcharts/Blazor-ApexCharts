@@ -14,9 +14,9 @@ namespace ApexCharts
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderByDescending { get; set; }
         [Parameter] public PointType SeriesType { get; set; }
 
-        protected override void OnInitialized()
+        protected override void OnParametersSet()
         {
-            base.OnInitialized();
+            base.OnParametersSet();
             SetData();
 
             var chartType = GetChartType();
@@ -24,6 +24,12 @@ namespace ApexCharts
 
 
             SetMixedChartType();
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
         }
 
         private void SetMixedChartType()

@@ -1,21 +1,20 @@
 ﻿
-    <ApexChart TItem="SupportIncident"
-               Title="HeatMap"
-               
-               Options="options"
-               Debug>
+<ApexChart TItem="SupportIncident"
+           Title="HeatMap"
+           Options="options"
+           Debug>
 
-        @foreach (var source in incidents.GroupBy(e => e.Source))
-        {
-            <ApexPointSeries TItem="SupportIncident"
-                    Items="source.OrderBy(e=>e.WeekNumber)"
-                    Name="@source.Key.ToString()"
-                    SeriesType="PointType.Heatmap"
-                    XValue="@(e => e.WeekName)"
-                    YAggregate="@(e => (int)e.Average(a=>a.Severity))" />
-        }
+    @foreach (var source in incidents.GroupBy(e => e.Source))
+    {
+        <ApexPointSeries TItem="SupportIncident"
+                     Items="source.OrderBy(e=>e.WeekNumber)"
+                     Name="@source.Key.ToString()"
+                     SeriesType="PointType.Heatmap"
+                     XValue="@(e => e.WeekName)"
+                     YAggregate="@(e => (int)e.Average(a=>a.Severity))" />
+    }
 
-    </ApexChart>
+</ApexChart>
 
 
 @code {
@@ -26,8 +25,7 @@
     {
         options = new ApexChartOptions<SupportIncident>
             {
-                //Colors = new List<string> { "#008FFB" },
-                Chart = new Chart{ Sparkline = new ChartSparkline { Enabled = true}}
+                Chart = new Chart { Sparkline = new ChartSparkline { Enabled = true } }
             };
     }
     }
