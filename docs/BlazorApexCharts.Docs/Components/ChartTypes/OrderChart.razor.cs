@@ -6,9 +6,7 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
 {
     public partial class OrderChart
     {
-        //[Parameter] public List<Order> Orders { get; set; }
         [Parameter] public PointType PointType { get; set; }
-
 
         private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
         private List<Order> orders { get; set; } = SampleData.GetOrders();
@@ -30,7 +28,7 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
             {
                 Sparkline = new ChartSparkline
                 {
-                    Enabled = PointType != PointType.Histogram //; //&& ChartType //!= ChartType.Radar
+                    Enabled = PointType != PointType.Histogram 
                 }
             };
 

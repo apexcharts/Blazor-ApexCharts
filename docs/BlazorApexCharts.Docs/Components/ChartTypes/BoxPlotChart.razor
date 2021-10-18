@@ -1,17 +1,32 @@
-﻿    <ApexChart TItem="SupportIncident"
-               
-    Title="BoxPlot">
+﻿<ApexChart TItem="SupportIncident"
+           Options=options
+           Title="BoxPlot">
 
-        <ApexBoxPlotSeries TItem="SupportIncident"
-                    Items="incidents.OrderBy(e=>e.WeekNumber)"
-                    Name="incidents"
-                    XValue="@(e => e.WeekName)"
-                    YValue="@(e => e.Severity)" />
+    <ApexBoxPlotSeries TItem="SupportIncident"
+                       Items="incidents.OrderBy(e=>e.WeekNumber)"
+                       Name="incidents"
+                       XValue="@(e => e.WeekName)"
+                       YValue="@(e => e.Severity)" />
 
 
-    </ApexChart>
+</ApexChart>
 
 
 @code {
-    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(30,60);
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(30, 60);
+    private ApexChartOptions<SupportIncident> options = new ApexChartOptions<SupportIncident>();
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        options.Chart = new Chart
+            {
+                Sparkline = new ChartSparkline
+                {
+                    Enabled = true
+                }
+            };
+
     }
+        }
+ 
