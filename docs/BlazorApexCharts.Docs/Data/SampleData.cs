@@ -60,6 +60,7 @@ namespace BlazorApexCharts.Docs
             var fakeIncidents = new Faker<SupportIncident>()
             .RuleFor(o => o.Severity, f => f.Random.Number(severityMin, severityMax))
             .RuleFor(o => o.Source, f => f.PickRandom<IncidentSource>())
+             .RuleFor(o => o.LeadTime, f => f.Random.Number(1, 10))
             .RuleFor(o => o.WeekNumber, f => f.Random.Number(1, 20));
 
             var test = fakeIncidents.Generate(300);

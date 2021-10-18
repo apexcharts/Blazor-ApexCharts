@@ -1,43 +1,20 @@
 ﻿<ChartContainer>
-    <ApexChart TItem="Order"
-               Title="Order Net Value"
-               
-    Debug>
+    <ApexChart TItem="SupportIncident"
+               Title="Support Incidents">
 
-      <ApexBubbleSeries TItem="Order"
-                    Items="Orders"
-                    Name="Gross Value"
-                    XValue="@(e => e.Country)"
-                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                    ZAggregate="@(e => e.Average(e => e.DiscountPrecentage))"
+    @foreach (var data in incidents.GroupBy(e=> e.Source))
+   {
+         <ApexBubbleSeries TItem="SupportIncident"
+                    Items="data.ToList()"
+                    Name="@data.Key.ToString()"
+                    XValue="@(e => e.WeekNumber)"
+                    YAggregate="@(e => (decimal)e.Sum(e => e.LeadTime))"
+                    ZAggregate="@(e => (int)e.Average(e => e.Severity))"
                      />
-
-       <ApexBubbleSeries TItem="Order"
-                    Items="Orders"
-                    Name="Net  Value"
-                    XValue="@(e => e.Country)"
-                    YAggregate="@(e => e.Sum(e => e.NetValue))"
-                    ZAggregate="@(e => e.Average(e => e.DiscountPrecentage))"
-                     />
-
-      @*  <ApexSeries TItem="Order"
-                    Items="Orders"
-                    Name="Gross Value"
-                    XValue="@(e => e.Country)"
-                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                    ZAggregate="@(e => e.Average(e => e.DiscountPrecentage))"
-                    OrderByDescending="e=>e.Y" />
-
-       <ApexSeries TItem="Order"
-                    Items="Orders"
-                    Name="Net  Value"
-                    XValue="@(e => e.Country)"
-                    YAggregate="@(e => e.Sum(e => e.NetValue))"
-                    ZAggregate="@(e => e.Average(e => e.DiscountPrecentage))"
-                    OrderByDescending="e=>e.Y" />*@
+   }
     </ApexChart>
 </ChartContainer>
 
 @code {
-    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(); 
     }

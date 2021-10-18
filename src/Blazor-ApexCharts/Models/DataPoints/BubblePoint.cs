@@ -6,8 +6,11 @@ namespace ApexCharts
 {
     public class BubblePoint<TItem> : IDataPoint<TItem>
     {
+      
         public object X { get; set; }
+       
         public decimal Y{ get; set; }
+       
         public decimal Z { get; set; }
 
       

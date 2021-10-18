@@ -11,7 +11,7 @@ namespace ApexCharts
     {
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> YAggregate { get; set; }
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> ZAggregate { get; set; }
-        [Parameter] public Expression<Func<BubblePoint<TItem>, object>> OrderBy { get; set; }
+        [Parameter] public Expression<Func< BubblePoint<TItem>, object>> OrderBy { get; set; }
         [Parameter] public Expression<Func<BubblePoint<TItem>, object>> OrderByDescending { get; set; }
 
         protected override void OnInitialized()
@@ -23,14 +23,22 @@ namespace ApexCharts
 
         private void SetData()
         {
-         
+
             var data = Items.GroupBy(e => XValue.Compile().Invoke(e)).Select(d => new BubblePoint<TItem>
             {
                 X = d.Key,
                 Y = YAggregate.Compile().Invoke(d),
-                Z = ZAggregate.Compile().Invoke(d),
+                Z =  ZAggregate.Compile().Invoke(d),
                 Items = d.ToList()
             });
+
+            //var data = Items.GroupBy(e => XValue.Compile().Invoke(e)).Select(d => new ListPoint<TItem>
+            //{
+            //    X = d.Key,
+            //    Y = new List<decimal> {YAggregate.Compile().Invoke(d), ZAggregate.Compile().Invoke(d) },
+            //    Items = d.ToList()
+            //});
+
 
             if (OrderBy != null)
             {
