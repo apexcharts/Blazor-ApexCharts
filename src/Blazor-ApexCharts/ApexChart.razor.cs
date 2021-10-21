@@ -24,8 +24,7 @@ namespace ApexCharts
 
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
         private ElementReference ChartContainer { get; set; }
-        private ChartType? chartType;
-
+      
         private bool isReady;
         private bool forceRender = true;
 
@@ -44,23 +43,12 @@ namespace ApexCharts
             }
         }
 
-        internal void SetChartType(ChartType? chartType)
-        {
-            if (chartType != null)
-            {
-                this.chartType = chartType;
-                if (Options.Chart == null) { Options.Chart = new Chart(); }
-                Options.Chart.Type = (ChartType)chartType;
-            }
-
-        }
-
+      
         protected override void OnParametersSet()
         {
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
             Options.Debug = Debug;
-            // Options.Chart.Type = chartType;
             Options.Chart.Width = Width;
             Options.Chart.Height = Height;
 
@@ -81,31 +69,42 @@ namespace ApexCharts
             }
         }
 
-        internal DataCategory DataCategory
-        {
-            get
+        private bool IsNoAxisChart { 
+        get
             {
-                switch (chartType)
-                {
-                    case ChartType.Candlestick:
-                        return DataCategory.Candle;
-                    case ChartType.RangeBar:
-                        return DataCategory.Range;
-                    case ChartType.BoxPlot:
-                        return DataCategory.BoxPlot;
-                    case ChartType.Bubble:
-                        return DataCategory.XYZ;
-                    case ChartType.Pie:
-                    case ChartType.Donut:
-                    case ChartType.RadialBar:
-                    case ChartType.PolarArea:
-                        return DataCategory.NoAxis;
-
-                    default:
-                        return DataCategory.Point;
-                }
+                return Options?.Chart?.Type == ChartType.Pie ||
+               Options?.Chart?.Type == ChartType.Donut ||
+               Options?.Chart?.Type == ChartType.PolarArea ||
+               Options?.Chart?.Type == ChartType.RadialBar;
             }
         }
+      
+
+        //internal DataCategory DataCategory
+        //{
+        //    get
+        //    {
+        //        switch (chartType)
+        //        {
+        //            case ChartType.Candlestick:
+        //                return DataCategory.Candle;
+        //            case ChartType.RangeBar:
+        //                return DataCategory.Range;
+        //            case ChartType.BoxPlot:
+        //                return DataCategory.BoxPlot;
+        //            case ChartType.Bubble:
+        //                return DataCategory.XYZ;
+        //            case ChartType.Pie:
+        //            case ChartType.Donut:
+        //            case ChartType.RadialBar:
+        //            case ChartType.PolarArea:
+        //                return DataCategory.NoAxis;
+
+        //            default:
+        //                return DataCategory.Point;
+        //        }
+        //    }
+        //}
 
         private void SetStroke()
         {
@@ -168,7 +167,7 @@ namespace ApexCharts
 
         private void UpdateDataForNoAxisCharts()
         {
-            if (DataCategory != DataCategory.NoAxis)
+            if (!IsNoAxisChart)
             {
                 Options.SeriesNonXAxis = null;
                 Options.Labels = null;

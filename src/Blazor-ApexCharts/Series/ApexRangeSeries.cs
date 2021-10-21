@@ -16,7 +16,7 @@ namespace ApexCharts
         {
             base.OnInitialized();
             SetData();
-            Chart.SetChartType(ChartType.RangeBar);
+            SetChartType(ChartType.RangeBar);
         }
 
         private void SetData()

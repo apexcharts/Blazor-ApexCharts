@@ -4,8 +4,6 @@
     {
         Area,
         Bar,
-       // Bubble,
-       // Candlestick,
         Donut,
         Heatmap,
         Histogram,
@@ -14,9 +12,7 @@
         PolarArea,
         Radar,
         RadialBar,
-        //RangeBar,
         Scatter,
-        Treemap,
-        //BoxPlot,
+        Treemap
     }
 }

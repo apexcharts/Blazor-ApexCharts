@@ -338,7 +338,7 @@ namespace ApexCharts
         public bool? Stacked { get; set; }
         public StackType? StackType { get; set; }
         public Toolbar Toolbar { get; set; }
-        public ChartType Type { get; set; }
+        public ChartType? Type { get; set; }
         public object Width { get; set; }
         public object Height { get; set; }
         public Zoom Zoom { get; set; }

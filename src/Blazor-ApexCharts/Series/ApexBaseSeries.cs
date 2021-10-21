@@ -25,17 +25,78 @@ namespace ApexCharts
             series.Name = Name;
             series.ShowDataLabels = ShowDataLabels;
             series.Stroke = Stroke;
-            //series.Type = MixedType;
 
-                     
-          
         }
+
 
         protected override void OnInitialized()
         {
             if (Chart.Options.Series == null) { Chart.Options.Series = new List<Series<TItem>>(); }
             Chart.Options.Series.Add(series);
         }
+
+        internal void SetChartType(ChartType chartType)
+        {
+            if (Chart.Options.Chart == null) { Chart.Options.Chart = new Chart(); }
+
+            if (Chart.Options.Chart.Type == null)
+            {
+                Chart.Options.Chart.Type = chartType;
+            }
+            else if (Chart.Options.Chart.Type != chartType)
+            {
+                Chart.Options.Chart.Type = null;
+            }
+
+            SetMixedChartType(chartType);
+
+        }
+
+        private void SetMixedChartType(ChartType chartType)
+        {
+            //if (Chart.Options?.Chart?.Type == null || Chart.Options?.Chart?.Type == chartType)
+            //{
+            //    return;
+            //}
+
+            if (chartType == ChartType.Line)
+            {
+                series.Type = MixedType.Line;
+                return;
+            }
+
+            if (chartType == ChartType.Scatter)
+            {
+                series.Type = MixedType.Scatter;
+                return;
+            }
+
+            if (chartType == ChartType.Area)
+            {
+                series.Type = MixedType.Area;
+                return;
+            }
+
+            if (chartType == ChartType.Bubble)
+            {
+                series.Type = MixedType.Bubble;
+                return;
+            }
+
+            if (chartType == ChartType.Bar)
+            {
+                if (Chart?.Options?.PlotOptions?.Bar?.Horizontal == true)
+                {
+                    series.Type = MixedType.Bar;
+                }
+                else
+                {
+                    series.Type = MixedType.Column;
+                }
+            }
+
+        }
+
 
         void IDisposable.Dispose()
         {

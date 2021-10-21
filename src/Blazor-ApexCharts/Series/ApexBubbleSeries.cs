@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 
 namespace ApexCharts
 {
-
     public class ApexBubbleSeries<TItem> : ApexBaseSeries<TItem> where TItem : class
     {
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> YAggregate { get; set; }
@@ -18,7 +17,7 @@ namespace ApexCharts
         {
             base.OnInitialized();
             SetData();
-            Chart.SetChartType(ChartType.Bubble);
+            SetChartType(ChartType.Bubble);
         }
 
         private void SetData()
@@ -31,14 +30,6 @@ namespace ApexCharts
                 Z =  ZAggregate.Compile().Invoke(d),
                 Items = d.ToList()
             });
-
-            //var data = Items.GroupBy(e => XValue.Compile().Invoke(e)).Select(d => new ListPoint<TItem>
-            //{
-            //    X = d.Key,
-            //    Y = new List<decimal> {YAggregate.Compile().Invoke(d), ZAggregate.Compile().Invoke(d) },
-            //    Items = d.ToList()
-            //});
-
 
             if (OrderBy != null)
             {

@@ -20,28 +20,18 @@ namespace ApexCharts
             SetData();
 
             var chartType = GetChartType();
-            Chart.SetChartType(chartType);
-
-
-            SetMixedChartType();
+  
+            //SetMixedChartType(chartType);
+            SetChartType(chartType);
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-
+         
         }
 
-        private void SetMixedChartType()
-        {
-            //line/area/column/bar/scatter/bubble
-
-            if (SeriesType == PointType.Line || SeriesType == PointType.Area
-                || SeriesType == PointType.Bar || SeriesType == PointType.Scatter) //|| SeriesType == PointType.Bubbl
-            {
-                series.Type = GetChartType();
-            }
-        }
+     
 
         private ChartType GetChartType()
         {

@@ -9,7 +9,7 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
         [Parameter] public PointType PointType { get; set; }
 
         private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
-        private List<Order> orders { get; set; } = SampleData.GetOrders();
+        private List<Order> orders;
 
         private bool IsXYChart()
         {
@@ -23,6 +23,8 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
         protected override void OnInitialized()
         {
             base.OnInitialized();
+
+            orders =  SampleData.GetOrders();
 
             options.Chart = new Chart
             {

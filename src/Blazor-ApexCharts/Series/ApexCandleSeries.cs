@@ -19,7 +19,7 @@ namespace ApexCharts
         {
             base.OnInitialized();
             SetData();
-            Chart.SetChartType(ChartType.Candlestick);
+            SetChartType(ChartType.Candlestick);
         }
   
         private void SetData()
