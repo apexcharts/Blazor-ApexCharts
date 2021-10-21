@@ -1,28 +1,24 @@
-﻿<Card  Size="CardSize.Small">
+﻿<Card Size="CardSize.Small">
     <CardBody>
         <ApexChart TItem="Order"
                    Title="Mixed"
-                   
-                   Debug
                    Options=options>
 
+            <ApexPointSeries TItem="Order"
+                             Items="orders"
+                             Name="Gross Value"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                             OrderByDescending="e=>e.Y"
+                             SeriesType="PointType.Bar" />
 
             <ApexPointSeries TItem="Order"
-                        Items="orders"
-                        Name="Gross Value"
-                        XValue="@(e => e.Country)"
-                        YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                        OrderByDescending="e=>e.Y"
-                        SeriesType="PointType.Bar"
-                         />
-
-            <ApexPointSeries TItem="Order"
-                        Items="orders"
-                        Name="Net Value"
-                        XValue="@(e => e.Country)"
-                        YAggregate="@(e => e.Sum(e => e.NetValue))"
-                        OrderByDescending="e=>e.Y"
-                        SeriesType="PointType.Line" />
+                             Items="orders"
+                             Name="Net Value"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.NetValue))"
+                             OrderByDescending="e=>e.Y"
+                             SeriesType="PointType.Line" />
         </ApexChart>
 
     </CardBody>
