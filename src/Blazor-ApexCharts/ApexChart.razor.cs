@@ -1,8 +1,10 @@
 ﻿using ApexCharts.Models;
+using BlazorApexCharts.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -11,6 +13,7 @@ namespace ApexCharts
 {
     public partial class ApexChart<TItem> : IDisposable where TItem : class
     {
+        [Inject] private ChartService ChartService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
@@ -211,18 +214,28 @@ namespace ApexCharts
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
 
-            var serializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                IgnoreNullValues = true,
-            };
+            //var serializerOptions = new JsonSerializerOptions
+            //{
+            //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            //    IgnoreNullValues = true,
+            //};
 
-            serializerOptions.Converters.Add(new DataPointConverter<TItem>());
-            serializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
+            //serializerOptions.Converters.Add(new DataPointConverter<TItem>());
+            //serializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            Console.WriteLine("Start serialize");
+            var serializerOptions = ChartService.GetOptions<TItem>();
+            Console.WriteLine($"Options retrieved {stopWatch.ElapsedMilliseconds}");
+
             var jsonOptions = JsonSerializer.Serialize(Options, serializerOptions);
+            Console.WriteLine($"Serialization done {stopWatch.ElapsedMilliseconds}");
 
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
-            await OnDataPointSelection.InvokeAsync(null);
+             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
+            Console.WriteLine($"options sent to chart {stopWatch.ElapsedMilliseconds}");
+
+            //await OnDataPointSelection.InvokeAsync(null);
         }
 
 

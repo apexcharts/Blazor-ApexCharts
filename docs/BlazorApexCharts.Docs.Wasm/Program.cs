@@ -1,4 +1,5 @@
 using BlazorApexCharts.Docs.Services;
+using BlazorApexCharts.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,7 @@ namespace BlazorApexCharts.Docs.Wasm
  
             builder.Services.AddHttpClient("GitHub", client => client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("TabBlazor", "1")));
             builder.Services.AddScoped<ICodeSnippetService, GitHubSnippetService>();
+            builder.Services.AddSingleton<ChartService>();
             await builder.Build().RunAsync();
         }
     }

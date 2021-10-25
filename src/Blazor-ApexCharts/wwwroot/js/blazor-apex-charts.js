@@ -16,7 +16,7 @@
             console.log(options);
         }
 
-        console.log('-' + Date());
+       /* console.log('-' + Date());*/
 
         var options = JSON.parse(options, (key, value) =>
             (key === 'formatter' || key === 'custom') && value.length !== 0 ? eval("(" + value + ")") : value
