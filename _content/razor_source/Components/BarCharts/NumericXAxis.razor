@@ -1,0 +1,31 @@
+﻿<ChartContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               ChartType="@ChartType.Bar"
+               XAxisType=XaxisType.Numeric
+               Options=options>
+
+        <ApexSeries TItem="Order"
+                    Items="Orders"
+                    Name="Gross Value"
+                    XValue="@(e => e.DiscountPrecentage)"
+                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                    OrderByDescending="e=>e.Y" />
+
+
+    </ApexChart>
+</ChartContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        options = new ApexChartOptions<Order>
+            {
+                Xaxis = new XAxis { DecimalsInFloat = 1 }
+            };
+    }
+}

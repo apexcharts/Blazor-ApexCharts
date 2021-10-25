@@ -1,0 +1,20 @@
+﻿<ChartContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               ChartType="@ChartType.Line"
+    Debug>
+
+        <ApexSeries TItem="Order"
+                    Items="Orders"
+                    Name="Gross Value"
+                    XValue="@(e => e.OrderDate.FirstDayOfMonth())"
+                    YValue = "@(e => e.DiscountPrecentage)"
+                    OrderByDescending="e=>e.X" />
+
+    
+    </ApexChart>
+</ChartContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    }
