@@ -32,7 +32,7 @@
                                  Items="selectedData.DataPoint.Items"
                                  SeriesType="PointType.Pie"
                                  XValue="e=> e.OrderType"
-                                 YAggregate="e=> e.Sum(f=> f.GrossValue)" />
+                                 YAggregate="((ApexPointSeries<Order>)selectedData.Series.ApexSeries).YAggregate" />
                 </ApexChart>
             </div>
         </Tab>
@@ -51,11 +51,7 @@
             </Table>
         </Tab>
     </Tabs>
-
-
 }
-
-
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();

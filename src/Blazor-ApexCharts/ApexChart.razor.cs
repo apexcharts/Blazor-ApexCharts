@@ -106,7 +106,7 @@ namespace ApexCharts
         private void SetStroke()
         {
             if (Options?.Series == null) { return; }
-            if (Options.Series.All(e => (e.Stroke == null))) { return; }
+            if (apexSeries.All(e => (e.Stroke == null))) { return; }
 
             if (Options.Stroke == null) { Options.Stroke = new Stroke(); }
 
@@ -115,9 +115,9 @@ namespace ApexCharts
             var strokeDash = new List<int>();
             foreach (var series in Options.Series)
             {
-                strokeWidths.Add(series.Stroke?.Width ?? 4); // 
-                strokeColors.Add(series.Stroke?.Color ?? "#d3d3d3"); //Default is light gray
-                strokeDash.Add(series.Stroke?.DashSpace ?? 0);
+                strokeWidths.Add(series.ApexSeries.Stroke?.Width ?? 4); // 
+                strokeColors.Add(series.ApexSeries.Stroke?.Color ?? "#d3d3d3"); //Default is light gray
+                strokeDash.Add(series.ApexSeries.Stroke?.DashSpace ?? 0);
             }
 
             Options.Colors = strokeColors;
@@ -126,7 +126,7 @@ namespace ApexCharts
             Options.Stroke.DashArray = strokeDash;
         }
 
-        private void SetDatalabels()
+        private void SetDataLabels()
         {
             if (Options?.Series == null) { return; }
 
@@ -136,7 +136,7 @@ namespace ApexCharts
             foreach (var series in Options.Series)
             {
                 var index = Options.Series.FindIndex(e => e == series);
-                if (series.ShowDataLabels)
+                if (series.ApexSeries.ShowDataLabels)
                 {
                     if (!Options.DataLabels.EnabledOnSeries.Contains(index))
                     {
@@ -152,7 +152,7 @@ namespace ApexCharts
                 }
             }
 
-            if (Options.Series.Any(e => e.ShowDataLabels))
+            if (Options.Series.Select(e=>e.ApexSeries).Any(e => e.ShowDataLabels))
             {
                 Options.DataLabels.Enabled = true;
             }
@@ -205,7 +205,7 @@ namespace ApexCharts
             forceRender = false;
             SetSeries();
             SetStroke();
-            SetDatalabels();
+            SetDataLabels();
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
 
@@ -237,7 +237,8 @@ namespace ApexCharts
                 var series = new Series<TItem>
                 {
                     Data = apxSeries.GetData(),
-                    Name = apxSeries.Name
+                    Name = apxSeries.Name,
+                    ApexSeries = apxSeries
                 };
                 Options.Series.Add(series);
 

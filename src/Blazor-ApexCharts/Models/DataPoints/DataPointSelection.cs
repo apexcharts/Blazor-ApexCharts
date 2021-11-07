@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ApexCharts
 {
-    public class DataPointSelection<TItem>
+    public class DataPointSelection<TItem> where TItem : class
     {
         public List<object> SelectedDataPoints { get; set; }
         public int DataPointIndex { get; set; }
@@ -16,7 +16,7 @@ namespace ApexCharts
     }
 
 
-    public class SelectedData<TItem>
+    public class SelectedData<TItem> where TItem:class
     {
         public Series<TItem> Series { get; set; }
         public IDataPoint<TItem> DataPoint { get; set; }

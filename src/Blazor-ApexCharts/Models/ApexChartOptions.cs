@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 namespace ApexCharts
 {
-    public class ApexChartOptions<TItem>
+    public class ApexChartOptions<TItem> where TItem : class
     {
         public bool Debug { get; set; }
 
@@ -72,7 +72,7 @@ namespace ApexCharts
         /// Series for specifying chart-type-specific configuration.
         /// See https://apexcharts.com/docs/options/series/
         /// </summary>
-        public List<Series<TItem>> Series { get; set; }
+        public List<Series<TItem>> Series { get; set; } 
 
         public List<object> SeriesNonXAxis { get; internal set; }
         public ForecastDataPoints ForecastDataPoints { get; set; }
