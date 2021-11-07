@@ -6,7 +6,7 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
 {
     public partial class OrderChart
     {
-        [Parameter] public PointType PointType { get; set; }
+        [Parameter] public SeriesType PointType { get; set; }
 
         private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
         private List<Order> orders;
@@ -15,7 +15,7 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
         {
             return PointType switch
             {
-                PointType.Pie or PointType.Donut or PointType.Treemap or PointType.RadialBar or PointType.PolarArea => false,
+                SeriesType.Pie or SeriesType.Donut or SeriesType.Treemap or SeriesType.RadialBar or SeriesType.PolarArea => false,
                 _ => true,
             };
         }
@@ -30,7 +30,7 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
             {
                 Sparkline = new ChartSparkline
                 {
-                    Enabled = PointType != PointType.Histogram 
+                    Enabled = PointType != SeriesType.Histogram 
                 }
             };
 

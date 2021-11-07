@@ -3,7 +3,7 @@
            Title="@PointType.ToString()"
            Options=options>
 
-    @if (PointType == PointType.Scatter)
+    @if (PointType == SeriesType.Scatter)
     {
         <ApexPointSeries TItem="Order"
                      Items="orders"
@@ -22,7 +22,7 @@
                      OrderByDescending="e=>e.X" />
     }
 
-    else if (PointType == PointType.RadialBar)
+    else if (PointType == SeriesType.RadialBar)
     {
         <ApexPointSeries TItem="Order"
                      Items="orders"

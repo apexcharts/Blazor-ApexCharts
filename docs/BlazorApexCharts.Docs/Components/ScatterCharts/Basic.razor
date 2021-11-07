@@ -5,14 +5,14 @@
         <ApexPointSeries TItem="Order"
                          Items="orders"
                          Name="% Gross"
-                         SeriesType="PointType.Scatter"
+                         SeriesType="SeriesType.Scatter"
                          XValue="@(e => e.DiscountPrecentage)"
                          YValue="@(e => e.GrossValue)"
                          OrderByDescending="e=>e.X" />
 
         <ApexPointSeries TItem="Order"
                          Items="orders"
-                         SeriesType="PointType.Scatter"
+                         SeriesType="SeriesType.Scatter"
                          Name="% Net"
                          XValue="@(e => e.DiscountPrecentage)"
                          YValue="@(e => e.NetValue)"

@@ -89,7 +89,6 @@ namespace ApexCharts
             }
         }
 
-
         private bool IsNoAxisChart
         {
             get
@@ -100,8 +99,6 @@ namespace ApexCharts
                Options?.Chart?.Type == ChartType.RadialBar;
             }
         }
-
-
 
         private void SetStroke()
         {

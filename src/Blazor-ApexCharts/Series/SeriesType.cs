@@ -1,6 +1,6 @@
 ﻿namespace ApexCharts
 {
-    public enum PointType
+    public enum SeriesType
     {
         Area,
         Bar,

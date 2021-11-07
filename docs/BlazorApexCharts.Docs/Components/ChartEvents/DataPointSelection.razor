@@ -7,7 +7,7 @@
         <ApexPointSeries TItem="Order"
                          Items="Orders"
                          Name="Gross Value"
-                         SeriesType="PointType.Line"
+                         SeriesType="SeriesType.Line"
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
                          OrderByDescending="e=>e.X" />
@@ -15,7 +15,7 @@
         <ApexPointSeries TItem="Order"
                          Items="Orders"
                          Name="Net Value"
-                         SeriesType="PointType.Line"
+                         SeriesType="SeriesType.Line"
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.NetValue))"
                          OrderByDescending="e=>e.X" />
@@ -30,7 +30,7 @@
                 <ApexChart @ref=detailsChart TItem=Order>
                     <ApexPointSeries TItem="Order"
                                  Items="selectedData.DataPoint.Items"
-                                 SeriesType="PointType.Pie"
+                                 SeriesType="SeriesType.Pie"
                                  XValue="e=> e.OrderType"
                                  YAggregate="((ApexPointSeries<Order>)selectedData.Series.ApexSeries).YAggregate" />
                 </ApexChart>

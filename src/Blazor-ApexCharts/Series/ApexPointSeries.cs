@@ -12,7 +12,7 @@ namespace ApexCharts
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> YAggregate { get; set; }
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderBy { get; set; }
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderByDescending { get; set; }
-        [Parameter] public PointType SeriesType { get; set; }
+        [Parameter] public SeriesType SeriesType { get; set; }
 
         protected override void OnInitialized()
         {
@@ -24,29 +24,29 @@ namespace ApexCharts
         {
             switch (SeriesType)
             {
-                case PointType.Area:
+                case SeriesType.Area:
                     return ChartType.Area;
-                case PointType.Bar:
+                case SeriesType.Bar:
                     return ChartType.Bar;
-                case PointType.Donut:
+                case SeriesType.Donut:
                     return ChartType.Donut;
-                case PointType.Heatmap:
+                case SeriesType.Heatmap:
                     return ChartType.Heatmap;
-                case PointType.Histogram:
+                case SeriesType.Histogram:
                     return ChartType.Histogram;
-                case PointType.Line:
+                case SeriesType.Line:
                     return ChartType.Line;
-                case PointType.Pie:
+                case SeriesType.Pie:
                     return ChartType.Pie;
-                case PointType.PolarArea:
+                case SeriesType.PolarArea:
                     return ChartType.PolarArea;
-                case PointType.Radar:
+                case SeriesType.Radar:
                     return ChartType.Radar;
-                case PointType.RadialBar:
+                case SeriesType.RadialBar:
                     return ChartType.RadialBar;
-                case PointType.Scatter:
+                case SeriesType.Scatter:
                     return ChartType.Scatter;
-                case PointType.Treemap:
+                case SeriesType.Treemap:
                     return ChartType.Treemap;
                 default:
                     throw new SystemException($"SeriesType {SeriesType} can not be converted to CartType");

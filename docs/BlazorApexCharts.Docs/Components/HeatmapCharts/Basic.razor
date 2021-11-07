@@ -8,7 +8,7 @@
             <ApexPointSeries TItem="SupportIncident"
                          Items="source.OrderBy(e=>e.WeekNumber)"
                          Name="@source.Key.ToString()"
-                         SeriesType="PointType.Heatmap"
+                         SeriesType="SeriesType.Heatmap"
                          XValue="@(e => e.WeekName)"
                          YAggregate="@(e => (int)e.Average(a=>a.Severity))" />
         }

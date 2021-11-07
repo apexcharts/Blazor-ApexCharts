@@ -4,7 +4,7 @@
 
         <ApexPointSeries TItem="Order"
                     Items="Orders"
-                    SeriesType="PointType.Donut"
+                    SeriesType="SeriesType.Donut"
                     Name="Gross Value"
                     XValue="@(e => e.Country)"
                     YAggregate="@(e => e.Sum(e => e.GrossValue))"
