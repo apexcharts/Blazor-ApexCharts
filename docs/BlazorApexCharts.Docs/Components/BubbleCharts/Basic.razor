@@ -1,4 +1,4 @@
-﻿<ChartContainer>
+﻿<DemoContainer>
     <ApexChart TItem="SupportIncident"
                Title="Support Incidents">
 
@@ -12,7 +12,7 @@
                     ZAggregate="@(e => (int)e.Average(e => e.Severity))" />
    }
     </ApexChart>
-</ChartContainer>
+</DemoContainer>
 
 @code {
     private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(); 

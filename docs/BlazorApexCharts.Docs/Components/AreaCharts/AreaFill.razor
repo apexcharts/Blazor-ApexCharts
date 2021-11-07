@@ -1,4 +1,4 @@
-﻿<ChartContainer>
+﻿<DemoContainer>
     <ApexChart TItem="Order"
                Title="Scatter Sample"
                
@@ -20,7 +20,7 @@
                     YAggregate="@(e => e.Sum(e => e.NetValue))"
                     OrderByDescending="e=>e.Y" />
     </ApexChart>
-</ChartContainer>
+</DemoContainer>
 @code {
     private List<Order> orders = SampleData.GetOrders();
     private ApexChartOptions<Order> options = new ApexChartOptions<Order>();

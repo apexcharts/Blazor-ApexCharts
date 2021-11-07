@@ -1,4 +1,4 @@
-﻿<ChartContainer>
+﻿<DemoContainer>
     <ApexChart TItem="Order"
                Title="Order Gross Value">
 
@@ -10,7 +10,7 @@
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
                          OrderByDescending="e=>e.Y" />
     </ApexChart>
-</ChartContainer>
+</DemoContainer>
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();

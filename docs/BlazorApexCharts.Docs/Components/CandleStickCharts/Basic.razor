@@ -1,4 +1,4 @@
-﻿<ChartContainer>
+﻿<DemoContainer>
     <ApexChart TItem="StockPrice"
                XAxisType="XAxisType.Datetime">
 
@@ -12,7 +12,7 @@
                           Close="@(e => e.Close)"
                           OrderByDescending="e=> e.X" />
     </ApexChart>
-</ChartContainer>
+</DemoContainer>
 
 @code {
     private List<StockPrice> stockPrices { get; set; } = SampleData.GetStockPrices();

@@ -1,4 +1,4 @@
-﻿<ChartContainer>
+﻿<DemoContainer>
 <ApexChart TItem="Order"
            Title="Order Net Value">
 
@@ -18,7 +18,7 @@
                 OrderByDescending="e=>e.Y"
                 SeriesType="SeriesType.Bar"/>
 </ApexChart>
-</ChartContainer>
+</DemoContainer>
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
