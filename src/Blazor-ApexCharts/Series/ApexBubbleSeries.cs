@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace ApexCharts
 {
-    public class ApexBubbleSeries<TItem> : ApexBaseSeries<TItem> where TItem : class
+    public class ApexBubbleSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> YAggregate { get; set; }
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> ZAggregate { get; set; }

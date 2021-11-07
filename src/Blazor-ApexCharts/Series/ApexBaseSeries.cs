@@ -13,7 +13,6 @@ namespace ApexCharts
         [CascadingParameter(Name = "Chart")] public ApexChart<TItem> Chart { get; set; }
         [Parameter] public string Name { get; set; }
         [Parameter] public Expression<Func<TItem, object>> XValue { get; set; }
-        //[Parameter] public MixedType? MixedType { get; set; }
         [Parameter] public bool ShowDataLabels { get; set; }
         [Parameter] public IEnumerable<TItem> Items { get; set; }
         [Parameter] public SeriesStroke Stroke { get; set; }
@@ -25,9 +24,7 @@ namespace ApexCharts
             series.Name = Name;
             series.ShowDataLabels = ShowDataLabels;
             series.Stroke = Stroke;
-
         }
-
 
         protected override void OnInitialized()
         {

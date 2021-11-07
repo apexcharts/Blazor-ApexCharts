@@ -21,6 +21,7 @@ namespace ApexCharts
         [Parameter] public bool Debug { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
+        
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
 
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;

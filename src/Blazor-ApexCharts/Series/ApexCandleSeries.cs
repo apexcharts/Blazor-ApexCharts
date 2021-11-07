@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace ApexCharts
 {
-    public class ApexCandleSeries<TItem> : ApexBaseSeries<TItem> where TItem : class
+    public class ApexCandleSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
         [Parameter] public Expression<Func<TItem, decimal>> Open { get; set; }
         [Parameter] public Expression<Func<TItem, decimal>> High { get; set; }
