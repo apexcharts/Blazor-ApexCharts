@@ -1,5 +1,4 @@
-﻿using ApexCharts.Models;
-using BlazorApexCharts.Services;
+﻿using BlazorApexCharts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
@@ -13,7 +12,6 @@ namespace ApexCharts
 {
     public partial class ApexChart<TItem> : IDisposable where TItem : class
     {
-        [Inject] private ChartService ChartService { get; set; }
         [Inject] public IJSRuntime JSRuntime { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
@@ -213,20 +211,15 @@ namespace ApexCharts
             SetDatalabels();
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
-
-            //var serializerOptions = new JsonSerializerOptions
-            //{
-            //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            //    IgnoreNullValues = true,
-            //};
-
-            //serializerOptions.Converters.Add(new DataPointConverter<TItem>());
-            //serializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
+          
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
             Console.WriteLine("Start serialize");
-            var serializerOptions = ChartService.GetOptions<TItem>();
+            var chartSerializer = new ChartSerializer();
+            var serializerOptions = chartSerializer.GetOptions<TItem>();
+
+
             Console.WriteLine($"Options retrieved {stopWatch.ElapsedMilliseconds}");
 
             var jsonOptions = JsonSerializer.Serialize(Options, serializerOptions);

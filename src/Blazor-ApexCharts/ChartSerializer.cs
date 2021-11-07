@@ -1,18 +1,12 @@
 ﻿using ApexCharts.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
-namespace BlazorApexCharts.Services
+namespace BlazorApexCharts
 {
-
-  
-    public class ChartService
+    public class ChartSerializer
     {
-        private Dictionary<string, JsonSerializerOptions> _serializerOptions = new Dictionary<string, JsonSerializerOptions>();
+        private static Dictionary<string, JsonSerializerOptions> _serializerOptions = new Dictionary<string, JsonSerializerOptions>();
 
         private JsonSerializerOptions GenerateOptions<TItem>()
         {
@@ -40,6 +34,5 @@ namespace BlazorApexCharts.Services
 
             return newOptions;
         }
-
     }
 }
