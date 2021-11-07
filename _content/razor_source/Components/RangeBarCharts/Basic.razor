@@ -1,4 +1,4 @@
-﻿<ChartContainer>
+﻿<DemoContainer>
     <ApexChart TItem="SupportIncident"
                Title="Incident Severity"
                Options=options>
@@ -9,7 +9,7 @@
                          YValue="@(e =>e.Severity)" />
 
     </ApexChart>
-</ChartContainer>
+</DemoContainer>
 
 @code {
     private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidentsForRange();

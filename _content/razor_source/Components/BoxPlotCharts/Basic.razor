@@ -1,4 +1,4 @@
-﻿<ChartContainer>
+﻿<DemoContainer>
     <ApexChart TItem="SupportIncident">
         <ApexBoxPlotSeries TItem="SupportIncident"
                     Items="incidents.OrderBy(e=>e.WeekNumber)"
@@ -6,7 +6,7 @@
                     XValue="@(e => e.WeekName)"
                     YValue="@(e => e.Severity)" />
     </ApexChart>
-</ChartContainer>
+</DemoContainer>
 
 @code {
     private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(30,60);

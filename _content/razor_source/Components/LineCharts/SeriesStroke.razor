@@ -1,4 +1,4 @@
-﻿<ChartContainer>
+﻿<DemoContainer>
     <ApexChart TItem="Order"
                Title="Series Stroke"
                Options="@options">
@@ -22,7 +22,7 @@
                          OrderByDescending="e=>e.Y"
                          Stroke="@(new ApexCharts.SeriesStroke { Color = "#000080", DashSpace = 3, Width = 3 })" />
     </ApexChart>
-</ChartContainer>
+</DemoContainer>
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
