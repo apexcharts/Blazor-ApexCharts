@@ -1,8 +1,7 @@
 ﻿<ChartContainer>
     <ApexChart TItem="SupportIncident"
                Title="Incident Severity"
-               Options="options"
-               Debug>
+               Options="options">
 
         @foreach (var source in incidents.GroupBy(e => e.Source))
         {

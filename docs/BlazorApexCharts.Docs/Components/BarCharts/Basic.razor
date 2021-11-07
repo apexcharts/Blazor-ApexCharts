@@ -1,7 +1,6 @@
 ﻿<ChartContainer>
 <ApexChart TItem="Order"
-           Title="Order Net Value"
-           >
+           Title="Order Net Value">
 
     <ApexPointSeries TItem="Order"
                 Items="Orders"
@@ -20,6 +19,7 @@
                 SeriesType="PointType.Bar"/>
 </ApexChart>
 </ChartContainer>
+
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
     }

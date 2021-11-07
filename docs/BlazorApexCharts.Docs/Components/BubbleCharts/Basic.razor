@@ -9,8 +9,7 @@
                     Name="@data.Key.ToString()"
                     XValue="@(e => e.WeekNumber)"
                     YAggregate="@(e => (decimal)e.Sum(e => e.LeadTime))"
-                    ZAggregate="@(e => (int)e.Average(e => e.Severity))"
-                     />
+                    ZAggregate="@(e => (int)e.Average(e => e.Severity))" />
    }
     </ApexChart>
 </ChartContainer>

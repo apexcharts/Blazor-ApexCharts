@@ -3,12 +3,10 @@
                Title="Incident Severity"
                Options=options>
 
-
         <ApexRangeSeries TItem="SupportIncident"
                          Items="incidents"
                          XValue="@(e => e.Source.ToString())"
                          YValue="@(e =>e.Severity)" />
-
 
     </ApexChart>
 </ChartContainer>

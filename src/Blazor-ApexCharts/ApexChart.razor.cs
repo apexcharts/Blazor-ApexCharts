@@ -195,12 +195,12 @@ namespace ApexCharts
             }
         }
 
-        public void SetForceRender()
+        public void SetRerenderChart()
         {
             forceRender = true;
         }
 
-        public async Task Render()
+        private async Task Render()
         {
             forceRender = false;
             SetSeries();
@@ -209,22 +209,10 @@ namespace ApexCharts
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
 
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-
-            Console.WriteLine("Start serialize");
             var chartSerializer = new ChartSerializer();
             var serializerOptions = chartSerializer.GetOptions<TItem>();
-
-
-            Console.WriteLine($"Options retrieved {stopWatch.ElapsedMilliseconds}");
-
             var jsonOptions = JsonSerializer.Serialize(Options, serializerOptions);
-            Console.WriteLine($"Serialization done {stopWatch.ElapsedMilliseconds}");
-
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
-            Console.WriteLine($"options sent to chart {stopWatch.ElapsedMilliseconds}");
-
         }
 
         private void SetSeries()
