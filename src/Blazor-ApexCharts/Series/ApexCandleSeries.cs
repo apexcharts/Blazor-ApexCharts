@@ -18,25 +18,29 @@ namespace ApexCharts
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            SetData();
-            SetChartType(ChartType.Candlestick);
+            Chart.AddSeries(this);
         }
-  
-        private void SetData()
+
+        public ChartType GetChartType()
         {
-           var data = Items
-          .Select(d => new ListPoint<TItem>
-          {
-              X = XValue.Compile().Invoke(d),
-              Y = new List<decimal>
-              {
+            return ChartType.Candlestick;
+        }
+
+        public IEnumerable<IDataPoint<TItem>> GetData()
+        {
+            var data = Items
+         .Select(d => new ListPoint<TItem>
+         {
+             X = XValue.Compile().Invoke(d),
+             Y = new List<decimal>
+             {
                          Open.Compile().Invoke(d),
                          High.Compile().Invoke(d),
                          Low.Compile().Invoke(d),
                        Close.Compile().Invoke(d)
-              },
-              Items = Items
-          });
+             },
+             Items = Items
+         });
 
             if (OrderBy != null)
             {
@@ -47,7 +51,14 @@ namespace ApexCharts
                 data = data.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
             }
 
-            series.Data = data;
+            return data;
+
         }
+
+        public void Dispose()
+        {
+            Chart.RemoveSeries(this);
+        }
+
     }
 }

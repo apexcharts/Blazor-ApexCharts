@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -14,12 +15,15 @@ namespace ApexCharts
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            SetData();
-            SetChartType(ChartType.BoxPlot);
+            Chart.AddSeries(this);
         }
-   
 
-        private void SetData()
+        public ChartType GetChartType()
+        {
+            return ChartType.BoxPlot;
+        }
+
+        public IEnumerable<IDataPoint<TItem>> GetData()
         {
             var data = Items.GroupBy(e => XValue.Compile().Invoke(e)).Select(d => new ListPoint<TItem>
             {
@@ -37,7 +41,14 @@ namespace ApexCharts
                 data = data.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
             }
 
-            series.Data = data;
+            return data;
         }
+
+        public void Dispose()
+        {
+            Chart.RemoveSeries(this);
+        }
+
+
     }
 }

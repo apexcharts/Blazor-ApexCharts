@@ -16,18 +16,22 @@ namespace ApexCharts
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            SetData();
-            SetChartType(ChartType.Bubble);
+            Chart.AddSeries(this);
         }
 
-        private void SetData()
+        public ChartType GetChartType()
+        {
+            return ChartType.Bubble;
+        }
+
+        public IEnumerable<IDataPoint<TItem>> GetData()
         {
 
             var data = Items.GroupBy(e => XValue.Compile().Invoke(e)).Select(d => new BubblePoint<TItem>
             {
                 X = d.Key,
                 Y = YAggregate.Compile().Invoke(d),
-                Z =  ZAggregate.Compile().Invoke(d),
+                Z = ZAggregate.Compile().Invoke(d),
                 Items = d.ToList()
             });
 
@@ -40,7 +44,12 @@ namespace ApexCharts
                 data = data.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
             }
 
-            series.Data = data;
+            return data;
+        }
+
+        public void Dispose()
+        {
+            Chart.RemoveSeries(this);
         }
     }
 }

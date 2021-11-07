@@ -14,26 +14,13 @@ namespace ApexCharts
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderByDescending { get; set; }
         [Parameter] public PointType SeriesType { get; set; }
 
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            SetData();
-
-            var chartType = GetChartType();
-  
-            //SetMixedChartType(chartType);
-            SetChartType(chartType);
-        }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
-         
+            Chart.AddSeries(this);
         }
 
-     
-
-        private ChartType GetChartType()
+        public ChartType GetChartType()
         {
             switch (SeriesType)
             {
@@ -67,7 +54,8 @@ namespace ApexCharts
 
         }
 
-        private void SetData()
+
+        public IEnumerable<IDataPoint<TItem>> GetData()
         {
             IEnumerable<DataPoint<TItem>> data;
 
@@ -93,7 +81,7 @@ namespace ApexCharts
             }
             else
             {
-                return;
+                return new List<IDataPoint<TItem>>();
             }
 
 
@@ -106,7 +94,12 @@ namespace ApexCharts
                 data = data.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
             }
 
-            series.Data = data;
+            return data;
+        }
+
+        public void Dispose()
+        {
+            Chart.RemoveSeries(this);
         }
     }
 }
