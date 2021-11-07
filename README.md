@@ -6,6 +6,16 @@ A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
 
 **Please note: Development in progress, expect breaking changes.**
 
+## Breaking Changes v0.6.0-alpha
+Version v0.6.0 introduces support for all Apex chart types, this comes with a number of breaking changes
+- Chart Type is no longer set on chart level
+- ApexSeries has been been replaced with ApexPointSeries
+- ApexPointSeries take SeriesType to set chart type
+- Chart is no longer automatically rerenderd, please use the method SetRerenderChart to flag the chart to be rerendered
+
+Please see the samples for more details.
+
+
 ## Installation
 ### Nuget
 [Blazor-ApexCharts](https://www.nuget.org/packages/Blazor-ApexCharts/)
