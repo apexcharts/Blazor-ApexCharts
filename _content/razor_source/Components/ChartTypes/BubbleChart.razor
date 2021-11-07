@@ -1,0 +1,20 @@
+﻿
+    <ApexChart TItem="SupportIncident"
+               Title="Bubble">
+
+    @foreach (var data in incidents.GroupBy(e=> e.Source))
+   {
+         <ApexBubbleSeries TItem="SupportIncident"
+                    Items="data.ToList()"
+                    Name="@data.Key.ToString()"
+                    XValue="@(e => e.WeekNumber)"
+                    YAggregate="@(e => (decimal)e.Sum(e => e.LeadTime))"
+                    ZAggregate="@(e => (int)e.Average(e => e.Severity))"
+                     />
+   }
+    </ApexChart>
+
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(); 
+    }

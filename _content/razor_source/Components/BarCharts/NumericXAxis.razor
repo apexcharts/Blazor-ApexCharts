@@ -1,13 +1,13 @@
 ﻿<ChartContainer>
     <ApexChart TItem="Order"
                Title="Order Net Value"
-               ChartType="@ChartType.Bar"
-               XAxisType=XaxisType.Numeric
+               XAxisType=XAxisType.Numeric
                Options=options>
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="Orders"
                     Name="Gross Value"
+                    SeriesType="SeriesType.Bar"
                     XValue="@(e => e.DiscountPrecentage)"
                     YAggregate="@(e => e.Sum(e => e.GrossValue))"
                     OrderByDescending="e=>e.Y" />
