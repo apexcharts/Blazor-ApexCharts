@@ -1,0 +1,31 @@
+﻿
+<ApexChart TItem="SupportIncident"
+           Title="HeatMap"
+           Options="options"
+           >
+
+    @foreach (var source in incidents.GroupBy(e => e.Source))
+    {
+        <ApexPointSeries TItem="SupportIncident"
+                     Items="source.OrderBy(e=>e.WeekNumber)"
+                     Name="@source.Key.ToString()"
+                     SeriesType="SeriesType.Heatmap"
+                     XValue="@(e => e.WeekName)"
+                     YAggregate="@(e => (int)e.Average(a=>a.Severity))" />
+    }
+
+</ApexChart>
+
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents();
+    private ApexChartOptions<SupportIncident> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<SupportIncident>
+            {
+                Chart = new Chart { Sparkline = new ChartSparkline { Enabled = true } }
+            };
+    }
+    }

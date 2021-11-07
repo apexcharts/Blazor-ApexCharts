@@ -1,8 +1,9 @@
-﻿using ApexCharts.Models;
+﻿using BlazorApexCharts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,34 +16,22 @@ namespace ApexCharts
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
-       
 
-        [Parameter]
-        public ChartType ChartType
-        {
-            get => chartType;
-            set
-            {
-                if (chartType != value)
-                {
-                    ForceRender = true;
-                }
-                chartType = value;
-            }
-        }
-        [Parameter] public XaxisType? XAxisType { get; set; }
+        [Parameter] public XAxisType? XAxisType { get; set; }
         [Parameter] public bool Debug { get; set; }
-        [Parameter] public bool ManualRender { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
+
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
 
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
         private ElementReference ChartContainer { get; set; }
 
+        private List<IApexSeries<TItem>> apexSeries = new();
+
         private bool isReady;
-        internal bool ForceRender = true;
-        private ChartType chartType = ChartType.Bar;
+        private bool forceRender = true;
+
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -52,7 +41,7 @@ namespace ApexCharts
                 ObjectReference = DotNetObjectReference.Create(this);
             }
 
-            if (isReady && ForceRender && !ManualRender)
+            if (isReady && forceRender)
             {
                 await Render();
             }
@@ -63,7 +52,6 @@ namespace ApexCharts
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
             Options.Debug = Debug;
-            Options.Chart.Type = ChartType;
             Options.Chart.Width = Width;
             Options.Chart.Height = Height;
 
@@ -84,10 +72,38 @@ namespace ApexCharts
             }
         }
 
+        internal void AddSeries(IApexSeries<TItem> series)
+        {
+            if (!apexSeries.Contains(series))
+            {
+                apexSeries.Add(series);
+            }
+
+        }
+
+        internal void RemoveSeries(IApexSeries<TItem> series)
+        {
+            if (apexSeries.Contains(series))
+            {
+                apexSeries.Remove(series);
+            }
+        }
+
+        private bool IsNoAxisChart
+        {
+            get
+            {
+                return Options?.Chart?.Type == ChartType.Pie ||
+               Options?.Chart?.Type == ChartType.Donut ||
+               Options?.Chart?.Type == ChartType.PolarArea ||
+               Options?.Chart?.Type == ChartType.RadialBar;
+            }
+        }
+
         private void SetStroke()
         {
             if (Options?.Series == null) { return; }
-            if (Options.Series.All(e => (e.Stroke == null))) { return; }
+            if (apexSeries.All(e => (e.Stroke == null))) { return; }
 
             if (Options.Stroke == null) { Options.Stroke = new Stroke(); }
 
@@ -96,9 +112,9 @@ namespace ApexCharts
             var strokeDash = new List<int>();
             foreach (var series in Options.Series)
             {
-                strokeWidths.Add(series.Stroke?.Width ?? 4); // 
-                strokeColors.Add(series.Stroke?.Color ?? "#d3d3d3"); //Default is light gray
-                strokeDash.Add(series.Stroke?.DashSpace ?? 0);
+                strokeWidths.Add(series.ApexSeries.Stroke?.Width ?? 4); // 
+                strokeColors.Add(series.ApexSeries.Stroke?.Color ?? "#d3d3d3"); //Default is light gray
+                strokeDash.Add(series.ApexSeries.Stroke?.DashSpace ?? 0);
             }
 
             Options.Colors = strokeColors;
@@ -107,7 +123,7 @@ namespace ApexCharts
             Options.Stroke.DashArray = strokeDash;
         }
 
-        private void SetDatalabels()
+        private void SetDataLabels()
         {
             if (Options?.Series == null) { return; }
 
@@ -117,7 +133,7 @@ namespace ApexCharts
             foreach (var series in Options.Series)
             {
                 var index = Options.Series.FindIndex(e => e == series);
-                if (series.ShowDataLabels)
+                if (series.ApexSeries.ShowDataLabels)
                 {
                     if (!Options.DataLabels.EnabledOnSeries.Contains(index))
                     {
@@ -133,7 +149,7 @@ namespace ApexCharts
                 }
             }
 
-            if (Options.Series.Any(e => e.ShowDataLabels))
+            if (Options.Series.Select(e=>e.ApexSeries).Any(e => e.ShowDataLabels))
             {
                 Options.DataLabels.Enabled = true;
             }
@@ -145,10 +161,7 @@ namespace ApexCharts
 
         private void UpdateDataForNoAxisCharts()
         {
-            if (Options.Chart.Type != ChartType.Pie &&
-                Options.Chart.Type != ChartType.Donut &&
-                Options.Chart.Type != ChartType.RadialBar &&
-                Options.Chart.Type != ChartType.PolarArea)
+            if (!IsNoAxisChart)
             {
                 Options.SeriesNonXAxis = null;
                 Options.Labels = null;
@@ -156,9 +169,7 @@ namespace ApexCharts
             };
 
             if (Options.Series == null || !Options.Series.Any()) { return; }
-
             var noAxisSeries = Options.Series.First();
-
             var data = noAxisSeries.Data.Cast<DataPoint<TItem>>().ToList();
             Options.SeriesNonXAxis = data.Select(e => e.Y).Cast<object>().ToList();
             Options.Labels = data.Select(e => e.X?.ToString()).ToList();
@@ -181,28 +192,84 @@ namespace ApexCharts
             }
         }
 
-        public async Task Render()
+        public void SetRerenderChart()
         {
-            ForceRender = false;
+            forceRender = true;
+        }
+
+        private async Task Render()
+        {
+            forceRender = false;
+            SetSeries();
             SetStroke();
-            SetDatalabels();
+            SetDataLabels();
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
 
-            var serializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                IgnoreNullValues = true,
-            };
-
-            serializerOptions.Converters.Add(new DataPointConverter<TItem>());
-            serializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
+            var chartSerializer = new ChartSerializer();
+            var serializerOptions = chartSerializer.GetOptions<TItem>();
             var jsonOptions = JsonSerializer.Serialize(Options, serializerOptions);
-          
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
-            await OnDataPointSelection.InvokeAsync(null);
         }
-            
+
+        private void SetSeries()
+        {
+            Options.Series = new List<Series<TItem>>();
+            var isMixed = apexSeries.Select(e => e.GetChartType()).Distinct().Count() > 1;
+
+            foreach (var apxSeries in apexSeries)
+            {
+                var series = new Series<TItem>
+                {
+                    Data = apxSeries.GetData(),
+                    Name = apxSeries.Name,
+                    ApexSeries = apxSeries
+                };
+                Options.Series.Add(series);
+
+                var seriesChartType = apxSeries.GetChartType();
+
+                if (!isMixed)
+                {
+                    Options.Chart.Type = seriesChartType;
+                }
+                else
+                {
+                    series.Type = GetMixedChartType(seriesChartType);
+                }
+            }
+        }
+
+
+        private MixedType GetMixedChartType(ChartType chartType)
+        {
+
+            switch (chartType)
+            {
+                case ChartType.Line:
+                    return MixedType.Line;
+                case ChartType.Scatter:
+                    return MixedType.Scatter;
+                case ChartType.Area:
+                    return MixedType.Area;
+                case ChartType.Bubble:
+                    return MixedType.Bubble;
+                case ChartType.Bar:
+                    if (Options?.PlotOptions?.Bar?.Horizontal == true)
+                    {
+                        return MixedType.Bar;
+                    }
+                    else
+                    {
+                        return MixedType.Column;
+                    }
+
+                default:
+                    throw new Exception($"Chart Type {chartType} connot be mixed");
+            }
+
+        }
+
 
         public void Dispose()
         {

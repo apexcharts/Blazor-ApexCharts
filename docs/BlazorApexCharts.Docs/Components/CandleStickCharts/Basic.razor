@@ -1,20 +1,19 @@
 ﻿<ChartContainer>
-    <ApexChart TItem="Order"
-               Title="Order Net Value"
-               ChartType="@ChartType.Line"
-    Debug>
+    <ApexChart TItem="StockPrice"
+               XAxisType="XAxisType.Datetime">
 
-        <ApexSeries TItem="Order"
-                    Items="Orders"
-                    Name="Gross Value"
-                    XValue="@(e => e.OrderDate.FirstDayOfMonth())"
-                    YValue = "@(e => e.DiscountPrecentage)"
-                    OrderByDescending="e=>e.X" />
-
-    
+        <ApexCandleSeries TItem="StockPrice"
+                          Items="stockPrices"
+                          Name="Apex Stock Price"
+                          XValue="@(e => e.Date.DayOnly().ToUnixTimeMilliseconds())"
+                          Open="@(e => e.Open)"
+                          High="@(e => e.High)"
+                          Low="@(e => e.Low)"
+                          Close="@(e => e.Close)"
+                          OrderByDescending="e=> e.X" />
     </ApexChart>
 </ChartContainer>
 
 @code {
-    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private List<StockPrice> stockPrices { get; set; } = SampleData.GetStockPrices();
     }

@@ -1,49 +1,65 @@
 ﻿<ChartContainer>
     <ApexChart TItem="Order"
                Title="Order Net Value"
-               ChartType="@ChartType.Line"
-               OnDataPointSelection=DataPointsSelected>
+               OnDataPointSelection=DataPointsSelected
+               Debug>
 
-        <ApexSeries TItem="Order"
-                    Items="Orders"
-                    Name="Gross Value"
-                    XValue="@(e => e.Country)"
-                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                    OrderByDescending="e=>e.Y" />
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.X" />
 
-        <ApexSeries TItem="Order"
-                    Items="Orders"
-                    Name="Net Value"
-                    XValue="@(e => e.Country)"
-                    YAggregate="@(e => e.Sum(e => e.NetValue))"
-                    OrderByDescending="e=>e.Y" />
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.X" />
     </ApexChart>
 </ChartContainer>
 
 @if (selectedData != null)
 {
-    <Table Items=selectedData.DataPoint.Items>
-        <HeaderTemplate>
-            <strong> Series:@selectedData.Series.Name X:@selectedData.DataPoint.X</strong>
-        </HeaderTemplate>
-        <ChildContent>
-            <Column Item=Order Property="e => e.Country" Searchable Sortable />
-            <Column Item=Order Property="e => e.CustomerName" Title="Customer" Searchable Sortable Groupable />
-            <Column Item=Order Property="e => e.OrderType" Title="Type" Searchable Sortable Groupable/>
-            <Column Item=Order Property="e => e.GrossValue" Title="Gross" Searchable Sortable />
-            <Column Item=Order Property="e => e.NetValue" Title="Net"  Searchable Sortable />
-        </ChildContent>
-    </Table>
-    }
-
-
+    <Tabs>
+        <Tab Title=Chart>
+            <div style="max-width:300px">
+                <ApexChart @ref=detailsChart TItem=Order>
+                    <ApexPointSeries TItem="Order"
+                                 Items="selectedData.DataPoint.Items"
+                                 SeriesType="SeriesType.Pie"
+                                 XValue="e=> e.OrderType"
+                                 YAggregate="((ApexPointSeries<Order>)selectedData.Series.ApexSeries).YAggregate" />
+                </ApexChart>
+            </div>
+        </Tab>
+        <Tab Title=Table>
+            <Table Items=selectedData.DataPoint.Items.ToList()>
+                <HeaderTemplate>
+                    <strong> Series:@selectedData.Series.Name X:@selectedData.DataPoint.X</strong>
+                </HeaderTemplate>
+                <ChildContent>
+                    <Column Item=Order Property="e => e.Country" Searchable Sortable />
+                    <Column Item=Order Property="e => e.CustomerName" Title="Customer" Searchable Sortable Groupable />
+                    <Column Item=Order Property="e => e.OrderType" Title="Type" Searchable Sortable Groupable />
+                    <Column Item=Order Property="e => e.GrossValue" Title="Gross" Searchable Sortable />
+                    <Column Item=Order Property="e => e.NetValue" Title="Net" Searchable Sortable />
+                </ChildContent>
+            </Table>
+        </Tab>
+    </Tabs>
+}
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
     private SelectedData<Order> selectedData;
-
+    private ApexChart<Order> detailsChart;
     private void DataPointsSelected(SelectedData<Order> selectedData)
     {
         this.selectedData = selectedData;
+        detailsChart?.SetRerenderChart();
     }
     }

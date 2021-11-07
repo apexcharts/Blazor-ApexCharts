@@ -1,0 +1,33 @@
+﻿
+<ApexChart TItem="StockPrice"
+           Title="Candlestick"
+           XAxisType="XAxisType.Datetime"
+           Options=options>
+    <ApexCandleSeries TItem="StockPrice"
+                      Items="stockPrices"
+                      Name="Apex Stock Price"
+                      XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
+                      Open="@(e => e.Open)"
+                      High="@(e => e.High)"
+                      Low="@(e => e.Low)"
+                      Close="@(e => e.Close)" />
+
+</ApexChart>
+
+
+@code {
+    private List<StockPrice> stockPrices { get; set; } = SampleData.GetStockPrices();
+    private ApexChartOptions<StockPrice> options = new ApexChartOptions<StockPrice>();
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        options.Chart = new Chart
+            {
+                Sparkline = new ChartSparkline
+                {
+                    Enabled = true
+                }
+            };
+    }
+        }

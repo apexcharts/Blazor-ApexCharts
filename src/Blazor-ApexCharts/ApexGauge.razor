@@ -2,10 +2,11 @@
 
 
 <ApexChart TItem="GaugeValue" Title="@Title"
-           ChartType="ChartType.RadialBar"
+           
            Options="options">
 
-    <ApexSeries TItem="GaugeValue"
+    <ApexPointSeries TItem="GaugeValue"
+    SeriesType=SeriesType.RadialBar
                 Items=GetItems()
                 Name=@Label
                 XValue="@(e => e.Label)"

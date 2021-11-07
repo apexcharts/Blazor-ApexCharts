@@ -1,10 +1,10 @@
 ﻿<ChartContainer>
     <ApexChart TItem="Order"
-               Title="Order Gross Value"
-               ChartType="@ChartType.Donut">
+               Title="Order Gross Value">
 
-        <ApexSeries TItem="Order"
+        <ApexPointSeries TItem="Order"
                     Items="Orders"
+                    SeriesType="SeriesType.Donut"
                     Name="Gross Value"
                     XValue="@(e => e.Country)"
                     YAggregate="@(e => e.Sum(e => e.GrossValue))"

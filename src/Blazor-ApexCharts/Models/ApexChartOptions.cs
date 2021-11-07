@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 namespace ApexCharts
 {
-    public class ApexChartOptions<TItem>
+    public class ApexChartOptions<TItem> where TItem : class
     {
         public bool Debug { get; set; }
 
@@ -72,7 +72,7 @@ namespace ApexCharts
         /// Series for specifying chart-type-specific configuration.
         /// See https://apexcharts.com/docs/options/series/
         /// </summary>
-        public List<Series<TItem>> Series { get; set; }
+        public List<Series<TItem>> Series { get; set; } 
 
         public List<object> SeriesNonXAxis { get; internal set; }
         public ForecastDataPoints ForecastDataPoints { get; set; }
@@ -338,7 +338,7 @@ namespace ApexCharts
         public bool? Stacked { get; set; }
         public StackType? StackType { get; set; }
         public Toolbar Toolbar { get; set; }
-        public ChartType Type { get; set; }
+        public ChartType? Type { get; set; }
         public object Width { get; set; }
         public object Height { get; set; }
         public Zoom Zoom { get; set; }
@@ -1297,7 +1297,7 @@ namespace ApexCharts
         public string TickPlacement { get; set; }
         public AxisTitle Title { get; set; }
         public AxisTooltip Tooltip { get; set; }
-        public XaxisType? Type { get; set; }
+        public XAxisType? Type { get; set; }
     }
 
     public class AxisBorder
@@ -2732,7 +2732,25 @@ namespace ApexCharts
 
     public enum AutoSelected { Pan, Selection, Zoom };
 
-    public enum ChartType { Area, Bar, Bubble, Candlestick, Donut, Heatmap, Histogram, Line, Pie, PolarArea, Radar, RadialBar, RangeBar, Scatter, Treemap };
+    public enum ChartType
+    {
+        Area,
+        Bar, 
+        Bubble, 
+        Candlestick, 
+        Donut, 
+        Heatmap, 
+        Histogram, 
+        Line, 
+        Pie, 
+        PolarArea, 
+        Radar, 
+        RadialBar, 
+        RangeBar, 
+        Scatter, 
+        Treemap,
+        BoxPlot,
+    };
 
     public enum ZoomType { X, Xy, Y };
 
@@ -2760,7 +2778,7 @@ namespace ApexCharts
 
     public enum TickAmountEnum { DataPoints };
 
-    public enum XaxisType { Category, Datetime, Numeric };
+    public enum XAxisType { Category, Datetime, Numeric };
 
 
     public struct Download

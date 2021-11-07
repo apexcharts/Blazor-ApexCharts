@@ -1,25 +1,26 @@
 ﻿<ChartContainer>
-<ApexChart TItem="Order"
-           Title="Order Net Value"
-           ChartType="@ChartType.Bar"
-           Options=options>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               Options=options>
 
-    <ApexSeries TItem="Order"
-                Items="Orders"
-                Name="Gross Value"
-                XValue="@(e => e.Country)"
-                YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                OrderByDescending="e=>e.Y"
-                ShowDataLabels />
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y"
+                         ShowDataLabels />
 
-    <ApexSeries TItem="Order"
-                Items="Orders"
-                Name="Net Value"
-                XValue="@(e => e.Country)"
-                YAggregate="@(e => e.Sum(e => e.NetValue))"
-                OrderByDescending="e=>e.Y"
-                ShowDataLabels />
-</ApexChart>
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y"
+                         ShowDataLabels />
+    </ApexChart>
 </ChartContainer>
 
 @code {

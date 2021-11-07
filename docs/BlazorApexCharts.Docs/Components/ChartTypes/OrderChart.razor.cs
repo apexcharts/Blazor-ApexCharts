@@ -6,18 +6,16 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
 {
     public partial class OrderChart
     {
-        //[Parameter] public List<Order> Orders { get; set; }
-        [Parameter] public ChartType ChartType { get; set; }
-
+        [Parameter] public SeriesType PointType { get; set; }
 
         private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
-        private List<Order> orders { get; set; } = SampleData.GetOrders();
+        private List<Order> orders;
 
         private bool IsXYChart()
         {
-            return ChartType switch
+            return PointType switch
             {
-                ChartType.Pie or ChartType.Donut or ChartType.Treemap or ChartType.RadialBar or ChartType.PolarArea => false,
+                SeriesType.Pie or SeriesType.Donut or SeriesType.Treemap or SeriesType.RadialBar or SeriesType.PolarArea => false,
                 _ => true,
             };
         }
@@ -26,11 +24,13 @@ namespace BlazorApexCharts.Docs.Components.ChartTypes
         {
             base.OnInitialized();
 
+            orders =  SampleData.GetOrders();
+
             options.Chart = new Chart
             {
                 Sparkline = new ChartSparkline
                 {
-                    Enabled = ChartType != ChartType.Histogram //; //&& ChartType //!= ChartType.Radar
+                    Enabled = PointType != SeriesType.Histogram 
                 }
             };
 

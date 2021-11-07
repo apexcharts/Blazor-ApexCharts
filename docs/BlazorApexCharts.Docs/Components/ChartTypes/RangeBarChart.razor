@@ -1,0 +1,38 @@
+﻿<ApexChart TItem="SupportIncident"
+           Title="RangeBar"
+           Options=options>
+
+
+    <ApexRangeSeries TItem="SupportIncident"
+                     Items="incidents"
+                     XValue="@(e => e.Source.ToString())"
+                     YValue="@(e =>e.Severity)" />
+
+
+</ApexChart>
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidentsForRange();
+    private ApexChartOptions<SupportIncident> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<SupportIncident>
+            {
+                Chart = new Chart
+                {
+                    Sparkline = new ChartSparkline
+                    {
+                        Enabled = true
+                    }
+                },
+                PlotOptions = new PlotOptions
+                {
+                    Bar = new PlotOptionsBar
+                    {
+                        Horizontal = true
+                    }
+                }
+            };
+    }
+    }
