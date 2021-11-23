@@ -1,0 +1,30 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Activity"
+               Title="Activities"
+               Options=options
+               XAxisType="XAxisType.Datetime">
+        <ApexRangeSeries TItem="Activity"
+                         Items="activities"
+                         XValue="@(e => e.Name)"
+                         YValue="@(e =>e.ÁctivityDate.ToUnixTimeMilliseconds())" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Activity> activities { get; set; } = SampleData.GetActivites();
+    private ApexChartOptions<Activity> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Activity>
+            {
+                PlotOptions = new PlotOptions
+                {
+                    Bar = new PlotOptionsBar
+                    {
+                        Horizontal = true
+                    }
+                }
+            };
+    }
+    }

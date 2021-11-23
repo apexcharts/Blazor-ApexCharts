@@ -55,7 +55,25 @@ namespace BlazorApexCharts.Docs
             return orders;
         }
 
-        public static List<SupportIncident> GetSupportIncidents(int severityMin = 0, int severityMax = 100)
+        public static List<Activity> GetActivites()
+        {
+            var result = new List<Activity>();
+
+            result.Add(new Activity { Name = "Design", ÁctivityDate = DateTimeOffset.Now.AddDays(-30)});
+            result.Add(new Activity { Name = "Design", ÁctivityDate = DateTimeOffset.Now.AddDays(-20)});
+
+            result.Add(new Activity { Name = "Develop", ÁctivityDate = DateTimeOffset.Now.AddDays(-22) });
+            result.Add(new Activity { Name = "Develop", ÁctivityDate = DateTimeOffset.Now.AddDays(-10) });
+
+            result.Add(new Activity { Name = "Test", ÁctivityDate = DateTimeOffset.Now.AddDays(-14) });
+            result.Add(new Activity { Name = "Test", ÁctivityDate = DateTimeOffset.Now.AddDays(-8) });
+
+
+            return result;
+
+        }
+
+            public static List<SupportIncident> GetSupportIncidents(int severityMin = 0, int severityMax = 100)
         {
             var fakeIncidents = new Faker<SupportIncident>()
             .RuleFor(o => o.Severity, f => f.Random.Number(severityMin, severityMax))
