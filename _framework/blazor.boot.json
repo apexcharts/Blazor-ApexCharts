@@ -29,9 +29,9 @@
       "Microsoft.JSInterop.WebAssembly.dll": "sha256-eF6xbzCQBK4yEs2CC3wnJR1I1ZWXwlJp7GJ4R1UMM14=",
       "System.IO.Pipelines.dll": "sha256-qZYTUS+ga7CydtH54fYPbehFCvx3B49I74G8dxreTog=",
       "TabBlazor.dll": "sha256-s9vv17LiOR2HTkjNVGACSp5a4TfH09CA+\/dOs80YeVw=",
-      "Blazor-ApexCharts.dll": "sha256-vVg+YL0e9CbExuHbPuGE5wiwjU7L02DIbbb9dz3f6j0=",
-      "BlazorApexCharts.Docs.dll": "sha256-rVo52o0paeO5nT5grExkXcJ2wTfPJ3NXQG0TEE399Lw=",
-      "BlazorApexCharts.Docs.Wasm.dll": "sha256-wmT4+YlYlpd8fvhqt3IIB0zu2kJsGyhlN2YWNyJARb0=",
+      "Blazor-ApexCharts.dll": "sha256-rEg9TrFPY7N4tpYBfzouh3e6jfcGHlAjwsGoKDe053g=",
+      "BlazorApexCharts.Docs.dll": "sha256-FeadpKKV1vnxfi+PYJtBdC6LfjHqF3PSyCnUznyz3qY=",
+      "BlazorApexCharts.Docs.Wasm.dll": "sha256-R+i+tuZGSkGK6IfjiM2nN8b1VZYu3agO2pfIf5iJP28=",
       "System.Collections.Concurrent.dll": "sha256-i6JWsQVmeMBvOdGpaCw6Sbmn0T+GJxxLYnXlrv8b+YE=",
       "System.Collections.Immutable.dll": "sha256-8mZUoG2xqhXRn5C1N8zX+1zliOAEtaNbzz7Dq+Pz5kc=",
       "System.Collections.NonGeneric.dll": "sha256-jmC4p3Lp8\/ZJErl1AXEztERxR0xBg7V0X7mXbI0KhqU=",
@@ -60,7 +60,7 @@
       "System.Text.Encodings.Web.dll": "sha256-MjKzlKJU7sGHURlvpLznB6MNOzZh+JJ0sPYYvlUVHRA=",
       "System.Text.Json.dll": "sha256-n4PyzcMjHjKwUgAXJQAJQKr+tls4B+mArxgYcG8aoKM=",
       "System.Text.RegularExpressions.dll": "sha256-plllf6P79OpzTQQUnPK0u6CWJSL4HEFFM0UvOzgK\/2s=",
-      "System.Private.CoreLib.dll": "sha256-CqK+wCOmDAPX76fnXQ4kXkYsRbRWypwwODjTDobqMLo="
+      "System.Private.CoreLib.dll": "sha256-Bb+ReblPhejnojQ8oGjFjT8dApm\/2PpLJX4gkcTz6MI="
     },
     "lazyAssembly": null,
     "pdb": null,

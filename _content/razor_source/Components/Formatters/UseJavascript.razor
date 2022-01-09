@@ -1,0 +1,69 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+    Options="options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" ShowDataLabels />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Order>();
+
+        options.Yaxis = new List<YAxis>();
+        options.Yaxis.Add(new YAxis
+            {
+                Labels = new AxisLabels
+                {
+                    Formatter = @"function (value) {
+                    return '$' + Number(value).toLocaleString();}"
+                }
+            }
+        );
+
+        options.Xaxis = new XAxis
+            {
+                Labels = new AxisLabels
+                {
+                    Formatter = @"function (value) {
+                    if (value === undefined) {return '';}
+                    return value.toUpperCase();}"
+                }
+            };
+
+        options.DataLabels = new DataLabels
+            {
+                Formatter = @"function(value, opts) {
+            return  Number(value).toLocaleString();}"
+            };
+
+        options.Tooltip = new ApexCharts.Tooltip
+            {
+                X = new TooltipX
+                {
+                    Formatter = @"function(value, opts) {
+                    if (value === undefined) {return '';}
+                    return  opts.w.globals.categoryLabels[value-1] + ':' + value}"
+                }
+            };
+    }
+    }

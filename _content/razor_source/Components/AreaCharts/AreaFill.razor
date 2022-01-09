@@ -1,6 +1,6 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
-               Title="Scatter Sample"
+               Title="Fill Sample"
                Options=options>
 
         <ApexPointSeries TItem="Order"
@@ -9,7 +9,7 @@
                          Name="Gross Value"
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                         OrderByDescending="e=>e.Y" />
+                         OrderByDescending="e=>e.Y" ShowDataLabels />
 
         <ApexPointSeries TItem="Order"
                          Items="orders"
@@ -40,11 +40,14 @@
                 }
             };
 
-    
         options.Yaxis = new List<YAxis>();
         options.Yaxis.Add(new YAxis
             {
-                Labels = new AxisLabels { Formatter = @"function (value) { return Number(value).toLocaleString() }" }
+                Labels = new AxisLabels
+                {
+                    Formatter = @"function (value, index, w) {
+                    return Number(value).toLocaleString();}"
+                }
             }
         );
     }
