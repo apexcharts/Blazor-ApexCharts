@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -23,6 +22,8 @@ namespace ApexCharts
         [Parameter] public object Height { get; set; }
 
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
+
+        [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
 
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
         private ElementReference ChartContainer { get; set; }
@@ -149,7 +150,7 @@ namespace ApexCharts
                 }
             }
 
-            if (Options.Series.Select(e=>e.ApexSeries).Any(e => e.ShowDataLabels))
+            if (Options.Series.Select(e => e.ApexSeries).Any(e => e.ShowDataLabels))
             {
                 Options.DataLabels.Enabled = true;
             }
@@ -205,6 +206,7 @@ namespace ApexCharts
             SetDataLabels();
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
+            SetDotNetFormatters();
 
             var chartSerializer = new ChartSerializer();
             var serializerOptions = chartSerializer.GetOptions<TItem>();
@@ -212,6 +214,20 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
         }
 
+        private void SetDotNetFormatters()
+        {
+            if (FormatYAxisLabel != null)
+            {
+                if (Options.Yaxis == null) { Options.Yaxis = new List<YAxis>(); }
+                if (!Options.Yaxis.Any()) { Options.Yaxis.Add(new YAxis()); }
+
+                var yAxis = Options.Yaxis.First();
+                if (yAxis.Labels == null) { yAxis.Labels = new AxisLabels(); }
+                yAxis.Labels.Formatter = @"function (value, index, w) {
+                                          return window.blazor_apexchart.getYAxisLabel(value, index, w);
+                                         }";
+            }
+        }
         private void SetSeries()
         {
             Options.Series = new List<Series<TItem>>();
@@ -283,6 +299,20 @@ namespace ApexCharts
             {
                 ObjectReference.Dispose();
             }
+        }
+
+        [JSInvokable]
+        public string GetFormattedYAxisValue(object value)
+        {
+            if (value == null) { return ""; }
+            if (FormatYAxisLabel == null) { return value.ToString(); }
+
+            if (decimal.TryParse(value.ToString(), out var decimalValue))
+            {
+                return FormatYAxisLabel.Invoke(decimalValue);
+            }
+
+            return value.ToString();
         }
 
         [JSInvokable]

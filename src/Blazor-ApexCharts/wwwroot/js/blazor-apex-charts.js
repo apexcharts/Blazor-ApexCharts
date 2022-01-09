@@ -1,6 +1,24 @@
 ﻿window.blazor_apexchart = {
     charts: [],
 
+    getYAxisLabel(value, index, w) {
+         
+        if (window.wasmBinaryFile === undefined) {
+            console.warn("YAxis labels is only supported in Blazor WASM");
+            return value;
+        }
+
+        if (w !== undefined) {
+            return w.config.dotNetObject.invokeMethod('GetFormattedYAxisValue', value);
+        };
+
+        if (index !== undefined) {
+            return index.w.config.dotNetObject.invokeMethod('GetFormattedYAxisValue', value);
+        }
+
+        return value;
+    },
+
     destroyChart(chartId) {
         var chartFind = this.charts.filter(x => x.opts.chart.chartId === chartId)
         if (chartFind.length > 0) {
@@ -16,16 +34,18 @@
             console.log(options);
         }
 
-       /* console.log('-' + Date());*/
-
         var options = JSON.parse(options, (key, value) =>
             (key === 'formatter' || key === 'custom') && value.length !== 0 ? eval("(" + value + ")") : value
         );
 
-
         if (options.debug == true) {
             console.log(options);
         }
+
+    
+        options.dotNetObject = dotNetObject;
+
+        
 
         if (options.seriesNonXAxis != undefined) {
 
