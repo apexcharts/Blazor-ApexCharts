@@ -40,11 +40,14 @@
                 }
             };
 
-    
+
         options.Yaxis = new List<YAxis>();
         options.Yaxis.Add(new YAxis
             {
-                Labels = new AxisLabels { Formatter = @"function (value) { return Number(value).toLocaleString() }" }
+                Labels = new AxisLabels
+                {
+                    Formatter = @"function (value) { return Number(value).toLocaleString() }"
+                }
             }
         );
     }
