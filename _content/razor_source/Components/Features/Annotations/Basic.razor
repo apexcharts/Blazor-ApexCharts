@@ -1,0 +1,60 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Scatter Sample"
+               Options=options>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="% Gross"
+                         SeriesType="SeriesType.Scatter"
+                         XValue="@(e => e.DiscountPrecentage)"
+                         YValue="@(e => e.GrossValue)"
+                         OrderByDescending="e=>e.X" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType="SeriesType.Scatter"
+                         Name="% Net"
+                         XValue="@(e => e.DiscountPrecentage)"
+                         YValue="@(e => e.NetValue)"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
+
+    protected override void OnInitialized()
+    {
+        options.Annotations = new Annotations
+            {
+                Xaxis = new List<AnnotationsXAxis> { new AnnotationsXAxis
+                        {
+                           Label = new Label {
+                                Text = "X Axis",
+                                Style = new Style{ Background="red" }
+                           },
+                           X = 40,
+                           BorderWidth = 3,
+                           StrokeDashArray = 2,
+                           BorderColor = "red"
+                        }
+                        },
+                Yaxis = new List<AnnotationsYAxis> { new AnnotationsYAxis
+                        {
+                            Label = new Label
+                            {
+                                Text = "Y Axis",
+                                Style = new Style { Background = "blue", Color="white"}
+                            },
+                            Y = 70000,
+                            BorderWidth = 3,
+                            BorderColor = "blue",
+                            StrokeDashArray = 0
+                        }
+                        }
+
+            };
+    }
+    }
