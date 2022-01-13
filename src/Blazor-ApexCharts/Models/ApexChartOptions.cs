@@ -1294,10 +1294,16 @@ namespace ApexCharts
         public double? Range { get; set; }
         public bool? Sorted { get; set; }
         public object TickAmount { get; set; }
-        public string TickPlacement { get; set; }
+        public TickPlacement? TickPlacement { get; set; }
         public AxisTitle Title { get; set; }
         public AxisTooltip Tooltip { get; set; }
         public XAxisType? Type { get; set; }
+    }
+
+    public enum TickPlacement
+    {
+        On,
+        Beteween
     }
 
     public class AxisBorder
