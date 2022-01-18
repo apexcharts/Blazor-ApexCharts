@@ -1,15 +1,21 @@
 ﻿<DemoContainer>
-
-    @if (activities != null)
+    @if (projects == null)
     {
-        <ApexChart TItem="Activity"
-               Title="Activities"
+        <div class="text-center text-muted" style="min-height:300px">
+             <h3>Loading chart<span class="animated-dots"></span></h3>
+        </div>
+    }
+    else
+    {
+        <ApexChart TItem="Project"
+               Title="Projects"
                Options=options
                XAxisType="XAxisType.Datetime">
-            <ApexRangeSeries TItem="Activity"
-                         Items="activities"
+            <ApexRangeSeries TItem="Project"
+                         Items="projects"
                          XValue="@(e => e.Name)"
-                         YValue="@(e =>e.ActivityDate.ToUnixTimeMilliseconds())" />
+                         YMinValue="@(e =>e.StartDate.ToUnixTimeMilliseconds())"
+                         YMaxValue="@(e =>e.EndDate.ToUnixTimeMilliseconds())" />
         </ApexChart>
     }
 
@@ -17,12 +23,12 @@
 </DemoContainer>
 
 @code {
-    private List<Activity> activities;
-    private ApexChartOptions<Activity> options;
+    private List<Project> projects;
+    private ApexChartOptions<Project> options;
 
     protected override async Task OnInitializedAsync()
     {
-        options = new ApexChartOptions<Activity>
+        options = new ApexChartOptions<Project>
             {
                 PlotOptions = new PlotOptions
                 {
@@ -33,13 +39,13 @@
                 }
             };
 
-        activities = await LoadExternalData();
+        projects = await LoadProjects();
     }
 
-    private async Task<List<Activity>> LoadExternalData()
+    private async Task<List<Project>> LoadProjects()
     {
-        await Task.Delay(1000);
-        return SampleData.GetActivites();
+        await Task.Delay(3000);
+        return SampleData.GetProjects();
     }
 
     }

@@ -12,10 +12,23 @@ namespace ApexCharts
         [Parameter] public Expression<Func<ListPoint<TItem>, object>> OrderBy { get; set; }
         [Parameter] public Expression<Func<ListPoint<TItem>, object>> OrderByDescending { get; set; }
 
+        [Parameter] public Expression<Func<TItem, decimal>> YMinValue { get; set; }
+        [Parameter] public Expression<Func<TItem, decimal>> YMaxValue { get; set; }
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            CheckInput();
             Chart.AddSeries(this);
+        }
+
+        private void CheckInput()
+        {
+
+            if (YValue == null && (YMinValue == null || YMinValue == null)) {
+                throw new ArgumentNullException($"You have to set YValue or YMinValue and YMaxValue");
+            }
+
         }
 
         public ChartType GetChartType()
@@ -25,14 +38,30 @@ namespace ApexCharts
 
         public IEnumerable<IDataPoint<TItem>> GetData()
         {
-            var data = Items
-                    .GroupBy(e => XValue.Compile().Invoke(e))
-                    .Select(d => new ListPoint<TItem>
-                    {
-                        X = d.Key,
-                        Y = new List<decimal> { d.AsQueryable().Min(YValue), d.AsQueryable().Max(YValue) },
-                        Items = d
-                    });
+            IEnumerable<ListPoint<TItem>> data;
+
+            if (YMinValue != null && YMaxValue != null)
+            {
+                data = Items
+                       .Select(e => new ListPoint<TItem>
+                       {
+                           X = XValue.Compile().Invoke(e),
+                           Y = new List<decimal> { YMinValue.Compile().Invoke(e), YMaxValue.Compile().Invoke(e) },
+                           Items = new List<TItem> { e}
+                       });
+            }
+            else
+            {
+                data = Items
+                 .GroupBy(e => XValue.Compile().Invoke(e))
+                 .Select(d => new ListPoint<TItem>
+                 {
+                     X = d.Key,
+                     Y = new List<decimal> { d.AsQueryable().Min(YValue), d.AsQueryable().Max(YValue) },
+                     Items = d
+                 });
+            }
+
 
             if (OrderBy != null)
             {

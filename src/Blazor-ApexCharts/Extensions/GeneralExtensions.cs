@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -17,5 +13,13 @@ namespace ApexCharts
         {
             return new DateTimeOffset(value.Year, value.Month, value.Day, 0, 0, 0, new TimeSpan());
         }
+
+       
+        public static long ToUnixTimeMilliseconds(this DateTime d)
+        {
+            DateTime epoch = DateTime.UnixEpoch;
+            return (long)(d - epoch).TotalMilliseconds;
+        }
+
     }
 }
