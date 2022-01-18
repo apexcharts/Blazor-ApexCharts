@@ -1,20 +1,26 @@
 ﻿<DemoContainer>
-    <ApexChart TItem="Activity"
+
+    @if (activities != null)
+    {
+        <ApexChart TItem="Activity"
                Title="Activities"
                Options=options
                XAxisType="XAxisType.Datetime">
-        <ApexRangeSeries TItem="Activity"
+            <ApexRangeSeries TItem="Activity"
                          Items="activities"
                          XValue="@(e => e.Name)"
-                         YValue="@(e =>e.ÁctivityDate.ToUnixTimeMilliseconds())" />
-    </ApexChart>
+                         YValue="@(e =>e.ActivityDate.ToUnixTimeMilliseconds())" />
+        </ApexChart>
+    }
+
+
 </DemoContainer>
 
 @code {
-    private List<Activity> activities { get; set; } = SampleData.GetActivites();
+    private List<Activity> activities;
     private ApexChartOptions<Activity> options;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         options = new ApexChartOptions<Activity>
             {
@@ -26,5 +32,14 @@
                     }
                 }
             };
+
+        activities = await LoadExternalData();
     }
+
+    private async Task<List<Activity>> LoadExternalData()
+    {
+        await Task.Delay(1000);
+        return SampleData.GetActivites();
+    }
+
     }

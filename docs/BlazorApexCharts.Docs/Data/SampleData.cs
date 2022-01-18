@@ -59,14 +59,14 @@ namespace BlazorApexCharts.Docs
         {
             var result = new List<Activity>();
 
-            result.Add(new Activity { Name = "Design", ÁctivityDate = DateTimeOffset.Now.AddDays(-30)});
-            result.Add(new Activity { Name = "Design", ÁctivityDate = DateTimeOffset.Now.AddDays(-20)});
+            result.Add(new Activity { Name = "Design", ActivityDate = DateTimeOffset.Now.AddDays(-30)});
+            result.Add(new Activity { Name = "Design", ActivityDate = DateTimeOffset.Now.AddDays(-20)});
 
-            result.Add(new Activity { Name = "Develop", ÁctivityDate = DateTimeOffset.Now.AddDays(-22) });
-            result.Add(new Activity { Name = "Develop", ÁctivityDate = DateTimeOffset.Now.AddDays(-10) });
+            result.Add(new Activity { Name = "Develop", ActivityDate = DateTimeOffset.Now.AddDays(-22) });
+            result.Add(new Activity { Name = "Develop", ActivityDate = DateTimeOffset.Now.AddDays(-10) });
 
-            result.Add(new Activity { Name = "Test", ÁctivityDate = DateTimeOffset.Now.AddDays(-14) });
-            result.Add(new Activity { Name = "Test", ÁctivityDate = DateTimeOffset.Now.AddDays(-8) });
+            result.Add(new Activity { Name = "Test", ActivityDate = DateTimeOffset.Now.AddDays(-14) });
+            result.Add(new Activity { Name = "Test", ActivityDate = DateTimeOffset.Now.AddDays(-8) });
 
 
             return result;

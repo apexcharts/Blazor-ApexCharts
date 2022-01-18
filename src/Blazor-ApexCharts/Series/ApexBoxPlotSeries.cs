@@ -25,6 +25,7 @@ namespace ApexCharts
 
         public IEnumerable<IDataPoint<TItem>> GetData()
         {
+            
             var data = Items.GroupBy(e => XValue.Compile().Invoke(e)).Select(d => new ListPoint<TItem>
             {
                 X = d.Key,
