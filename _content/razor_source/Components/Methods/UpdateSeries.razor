@@ -1,0 +1,78 @@
+﻿@using System.Timers
+
+
+
+<DemoContainer>
+
+    <Button OnClick=UpdateChartSeries BackgroundColor="TablerColor.Primary">Update Series</Button>
+
+    <ApexChart @ref=chart TItem="TimeSeries"
+               Title="Order Net Value"
+               XAxisType="XAxisType.Datetime"
+               Options=options>
+
+        <ApexPointSeries TItem="TimeSeries"
+                         Items="generator.TimeSeries"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Date)"
+                         YValue="@(e => e.Value)"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<TimeSeries> chart;
+    private ApexChartOptions<TimeSeries> options;
+    private TimeSeriesGenerator generator = new TimeSeriesGenerator(20);
+    private bool timerInitialized;
+
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<TimeSeries>();
+
+        options.Xaxis = new XAxis
+            {
+                Range = generator.Range
+            };
+
+        options.Yaxis = new List<YAxis> {
+            new YAxis {
+                Max = 100,
+                Min = 0 }
+        };
+        options.Stroke = new Stroke { Curve = Curve.Smooth };
+        options.Chart = new Chart
+            {
+                Animations = new Animations
+                {
+                    Easing = Easing.Linear,
+                    DynamicAnimation = new DynamicAnimation
+                    {
+                        Speed = 1000
+                    }
+                }
+            };
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && !timerInitialized)
+        {
+            timerInitialized = true;
+            var timer = new Timer(1000);
+            timer.Elapsed += async delegate
+                    {
+                        await UpdateChartSeries();
+                    };
+            timer.Enabled = true;
+        }
+    }
+
+    private async Task UpdateChartSeries()
+    {
+        generator.Update();
+        await chart.UpdateSeries();
+    }
+    }

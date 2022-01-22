@@ -2,7 +2,7 @@
     charts: [],
 
     getYAxisLabel(value, index, w) {
-         
+
         if (window.wasmBinaryFile === undefined) {
             console.warn("YAxis labels is only supported in Blazor WASM");
             return value;
@@ -19,17 +19,36 @@
         return value;
     },
 
-    destroyChart(chartId) {
+    findChart(chartId) {
         var chartFind = this.charts.filter(x => x.opts.chart.chartId === chartId)
         if (chartFind.length > 0) {
-            var chart = chartFind[0];
+            return chartFind[0];
+        }
+        return undefined;
+    },
+
+    destroyChart(chartId) {
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
             chart.destroy();
             this.charts = this.charts.filter(x => x.opts.chart.chartId !== chartId);
         }
     },
 
-    renderChart(dotNetObject, container, options) {
+    updateSeries(chartId, series, animate) {
+        var data = JSON.parse(series);
+        var chart = this.findChart(chartId);
+        console.log(chart);
+        console.log(data);
+        console.log(chartId);
+        console.log('------------');
 
+        chart.updateSeries(data, animate);
+
+
+    },
+
+    renderChart(dotNetObject, container, options) {
         if (options.debug == true) {
             console.log(options);
         }
@@ -42,10 +61,7 @@
             console.log(options);
         }
 
-    
         options.dotNetObject = dotNetObject;
-
-        
 
         if (options.seriesNonXAxis != undefined) {
 
@@ -65,12 +81,13 @@
             }
         }
 
-        //Always destry chart
+        //Always destry chart if it exists
         this.destroyChart(options.chart.chartId);
 
         chart = new ApexCharts(container, options);
-        this.charts.push(chart)
+        this.charts.push(chart);
         chart.render();
+
         if (options.debug == true) {
             console.log('Chart ' + options.chart.chartId + ' rendered');
         }
