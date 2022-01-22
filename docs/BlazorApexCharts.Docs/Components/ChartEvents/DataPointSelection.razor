@@ -57,9 +57,10 @@
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
     private SelectedData<Order> selectedData;
     private ApexChart<Order> detailsChart;
+  
     private void DataPointsSelected(SelectedData<Order> selectedData)
     {
         this.selectedData = selectedData;
-        detailsChart?.SetRerenderChart();
+        detailsChart?.Render();
     }
     }
