@@ -44,7 +44,7 @@ namespace ApexCharts
 
             if (isReady && forceRender)
             {
-                await Render();
+                await RenderChart();
             }
         }
 
@@ -193,12 +193,27 @@ namespace ApexCharts
             }
         }
 
+        [Obsolete("Please use Render(), this method will be removed")]
         public void SetRerenderChart()
         {
             forceRender = true;
         }
 
-        private async Task Render()
+        public void Render()
+        {
+            forceRender = true;
+        }
+
+        public async Task UpdateSeries(bool animate=true)
+        {
+            SetSeries();
+            var serializerOptions = new ChartSerializer().GetOptions<TItem>();
+            var jsonSeries = JsonSerializer.Serialize(Options.Series, serializerOptions);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.ChartId, jsonSeries, animate);
+
+        }
+
+        private async Task RenderChart()
         {
             forceRender = false;
             SetSeries();
