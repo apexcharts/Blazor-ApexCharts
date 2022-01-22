@@ -28,9 +28,8 @@
     },
 
     destroyChart(chartId) {
-        var chartFind = this.charts.filter(x => x.opts.chart.chartId === chartId)
-        if (chartFind.length > 0) {
-            var chart = chartFind[0];
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
             chart.destroy();
             this.charts = this.charts.filter(x => x.opts.chart.chartId !== chartId);
         }
@@ -45,7 +44,7 @@
         console.log('------------');
 
         chart.updateSeries(data, animate);
-         
+
 
     },
 
@@ -82,12 +81,13 @@
             }
         }
 
-        //Always destry chart
-       // this.destroyChart(options.chart.chartId);
+        //Always destry chart if it exists
+        this.destroyChart(options.chart.chartId);
 
         chart = new ApexCharts(container, options);
-        this.charts.push(chart)
+        this.charts.push(chart);
         chart.render();
+
         if (options.debug == true) {
             console.log('Chart ' + options.chart.chartId + ' rendered');
         }
