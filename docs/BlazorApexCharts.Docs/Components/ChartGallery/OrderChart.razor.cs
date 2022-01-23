@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 
-namespace BlazorApexCharts.Docs.Components.ChartTypes
+namespace BlazorApexCharts.Docs.Components.ChartGallery
 {
     public partial class OrderChart
     {
