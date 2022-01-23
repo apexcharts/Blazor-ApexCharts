@@ -1,0 +1,20 @@
+﻿
+<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Discount">
+
+     <ApexPointSeries TItem="Order"
+                     Items="orders"
+                     SeriesType=SeriesType.RadialBar
+                     Name="Gross Value"
+                     XValue="@(e => e.Country)"
+                     YAggregate="@(e => decimal.Round(e.Average(e => e.DiscountPrecentage)))"
+                     OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+
+
+@code {
+    private List<Order> orders = SampleData.GetOrders();
+}

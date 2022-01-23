@@ -3,7 +3,7 @@
     {
         @foreach (var series in chart.Series)
         {
-            <Badge class="me-2" BackgroundColor=TablerColor.Primary OnClick="@(() => ToggleChartSeries(series.Name))">@series.Name @series.Items.Count()</Badge>
+            <Badge class="me-2" BackgroundColor=TablerColor.Primary OnClick="@(() => ToggleChartSeries(series))">@series.Name @series.Items.Count()</Badge>
         }
 
         <span>Click badge to toggle series</span>
@@ -63,8 +63,8 @@
         StateHasChanged();
     }
 
-    private async Task ToggleChartSeries(string seriesName)
+    private async Task ToggleChartSeries(IApexSeries<Order> series)
     {
-        await chart.ToggleSeries(seriesName);
+        await series.Toggle();
     }
 }
