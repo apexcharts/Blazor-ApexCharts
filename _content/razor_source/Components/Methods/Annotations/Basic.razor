@@ -1,0 +1,96 @@
+﻿ <Button class="mb-3"  OnClick="RenderChart" BackgroundColor="TablerColor.Primary">Render Chart</Button>
+
+    <div class="mb-2 btn-list">
+        <Button Size=ButtonSize.Small OnClick=AddPointAnnotation BackgroundColor="TablerColor.Primary">Add Point Annotation</Button>
+        <Button Size=ButtonSize.Small OnClick=AddXAxisAnnotation BackgroundColor="TablerColor.Primary">Add XAxis Annotation</Button>
+        <Button Size=ButtonSize.Small OnClick=AddYAxisAnnotation BackgroundColor="TablerColor.Primary">Add YAxis Annotation</Button>
+        <Button Size=ButtonSize.Small OnClick=ClearAnnotations BackgroundColor="TablerColor.Danger">Clear Annotations</Button>
+    </div>
+<DemoContainer>
+
+    <ApexChart @ref=chart TItem="Order"
+               Title="@title">
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Order> chart;
+    private List<Order> orders = SampleData.GetOrders();
+    private string title = "Orders";
+
+    private async Task ClearAnnotations()
+    {
+        await chart.ClearAnnotations();
+    }
+
+    private async Task AddYAxisAnnotation()
+    {
+        var annotation = new AnnotationsYAxis
+            {
+                
+                Y = 150000,
+                StrokeDashArray = 10,
+                BorderWidth = 2,
+                Label = new Label
+                {
+                    Text = "Y Axis Annotation"
+                }
+            };
+
+        await chart.AddYAxisAnnotation(annotation, true);
+    }
+
+    private async Task AddXAxisAnnotation()
+    {
+        var point = new AnnotationsXAxis
+            {
+                X = "Sweden",
+                StrokeDashArray = 10,
+                BorderWidth = 2,
+                Label = new Label
+                {
+                    Text = "X Axis Annotation"
+                }
+            };
+
+        await chart.AddXAxisAnnotation(point, false);
+    }
+
+    private async Task AddPointAnnotation()
+    {
+        var point = new AnnotationsPoint
+            {
+                X = "Sweden",
+                Y = 200000,
+                Label = new Label
+                {
+                    Text = "This is a point"
+                }
+            };
+
+        await chart.AddPointAnnotation(point, false);
+    }
+
+    private void RenderChart()
+    {
+        chart?.Render();
+    }
+}

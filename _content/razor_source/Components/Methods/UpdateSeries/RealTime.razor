@@ -2,8 +2,6 @@
 @implements IDisposable
 
 <DemoContainer>
-
-   
     <ApexChart @ref=chart TItem="TimeSeries"
                Title="Order Net Value"
                XAxisType="XAxisType.Datetime"
@@ -50,6 +48,14 @@
                     {
                         Speed = 950
                     }
+                },
+                Toolbar = new Toolbar
+                {
+                    Show = false
+                },
+                Zoom = new Zoom
+                {
+                    Enabled = false
                 }
             };
     }

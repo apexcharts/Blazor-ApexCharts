@@ -48,6 +48,67 @@
         }
     },
 
+    addPointAnnotation(chartId, annotation, pushToMemory) {
+        var data = JSON.parse(annotation);
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
+            if (chart.options.debug === true) {
+                console.log('Add point annotation series chartId: ' + chartId);
+                console.log(data);
+                console.log('------');
+            }
+            chart.addPointAnnotation(data, pushToMemory);
+        }
+    },
+
+    addXaxisAnnotation(chartId, annotation, pushToMemory) {
+        var data = JSON.parse(annotation);
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
+            if (chart.options.debug === true) {
+                console.log('Add XAxis annotation chartId: ' + chartId);
+                console.log(data);
+                console.log('------');
+            }
+            chart.addXaxisAnnotation(data, pushToMemory);
+        }
+    },
+
+    addYaxisAnnotation(chartId, annotation, pushToMemory) {
+        var data = JSON.parse(annotation);
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
+            if (chart.options.debug === true) {
+                console.log('Add YAxis annotation chartId: ' + chartId);
+                console.log(data);
+                console.log('------');
+            }
+            chart.addYaxisAnnotation(data, pushToMemory);
+        }
+    },
+
+    clearAnnotations(chartId) {
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
+            if (chart.options.debug === true) {
+                console.log('Clear annotations chartId: ' + chartId);
+                console.log('------');
+            }
+            chart.clearAnnotations();
+        }
+    },
+
+    removeAnnotation(chartId, id) {
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
+            if (chart.options.debug === true) {
+                console.log('Remove annotation ' + id + ' chartId: ' + chartId);
+                console.log('------');
+            }
+            chart.removeAnnotation(id);
+        }
+    },
+
     toggleSeries(chartId, seriesName) {
         var chart = this.findChart(chartId);
         if (chart !== undefined) {
