@@ -210,9 +210,9 @@ namespace ApexCharts
             forceRender = true;
         }
 
-        public void Render()
+        public async Task Render()
         {
-            forceRender = true;
+            await RenderChart();
         }
 
         public async Task AddPointAnnotation(AnnotationsPoint annotationsPoint, bool pushToMemory)
