@@ -3,7 +3,7 @@
     <Button OnClick=RenderChart BackgroundColor="TablerColor.Primary">Render</Button>
 
     <ApexChart @ref=chart TItem="Order"
-               Title="Order Net Value">
+               Title="@title">
 
         <ApexPointSeries TItem="Order"
                          Items="orders"
@@ -28,7 +28,9 @@
 @code {
     private ApexChart<Order> chart;
     private List<Order> orders = SampleData.GetOrders();
- 
+    private string title = "Orders";
+    private int counter = 1;
+
     private void RenderChart()
     {
         var rnd = new Random();
@@ -38,6 +40,8 @@
             order.GrossValue = Math.Round(order.GrossValue * (decimal)multiply);
         }
 
+        title = $"Render[{counter}]";
+        counter++;
         chart.Render();
     }
 }
