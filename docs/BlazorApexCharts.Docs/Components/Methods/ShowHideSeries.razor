@@ -5,12 +5,14 @@
         {
             <Badge class="me-2" BackgroundColor=TablerColor.Primary OnClick="@(() => ToggleChartSeries(series.Name))">@series.Name @series.Items.Count()</Badge>
         }
-    }
 
-    <div class="mt-2">
-        <Button Size=ButtonSize.Small BackgroundColor=TablerColor.Green OnClick=ShowAll>Show All</Button>
-        <Button Size=ButtonSize.Small BackgroundColor=TablerColor.Danger OnClick=HideAll>Hide All</Button>
-    </div>
+        <span>Click badge to toggle series</span>
+
+        <div class="mt-2">
+            <Button Size=ButtonSize.Small BackgroundColor=TablerColor.Green OnClick=ShowAll>Show All</Button>
+            <Button Size=ButtonSize.Small BackgroundColor=TablerColor.Danger OnClick=HideAll>Hide All</Button>
+        </div>
+    }
 
     <ApexChart @ref=chart TItem="Order"
                Title="Order Net Value"
