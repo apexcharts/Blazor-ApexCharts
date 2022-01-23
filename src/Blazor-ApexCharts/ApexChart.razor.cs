@@ -181,7 +181,7 @@ namespace ApexCharts
             Options.Labels = data.Select(e => e.X?.ToString()).ToList();
         }
 
-        public void FixLineDataSelection()
+        private void FixLineDataSelection()
         {
             if ((Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area || Options.Chart.Type == ChartType.Radar) && OnDataPointSelection.HasDelegate)
             {
@@ -198,6 +198,12 @@ namespace ApexCharts
             }
         }
 
+        private string Serialize(object data)
+        {
+            var serializerOptions = new ChartSerializer().GetOptions<TItem>();
+            return JsonSerializer.Serialize(data, serializerOptions);
+        }
+
         [Obsolete("Please use Render(), this method will be removed")]
         public void SetRerenderChart()
         {
@@ -207,6 +213,30 @@ namespace ApexCharts
         public void Render()
         {
             forceRender = true;
+        }
+
+        public async Task AddPointAnnotation(AnnotationsPoint annotationsPoint, bool pushToMemory)
+        {
+            var serializerOptions = new ChartSerializer().GetOptions<TItem>();
+            var json = JsonSerializer.Serialize(annotationsPoint, serializerOptions);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.ChartId, json, pushToMemory);
+        }
+
+        public async Task AddXAxisAnnotation(AnnotationsXAxis annotationsXAxis, bool pushToMemory)
+        {
+            var json = Serialize(annotationsXAxis);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addXaxisAnnotation", Options.Chart.ChartId, json, pushToMemory);
+        }
+
+        public async Task AddYAxisAnnotation(AnnotationsYAxis annotationsYAxis, bool pushToMemory)
+        {
+            var json = Serialize(annotationsYAxis);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addYaxisAnnotation", Options.Chart.ChartId, json, pushToMemory);
+        }
+
+        public async Task ClearAnnotations()
+        {
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.clearAnnotations", Options.Chart.ChartId);
         }
 
         public async Task UpdateSeries(bool animate = true)
