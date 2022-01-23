@@ -239,6 +239,11 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.clearAnnotations", Options.Chart.ChartId);
         }
 
+        public async Task RemoveAnnotation(string id)
+        {
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.removeAnnotation", Options.Chart.ChartId, id);
+        }
+        
         public async Task UpdateSeries(bool animate = true)
         {
             SetSeries();

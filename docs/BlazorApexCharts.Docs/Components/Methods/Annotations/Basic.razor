@@ -1,8 +1,4 @@
-﻿<DemoContainer>
-
-    <Button class="mb-3"  OnClick="RenderChart" BackgroundColor="TablerColor.Primary">Render Chart</Button>
-
-
+﻿ <Button class="mb-3"  OnClick="RenderChart" BackgroundColor="TablerColor.Primary">Render Chart</Button>
 
     <div class="mb-2 btn-list">
         <Button Size=ButtonSize.Small OnClick=AddPointAnnotation BackgroundColor="TablerColor.Primary">Add Point Annotation</Button>
@@ -10,6 +6,7 @@
         <Button Size=ButtonSize.Small OnClick=AddYAxisAnnotation BackgroundColor="TablerColor.Primary">Add YAxis Annotation</Button>
         <Button Size=ButtonSize.Small OnClick=ClearAnnotations BackgroundColor="TablerColor.Danger">Clear Annotations</Button>
     </div>
+<DemoContainer>
 
     <ApexChart @ref=chart TItem="Order"
                Title="@title">
@@ -38,7 +35,6 @@
     private ApexChart<Order> chart;
     private List<Order> orders = SampleData.GetOrders();
     private string title = "Orders";
-    private int counter = 1;
 
     private async Task ClearAnnotations()
     {
@@ -49,6 +45,7 @@
     {
         var annotation = new AnnotationsYAxis
             {
+                
                 Y = 150000,
                 StrokeDashArray = 10,
                 BorderWidth = 2,

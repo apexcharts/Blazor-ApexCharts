@@ -18,7 +18,7 @@
 </DemoContainer>
 
 <div>
-@message;
+@message
 </div>
 @code {
     private List<Order> orders { get; set; } = SampleData.GetOrders();
@@ -29,6 +29,6 @@
         var order = orders.First();
         message = order.Country;
         order.GrossValue = order.GrossValue * (decimal)1.6; 
-        chart.UpdateSeries(true);
+        await chart.UpdateSeries(true);
     }
     }

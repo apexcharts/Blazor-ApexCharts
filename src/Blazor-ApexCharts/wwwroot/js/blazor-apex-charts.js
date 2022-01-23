@@ -98,6 +98,17 @@
         }
     },
 
+    removeAnnotation(chartId, id) {
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
+            if (chart.options.debug === true) {
+                console.log('Remove annotation ' + id + ' chartId: ' + chartId);
+                console.log('------');
+            }
+            chart.removeAnnotation(id);
+        }
+    },
+
     toggleSeries(chartId, seriesName) {
         var chart = this.findChart(chartId);
         if (chart !== undefined) {

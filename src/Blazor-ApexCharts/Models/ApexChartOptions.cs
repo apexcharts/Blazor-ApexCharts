@@ -177,6 +177,7 @@ namespace ApexCharts
 
     public class AnnotationsPoint
     {
+        public string Id { get; set; }
         public AnnotationsPointImage Image { get; set; }
         public Label Label { get; set; }
         public AnnotationMarker Marker { get; set; }
@@ -276,6 +277,7 @@ namespace ApexCharts
 
     public class AnnotationsXAxis
     {
+        public string Id { get; set; }
         public string BorderColor { get; set; }
         public double? BorderWidth { get; set; }
         public string FillColor { get; set; }
@@ -292,6 +294,7 @@ namespace ApexCharts
 
     public class AnnotationsYAxis
     {
+        public string Id { get; set; }
         public string BorderColor { get; set; }
         public double? BorderWidth { get; set; }
         public string FillColor { get; set; }
