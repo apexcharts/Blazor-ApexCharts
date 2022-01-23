@@ -31,7 +31,7 @@
     private string title = "Orders";
     private int counter = 1;
 
-    private void RenderChart()
+    private async Task RenderChart()
     {
         var rnd = new Random();
         foreach (var order in orders)
@@ -42,6 +42,6 @@
 
         title = $"Render[{counter}]";
         counter++;
-        chart.Render();
+        await chart.Render();
     }
 }
