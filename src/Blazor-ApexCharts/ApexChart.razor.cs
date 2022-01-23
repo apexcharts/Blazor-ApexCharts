@@ -243,7 +243,14 @@ namespace ApexCharts
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.removeAnnotation", Options.Chart.ChartId, id);
         }
-        
+
+        public async Task UpdateOptions(bool redrawPaths, bool animate, bool updateSyncedCharts)
+        {
+            PrepareChart();
+            var json = Serialize(Options);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateOptions", Options.Chart.ChartId, json, redrawPaths, animate, updateSyncedCharts);
+        }
+
         public async Task UpdateSeries(bool animate = true)
         {
             SetSeries();
@@ -281,19 +288,21 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.hideSeries", Options.Chart.ChartId, seriesName);
         }
 
-        private async Task RenderChart()
+        private void PrepareChart()
         {
-            forceRender = false;
             SetSeries();
             SetStroke();
             SetDataLabels();
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
             SetDotNetFormatters();
+        }
 
-            var chartSerializer = new ChartSerializer();
-            var serializerOptions = chartSerializer.GetOptions<TItem>();
-            var jsonOptions = JsonSerializer.Serialize(Options, serializerOptions);
+        private async Task RenderChart()
+        {
+            forceRender = false;
+            PrepareChart();
+            var jsonOptions = Serialize(Options);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
         }
 

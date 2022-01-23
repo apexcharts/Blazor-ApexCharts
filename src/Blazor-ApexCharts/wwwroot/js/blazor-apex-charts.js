@@ -35,6 +35,20 @@
         }
     },
 
+
+    updateOptions(chartId, options, redrawPaths, animate, updateSyncedCharts) {
+        var data = JSON.parse(options);
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
+            if (chart.options.debug === true) {
+                console.log('Update options chartId: ' + chartId);
+                console.log(data);
+                console.log('------');
+            }
+            chart.updateOptions(newOptions, redrawPaths, animate, updateSyncedCharts);
+        }
+    },
+
     updateSeries(chartId, series, animate) {
         var data = JSON.parse(series);
         var chart = this.findChart(chartId);
