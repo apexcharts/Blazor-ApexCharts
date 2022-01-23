@@ -37,6 +37,7 @@ namespace BlazorApexCharts.Docs
         public static string Grid_dots { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><circle cx='5' cy='5' r='1' /><circle cx='12' cy='5' r='1' /><circle cx='19' cy='5' r='1' /><circle cx='5' cy='12' r='1' /><circle cx='12' cy='12' r='1' /><circle cx='19' cy='12' r='1' /><circle cx='5' cy='19' r='1' /><circle cx='12' cy='19' r='1' /><circle cx='19' cy='19' r='1' />"; }
         public static string Ad { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><rect x='3' y='5' width='18' height='14' rx='2' /><path d='M7 15v-4a2 2 0 0 1 4 0v4' /><line x1='7' y1='13' x2='11' y2='13' /><path d='M17 9v6h-1.5a1.5 1.5 0 1 1 1.5 -1.5' />"; }
         public static string Alert_triangle { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><path d='M12 9v2m0 4v.01' /><path d='M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75' />"; }
+        public static string Affiliate { get => @"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><path d='M5.931 6.936l1.275 4.249m5.607 5.609l4.251 1.275' /><path d='M11.683 12.317l5.759 -5.759' /><circle cx='5.5' cy='5.5' r='1.5' /><circle cx='18.5' cy='5.5' r='1.5' /><circle cx='18.5' cy='18.5' r='1.5' /><circle cx='8.5' cy='15.5' r='4.5' />"; }
 
     }
 }

@@ -99,6 +99,7 @@ namespace ApexCharts
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
             Chart.RemoveSeries(this);
         }
     }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -14,5 +15,21 @@ namespace ApexCharts
         [Parameter] public bool ShowDataLabels { get; set; }
         [Parameter] public IEnumerable<TItem> Items { get; set; }
         [Parameter] public SeriesStroke Stroke { get; set; }
+
+        public async Task Toggle()
+        {
+            await Chart?.ToggleSeries(Name);
+        }
+
+        public async Task Show()
+        {
+            await Chart?.ShowSeries(Name);
+        }
+
+        public async Task Hide()
+        {
+            await Chart?.HideSeries(Name);
+        }
+
     }
 }

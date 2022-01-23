@@ -22,8 +22,12 @@ namespace ApexCharts
         [Parameter] public object Height { get; set; }
 
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
+        [Parameter] public EventCallback<bool> OnRendered { get; set; }
+
 
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
+
+        public List<IApexSeries<TItem>> Series => apexSeries;
 
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
         private ElementReference ChartContainer { get; set; }
@@ -40,11 +44,13 @@ namespace ApexCharts
             {
                 isReady = true;
                 ObjectReference = DotNetObjectReference.Create(this);
+                await OnRendered.InvokeAsync(true);
             }
 
             if (isReady && forceRender)
             {
                 await RenderChart();
+                await OnRendered.InvokeAsync(false);
             }
         }
 
@@ -79,7 +85,6 @@ namespace ApexCharts
             {
                 apexSeries.Add(series);
             }
-
         }
 
         internal void RemoveSeries(IApexSeries<TItem> series)
@@ -204,13 +209,41 @@ namespace ApexCharts
             forceRender = true;
         }
 
-        public async Task UpdateSeries(bool animate=true)
+        public async Task UpdateSeries(bool animate = true)
         {
             SetSeries();
+            UpdateDataForNoAxisCharts();
+
+            object data;
+            if (IsNoAxisChart)
+            {
+                data = Options.SeriesNonXAxis;
+            }
+            else
+            {
+                data = Options.Series;
+            }
+
+
             var serializerOptions = new ChartSerializer().GetOptions<TItem>();
-            var jsonSeries = JsonSerializer.Serialize(Options.Series, serializerOptions);
+            var jsonSeries = JsonSerializer.Serialize(data, serializerOptions);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.ChartId, jsonSeries, animate);
 
+        }
+
+        public async Task ToggleSeries(string seriesName)
+        {
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleSeries", Options.Chart.ChartId, seriesName);
+        }
+
+        public async Task ShowSeries(string seriesName)
+        {
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.showSeries", Options.Chart.ChartId, seriesName);
+        }
+
+        public async Task HideSeries(string seriesName)
+        {
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.hideSeries", Options.Chart.ChartId, seriesName);
         }
 
         private async Task RenderChart()

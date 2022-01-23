@@ -38,14 +38,47 @@
     updateSeries(chartId, series, animate) {
         var data = JSON.parse(series);
         var chart = this.findChart(chartId);
-        console.log(chart);
-        console.log(data);
-        console.log(chartId);
-        console.log('------------');
+        if (chart !== undefined) {
+            if (chart.options.debug === true) {
+                console.log('Update series chartId: ' + chartId);
+                console.log(data);
+                console.log('------');
+            }
+            chart.updateSeries(data, animate);
+        }
+    },
 
-        chart.updateSeries(data, animate);
+    toggleSeries(chartId, seriesName) {
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
 
+            if (chart.options.debug === true) {
+                console.log('Toogle series ' + seriesName + ' chartId: ' + chartId);
+            }
+            chart.toggleSeries(seriesName)
+        }
+    },
 
+    showSeries(chartId, seriesName) {
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
+
+            if (chart.options.debug === true) {
+                console.log('Show series ' + seriesName + ' chartId: ' + chartId);
+            }
+            chart.showSeries(seriesName)
+        }
+    },
+
+    hideSeries(chartId, seriesName) {
+        var chart = this.findChart(chartId);
+        if (chart !== undefined) {
+
+            if (chart.options.debug === true) {
+                console.log('Hide series ' + seriesName + ' chartId: ' + chartId);
+            }
+            chart.hideSeries(seriesName)
+        }
     },
 
     renderChart(dotNetObject, container, options) {

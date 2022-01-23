@@ -1,11 +1,9 @@
 ﻿@using System.Timers
-
-
+@implements IDisposable
 
 <DemoContainer>
 
-    <Button OnClick=UpdateChartSeries BackgroundColor="TablerColor.Primary">Update Series</Button>
-
+   
     <ApexChart @ref=chart TItem="TimeSeries"
                Title="Order Net Value"
                XAxisType="XAxisType.Datetime"
@@ -26,7 +24,7 @@
     private ApexChartOptions<TimeSeries> options;
     private TimeSeriesGenerator generator = new TimeSeriesGenerator(20);
     private bool timerInitialized;
-
+    private Timer timer;
 
     protected override void OnInitialized()
     {
@@ -61,11 +59,8 @@
         if (firstRender && !timerInitialized)
         {
             timerInitialized = true;
-            var timer = new Timer(1000);
-            timer.Elapsed += async delegate
-                    {
-                        await UpdateChartSeries();
-                    };
+            timer = new Timer(1000);
+            timer.Elapsed += async delegate { await UpdateChartSeries(); };
             timer.Enabled = true;
         }
     }
@@ -75,4 +70,12 @@
         generator.Update();
         await chart.UpdateSeries();
     }
+
+    public void Dispose()
+    {
+        timer?.Stop();
+        timer = null;
+    }
+
+
     }

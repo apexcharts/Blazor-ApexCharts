@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -16,6 +17,10 @@ namespace ApexCharts
 
         public IEnumerable<IDataPoint<TItem>> GetData();
         public ChartType GetChartType();
+
+        public Task Toggle();
+        public Task Show();
+        public Task Hide();
 
     }
 }
