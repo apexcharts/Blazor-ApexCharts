@@ -22,7 +22,7 @@ namespace ApexCharts
         [Parameter] public object Height { get; set; }
 
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
-        [Parameter] public EventCallback<bool> OnRendered { get; set; }
+        [Parameter] public EventCallback OnRendered { get; set; }
 
 
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
@@ -45,13 +45,11 @@ namespace ApexCharts
             {
                 isReady = true;
                 ObjectReference = DotNetObjectReference.Create(this);
-                await OnRendered.InvokeAsync(true);
             }
 
             if (isReady && forceRender)
             {
                 await RenderChart();
-                await OnRendered.InvokeAsync(false);
             }
         }
 
@@ -305,6 +303,7 @@ namespace ApexCharts
             PrepareChart();
             var jsonOptions = Serialize(Options);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
+            await OnRendered.InvokeAsync();
         }
 
         private void SetDotNetFormatters()
