@@ -1278,7 +1278,7 @@ namespace ApexCharts
         public AxisCrosshairs Crosshairs { get; set; }
         public bool? Floating { get; set; }
         public int? DecimalsInFloat { get; set; }
-        public AxisLabels Labels { get; set; }
+        public XAxisLabels Labels { get; set; }
         public object Max { get; set; }
         public object Min { get; set; }
         public double? OffsetX { get; set; }
@@ -1362,9 +1362,9 @@ namespace ApexCharts
         public double? Width { get; set; }
     }
 
-    public class AxisLabels
+    public class XAxisLabels
     {
-        public PurpleDatetimeFormatter DatetimeFormatter { get; set; }
+        public DatetimeFormatter DatetimeFormatter { get; set; }
         public bool? DatetimeUTC { get; set; }
         public string Format { get; set; }
         public string Formatter { get; set; }
@@ -1381,7 +1381,26 @@ namespace ApexCharts
         public bool? Trim { get; set; }
     }
 
-    public class PurpleDatetimeFormatter
+    public class YAxisLabels
+    {
+        public DatetimeFormatter DatetimeFormatter { get; set; }
+        public bool? DatetimeUTC { get; set; }
+        public string Format { get; set; }
+        public string Formatter { get; set; }
+        public bool? HideOverlappingLabels { get; set; }
+        public double? MaxWidth { get; set; }
+        public double? MinWidth { get; set; }
+        public double? OffsetX { get; set; }
+        public double? OffsetY { get; set; }
+        public double? Rotate { get; set; }
+        public bool? RotateAlways { get; set; }
+        public bool? Show { get; set; }
+        public bool? ShowDuplicates { get; set; }
+        public AxisLabelStyle Style { get; set; }
+        public bool? Trim { get; set; }
+    }
+
+    public class DatetimeFormatter
     {
         public string Day { get; set; }
         public string Hour { get; set; }
@@ -1421,7 +1440,7 @@ namespace ApexCharts
         public int? DecimalsInFloat { get; set; }
         public bool? Floating { get; set; }
         public bool? ForceNiceScale { get; set; }
-        public AxisLabels Labels { get; set; }
+        public YAxisLabels Labels { get; set; }
         public bool? Logarithmic { get; set; }
         public object Max { get; set; }
         public object Min { get; set; }

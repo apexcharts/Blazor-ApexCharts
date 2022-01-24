@@ -57,6 +57,7 @@ namespace ApexCharts
         {
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
+            if(string.IsNullOrWhiteSpace(Options.Chart.Id)) { Options.Chart.Id = Options.Chart.ChartId.ToString(); }
             Options.Debug = Debug;
             Options.Chart.Width = Width;
             Options.Chart.Height = Height;
@@ -335,7 +336,7 @@ namespace ApexCharts
                 if (!Options.Yaxis.Any()) { Options.Yaxis.Add(new YAxis()); }
 
                 var yAxis = Options.Yaxis.First();
-                if (yAxis.Labels == null) { yAxis.Labels = new AxisLabels(); }
+                if (yAxis.Labels == null) { yAxis.Labels = new YAxisLabels(); }
                 yAxis.Labels.Formatter = @"function (value, index, w) {
                                           return window.blazor_apexchart.getYAxisLabel(value, index, w);
                                          }";

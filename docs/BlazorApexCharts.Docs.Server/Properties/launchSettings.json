@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "bar-charts",
+      "launchUrl": "features/syncronized",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

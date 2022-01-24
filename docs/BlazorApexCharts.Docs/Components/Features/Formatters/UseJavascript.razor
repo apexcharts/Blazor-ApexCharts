@@ -32,7 +32,7 @@
         options.Yaxis = new List<YAxis>();
         options.Yaxis.Add(new YAxis
             {
-                Labels = new AxisLabels
+                Labels = new YAxisLabels
                 {
                     Formatter = @"function (value) {
                     return '$' + Number(value).toLocaleString();}"
@@ -42,7 +42,7 @@
 
         options.Xaxis = new XAxis
             {
-                Labels = new AxisLabels
+                Labels = new XAxisLabels
                 {
                     Formatter = @"function (value) {
                     if (value === undefined) {return '';}
