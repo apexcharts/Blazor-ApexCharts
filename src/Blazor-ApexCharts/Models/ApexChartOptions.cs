@@ -18,7 +18,7 @@ namespace ApexCharts
         /// Main Chart options
         /// See https://apexcharts.com/docs/options/chart/
         /// </summary>
-        public Chart Chart { get; set; }
+        public Chart Chart { get; set; } = new();
 
         public List<string> Colors { get; set; }
 
@@ -330,7 +330,7 @@ namespace ApexCharts
         public string Group { get; set; }
 
         public Guid ChartId { get; set; }
-        public string Id { get; set; }
+        public string Id { get; internal set; }
         public List<ChartLocale> Locales { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }

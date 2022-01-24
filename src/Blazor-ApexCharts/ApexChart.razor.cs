@@ -37,7 +37,9 @@ namespace ApexCharts
 
         private bool isReady;
         private bool forceRender = true;
+        private string chartId = Guid.NewGuid().ToString("N");
 
+        public string ChartId => ChartId;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -57,7 +59,7 @@ namespace ApexCharts
         {
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
-            if(string.IsNullOrWhiteSpace(Options.Chart.Id)) { Options.Chart.Id = Options.Chart.ChartId.ToString(); }
+            Options.Chart.Id = chartId;
             Options.Debug = Debug;
             Options.Chart.Width = Width;
             Options.Chart.Height = Height;

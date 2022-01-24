@@ -2,7 +2,7 @@
 @typeparam TItem
 @namespace ApexCharts
 
-<div @ref=ChartContainer id="@Options?.Chart?.ChartId" />
+<div @ref=ChartContainer id="@chartId" />
 <CascadingValue Value="(ApexChart<TItem>)this" Name="Chart">
     @ChildContent
 </CascadingValue>
