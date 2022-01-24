@@ -32,7 +32,7 @@ namespace ApexCharts
          .Select(d => new ListPoint<TItem>
          {
              X = XValue.Compile().Invoke(d),
-             Y = new List<decimal>
+             Y = new List<decimal?>
              {
                          Open.Compile().Invoke(d),
                          High.Compile().Invoke(d),

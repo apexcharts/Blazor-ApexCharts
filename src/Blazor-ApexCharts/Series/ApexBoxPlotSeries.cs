@@ -8,7 +8,7 @@ namespace ApexCharts
 {
     public class ApexBoxPlotSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
-        [Parameter] public Expression<Func<TItem, decimal>> YValue { get; set; }
+        [Parameter] public Expression<Func<TItem, decimal?>> YValue { get; set; }
         [Parameter] public Expression<Func<ListPoint<TItem>, object>> OrderBy { get; set; }
         [Parameter] public Expression<Func<ListPoint<TItem>, object>> OrderByDescending { get; set; }
 
