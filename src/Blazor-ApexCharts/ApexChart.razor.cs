@@ -27,6 +27,7 @@ namespace ApexCharts
 
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
 
+        private ChartSerializer chartSerializer = new();
         public List<IApexSeries<TItem>> Series => apexSeries;
 
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
@@ -200,7 +201,7 @@ namespace ApexCharts
 
         private string Serialize(object data)
         {
-            var serializerOptions = new ChartSerializer().GetOptions<TItem>();
+            var serializerOptions = chartSerializer.GetOptions<TItem>();
             return JsonSerializer.Serialize(data, serializerOptions);
         }
 
@@ -267,8 +268,8 @@ namespace ApexCharts
             }
 
 
-            var serializerOptions = new ChartSerializer().GetOptions<TItem>();
-            var jsonSeries = JsonSerializer.Serialize(data, serializerOptions);
+
+            var jsonSeries = Serialize(data);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.ChartId, jsonSeries, animate);
 
         }
