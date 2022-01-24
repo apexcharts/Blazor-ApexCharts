@@ -241,36 +241,36 @@ namespace ApexCharts
         {
             var serializerOptions = new ChartSerializer().GetOptions<TItem>();
             var json = JsonSerializer.Serialize(annotationsPoint, serializerOptions);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.ChartId, json, pushToMemory);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
         public async Task AddXAxisAnnotation(AnnotationsXAxis annotationsXAxis, bool pushToMemory)
         {
             var json = Serialize(annotationsXAxis);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addXaxisAnnotation", Options.Chart.ChartId, json, pushToMemory);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addXaxisAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
         public async Task AddYAxisAnnotation(AnnotationsYAxis annotationsYAxis, bool pushToMemory)
         {
             var json = Serialize(annotationsYAxis);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addYaxisAnnotation", Options.Chart.ChartId, json, pushToMemory);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addYaxisAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
         public async Task ClearAnnotations()
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.clearAnnotations", Options.Chart.ChartId);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.clearAnnotations", Options.Chart.Id);
         }
 
         public async Task RemoveAnnotation(string id)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.removeAnnotation", Options.Chart.ChartId, id);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.removeAnnotation", Options.Chart.Id, id);
         }
 
         public async Task UpdateOptions(bool redrawPaths, bool animate, bool updateSyncedCharts)
         {
             PrepareChart();
             var json = Serialize(Options);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateOptions", Options.Chart.ChartId, json, redrawPaths, animate, updateSyncedCharts);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateOptions", Options.Chart.Id, json, redrawPaths, animate, updateSyncedCharts);
         }
 
         public async Task UpdateSeries(bool animate = true)
@@ -291,23 +291,23 @@ namespace ApexCharts
 
 
             var jsonSeries = Serialize(data);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.ChartId, jsonSeries, animate);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
 
         }
 
         public async Task ToggleSeries(string seriesName)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleSeries", Options.Chart.ChartId, seriesName);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleSeries", Options.Chart.Id, seriesName);
         }
 
         public async Task ShowSeries(string seriesName)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.showSeries", Options.Chart.ChartId, seriesName);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.showSeries", Options.Chart.Id, seriesName);
         }
 
         public async Task HideSeries(string seriesName)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.hideSeries", Options.Chart.ChartId, seriesName);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.hideSeries", Options.Chart.Id, seriesName);
         }
 
         private void PrepareChart()
@@ -406,9 +406,9 @@ namespace ApexCharts
         public void Dispose()
         {
             GC.SuppressFinalize(this);
-            if (Options.Chart?.ChartId != null && isReady)
+            if (Options.Chart?.Id != null && isReady)
             {
-                InvokeAsync(async () => { await JSRuntime.InvokeVoidAsync("blazor_apexchart.destroyChart", Options.Chart.ChartId); });
+                InvokeAsync(async () => { await JSRuntime.InvokeVoidAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
             }
 
             if (ObjectReference != null)

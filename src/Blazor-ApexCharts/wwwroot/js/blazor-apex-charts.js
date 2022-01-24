@@ -1,6 +1,5 @@
 ﻿window.blazor_apexchart = {
-    charts: [],
-
+ 
     getYAxisLabel(value, index, w) {
 
         if (window.wasmBinaryFile === undefined) {
@@ -19,29 +18,28 @@
         return value;
     },
 
-    findChart(chartId) {
-        var chartFind = this.charts.filter(x => x.opts.chart.chartId === chartId)
-        if (chartFind.length > 0) {
-            return chartFind[0];
+    findChart(id) {
+        if (Apex._chartInstances === undefined) {
+            return undefined;
         }
-        return undefined;
+        return ApexCharts.getChartByID(id)
+ 
     },
 
-    destroyChart(chartId) {
-        var chart = this.findChart(chartId);
+    destroyChart(id) {
+        var chart = this.findChart(id);
         if (chart !== undefined) {
             chart.destroy();
-            this.charts = this.charts.filter(x => x.opts.chart.chartId !== chartId);
         }
     },
 
 
-    updateOptions(chartId, options, redrawPaths, animate, updateSyncedCharts) {
+    updateOptions(id, options, redrawPaths, animate, updateSyncedCharts) {
         var data = JSON.parse(options);
-        var chart = this.findChart(chartId);
+        var chart = this.findChart(id);
         if (chart !== undefined) {
             if (chart.options.debug === true) {
-                console.log('Update options chartId: ' + chartId);
+                console.log('Update options id: ' + id);
                 console.log(data);
                 console.log('------');
             }
@@ -49,12 +47,12 @@
         }
     },
 
-    updateSeries(chartId, series, animate) {
+    updateSeries(id, series, animate) {
         var data = JSON.parse(series);
-        var chart = this.findChart(chartId);
+        var chart = this.findChart(id);
         if (chart !== undefined) {
             if (chart.options.debug === true) {
-                console.log('Update series chartId: ' + chartId);
+                console.log('Update series id: ' + id);
                 console.log(data);
                 console.log('------');
             }
@@ -62,12 +60,12 @@
         }
     },
 
-    addPointAnnotation(chartId, annotation, pushToMemory) {
+    addPointAnnotation(id, annotation, pushToMemory) {
         var data = JSON.parse(annotation);
-        var chart = this.findChart(chartId);
+        var chart = this.findChart(id);
         if (chart !== undefined) {
             if (chart.options.debug === true) {
-                console.log('Add point annotation series chartId: ' + chartId);
+                console.log('Add point annotation series id: ' + id);
                 console.log(data);
                 console.log('------');
             }
@@ -75,12 +73,12 @@
         }
     },
 
-    addXaxisAnnotation(chartId, annotation, pushToMemory) {
+    addXaxisAnnotation(id, annotation, pushToMemory) {
         var data = JSON.parse(annotation);
-        var chart = this.findChart(chartId);
+        var chart = this.findChart(id);
         if (chart !== undefined) {
             if (chart.options.debug === true) {
-                console.log('Add XAxis annotation chartId: ' + chartId);
+                console.log('Add XAxis annotation id: ' + id);
                 console.log(data);
                 console.log('------');
             }
@@ -88,12 +86,12 @@
         }
     },
 
-    addYaxisAnnotation(chartId, annotation, pushToMemory) {
+    addYaxisAnnotation(id, annotation, pushToMemory) {
         var data = JSON.parse(annotation);
-        var chart = this.findChart(chartId);
+        var chart = this.findChart(id);
         if (chart !== undefined) {
             if (chart.options.debug === true) {
-                console.log('Add YAxis annotation chartId: ' + chartId);
+                console.log('Add YAxis annotation id: ' + id);
                 console.log(data);
                 console.log('------');
             }
@@ -101,56 +99,56 @@
         }
     },
 
-    clearAnnotations(chartId) {
-        var chart = this.findChart(chartId);
+    clearAnnotations(id) {
+        var chart = this.findChart(id);
         if (chart !== undefined) {
             if (chart.options.debug === true) {
-                console.log('Clear annotations chartId: ' + chartId);
+                console.log('Clear annotations id: ' + id);
                 console.log('------');
             }
             chart.clearAnnotations();
         }
     },
 
-    removeAnnotation(chartId, id) {
-        var chart = this.findChart(chartId);
+    removeAnnotation(chartid, id) {
+        var chart = this.findChart(chartid);
         if (chart !== undefined) {
             if (chart.options.debug === true) {
-                console.log('Remove annotation ' + id + ' chartId: ' + chartId);
+                console.log('Remove annotation ' + id + ' Chartid: ' + chartid);
                 console.log('------');
             }
             chart.removeAnnotation(id);
         }
     },
 
-    toggleSeries(chartId, seriesName) {
-        var chart = this.findChart(chartId);
+    toggleSeries(id, seriesName) {
+        var chart = this.findChart(id);
         if (chart !== undefined) {
 
             if (chart.options.debug === true) {
-                console.log('Toogle series ' + seriesName + ' chartId: ' + chartId);
+                console.log('Toogle series ' + seriesName + ' id: ' + id);
             }
             chart.toggleSeries(seriesName)
         }
     },
 
-    showSeries(chartId, seriesName) {
-        var chart = this.findChart(chartId);
+    showSeries(id, seriesName) {
+        var chart = this.findChart(id);
         if (chart !== undefined) {
 
             if (chart.options.debug === true) {
-                console.log('Show series ' + seriesName + ' chartId: ' + chartId);
+                console.log('Show series ' + seriesName + ' id: ' + id);
             }
             chart.showSeries(seriesName)
         }
     },
 
-    hideSeries(chartId, seriesName) {
-        var chart = this.findChart(chartId);
+    hideSeries(id, seriesName) {
+        var chart = this.findChart(id);
         if (chart !== undefined) {
 
             if (chart.options.debug === true) {
-                console.log('Hide series ' + seriesName + ' chartId: ' + chartId);
+                console.log('Hide series ' + seriesName + ' id: ' + id);
             }
             chart.hideSeries(seriesName)
         }
@@ -190,14 +188,13 @@
         }
 
         //Always destry chart if it exists
-        this.destroyChart(options.chart.chartId);
+        this.destroyChart(options.chart.id);
 
         chart = new ApexCharts(container, options);
-        this.charts.push(chart);
         chart.render();
 
         if (options.debug == true) {
-            console.log('Chart ' + options.chart.chartId + ' rendered');
+            console.log('Chart ' + options.chart.id + ' rendered');
         }
     }
 }

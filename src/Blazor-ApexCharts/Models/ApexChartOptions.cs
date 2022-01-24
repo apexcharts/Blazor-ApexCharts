@@ -314,11 +314,6 @@ namespace ApexCharts
     /// </summary>
     public class Chart
     {
-
-        public Chart()
-        {
-            ChartId = Guid.NewGuid();
-        }
         public Animations Animations { get; set; }
         public string Background { get; set; }
         public Brush Brush { get; set; }
@@ -328,8 +323,6 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string ForeColor { get; set; }
         public string Group { get; set; }
-
-        public Guid ChartId { get; set; }
         public string Id { get; internal set; }
         public List<ChartLocale> Locales { get; set; }
         public double? OffsetX { get; set; }
