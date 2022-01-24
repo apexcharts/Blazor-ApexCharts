@@ -12,6 +12,8 @@ namespace ApexCharts
         Expression<Func<TItem, object>> XValue { get; set; }
         IEnumerable<TItem> Items { get; set; }
 
+        string Color { get; set; }
+
         bool ShowDataLabels { get; set; }
         SeriesStroke Stroke { get; set; }
 

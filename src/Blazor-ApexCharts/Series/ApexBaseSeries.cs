@@ -15,7 +15,7 @@ namespace ApexCharts
         [Parameter] public bool ShowDataLabels { get; set; }
         [Parameter] public IEnumerable<TItem> Items { get; set; }
         [Parameter] public SeriesStroke Stroke { get; set; }
-
+        [Parameter] public string Color { get; set; }
         public async Task Toggle()
         {
             await Chart?.ToggleSeries(Name);

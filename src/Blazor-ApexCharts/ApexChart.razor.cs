@@ -105,7 +105,22 @@ namespace ApexCharts
             }
         }
 
-        private void SetStroke()
+        private void SetSeriesColors()
+        {
+            if (Options?.Series == null) { return; }
+            if (apexSeries.All(e => (e.Color == null))) { return; }
+
+            var colors = new List<string>();
+
+            foreach (var series in Options.Series)
+            {
+                colors.Add(series.ApexSeries.Color ?? "#d3d3d3"); //Default is light gray
+            }
+            Options.Colors = colors;
+        }
+
+
+        private void SetSeriesStroke()
         {
             if (Options?.Series == null) { return; }
             if (apexSeries.All(e => (e.Stroke == null))) { return; }
@@ -122,7 +137,12 @@ namespace ApexCharts
                 strokeDash.Add(series.ApexSeries.Stroke?.DashSpace ?? 0);
             }
 
-            Options.Colors = strokeColors;
+            //Not sure if this is a good idea, right now only here for backward compability
+            if (Options.Colors == null || !Options.Colors.Any())
+            {
+                Options.Colors = strokeColors;
+            }
+
             Options.Stroke.Width = strokeWidths;
             Options.Stroke.Colors = strokeColors;
             Options.Stroke.DashArray = strokeDash;
@@ -290,7 +310,8 @@ namespace ApexCharts
         private void PrepareChart()
         {
             SetSeries();
-            SetStroke();
+            SetSeriesColors();
+            SetSeriesStroke();
             SetDataLabels();
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
