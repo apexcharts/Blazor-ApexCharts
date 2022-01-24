@@ -10,7 +10,8 @@ namespace ApexCharts
     public class ListPoint<TItem> : IDataPoint<TItem>
     {
         public object X { get; set; }
-        public IEnumerable<decimal> Y { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+        public IEnumerable<decimal?> Y { get; set; }
       
        
         [JsonIgnore]

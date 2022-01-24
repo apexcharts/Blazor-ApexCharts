@@ -46,7 +46,7 @@ namespace ApexCharts
                        .Select(e => new ListPoint<TItem>
                        {
                            X = XValue.Compile().Invoke(e),
-                           Y = new List<decimal> { YMinValue.Compile().Invoke(e), YMaxValue.Compile().Invoke(e) },
+                           Y = new List<decimal?> { YMinValue.Compile().Invoke(e), YMaxValue.Compile().Invoke(e) },
                            Items = new List<TItem> { e}
                        });
             }
@@ -57,7 +57,7 @@ namespace ApexCharts
                  .Select(d => new ListPoint<TItem>
                  {
                      X = d.Key,
-                     Y = new List<decimal> { d.AsQueryable().Min(YValue), d.AsQueryable().Max(YValue) },
+                     Y = new List<decimal?> { d.AsQueryable().Min(YValue), d.AsQueryable().Max(YValue) },
                      Items = d
                  });
             }

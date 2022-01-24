@@ -7,6 +7,18 @@ namespace BlazorApexCharts.Docs
     public static class SampleData
     {
 
+        public static List<SimpleValue> GetSimpleValues()
+        {
+            var result = new List<SimpleValue>();
+
+            result.Add(new SimpleValue { Name = "Blue", Value = 40 });
+            result.Add(new SimpleValue { Name = "Green", Value = 130 });
+            result.Add(new SimpleValue { Name = "Black", Value = null });
+            result.Add(new SimpleValue { Name = "Red", Value = 45 });
+            result.Add(new SimpleValue { Name = "White", Value = 11 });
+            return result;
+        }
+
         public static List<Order> GetRandomOrders()
         {
             var rnd = new Random();
@@ -59,7 +71,7 @@ namespace BlazorApexCharts.Docs
         {
             var result = new List<Project>();
 
-            result.Add(new Project { Name = "Design", StartDate = DateTime.Now.AddDays(-30), EndDate =  DateTime.Now.AddDays(-10) });
+            result.Add(new Project { Name = "Design", StartDate = DateTime.Now.AddDays(-30), EndDate = DateTime.Now.AddDays(-10) });
             result.Add(new Project { Name = "Construct", StartDate = DateTime.Now.AddDays(-20), EndDate = DateTime.Now.AddDays(-5) });
             result.Add(new Project { Name = "Install", StartDate = DateTime.Now.AddDays(-14), EndDate = DateTime.Now.AddDays(0) });
             result.Add(new Project { Name = "Train", StartDate = DateTime.Now.AddDays(-18), EndDate = DateTime.Now.AddDays(5) });
@@ -71,8 +83,8 @@ namespace BlazorApexCharts.Docs
         {
             var result = new List<Activity>();
 
-            result.Add(new Activity { Name = "Design", ActivityDate = DateTimeOffset.Now.AddDays(-30)});
-            result.Add(new Activity { Name = "Design", ActivityDate = DateTimeOffset.Now.AddDays(-20)});
+            result.Add(new Activity { Name = "Design", ActivityDate = DateTimeOffset.Now.AddDays(-30) });
+            result.Add(new Activity { Name = "Design", ActivityDate = DateTimeOffset.Now.AddDays(-20) });
 
             result.Add(new Activity { Name = "Develop", ActivityDate = DateTimeOffset.Now.AddDays(-22) });
             result.Add(new Activity { Name = "Develop", ActivityDate = DateTimeOffset.Now.AddDays(-10) });
@@ -85,7 +97,7 @@ namespace BlazorApexCharts.Docs
 
         }
 
-            public static List<SupportIncident> GetSupportIncidents(int severityMin = 0, int severityMax = 100)
+        public static List<SupportIncident> GetSupportIncidents(int severityMin = 0, int severityMax = 100)
         {
             var fakeIncidents = new Faker<SupportIncident>()
             .RuleFor(o => o.Severity, f => f.Random.Number(severityMin, severityMax))

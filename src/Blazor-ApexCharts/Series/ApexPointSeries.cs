@@ -8,8 +8,8 @@ namespace ApexCharts
 {
     public class ApexPointSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
-        [Parameter] public Expression<Func<TItem, decimal>> YValue { get; set; }
-        [Parameter] public Expression<Func<IEnumerable<TItem>, decimal>> YAggregate { get; set; }
+        [Parameter] public Expression<Func<TItem, decimal?>> YValue { get; set; }
+        [Parameter] public Expression<Func<IEnumerable<TItem>, decimal?>> YAggregate { get; set; }
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderBy { get; set; }
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderByDescending { get; set; }
         [Parameter] public SeriesType SeriesType { get; set; }
