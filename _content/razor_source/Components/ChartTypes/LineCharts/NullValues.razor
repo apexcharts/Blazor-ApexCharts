@@ -1,0 +1,17 @@
+﻿<DemoContainer>
+    <ApexChart TItem="SimpleValue"
+               Title="Order Net Value" Debug>
+
+        <ApexPointSeries TItem="SimpleValue"
+                         Items="Data"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Name)"
+                         YValue="@(e => e.Value)" />
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<SimpleValue> Data { get; set; } = SampleData.GetSimpleValues();
+    }
