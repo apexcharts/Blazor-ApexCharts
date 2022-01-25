@@ -13,7 +13,6 @@ namespace BlazorApexCharts.Docs
 
         public TimeSeriesGenerator(int points)
         {
-
             SetRange(points);
             
             var date = DateTimeOffset.Now.AddDays(-100);
@@ -48,7 +47,7 @@ namespace BlazorApexCharts.Docs
         {
             var rnd = new Random();
             var value = rnd.Next(1, 100);
-            TimeSeries.Add(new TimeSeries { Date = date, Value = value });
+            TimeSeries.Add(new TimeSeries { Date = date, Value = value, Quantity=rnd.Next(1,20) });
         }
 
     }
@@ -57,5 +56,6 @@ namespace BlazorApexCharts.Docs
     {
         public DateTimeOffset Date { get; set; }
         public decimal Value { get; set; }
+        public int Quantity { get; set; }
     }
 }
