@@ -1,65 +1,62 @@
 ﻿
 <div id="synced-charts">
-    <ApexChart TItem="Order"
-               Title="Gross Value"
+    <ApexChart TItem="TimeSeries"
+               Title="Value"
                Options=options1
-               Height="150">
+               Height="150"
+               XAxisType="XAxisType.Datetime">
 
-        <ApexPointSeries TItem="Order"
-                         Items="Orders"
-                         Name="Gross Value"
+        <ApexPointSeries TItem="TimeSeries"
+                         Items="data"
+                         Name="Value"
                          SeriesType="SeriesType.Line"
-                         XValue="@(e => e.Country)"
-                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                         OrderByDescending="e=>e.Y" />
+                         XValue="@(e => e.Date)"
+                         YAggregate="@(e => e.Sum(e => e.Value))"
+                         OrderBy="e=>e.X"
+                         Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
     </ApexChart>
 
-    <ApexChart TItem="Order"
-               Title="Net Value"
+    <ApexChart TItem="TimeSeries"
+               Title="Quantity"
                Options=options2
-               Height="150">
+               Height="150"
+               XAxisType="XAxisType.Datetime">
 
-        <ApexPointSeries TItem="Order"
-                         Items="Orders"
-                         Name="Net Value"
-                         SeriesType="SeriesType.Line"
-                         XValue="@(e => e.Country)"
-                         YAggregate="@(e => e.Sum(e => e.NetValue))"
-                         OrderByDescending="e=>e.Y" />
+        <ApexPointSeries TItem="TimeSeries"
+                         Items="data"
+                         Name="Quantity"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Date)"
+                         YValue="@(e => e.Quantity)"
+                         OrderBy="e=>e.X"
+                         Stroke="@(new SeriesStroke { Width = 2, Color="#E51C15"})" />
     </ApexChart>
 </div>
 
 @code {
-    private List<Order> Orders { get; set; } = SampleData.GetOrders();
-    private ApexChartOptions<Order> options1 = new();
-    private ApexChartOptions<Order> options2 = new();
+    private List<TimeSeries> data { get; set; } = new TimeSeriesGenerator(100).TimeSeries;
+    private ApexChartOptions<TimeSeries> options1 = new();
+    private ApexChartOptions<TimeSeries> options2 = new();
 
     protected override void OnInitialized()
     {
         const string groupName = "SyncGroup";
         const int YAxisMinWidth = 40;
-      
-        options1.Chart = new Chart
-            {
-                Group = groupName
-            };
 
-        options1.Yaxis = new List<YAxis> { new YAxis {
-                Labels = new YAxisLabels {
-                    MinWidth = YAxisMinWidth}}
+        options1.Chart = new Chart { Group = groupName };
+        options1.Yaxis = new List<YAxis> { new YAxis { 
+                Labels = new YAxisLabels { MinWidth = YAxisMinWidth}}
         };
 
-        options2.Chart = new Chart
-            {
-                Group = groupName
-            };
+        options2.Chart = new Chart { Group = groupName};
         options2.Yaxis = new List<YAxis> { new YAxis
             {
-                Labels = new YAxisLabels {
-                    MinWidth = YAxisMinWidth}}
+                Labels = new YAxisLabels { MinWidth = YAxisMinWidth}}
         };
 
         options2.Chart.Toolbar = new Toolbar { Show = false };
+        options2.Xaxis = new XAxis { TickPlacement = TickPlacement.On };
+
     }
 
 
