@@ -7,7 +7,7 @@
          <ApexBubbleSeries TItem="SupportIncident"
                     Items="data.ToList()"
                     Name="@data.Key.ToString()"
-                    XValue="@(e => e.WeekNumber)"
+                     XValue="@(e => e.WeekName)"
                     YAggregate="@(e => (decimal)e.Sum(e => e.LeadTime))"
                     ZAggregate="@(e => (int)e.Average(e => e.Severity))" />
    }
