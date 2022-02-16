@@ -43,7 +43,7 @@
                 console.log(data);
                 console.log('------');
             }
-            chart.updateOptions(newOptions, redrawPaths, animate, updateSyncedCharts);
+            chart.updateOptions(data, redrawPaths, animate, updateSyncedCharts);
         }
     },
 
