@@ -26,7 +26,7 @@ namespace ApexCharts
         public IEnumerable<IDataPoint<TItem>> GetData()
         {
             
-            var data = Items.GroupBy(e => XValue.Compile().Invoke(e)).Select(d => new ListPoint<TItem>
+            var data = Items.GroupBy(XValue).Select(d => new ListPoint<TItem>
             {
                 X = d.Key,
                 Y = d.AsQueryable().Select(YValue).OrderBy(o => o),

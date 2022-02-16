@@ -45,7 +45,7 @@ namespace ApexCharts
                 data = Items
                        .Select(e => new ListPoint<TItem>
                        {
-                           X = XValue.Compile().Invoke(e),
+                           X = XValue.Invoke(e),
                            Y = new List<decimal?> { YMinValue.Compile().Invoke(e), YMaxValue.Compile().Invoke(e) },
                            Items = new List<TItem> { e}
                        });
@@ -53,7 +53,7 @@ namespace ApexCharts
             else
             {
                 data = Items
-                 .GroupBy(e => XValue.Compile().Invoke(e))
+                 .GroupBy(XValue)
                  .Select(d => new ListPoint<TItem>
                  {
                      X = d.Key,

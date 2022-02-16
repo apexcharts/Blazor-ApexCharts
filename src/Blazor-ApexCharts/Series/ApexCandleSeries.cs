@@ -31,7 +31,7 @@ namespace ApexCharts
             var data = Items
          .Select(d => new ListPoint<TItem>
          {
-             X = XValue.Compile().Invoke(d),
+             X = XValue.Invoke(d),
              Y = new List<decimal?>
              {
                          Open.Compile().Invoke(d),

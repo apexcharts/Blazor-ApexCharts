@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -221,30 +220,10 @@ namespace ApexCharts
             }
         }
 
-        //private string Serialize<T>(T data)
-        //{
-        //    var stopWatch = new Stopwatch();
-        //    stopWatch.Start();
-        //    var serializerOptions = chartSerializer.GetOptions<TItem>();
-        //    WriteDebug($"Serialize Options Complete {stopWatch.ElapsedMilliseconds.ToString("N")}ms");
-        //    stopWatch.Reset();
-        //    stopWatch.Start();
-        //    var json = JsonSerializer.Serialize<T>(data, serializerOptions);
-        //    WriteDebug($"Serialize  Complete {stopWatch.ElapsedMilliseconds.ToString("N")}ms");
-        //    return json;
-        //}
-
         private string Serialize(object data)
         {
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-
             var serializerOptions = chartSerializer.GetOptions<TItem>();
-            WriteDebug($"Serialize Options Complete {stopWatch.ElapsedMilliseconds.ToString("N")}ms");
-            stopWatch.Reset();
-            stopWatch.Start();
             var json = JsonSerializer.Serialize(data, serializerOptions);
-            WriteDebug($"Serialize  Complete {stopWatch.ElapsedMilliseconds.ToString("N")}ms");
             return json;
         }
 
@@ -309,12 +288,8 @@ namespace ApexCharts
             {
                 jsonSeries = Serialize(Options.Series);
             }
-
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
+           
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
-            WriteDebug($"To Javascript Complete {stopWatch.ElapsedMilliseconds.ToString("N")}ms");
-            stopWatch.Stop();
         }
 
         public async Task ToggleSeries(string seriesName)
@@ -346,22 +321,10 @@ namespace ApexCharts
         private async Task RenderChart()
         {
             forceRender = false;
-            WriteDebug("Start Render");
             PrepareChart();
-            WriteDebug("Prepere Complete");
             var jsonOptions = Serialize(Options);
-            WriteDebug("Serialize Complete");
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
-            WriteDebug("Send to javascript complete");
             await OnRendered.InvokeAsync();
-        }
-
-        private void WriteDebug(string text)
-        {
-            if (Options.Debug)
-            {
-                Console.WriteLine($"{DateTimeOffset.Now.ToString("O")}: {text}");
-            }
         }
 
         private void SetDotNetFormatters()
@@ -385,7 +348,6 @@ namespace ApexCharts
 
             foreach (var apxSeries in apexSeries)
             {
-               
                 var series = new Series<TItem>
                 {
                     Data = apxSeries.GetData().ToList(),

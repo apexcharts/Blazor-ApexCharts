@@ -27,7 +27,7 @@ namespace ApexCharts
         public IEnumerable<IDataPoint<TItem>> GetData()
         {
 
-            var data = Items.GroupBy(e => XValue.Compile().Invoke(e)).Select(d => new BubblePoint<TItem>
+            var data = Items.GroupBy(XValue).Select(d => new BubblePoint<TItem>
             {
                 X = d.Key,
                 Y = YAggregate.Compile().Invoke(d),

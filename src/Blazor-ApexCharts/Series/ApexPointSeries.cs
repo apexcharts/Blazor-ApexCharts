@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -8,10 +9,11 @@ namespace ApexCharts
 {
     public class ApexPointSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
-        [Parameter] public Expression<Func<TItem, decimal?>> YValue { get; set; }
-        [Parameter] public Expression<Func<IEnumerable<TItem>, decimal?>> YAggregate { get; set; }
-        [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderBy { get; set; }
-        [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderByDescending { get; set; }
+        //[Parameter] public IEnumerable<IDataPoint<TItem>> Data { get; set; }
+        [Parameter] public Func<TItem, decimal?> YValue { get; set; }
+        [Parameter] public Func<IEnumerable<TItem>, decimal?> YAggregate { get; set; }
+        [Parameter] public Func<DataPoint<TItem>, object> OrderBy { get; set; }
+        [Parameter] public Func<DataPoint<TItem>, object> OrderByDescending { get; set; }
         [Parameter] public SeriesType SeriesType { get; set; }
 
         protected override void OnInitialized()
@@ -57,30 +59,27 @@ namespace ApexCharts
 
         public IEnumerable<IDataPoint<TItem>> GetData()
         {
-            IEnumerable<DataPoint<TItem>> data;
+            //if (Data != null) { return Data; }
 
-           
-            var xCompiled = XValue.Compile();
+            IEnumerable<DataPoint<TItem>> data;
 
             if (YValue != null)
             {
-                var yCompiled = YValue.Compile();
                 data = Items.Select(e => new DataPoint<TItem>
                 {
-                    X = xCompiled.Invoke(e),
-                    Y = yCompiled.Invoke(e),
+                    X = XValue.Invoke(e),
+                    Y = YValue.Invoke(e),
                     Items = new List<TItem> { e }
                 });
 
             }
             else if (YAggregate != null)
             {
-                var yAggCompiled = YAggregate.Compile();
-                data = Items.GroupBy(e => xCompiled.Invoke(e))
+                data = Items.GroupBy(XValue)
                .Select(d => new DataPoint<TItem>
                {
                    X = d.Key,
-                   Y = yAggCompiled.Invoke(d),
+                   Y = YAggregate.Invoke(d),
                    Items = d.ToList()
                });
             }
@@ -92,13 +91,18 @@ namespace ApexCharts
 
             if (OrderBy != null)
             {
-                data = data.OrderBy(o => OrderBy.Compile().Invoke(o));
+                data = data.OrderBy(OrderBy);
             }
             else if (OrderByDescending != null)
             {
-                data = data.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
+                data = data.OrderByDescending(OrderByDescending);
             }
 
+            //var sw = new Stopwatch();
+            //sw.Start();
+            //var result = data.ToList();
+            //sw.Stop();
+            //Console.WriteLine($"ToList {sw.ElapsedMilliseconds.ToString("N")}ms");
             return data;
         }
 
