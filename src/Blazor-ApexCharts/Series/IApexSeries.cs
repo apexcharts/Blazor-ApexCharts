@@ -9,7 +9,7 @@ namespace ApexCharts
     {
         ApexChart<TItem> Chart { get; set; }
         string Name { get; set; }
-        Expression<Func<TItem, object>> XValue { get; set; }
+        Func<TItem, object> XValue { get; set; }
         IEnumerable<TItem> Items { get; set; }
 
         string Color { get; set; }

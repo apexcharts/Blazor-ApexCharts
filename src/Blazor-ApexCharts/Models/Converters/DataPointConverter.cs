@@ -13,28 +13,28 @@ namespace ApexCharts.Models
 
         public override void Write(Utf8JsonWriter writer, IDataPoint<T> value, JsonSerializerOptions options)
         {
-            switch (value)
+            if (value == null)
             {
-                case null:
-                    JsonSerializer.Serialize(writer, (IDataPoint<T>)null, options);
-                    break;
-                default:
-                    {
-                        var type = value.GetType();
-                        JsonSerializer.Serialize(writer, value, type, options);
-                        break;
-                    }
-
-                    //if (value is DataPoint<T> dataPoint)
-                    //    JsonSerializer.Serialize(writer, dataPoint, typeof(DataPoint<T>), options);
-                    //else if (value is BubblePoint<T> bubblePoint)
-                    //    JsonSerializer.Serialize(writer, bubblePoint, typeof(BubblePoint<T>), options);
-                    //else if (value is ListPoint<T> listPoint)
-                    //    JsonSerializer.Serialize(writer, listPoint, typeof(ListPoint<T>), options);
-
-                    //else
-                    //    throw new ArgumentOutOfRangeException(nameof(value), $"Unknown implementation of the interface {nameof(IDataPoint<T>)} for the parameter {nameof(value)}. Unknown implementation: {value?.GetType().Name}");
+                JsonSerializer.Serialize(writer, (IDataPoint<T>)null, options);
             }
+            else
+            {
+                var type = value.GetType();
+                JsonSerializer.Serialize(writer, value, type, options);
+            }
+
+      
+            //    if (value is DataPoint<T> dataPoint)
+            //        JsonSerializer.Serialize(writer, dataPoint, typeof(DataPoint<T>), options);
+            //    else if (value is BubblePoint<T> bubblePoint)
+            //        JsonSerializer.Serialize(writer, bubblePoint, typeof(BubblePoint<T>), options);
+            //    else if (value is ListPoint<T> listPoint)
+            //        JsonSerializer.Serialize(writer, listPoint, typeof(ListPoint<T>), options);
+
+            //    else
+            //        throw new ArgumentOutOfRangeException(nameof(value), $"Unknown implementation of the interface {nameof(IDataPoint<T>)} for the parameter {nameof(value)}. Unknown implementation: {value?.GetType().Name}");
+
         }
     }
 }
+

@@ -59,15 +59,12 @@ namespace ApexCharts
         {
             IEnumerable<DataPoint<TItem>> data;
 
-           
-            var xCompiled = XValue.Compile();
-
             if (YValue != null)
             {
                 var yCompiled = YValue.Compile();
                 data = Items.Select(e => new DataPoint<TItem>
                 {
-                    X = xCompiled.Invoke(e),
+                    X = XValue.Invoke(e),
                     Y = yCompiled.Invoke(e),
                     Items = new List<TItem> { e }
                 });
@@ -76,7 +73,7 @@ namespace ApexCharts
             else if (YAggregate != null)
             {
                 var yAggCompiled = YAggregate.Compile();
-                data = Items.GroupBy(e => xCompiled.Invoke(e))
+                data = Items.GroupBy(XValue)
                .Select(d => new DataPoint<TItem>
                {
                    X = d.Key,
