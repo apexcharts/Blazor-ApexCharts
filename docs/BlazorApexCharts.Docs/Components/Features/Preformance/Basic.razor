@@ -11,31 +11,26 @@
                Title="Value"
                Height="150"
                XAxisType="XAxisType.Datetime"
-               Debug @ref=chart>
+               @ref=chart>
 
+      
         <ApexPointSeries TItem="TimeSeries"
-                         Data=data
+                         Items="timeSeries.Take(pointsToLoad)"
+                         Name="Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Date)"
+                         YValue="@( e=> e.Value)"
                          Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
-
-
-        @* <ApexPointSeries TItem="TimeSeries"
-            Items="timeSeries"
-            Name="Value"
-            SeriesType="SeriesType.Line"
-            XValue="@(e => e.Date)"
-            YValue="@( e=> e.Value)"
-            OrderBy="e=>e.X"
-            Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />*@
     </ApexChart>
 </Dimmer>
 
 @if (isLoading)
 {
-   <span>Loading...</span> 
+    <h3>Loading<span class="animated-dots"></span></h3>
 }
 else
 {
-    @message
+    <h3>@message</h3>
 }
 
 
@@ -51,19 +46,18 @@ else
 
     private bool isLoading;
 
+    protected override void OnInitialized()
+    {
+        PopulateData();
+    }
+
     private async Task LoadData()
     {
         isLoading = true;
         await Task.Delay(10);
+        PopulateData();
         var sw = new Stopwatch();
         sw.Start();
-
-        data = timeSeries.Take(pointsToLoad).OrderBy(e => e.Date).Select(e => new DataPoint<TimeSeries>
-            {
-                X = e.Date,
-                Y = e.Value,
-                Items = new List<TimeSeries> { e }
-            });
 
         await Task.Delay(10);
 
@@ -74,23 +68,21 @@ else
         isLoading = false;
     }
 
+    private void PopulateData()
+    {
+
+        data = timeSeries.Take(pointsToLoad).Select(e => new DataPoint<TimeSeries>
+            {
+                X = e.Date,
+                Y = e.Value,
+                Items = new List<TimeSeries> { e }
+            });
+    }
+
     private void SerializeTest()
     {
         var series = chart.Options.Series;
-
-        //var series = new Series<TimeSeries>
-
-        //series.Name = "kolla";
-
-        //var dataPoints = new List<IDataPoint<TimeSeries>>();
-        //for (var i = 0; i < pointsToLoad; i++)
-        //{
-        //    dataPoints.Add(new DataPoint<TimeSeries> { Y = 100000, X = $"index {i}" });
-        //}
-        //series.Data = dataPoints;
         var options = new ChartSerializer().GetOptions<TimeSeries>();
-
-
         var sw = new Stopwatch();
         sw.Start();
 
@@ -98,9 +90,6 @@ else
         var result = System.Text.Json.JsonSerializer.Serialize(series, options);
         sw.Stop();
         message = $"Test [{pointsToLoad}] {sw.ElapsedMilliseconds.ToString("N")}ms";
-
     }
-
-
 
     }

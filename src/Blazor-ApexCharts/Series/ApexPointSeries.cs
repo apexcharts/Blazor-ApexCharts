@@ -9,11 +9,11 @@ namespace ApexCharts
 {
     public class ApexPointSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
-        [Parameter] public IEnumerable<IDataPoint<TItem>> Data { get; set; }
+        //[Parameter] public IEnumerable<IDataPoint<TItem>> Data { get; set; }
         [Parameter] public Func<TItem, decimal?> YValue { get; set; }
-        [Parameter] public Expression<Func<IEnumerable<TItem>, decimal?>> YAggregate { get; set; }
-        [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderBy { get; set; }
-        [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderByDescending { get; set; }
+        [Parameter] public Func<IEnumerable<TItem>, decimal?> YAggregate { get; set; }
+        [Parameter] public Func<DataPoint<TItem>, object> OrderBy { get; set; }
+        [Parameter] public Func<DataPoint<TItem>, object> OrderByDescending { get; set; }
         [Parameter] public SeriesType SeriesType { get; set; }
 
         protected override void OnInitialized()
@@ -59,7 +59,7 @@ namespace ApexCharts
 
         public IEnumerable<IDataPoint<TItem>> GetData()
         {
-            if (Data != null) { return Data; }
+            //if (Data != null) { return Data; }
 
             IEnumerable<DataPoint<TItem>> data;
 
@@ -75,12 +75,11 @@ namespace ApexCharts
             }
             else if (YAggregate != null)
             {
-                var yAggCompiled = YAggregate.Compile();
                 data = Items.GroupBy(XValue)
                .Select(d => new DataPoint<TItem>
                {
                    X = d.Key,
-                   Y = yAggCompiled.Invoke(d),
+                   Y = YAggregate.Invoke(d),
                    Items = d.ToList()
                });
             }
@@ -92,19 +91,19 @@ namespace ApexCharts
 
             if (OrderBy != null)
             {
-                data = data.OrderBy(o => OrderBy.Compile().Invoke(o));
+                data = data.OrderBy(OrderBy);
             }
             else if (OrderByDescending != null)
             {
-                data = data.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
+                data = data.OrderByDescending(OrderByDescending);
             }
 
-            var sw = new Stopwatch();
-            sw.Start();
-            var result = data.ToList();
-            sw.Stop();
-            Console.WriteLine($"ToList {sw.ElapsedMilliseconds.ToString("N")}ms");
-            return result;
+            //var sw = new Stopwatch();
+            //sw.Start();
+            //var result = data.ToList();
+            //sw.Stop();
+            //Console.WriteLine($"ToList {sw.ElapsedMilliseconds.ToString("N")}ms");
+            return data;
         }
 
         public void Dispose()
