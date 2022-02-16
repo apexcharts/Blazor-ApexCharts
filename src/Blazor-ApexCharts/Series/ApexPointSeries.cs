@@ -59,23 +59,28 @@ namespace ApexCharts
         {
             IEnumerable<DataPoint<TItem>> data;
 
+           
+            var xCompiled = XValue.Compile();
+
             if (YValue != null)
             {
+                var yCompiled = YValue.Compile();
                 data = Items.Select(e => new DataPoint<TItem>
                 {
-                    X = XValue.Compile().Invoke(e),
-                    Y = YValue.Compile().Invoke(e),
+                    X = xCompiled.Invoke(e),
+                    Y = yCompiled.Invoke(e),
                     Items = new List<TItem> { e }
                 });
 
             }
             else if (YAggregate != null)
             {
-                data = Items.GroupBy(e => XValue.Compile().Invoke(e))
+                var yAggCompiled = YAggregate.Compile();
+                data = Items.GroupBy(e => xCompiled.Invoke(e))
                .Select(d => new DataPoint<TItem>
                {
                    X = d.Key,
-                   Y = YAggregate.Compile().Invoke(d),
+                   Y = yAggCompiled.Invoke(d),
                    Items = d.ToList()
                });
             }

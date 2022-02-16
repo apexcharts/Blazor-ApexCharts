@@ -8,6 +8,7 @@ namespace ApexCharts
     public class DataPoint<TItem> : IDataPoint<TItem>
     {
         public object X { get; set; }
+        
         [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
         public decimal? Y { get; set; }
 

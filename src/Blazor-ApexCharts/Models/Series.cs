@@ -32,10 +32,6 @@ namespace ApexCharts
         [JsonIgnore]
         public IApexSeries<TItem> ApexSeries { get; set; }
 
-        //[JsonIgnore]
-        //public bool ShowDataLabels { get; set; }
-        //[JsonIgnore]
-        //public SeriesStroke Stroke { get; set; }
     }
 
     public enum MixedType

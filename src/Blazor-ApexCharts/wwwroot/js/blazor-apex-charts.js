@@ -50,10 +50,11 @@
     updateSeries(id, series, animate) {
         var data = JSON.parse(series);
         var chart = this.findChart(id);
+        console.log(chart);
         if (chart !== undefined) {
             if (chart.options.debug === true) {
                 console.log('Update series id: ' + id);
-                console.log(data);
+                console.log(data.length);
                 console.log('------');
             }
             chart.updateSeries(data, animate);

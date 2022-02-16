@@ -30,8 +30,6 @@ namespace BlazorApexCharts.Docs
             Range = DateTimeOffset.Now.ToUnixTimeMilliseconds() - DateTimeOffset.Now.AddDays(-points).ToUnixTimeMilliseconds();
         }
 
-      
-
         public void Update()
         {
             var first = TimeSeries.First();
