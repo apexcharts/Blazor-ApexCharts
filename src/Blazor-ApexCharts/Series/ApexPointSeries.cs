@@ -98,11 +98,6 @@ namespace ApexCharts
                 data = data.OrderByDescending(OrderByDescending);
             }
 
-            //var sw = new Stopwatch();
-            //sw.Start();
-            //var result = data.ToList();
-            //sw.Stop();
-            //Console.WriteLine($"ToList {sw.ElapsedMilliseconds.ToString("N")}ms");
             return data;
         }
 
