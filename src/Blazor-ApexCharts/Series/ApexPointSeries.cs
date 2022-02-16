@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -8,7 +9,8 @@ namespace ApexCharts
 {
     public class ApexPointSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
-        [Parameter] public Expression<Func<TItem, decimal?>> YValue { get; set; }
+        [Parameter] public IEnumerable<IDataPoint<TItem>> Data { get; set; }
+        [Parameter] public Func<TItem, decimal?> YValue { get; set; }
         [Parameter] public Expression<Func<IEnumerable<TItem>, decimal?>> YAggregate { get; set; }
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderBy { get; set; }
         [Parameter] public Expression<Func<DataPoint<TItem>, object>> OrderByDescending { get; set; }
@@ -57,15 +59,16 @@ namespace ApexCharts
 
         public IEnumerable<IDataPoint<TItem>> GetData()
         {
+            if (Data != null) { return Data; }
+
             IEnumerable<DataPoint<TItem>> data;
 
             if (YValue != null)
             {
-                var yCompiled = YValue.Compile();
                 data = Items.Select(e => new DataPoint<TItem>
                 {
                     X = XValue.Invoke(e),
-                    Y = yCompiled.Invoke(e),
+                    Y = YValue.Invoke(e),
                     Items = new List<TItem> { e }
                 });
 
@@ -96,7 +99,12 @@ namespace ApexCharts
                 data = data.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
             }
 
-            return data;
+            var sw = new Stopwatch();
+            sw.Start();
+            var result = data.ToList();
+            sw.Stop();
+            Console.WriteLine($"ToList {sw.ElapsedMilliseconds.ToString("N")}ms");
+            return result;
         }
 
         public void Dispose()

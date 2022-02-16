@@ -6,24 +6,38 @@
 <ItemSelect Label="Datapoints" Items=points @bind-SelectedValue=pointsToLoad Changed=LoadData />
 
 
+<Dimmer Active=isLoading ShowSpinner=false>
+    <ApexChart TItem="TimeSeries"
+               Title="Value"
+               Height="150"
+               XAxisType="XAxisType.Datetime"
+               Debug @ref=chart>
 
-<ApexChart TItem="TimeSeries"
-           Title="Value"
-           Height="150"
-           XAxisType="XAxisType.Datetime"
-           Debug @ref=chart>
+        <ApexPointSeries TItem="TimeSeries"
+                         Data=data
+                         Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
 
-    <ApexPointSeries TItem="TimeSeries"
-                     Items="data"
-                     Name="Value"
-                     SeriesType="SeriesType.Line"
-                     XValue="@(e => e.Date)"
-                     YValue="@( e=> e.Value)"
-                     OrderBy="e=>e.X"
-                     Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
-</ApexChart>
 
-@message
+        @* <ApexPointSeries TItem="TimeSeries"
+            Items="timeSeries"
+            Name="Value"
+            SeriesType="SeriesType.Line"
+            XValue="@(e => e.Date)"
+            YValue="@( e=> e.Value)"
+            OrderBy="e=>e.X"
+            Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />*@
+    </ApexChart>
+</Dimmer>
+
+@if (isLoading)
+{
+   <span>Loading...</span> 
+}
+else
+{
+    @message
+}
+
 
 @code {
 
@@ -31,26 +45,41 @@
     private ApexChart<TimeSeries> chart;
     private List<int> points = new List<int> { 100, 1000, 5000, 10000 };
     private int pointsToLoad = 100;
-    private IEnumerable<TimeSeries> data = new TimeSeriesGenerator(100).TimeSeries;
+    private IEnumerable<TimeSeries> timeSeries = new TimeSeriesGenerator(10000).TimeSeries;
     private string message;
+    private IEnumerable<DataPoint<TimeSeries>> data;
+
+    private bool isLoading;
 
     private async Task LoadData()
     {
-        data = new TimeSeriesGenerator(pointsToLoad).TimeSeries;
+        isLoading = true;
         await Task.Delay(10);
         var sw = new Stopwatch();
         sw.Start();
+
+        data = timeSeries.Take(pointsToLoad).OrderBy(e => e.Date).Select(e => new DataPoint<TimeSeries>
+            {
+                X = e.Date,
+                Y = e.Value,
+                Items = new List<TimeSeries> { e }
+            });
+
+        await Task.Delay(10);
+
         await chart.UpdateSeries(false);
         sw.Stop();
 
-        message = $"Update {sw.ElapsedMilliseconds.ToString("N")}ms";
+        message = $"Updated {pointsToLoad} points in {sw.ElapsedMilliseconds.ToString("N0")}ms";
+        isLoading = false;
     }
 
     private void SerializeTest()
     {
         var series = chart.Options.Series;
-        
-        //var series = new Series<TimeSeries>();
+
+        //var series = new Series<TimeSeries>
+
         //series.Name = "kolla";
 
         //var dataPoints = new List<IDataPoint<TimeSeries>>();
@@ -61,11 +90,11 @@
         //series.Data = dataPoints;
         var options = new ChartSerializer().GetOptions<TimeSeries>();
 
-      
+
         var sw = new Stopwatch();
         sw.Start();
 
-       // var result = serializer.
+        // var result = serializer.
         var result = System.Text.Json.JsonSerializer.Serialize(series, options);
         sw.Stop();
         message = $"Test [{pointsToLoad}] {sw.ElapsedMilliseconds.ToString("N")}ms";
