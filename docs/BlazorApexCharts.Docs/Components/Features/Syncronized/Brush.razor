@@ -1,6 +1,4 @@
-﻿
-
-<ApexChart TItem="TimeSeries"
+﻿<ApexChart TItem="TimeSeries"
            Title="Value"
            Options=options1
            Height="150"
@@ -41,10 +39,10 @@
     protected override void OnInitialized()
     {
         const string mainChartId = "mainChart";
+
         options1.Chart.Id = mainChartId;
         options1.Chart.Toolbar = new Toolbar { AutoSelected = AutoSelected.Pan, Show = false };
 
-        
         var selectionStart = data.Min(e => e.Date).AddDays(30);
         options2.Chart.Toolbar = new Toolbar { Show = false };
         options2.Xaxis = new XAxis { TickPlacement = TickPlacement.On };
@@ -58,8 +56,5 @@
                     Max = selectionStart.AddDays(40).ToUnixTimeMilliseconds()
                 }
             };
-
     }
-
-
     }
