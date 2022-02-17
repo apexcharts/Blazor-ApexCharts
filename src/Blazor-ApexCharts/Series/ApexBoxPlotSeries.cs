@@ -8,9 +8,9 @@ namespace ApexCharts
 {
     public class ApexBoxPlotSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
-        [Parameter] public Expression<Func<TItem, decimal?>> YValue { get; set; }
-        [Parameter] public Expression<Func<ListPoint<TItem>, object>> OrderBy { get; set; }
-        [Parameter] public Expression<Func<ListPoint<TItem>, object>> OrderByDescending { get; set; }
+        [Parameter] public Func<TItem, decimal?> YValue { get; set; }
+        [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
+        [Parameter] public Func<ListPoint<TItem>, object> OrderByDescending { get; set; }
 
         protected override void OnInitialized()
         {
@@ -35,11 +35,11 @@ namespace ApexCharts
 
             if (OrderBy != null)
             {
-                data = data.OrderBy(o => OrderBy.Compile().Invoke(o));
+                data = data.OrderBy(OrderBy);
             }
             else if (OrderByDescending != null)
             {
-                data = data.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
+                data = data.OrderByDescending(OrderByDescending);
             }
 
             return data;

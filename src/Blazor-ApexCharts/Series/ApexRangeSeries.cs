@@ -8,12 +8,12 @@ namespace ApexCharts
 {
     public class ApexRangeSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
-        [Parameter] public Expression<Func<TItem, decimal>> YValue { get; set; }
-        [Parameter] public Expression<Func<ListPoint<TItem>, object>> OrderBy { get; set; }
-        [Parameter] public Expression<Func<ListPoint<TItem>, object>> OrderByDescending { get; set; }
+        [Parameter] public Func<TItem, decimal> YValue { get; set; }
+        [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
+        [Parameter] public Func<ListPoint<TItem>, object> OrderByDescending { get; set; }
 
-        [Parameter] public Expression<Func<TItem, decimal>> YMinValue { get; set; }
-        [Parameter] public Expression<Func<TItem, decimal>> YMaxValue { get; set; }
+        [Parameter] public Func<TItem, decimal> YMinValue { get; set; }
+        [Parameter] public Func<TItem, decimal> YMaxValue { get; set; }
 
         protected override void OnInitialized()
         {
@@ -30,7 +30,6 @@ namespace ApexCharts
             }
 
         }
-
         public ChartType GetChartType()
         {
             return ChartType.RangeBar;
@@ -46,7 +45,7 @@ namespace ApexCharts
                        .Select(e => new ListPoint<TItem>
                        {
                            X = XValue.Invoke(e),
-                           Y = new List<decimal?> { YMinValue.Compile().Invoke(e), YMaxValue.Compile().Invoke(e) },
+                           Y = new List<decimal?> { YMinValue.Invoke(e), YMaxValue.Invoke(e) },
                            Items = new List<TItem> { e}
                        });
             }
@@ -65,11 +64,11 @@ namespace ApexCharts
 
             if (OrderBy != null)
             {
-                data = data.OrderBy(o => OrderBy.Compile().Invoke(o));
+                data = data.OrderBy(OrderBy);
             }
             else if (OrderByDescending != null)
             {
-                data = data.OrderByDescending(o => OrderByDescending.Compile().Invoke(o));
+                data = data.OrderByDescending(OrderByDescending);
             }
 
             return data;
