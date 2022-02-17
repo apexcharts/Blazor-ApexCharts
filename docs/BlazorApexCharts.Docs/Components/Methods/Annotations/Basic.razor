@@ -38,7 +38,7 @@
 
     private async Task ClearAnnotations()
     {
-        await chart.ClearAnnotations();
+        await chart.ClearAnnotationsAsync();
     }
 
     private async Task AddYAxisAnnotation()
@@ -55,7 +55,7 @@
                 }
             };
 
-        await chart.AddYAxisAnnotation(annotation, true);
+        await chart.AddYAxisAnnotationAsync(annotation, true);
     }
 
     private async Task AddXAxisAnnotation()
@@ -71,7 +71,7 @@
                 }
             };
 
-        await chart.AddXAxisAnnotation(point, false);
+        await chart.AddXAxisAnnotationAsync(point, false);
     }
 
     private async Task AddPointAnnotation()
@@ -86,11 +86,11 @@
                 }
             };
 
-        await chart.AddPointAnnotation(point, false);
+        await chart.AddPointAnnotationAsync(point, false);
     }
 
     private void RenderChart()
     {
-        chart?.Render();
+        chart?.RenderAsync();
     }
 }

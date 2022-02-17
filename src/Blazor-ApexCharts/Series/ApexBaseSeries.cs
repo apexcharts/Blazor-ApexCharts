@@ -18,17 +18,17 @@ namespace ApexCharts
         [Parameter] public string Color { get; set; }
         public async Task Toggle()
         {
-            await Chart?.ToggleSeries(Name);
+            await Chart?.ToggleSeriesAsync(Name);
         }
 
         public async Task Show()
         {
-            await Chart?.ShowSeries(Name);
+            await Chart?.ShowSeriesAsync(Name);
         }
 
         public async Task Hide()
         {
-            await Chart?.HideSeries(Name);
+            await Chart?.HideSeriesAsync(Name);
         }
 
     }

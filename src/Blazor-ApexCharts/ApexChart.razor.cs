@@ -15,16 +15,12 @@ namespace ApexCharts
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
-
         [Parameter] public XAxisType? XAxisType { get; set; }
         [Parameter] public bool Debug { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
-
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
         [Parameter] public EventCallback OnRendered { get; set; }
-
-
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
 
         private ChartSerializer chartSerializer = new();
@@ -32,13 +28,10 @@ namespace ApexCharts
 
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
         private ElementReference ChartContainer { get; set; }
-
         private List<IApexSeries<TItem>> apexSeries = new();
-
         private bool isReady;
         private bool forceRender = true;
         private string chartId = Guid.NewGuid().ToString("N");
-
         public string ChartId => ChartId;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -51,7 +44,7 @@ namespace ApexCharts
 
             if (isReady && forceRender)
             {
-                await RenderChart();
+                await RenderChartAsync();
             }
         }
 
@@ -227,54 +220,54 @@ namespace ApexCharts
             return json;
         }
 
-        [Obsolete("Please use Render(), this method will be removed")]
+        [Obsolete("Please use RenderAsync(), this method will be removed in future versions")]
         public void SetRerenderChart()
         {
             forceRender = true;
         }
 
-        public async Task Render()
+        public async Task RenderAsync()
         {
-            await RenderChart();
+            await RenderChartAsync();
         }
 
-        public async Task AddPointAnnotation(AnnotationsPoint annotationsPoint, bool pushToMemory)
+        public async Task AddPointAnnotationAsync(AnnotationsPoint annotationsPoint, bool pushToMemory)
         {
             var serializerOptions = new ChartSerializer().GetOptions<TItem>();
             var json = JsonSerializer.Serialize(annotationsPoint, serializerOptions);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
-        public async Task AddXAxisAnnotation(AnnotationsXAxis annotationsXAxis, bool pushToMemory)
+        public async Task AddXAxisAnnotationAsync(AnnotationsXAxis annotationsXAxis, bool pushToMemory)
         {
             var json = Serialize(annotationsXAxis);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addXaxisAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
-        public async Task AddYAxisAnnotation(AnnotationsYAxis annotationsYAxis, bool pushToMemory)
+        public async Task AddYAxisAnnotationAsync(AnnotationsYAxis annotationsYAxis, bool pushToMemory)
         {
             var json = Serialize(annotationsYAxis);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addYaxisAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
-        public async Task ClearAnnotations()
+        public async Task ClearAnnotationsAsync()
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.clearAnnotations", Options.Chart.Id);
         }
 
-        public async Task RemoveAnnotation(string id)
+        public async Task RemoveAnnotationAsync(string id)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.removeAnnotation", Options.Chart.Id, id);
         }
 
-        public async Task UpdateOptions(bool redrawPaths, bool animate, bool updateSyncedCharts)
+        public async Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts)
         {
             PrepareChart();
             var json = Serialize(Options);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateOptions", Options.Chart.Id, json, redrawPaths, animate, updateSyncedCharts);
         }
 
-        public async Task UpdateSeries(bool animate = true)
+        public async Task UpdateSeriesAsync(bool animate = true)
         {
             SetSeries();
             UpdateDataForNoAxisCharts();
@@ -292,17 +285,17 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
         }
 
-        public async Task ToggleSeries(string seriesName)
+        public async Task ToggleSeriesAsync(string seriesName)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleSeries", Options.Chart.Id, seriesName);
         }
 
-        public async Task ShowSeries(string seriesName)
+        public async Task ShowSeriesAsync(string seriesName)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.showSeries", Options.Chart.Id, seriesName);
         }
 
-        public async Task HideSeries(string seriesName)
+        public async Task HideSeriesAsync(string seriesName)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.hideSeries", Options.Chart.Id, seriesName);
         }
@@ -318,7 +311,7 @@ namespace ApexCharts
             SetDotNetFormatters();
         }
 
-        private async Task RenderChart()
+        private async Task RenderChartAsync()
         {
             forceRender = false;
             PrepareChart();

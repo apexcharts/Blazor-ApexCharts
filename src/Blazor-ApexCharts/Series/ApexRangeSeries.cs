@@ -61,7 +61,6 @@ namespace ApexCharts
                  });
             }
 
-
             if (OrderBy != null)
             {
                 data = data.OrderBy(OrderBy);

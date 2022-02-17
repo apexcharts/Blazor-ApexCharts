@@ -61,7 +61,7 @@ else
 
         await Task.Delay(10);
 
-        await chart.UpdateSeries(false);
+        await chart.UpdateSeriesAsync(false);
         sw.Stop();
 
         message = $"Updated {pointsToLoad} points in {sw.ElapsedMilliseconds.ToString("N0")}ms";
