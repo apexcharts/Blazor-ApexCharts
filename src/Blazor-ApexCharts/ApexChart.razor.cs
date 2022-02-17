@@ -31,7 +31,7 @@ namespace ApexCharts
         private List<IApexSeries<TItem>> apexSeries = new();
         private bool isReady;
         private bool forceRender = true;
-        private string chartId = Guid.NewGuid().ToString("N");
+        private string chartId;
         public string ChartId => ChartId;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -51,6 +51,18 @@ namespace ApexCharts
         protected override void OnParametersSet()
         {
             if (Options.Chart == null) { Options.Chart = new Chart(); }
+
+            if (string.IsNullOrEmpty(chartId))
+            {
+                if (Options.Chart.Id != null)
+                {
+                    chartId = Options.Chart.Id;
+                }
+                else
+                {
+                    chartId = Guid.NewGuid().ToString("N");
+                }
+            }
 
             Options.Chart.Id = chartId;
             Options.Debug = Debug;

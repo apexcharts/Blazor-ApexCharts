@@ -1,0 +1,65 @@
+﻿
+
+<ApexChart TItem="TimeSeries"
+           Title="Value"
+           Options=options1
+           Height="150"
+           XAxisType="XAxisType.Datetime">
+
+    <ApexPointSeries TItem="TimeSeries"
+                     Items="data"
+                     Name="Value"
+                     SeriesType="SeriesType.Line"
+                     XValue="@(e => e.Date)"
+                     YAggregate="@(e => e.Sum(e => e.Value))"
+                     OrderBy="e=>e.X"
+                     Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
+</ApexChart>
+
+<ApexChart TItem="TimeSeries"
+           Title="Quantity"
+           Options=options2
+           Height="150"
+           XAxisType="XAxisType.Datetime">
+
+    <ApexPointSeries TItem="TimeSeries"
+                     Items="data"
+                     Name="Quantity"
+                     SeriesType="SeriesType.Bar"
+                     XValue="@(e => e.Date)"
+                     YValue="@(e => e.Quantity)"
+                     OrderBy="e=>e.X"
+                     Stroke="@(new SeriesStroke { Width = 2, Color="#E51C15"})" />
+</ApexChart>
+
+
+@code {
+    private List<TimeSeries> data { get; set; } = new TimeSeriesGenerator(100).TimeSeries;
+    private ApexChartOptions<TimeSeries> options1 = new();
+    private ApexChartOptions<TimeSeries> options2 = new();
+
+    protected override void OnInitialized()
+    {
+        const string mainChartId = "mainChart";
+        options1.Chart.Id = mainChartId;
+        options1.Chart.Toolbar = new Toolbar { AutoSelected = AutoSelected.Pan, Show = false };
+
+        
+        var selectionStart = data.Min(e => e.Date).AddDays(30);
+        options2.Chart.Toolbar = new Toolbar { Show = false };
+        options2.Xaxis = new XAxis { TickPlacement = TickPlacement.On };
+        options2.Chart.Brush = new ApexCharts.Brush { Enabled = true, Target = mainChartId };
+        options2.Chart.Selection = new Selection
+            {
+                Enabled = true,
+                Xaxis = new SelectionXaxis
+                {
+                    Min = selectionStart.ToUnixTimeMilliseconds(),
+                    Max = selectionStart.AddDays(40).ToUnixTimeMilliseconds()
+                }
+            };
+
+    }
+
+
+    }

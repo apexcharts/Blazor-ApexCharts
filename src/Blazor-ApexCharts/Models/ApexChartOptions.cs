@@ -323,7 +323,7 @@ namespace ApexCharts
         public string FontFamily { get; set; }
         public string ForeColor { get; set; }
         public string Group { get; set; }
-        public string Id { get; internal set; }
+        public string Id { get;  set; }
         public List<ChartLocale> Locales { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
