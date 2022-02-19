@@ -1,11 +1,11 @@
-﻿ <Button class="mb-3"  OnClick="RenderChart" BackgroundColor="TablerColor.Primary">Render Chart</Button>
+﻿<Button class="mb-3" OnClick="RenderChart" BackgroundColor="TablerColor.Primary">Render Chart</Button>
 
-    <div class="mb-2 btn-list">
-        <Button Size=ButtonSize.Small OnClick=AddPointAnnotation BackgroundColor="TablerColor.Primary">Add Point Annotation</Button>
-        <Button Size=ButtonSize.Small OnClick=AddXAxisAnnotation BackgroundColor="TablerColor.Primary">Add XAxis Annotation</Button>
-        <Button Size=ButtonSize.Small OnClick=AddYAxisAnnotation BackgroundColor="TablerColor.Primary">Add YAxis Annotation</Button>
-        <Button Size=ButtonSize.Small OnClick=ClearAnnotations BackgroundColor="TablerColor.Danger">Clear Annotations</Button>
-    </div>
+<div class="mb-2 btn-list">
+    <Button Size=ButtonSize.Small OnClick=AddPointAnnotation BackgroundColor="TablerColor.Primary">Add Point Annotation</Button>
+    <Button Size=ButtonSize.Small OnClick=AddXAxisAnnotation BackgroundColor="TablerColor.Primary">Add XAxis Annotation</Button>
+    <Button Size=ButtonSize.Small OnClick=AddYAxisAnnotation BackgroundColor="TablerColor.Primary">Add YAxis Annotation</Button>
+    <Button Size=ButtonSize.Small OnClick=ClearAnnotations BackgroundColor="TablerColor.Danger">Clear Annotations</Button>
+</div>
 <DemoContainer>
 
     <ApexChart @ref=chart TItem="Order"
@@ -45,7 +45,7 @@
     {
         var annotation = new AnnotationsYAxis
             {
-                
+
                 Y = 150000,
                 StrokeDashArray = 10,
                 BorderWidth = 2,
@@ -89,8 +89,9 @@
         await chart.AddPointAnnotationAsync(point, false);
     }
 
-    private void RenderChart()
+    private async Task RenderChart()
     {
-        chart?.RenderAsync();
+        await chart?.RenderAsync();
     }
-}
+
+   }

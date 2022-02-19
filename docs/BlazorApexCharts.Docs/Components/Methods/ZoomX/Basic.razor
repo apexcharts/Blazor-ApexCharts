@@ -1,0 +1,44 @@
+﻿<Button OnClick="Zoom" BackgroundColor=TablerColor.Primary>Zoom X</Button>
+<Button OnClick="Reset" BackgroundColor=TablerColor.Danger>Reset</Button>
+
+<DemoContainer>
+    <ApexChart @ref=chart TItem="TimeSeries"
+               Title="Order Net Value"
+               XAxisType="XAxisType.Datetime"
+               Options=options>
+
+        <ApexPointSeries TItem="TimeSeries"
+                         Items="generator.TimeSeries"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Date)"
+                         YValue="@(e => e.Value)"
+                         OrderByDescending="e=>e.X"
+                         Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})"
+                         />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<TimeSeries> chart;
+    private ApexChartOptions<TimeSeries> options;
+    private TimeSeriesGenerator generator = new TimeSeriesGenerator(100);
+
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<TimeSeries>();
+
+    }
+
+    private async Task Reset()
+    {
+        await chart.ResetSeriesAsync(true, true);
+    }
+    private async Task Zoom()
+    {
+        var start = generator.TimeSeries.Min(e => e.Date).AddDays(10);
+        var end = start.AddDays(15);
+        await chart.ZoomXAsync(start.ToUnixTimeMilliseconds(), end.ToUnixTimeMilliseconds());
+    }
+    }

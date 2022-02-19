@@ -245,8 +245,19 @@ namespace ApexCharts
 
         public async Task AddPointAnnotationAsync(AnnotationsPoint annotationsPoint, bool pushToMemory)
         {
-            var json = Serialize(annotationsPoint); 
+            var json = Serialize(annotationsPoint);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.Id, json, pushToMemory);
+        }
+        //zoomX (start, end)
+
+        public async Task ZoomXAsync(decimal start, decimal end)
+        {
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.zoomX", Options.Chart.Id, start, end);
+        }
+
+        public async Task ResetSeriesAsync(bool shouldUpdateChart, bool shouldResetZoom)
+        {
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.resetSeries", Options.Chart.Id, shouldUpdateChart, shouldResetZoom);
         }
 
         public async Task<string> GetDataUriAsync(DataUriOptions dataUriOptions)
@@ -299,7 +310,7 @@ namespace ApexCharts
             {
                 jsonSeries = Serialize(Options.Series);
             }
-           
+
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
         }
 
