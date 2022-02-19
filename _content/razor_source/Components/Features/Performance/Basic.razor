@@ -1,10 +1,7 @@
 ﻿@using System.Diagnostics
 @using System.Text.Json
 
-<Button OnClick=SerializeTest>Serialize Test</Button>
-
 <ItemSelect Label="Datapoints" Items=points @bind-SelectedValue=pointsToLoad Changed=LoadData />
-
 
 <Dimmer Active=isLoading ShowSpinner=false>
     <ApexChart TItem="TimeSeries"

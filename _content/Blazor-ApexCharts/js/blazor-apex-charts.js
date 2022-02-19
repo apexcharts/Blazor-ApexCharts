@@ -47,15 +47,28 @@
         }
     },
 
+    zoomX(id, start, end) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            return chart.zoomX(start, end);
+        }
+    },
+
+    resetSeries(id, shouldUpdateChart, shouldResetZoom) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            return chart.resetSeries(shouldUpdateChart, shouldResetZoom);
+        }
+    },
+
     dataUri(id, options) {
         var opt = JSON.parse(options);
         var chart = this.findChart(id);
-        var result = '';
         if (chart !== undefined) {
-            result = chart.dataURI(opt);
+            return chart.dataURI(opt);
         }
 
-        return result;
+        return '';
     },
 
     updateSeries(id, series, animate) {
