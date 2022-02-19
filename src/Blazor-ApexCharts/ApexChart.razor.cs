@@ -245,9 +245,15 @@ namespace ApexCharts
 
         public async Task AddPointAnnotationAsync(AnnotationsPoint annotationsPoint, bool pushToMemory)
         {
-            var serializerOptions = new ChartSerializer().GetOptions<TItem>();
-            var json = JsonSerializer.Serialize(annotationsPoint, serializerOptions);
+            var json = Serialize(annotationsPoint); 
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.Id, json, pushToMemory);
+        }
+
+        public async Task<string> GetDataUriAsync(DataUriOptions dataUriOptions)
+        {
+            var json = Serialize(dataUriOptions);
+            var result = await JSRuntime.InvokeAsync<DataUriResult>("blazor_apexchart.dataUri", Options.Chart.Id, json);
+            return result.ImgURI;
         }
 
         public async Task AddXAxisAnnotationAsync(AnnotationsXAxis annotationsXAxis, bool pushToMemory)

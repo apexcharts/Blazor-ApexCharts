@@ -1,0 +1,52 @@
+﻿<DemoContainer>
+
+    <Button OnClick=DataUri BackgroundColor="TablerColor.Primary">Chart Image</Button>
+
+    <ApexChart @ref=chart TItem="Order"
+               Title="@title">
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+
+                 <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+  
+
+    </ApexChart>
+</DemoContainer>
+
+@if (!string.IsNullOrWhiteSpace(dataUri))
+{
+   <ModalView Title="Chart Image" Options="@(new ModalOptions { Size= ModalSize.Medium })" OnClosed=ModalClosed >
+        <img src=@dataUri />
+   </ModalView>
+   
+}
+
+@code {
+    private ApexChart<Order> chart;
+    private List<Order> orders = SampleData.GetOrders();
+    private string title = "Orders";
+    private string dataUri;
+
+    private void ModalClosed()
+    {
+        dataUri = string.Empty;
+    }
+
+    private async Task DataUri()
+    {
+        var options = new DataUriOptions { Width = 400 };
+        dataUri = await chart.GetDataUriAsync(options);
+    }
+}

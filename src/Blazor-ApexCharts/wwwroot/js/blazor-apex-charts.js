@@ -1,5 +1,5 @@
 ﻿window.blazor_apexchart = {
- 
+
     getYAxisLabel(value, index, w) {
 
         if (window.wasmBinaryFile === undefined) {
@@ -23,7 +23,7 @@
             return undefined;
         }
         return ApexCharts.getChartByID(id)
- 
+
     },
 
     destroyChart(id) {
@@ -47,10 +47,20 @@
         }
     },
 
+    dataUri(id, options) {
+        var opt = JSON.parse(options);
+        var chart = this.findChart(id);
+        var result = '';
+        if (chart !== undefined) {
+            result = chart.dataURI(opt);
+        }
+
+        return result;
+    },
+
     updateSeries(id, series, animate) {
         var data = JSON.parse(series);
         var chart = this.findChart(id);
-        console.log(chart);
         if (chart !== undefined) {
             if (chart.options.debug === true) {
                 console.log('Update series id: ' + id);
