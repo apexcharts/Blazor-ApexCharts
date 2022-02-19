@@ -91,6 +91,149 @@
 .popover.arrow[b-ln8dyv3yn7] {
         left: 100px;
     }
+/* _content/TabBlazor/Components/RangeSliders/RangeSlider.razor.rz.scp.css */
+.single-drag-slider input[type='range'][b-jfmm81n9hg] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+    height: 5px;
+    border-radius: 5px;
+    background-image: linear-gradient(#f2f3f4, #f2f3f4);
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+    .single-drag-slider input[type='range'][b-jfmm81n9hg]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 13px;
+        width: 13px;
+        border-radius: 50%;
+        background: var(--tblr-primary);
+        box-shadow: 0 0 2px 1px white;
+        transform: translateY(-4px);
+    }
+
+    .single-drag-slider input[type='range'][b-jfmm81n9hg]::-moz-range-thumb {
+        color: transparent;
+        height: 13px;
+        width: 13px;
+        border-radius: 50%;
+        background: var(--tblr-primary);
+        box-shadow: 0 0 2px 1px white;
+    }
+
+    .single-drag-slider input[type='range'][b-jfmm81n9hg]::-ms-thumb {
+        height: 13px;
+        width: 13px;
+        border-radius: 50%;
+        background: var(--tblr-primary);
+        box-shadow: 0 0 2px 1px white;
+    }
+
+    .single-drag-slider input[type='range'][b-jfmm81n9hg]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 5px;
+        background: #f2f3f4;
+        border-radius: 5px;
+    }
+
+    .single-drag-slider input[type='range'][b-jfmm81n9hg]::-moz-range-track {
+        width: 100%;
+        height: 5px;
+        background: #f2f3f4;
+        border-radius: 5px;
+    }
+
+    .single-drag-slider input[type='range'][b-jfmm81n9hg]::-ms-track {
+        -webkit-appearance: none;
+        width: 100%;
+        box-shadow: none;
+        border: none;
+        border-color: transparent;
+        color: transparent;
+        height: 5px;
+        background: #f2f3f4;
+        border-radius: 5px;
+    }
+
+.multi-drag-slider[b-jfmm81n9hg] {
+    position: relative;
+    height: 10px;
+    width: 100%;
+    display: inline-block;
+}
+
+    .multi-drag-slider input[type='range'][b-jfmm81n9hg] {
+        -webkit-appearance: none;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 5px;
+        overflow: hidden;
+        outline: none;
+        background-image: linear-gradient(#f2f3f4, #f2f3f4);
+        background-size: 100%;
+        background-repeat: no-repeat;
+        overflow: visible;
+    }
+
+        .multi-drag-slider input[type='range'][b-jfmm81n9hg]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 5px;
+            background: #f2f3f4;
+            border-radius: 5px;
+            box-shadow: none;
+            border: 0;
+        }
+
+        .multi-drag-slider input[type='range'][b-jfmm81n9hg]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            z-index: 2;
+            position: relative;
+            border: 1px solid #003D7C;
+            height: 13px;
+            width: 13px;
+            border-radius: 25px;
+            background: var(--tblr-primary);
+            margin-top: -7px;
+            transform: translateY(2px);
+        }
+
+
+@-moz-document url-prefix() {
+    .multi-drag-slider[b-jfmm81n9hg]::before {
+        content: '';
+        width: 100%;
+        height: 5px;
+        background: #f2f3f4;
+        display: block;
+        position: relative;
+    }
+
+    .multi-drag-slider input[type='range'][b-jfmm81n9hg] {
+        position: absolute;
+        top: 35px !important;
+        overflow: visible !important;
+        height: 0;
+    }
+
+        .multi-drag-slider input[type='range'][b-jfmm81n9hg]::-moz-range-thumb {
+            position: relative;
+            height: 13px;
+            width: 13px;
+            margin-top: -7px;
+            background: var(--tblr-primary);
+            border: 1px solid #003D7C;
+            border-radius: 25px;
+            z-index: 1;
+            transform: translateY(-32px);
+        }
+
+        .multi-drag-slider input[type='range'][b-jfmm81n9hg]::-moz-range-track {
+            z-index: -1;
+        }
+}
 /* _content/TabBlazor/Components/Tooltips/Tooltip.razor.rz.scp.css */
 .tooltip-wrapper[b-qwrsjj0686] {
     position: relative;

@@ -1,5 +1,29 @@
 ﻿window.tabBlazor = {
 
+    saveAsFile: function (filename, href) {
+        var link = document.createElement('a');
+        link.download = filename;
+        link.href = href; 
+        document.body.appendChild(link); // Needed for Firefox
+        link.click();
+        document.body.removeChild(link);
+    },
+
+    addResizeObserver: (element, dotNetReference) => {
+        const resizeObserver = new ResizeObserver(onResize);
+        resizeObserver.observe(element);
+
+        function onResize(entries) {
+            const entry = entries[0];
+            console.log(entry);
+            const result = {
+                contentRect: entry.contentRect,
+            };
+
+            dotNetReference.invokeMethodAsync("ElementResized", result);
+        }
+    },
+
     preventDefaultKey: (element, event, keys) => {
         element.addEventListener(event, (e) => {
             if (keys.includes(e.key)) {
@@ -15,24 +39,23 @@
 
     navigateTable: (td, key) => {
         var tr = td.closest('tr');
-        var pos = td.cellIndex;
-        var moveToRow;
+        if (!tr) {
+            return;
+        }
 
-
+        var moveToRow = tr;
         if (key == 'ArrowUp') {
             moveToRow = tr.parentNode.rows[tr.rowIndex - 2];
         }
         else if (key == 'ArrowDown') {
             moveToRow = tr.parentNode.rows[tr.rowIndex];
         }
-        else {
-            moveToRow = tr;
-        }
 
         if (!moveToRow) {
             return;
         }
 
+        var pos = td.cellIndex;
         if (key == 'ArrowLeft') {
             pos = pos - 1;
         }
@@ -92,6 +115,10 @@
 
     copyToClipboard: (text) => {
         navigator.clipboard.writeText(text)
+    },
+
+    readFromClipboard: () => {
+        return navigator.clipboard.readText();
     },
 
     disableDraggable: (container, element) => {
