@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ApexCharts
 {
     public class DataPointSelection<TItem> where TItem : class
     {
-        public List<object> SelectedDataPoints { get; set; }
+        public List<List<int?>> SelectedDataPoints { get; set; }
         public int DataPointIndex { get; set; }
         public int SeriesIndex { get; set; }
 
@@ -20,6 +17,7 @@ namespace ApexCharts
     {
         public Series<TItem> Series { get; set; }
         public IDataPoint<TItem> DataPoint { get; set; }
+        public bool IsSelected { get; internal set; }
 
     }
 

@@ -343,6 +343,18 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
         }
 
+        /// <summary>
+        /// For no axis charts only provide the seriesIndex value, set dataPointIndex to null
+        /// </summary>
+        /// <param name="seriesIndex"></param>
+        /// <param name="dataPointIndex"></param>
+        /// <returns></returns>
+        public async Task ToggleDataPointSelectionAsync(int seriesIndex, int? dataPointIndex)
+        {
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleDataPointSelection", Options.Chart.Id, seriesIndex, dataPointIndex);
+
+        }
+
         public async Task ToggleSeriesAsync(string seriesName)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleSeries", Options.Chart.Id, seriesName);
@@ -489,8 +501,9 @@ namespace ApexCharts
 
                 var selection = new SelectedData<TItem>
                 {
-                    Series = series,
-                    DataPoint = dataPoint
+                    Series = series, 
+                    DataPoint = dataPoint,
+                    IsSelected = selectedDataPoints.SelectedDataPoints.Any(e=> e!= null && e.Any(e=> e != null && e.HasValue)),
                 };
 
                 OnDataPointSelection.InvokeAsync(selection);
