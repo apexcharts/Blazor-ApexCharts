@@ -1,8 +1,11 @@
-﻿<DemoContainer>
+﻿<Button class="mb-2" OnClick=ToggleDataPoint BackgroundColor="TablerColor.Primary">Toggle Data Point</Button>
+
+
+<DemoContainer>
     <ApexChart TItem="Order"
                Title="Order Net Value"
                OnDataPointSelection=DataPointsSelected
-               Debug>
+               @ref=chart>
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"
@@ -57,10 +60,24 @@
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
     private SelectedData<Order> selectedData;
     private ApexChart<Order> detailsChart;
-  
+    private ApexChart<Order> chart;
+
     private void DataPointsSelected(SelectedData<Order> selectedData)
     {
+        if (!selectedData.IsSelected)
+        {
+            this.selectedData = null;
+            return;
+        }
+
         this.selectedData = selectedData;
         detailsChart?.RenderAsync();
     }
+
+    private async Task ToggleDataPoint()
+    {
+
+        await chart.ToggleDataPointSelectionAsync(1, 1);
+    }
+
     }
