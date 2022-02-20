@@ -102,7 +102,7 @@ namespace ApexCharts
             }
         }
 
-        private bool IsNoAxisChart
+        internal bool IsNoAxisChart
         {
             get
             {
@@ -196,16 +196,18 @@ namespace ApexCharts
         {
             if (!IsNoAxisChart)
             {
-                Options.SeriesNonXAxis = null;
                 Options.Labels = null;
                 return;
             };
 
             if (Options.Series == null || !Options.Series.Any()) { return; }
+            if (Options.Series.Count > 1)
+            {
+                throw new SystemException("Only one series is allowed when chart has no axis");
+            }
+
             var noAxisSeries = Options.Series.First();
-            var data = noAxisSeries.Data.Cast<DataPoint<TItem>>().ToList();
-            Options.SeriesNonXAxis = data.Select(e => e.Y).Cast<object>().ToList();
-            Options.Labels = data.Select(e => e.X?.ToString()).ToList();
+            Options.Labels = noAxisSeries.Data.Select(e => e.X?.ToString()).ToList();
         }
 
         private void FixLineDataSelection()
@@ -251,20 +253,36 @@ namespace ApexCharts
 
         public async Task AppendDataAsync(IEnumerable<TItem> items)
         {
-            // var apxSeries = Series[seriesIndex];
             var seriesList = new List<AppendData<TItem>>();
+
+            if (IsNoAxisChart && Series.Any())
+            {
+                var series = Series.First();
+
+                var allItems = items.ToList();
+                allItems.AddRange(series.Items);
+
+                var dataPoints = Series.First().GenerateDataPoints(allItems).Select(e => ((DataPoint<TItem>)e));
+
+                var appendData = new AppendNoAxisData
+                {
+                    Data = dataPoints.Where(e => e.Y != null).Select(e => e.Y)
+                };
+
+                await JSRuntime.InvokeVoidAsync("blazor_apexchart.appendData", Options.Chart.Id, Serialize(appendData));
+
+                return;
+            }
+
             foreach (var apxSeries in Series)
             {
                 seriesList.Add(new AppendData<TItem>
                 {
                     Data = apxSeries.GenerateDataPoints(items)
                 });
-
             }
 
-
             var json = Serialize(seriesList);
-
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.appendData", Options.Chart.Id, json);
         }
 
@@ -319,15 +337,8 @@ namespace ApexCharts
             SetSeries();
             UpdateDataForNoAxisCharts();
 
-            var jsonSeries = string.Empty;
-            if (IsNoAxisChart)
-            {
-                jsonSeries = Serialize(Options.SeriesNonXAxis); ;
-            }
-            else
-            {
-                jsonSeries = Serialize(Options.Series);
-            }
+            var jsonSeries = Serialize(Options.Series);
+
 
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
         }

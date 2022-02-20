@@ -74,7 +74,7 @@ namespace ApexCharts
         /// </summary>
         public List<Series<TItem>> Series { get; set; } 
 
-        public List<object> SeriesNonXAxis { get; internal set; }
+        
         public ForecastDataPoints ForecastDataPoints { get; set; }
 
         public States States { get; set; }

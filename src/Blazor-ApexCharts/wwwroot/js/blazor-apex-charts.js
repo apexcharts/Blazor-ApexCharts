@@ -201,11 +201,6 @@
 
         options.dotNetObject = dotNetObject;
 
-        if (options.seriesNonXAxis != undefined) {
-
-            options.series = options.seriesNonXAxis;
-        }
-
         options.chart.events = {
             dataPointSelection: (event, chartContext, config) => {
 

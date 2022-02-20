@@ -6,4 +6,9 @@ namespace ApexCharts
     {
         public IEnumerable<IDataPoint<TItem>> Data { get; set; }
     }
+
+    internal class AppendNoAxisData
+    {
+        public IEnumerable<decimal?> Data { get; set; }
+    }
 }

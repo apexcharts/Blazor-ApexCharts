@@ -24,13 +24,14 @@ namespace ApexCharts
 
     public class Series<TItem> where TItem : class
     {
-     
         public IEnumerable<IDataPoint<TItem>> Data { get; set; }
         public string Name { get; set; }
         public MixedType? Type { get; set; }
 
         [JsonIgnore]
         public IApexSeries<TItem> ApexSeries { get; set; }
+
+        
 
     }
 
