@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -26,9 +27,9 @@ namespace ApexCharts
             return ChartType.Candlestick;
         }
 
-        public IEnumerable<IDataPoint<TItem>> GetData()
+        public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
-            var data = Items
+            var data = items
          .Select(d => new ListPoint<TItem>
          {
              X = XValue.Invoke(d),
@@ -39,7 +40,7 @@ namespace ApexCharts
                        Low.Invoke(d),
                        Close.Invoke(d)
              },
-             Items = Items
+             Items = new List<TItem> { d }
          });
 
             if (OrderBy != null)

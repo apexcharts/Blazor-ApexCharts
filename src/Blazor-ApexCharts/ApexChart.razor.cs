@@ -248,7 +248,22 @@ namespace ApexCharts
             var json = Serialize(annotationsPoint);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.Id, json, pushToMemory);
         }
-        //zoomX (start, end)
+
+        public async Task AppendDataAsync(int seriesIndex, IEnumerable<TItem> items)
+        {
+            var apxSeries = Series[seriesIndex];
+            var appendData = new AppendData<TItem>
+            {
+                Data = apxSeries.GenerateDataPoints(items),
+            };
+
+            var seriesList = new List<AppendData<TItem>>(seriesIndex + 1);
+            seriesList.Insert(seriesIndex, appendData);
+
+            var json = Serialize(seriesList);
+
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.appendData", Options.Chart.Id, json);
+        }
 
         public async Task ZoomXAsync(decimal start, decimal end)
         {
@@ -372,7 +387,7 @@ namespace ApexCharts
             {
                 var series = new Series<TItem>
                 {
-                    Data = apxSeries.GetData().ToList(),
+                    Data = apxSeries.GenerateDataPoints(apxSeries.Items),
                     Name = apxSeries.Name,
                     ApexSeries = apxSeries
                 };

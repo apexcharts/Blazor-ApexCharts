@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -24,9 +25,9 @@ namespace ApexCharts
             return ChartType.Bubble;
         }
 
-        public IEnumerable<IDataPoint<TItem>> GetData()
+        public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
-            var data = Items.GroupBy(XValue).Select(d => new BubblePoint<TItem>
+            var data = items.GroupBy(XValue).Select(d => new BubblePoint<TItem>
             {
                 X = d.Key,
                 Y = YAggregate.Invoke(d),

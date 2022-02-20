@@ -52,6 +52,7 @@ namespace BlazorApexCharts.Docs
 
     public class TimeSeries
     {
+        public long DateMilliseconds => Date.ToUnixTimeMilliseconds();
         public DateTimeOffset Date { get; set; }
         public decimal Value { get; set; }
         public int Quantity { get; set; }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -53,19 +54,15 @@ namespace ApexCharts
                 default:
                     throw new SystemException($"SeriesType {SeriesType} can not be converted to CartType");
             }
-
         }
 
-
-        public IEnumerable<IDataPoint<TItem>> GetData()
+        public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items) 
         {
-            //if (Data != null) { return Data; }
-
             IEnumerable<DataPoint<TItem>> data;
 
             if (YValue != null)
             {
-                data = Items.Select(e => new DataPoint<TItem>
+                data = items.Select(e => new DataPoint<TItem>
                 {
                     X = XValue.Invoke(e),
                     Y = YValue.Invoke(e),
@@ -75,7 +72,7 @@ namespace ApexCharts
             }
             else if (YAggregate != null)
             {
-                data = Items.GroupBy(XValue)
+                data = items.GroupBy(XValue)
                .Select(d => new DataPoint<TItem>
                {
                    X = d.Key,
@@ -101,10 +98,17 @@ namespace ApexCharts
             return data;
         }
 
+        public IEnumerable<IDataPoint<TItem>> GetData()
+        {
+            return GenerateDataPoints(Items);
+        }
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);
             Chart.RemoveSeries(this);
         }
+
+     
     }
 }

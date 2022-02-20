@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -23,10 +24,11 @@ namespace ApexCharts
             return ChartType.BoxPlot;
         }
 
-        public IEnumerable<IDataPoint<TItem>> GetData()
+       
+
+        public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
-            
-            var data = Items.GroupBy(XValue).Select(d => new ListPoint<TItem>
+            var data = items.GroupBy(XValue).Select(d => new ListPoint<TItem>
             {
                 X = d.Key,
                 Y = d.AsQueryable().Select(YValue).OrderBy(o => o),

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -24,7 +25,6 @@ namespace ApexCharts
 
         private void CheckInput()
         {
-
             if (YValue == null && (YMinValue == null || YMinValue == null)) {
                 throw new ArgumentNullException($"You have to set YValue or YMinValue and YMaxValue");
             }
@@ -34,24 +34,24 @@ namespace ApexCharts
         {
             return ChartType.RangeBar;
         }
-
-        public IEnumerable<IDataPoint<TItem>> GetData()
+       
+        public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
             IEnumerable<ListPoint<TItem>> data;
 
             if (YMinValue != null && YMaxValue != null)
             {
-                data = Items
+                data = items
                        .Select(e => new ListPoint<TItem>
                        {
                            X = XValue.Invoke(e),
                            Y = new List<decimal?> { YMinValue.Invoke(e), YMaxValue.Invoke(e) },
-                           Items = new List<TItem> { e}
+                           Items = new List<TItem> { e }
                        });
             }
             else
             {
-                data = Items
+                data = items
                  .GroupBy(XValue)
                  .Select(d => new ListPoint<TItem>
                  {
@@ -71,12 +71,18 @@ namespace ApexCharts
             }
 
             return data;
+        }
 
+        public IEnumerable<IDataPoint<TItem>> GetData()
+        {
+            return GenerateDataPoints(Items);
         }
 
         public void Dispose()
         {
             Chart.RemoveSeries(this);
         }
+
+        
     }
 }

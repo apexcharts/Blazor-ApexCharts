@@ -1,0 +1,46 @@
+﻿<Button OnClick="AppendData" BackgroundColor=TablerColor.Primary>Append Data</Button>
+
+<DemoContainer>
+    <ApexChart @ref=chart TItem="TimeSeries"
+               Title="Order Net Value"
+               XAxisType="XAxisType.Datetime"
+               Options=options>
+
+        <ApexPointSeries TItem="TimeSeries"
+                         Items="timeSeries"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.DateMilliseconds)"
+                         YValue="@(e => e.Value)"
+                         OrderBy="e=>e.X"
+                         Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<TimeSeries> chart;
+    private ApexChartOptions<TimeSeries> options;
+    private List<TimeSeries> timeSeries = new TimeSeriesGenerator(100).TimeSeries;
+
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<TimeSeries>();
+
+    }
+
+    private async Task AppendData()
+    {
+        var max = timeSeries.Max(e => e.Date);
+        var rnd = new Random();
+
+        var newData = new List<TimeSeries>();
+        for (var i = 1; i <= 10; i++)
+        {
+            newData.Add(new TimeSeries { Date = max.AddDays(i), Quantity = 44, Value = rnd.Next(1, 100) });
+        }
+        timeSeries.AddRange(newData);
+
+        await chart.AppendDataAsync(0, newData);
+    }
+    }
