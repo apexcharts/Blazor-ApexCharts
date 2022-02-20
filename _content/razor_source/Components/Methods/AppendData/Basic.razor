@@ -10,7 +10,7 @@
                          Items="timeSeries"
                          Name="Value"
                          SeriesType="SeriesType.Line"
-                         XValue="@(e => e.DateMilliseconds)"
+                         XValue="@(e => e.Date)"
                          YValue="@(e => e.Value)"
                          OrderBy="e=>e.X"
                          Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
@@ -19,7 +19,7 @@
                          Items="timeSeries"
                          Name="Quantity"
                          SeriesType="SeriesType.Line"
-                         XValue="@(e => e.DateMilliseconds)"
+                         XValue="@(e => e.Date)"
                          YValue="@(e => e.Quantity)"
                          OrderBy="e=>e.X"
                          Stroke="@(new SeriesStroke { Width = 2, Color="#E51534"})" />
