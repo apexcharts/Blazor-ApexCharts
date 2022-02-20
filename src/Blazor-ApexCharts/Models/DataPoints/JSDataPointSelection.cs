@@ -2,14 +2,12 @@
 
 namespace ApexCharts
 {
-    public class DataPointSelection<TItem> where TItem : class
+    public class JSDataPointSelection
     {
         public List<List<int?>> SelectedDataPoints { get; set; }
         public int DataPointIndex { get; set; }
         public int SeriesIndex { get; set; }
 
-        public IDataPoint<TItem> DataPoint { get; set; }
-        public object Label { get; set; }
     }
 
 

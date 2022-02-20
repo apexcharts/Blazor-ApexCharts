@@ -7,6 +7,8 @@ namespace ApexCharts
     public class ApexChartOptions<TItem> where TItem : class
     {
         public bool Debug { get; set; }
+        public bool HasDataPointSelection { get; internal set; }
+        public bool HasLegendClick { get; internal set; }
 
         /// <summary>
         /// Annotations options

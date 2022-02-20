@@ -196,17 +196,32 @@
 
         options.dotNetObject = dotNetObject;
 
-     
+
         options.chart.events = {
             dataPointSelection: (event, chartContext, config) => {
 
+                if (chartContext.opts.hasDataPointSelection === false) {
+                    return;
+                }
                 var selection = {
                     dataPointIndex: config.dataPointIndex,
                     seriesIndex: config.seriesIndex,
                     selectedDataPoints: config.selectedDataPoints
                 }
-
                 dotNetObject.invokeMethodAsync('DataPointSelected', selection);
+            },
+
+            legendClick: (chartContext, seriesIndex, config) => {
+                if (chartContext.opts.hasLegendClick === false) {
+                    return;
+                }
+                var legendClick = {
+
+                    seriesIndex: seriesIndex,
+                    collapsed: config.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1
+                }
+
+                dotNetObject.invokeMethodAsync('LegendClicked', legendClick);
             }
         }
 

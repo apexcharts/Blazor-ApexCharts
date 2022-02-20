@@ -1,0 +1,45 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               OnLegendClicked=LegendClicked
+               @ref=chart>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.X" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@if (legendClicked != null)
+{
+    <Alert BackgroundColor="TablerColor.Primary">
+        <h3>You clicked series @legendClicked.Series.Name</h3>
+        <span>Collapsed: @legendClicked.Collapsed</span>
+    </Alert>
+
+
+
+}
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private LegendClicked<Order> legendClicked;
+    private ApexChart<Order> chart;
+
+    private void LegendClicked(LegendClicked<Order> legend)
+    {
+        legendClicked = legend;
+    }
+    }

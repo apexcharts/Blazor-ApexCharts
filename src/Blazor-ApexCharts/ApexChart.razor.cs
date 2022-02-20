@@ -1,4 +1,5 @@
-﻿using BlazorApexCharts;
+﻿using ApexCharts.Series;
+using BlazorApexCharts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
@@ -20,6 +21,8 @@ namespace ApexCharts
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
+        [Parameter] public EventCallback<LegendClicked<TItem>> OnLegendClicked { get; set; }
+
         [Parameter] public EventCallback OnRendered { get; set; }
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
 
@@ -379,6 +382,14 @@ namespace ApexCharts
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
             SetDotNetFormatters();
+            SetEvents();
+        }
+
+        private void SetEvents()
+        {
+            Options.HasDataPointSelection = OnDataPointSelection.HasDelegate;
+            Options.HasLegendClick = OnLegendClicked.HasDelegate;
+
         }
 
         private async Task RenderChartAsync()
@@ -492,7 +503,27 @@ namespace ApexCharts
         }
 
         [JSInvokable]
-        public void DataPointSelected(DataPointSelection<TItem> selectedDataPoints)
+        public void LegendClicked(JSLegendClicked jsLegendClicked)
+        {
+
+            var series = Options.Series.ElementAt(jsLegendClicked.SeriesIndex);
+            var legendClicked = new LegendClicked<TItem>
+            {
+                Series = series,
+                Collapsed = jsLegendClicked.Collapsed
+            };
+            //Invert if Toggle series is set to flase (default == true)
+            var toggleSeries = Options?.Legend?.OnItemClick?.ToggleDataSeries;
+            if (toggleSeries != false)
+            {
+                legendClicked.Collapsed = !legendClicked.Collapsed;
+            }
+
+            OnLegendClicked.InvokeAsync(legendClicked);
+        }
+
+        [JSInvokable]
+        public void DataPointSelected(JSDataPointSelection selectedDataPoints)
         {
             if (OnDataPointSelection.HasDelegate)
             {
@@ -501,9 +532,9 @@ namespace ApexCharts
 
                 var selection = new SelectedData<TItem>
                 {
-                    Series = series, 
+                    Series = series,
                     DataPoint = dataPoint,
-                    IsSelected = selectedDataPoints.SelectedDataPoints.Any(e=> e!= null && e.Any(e=> e != null && e.HasValue)),
+                    IsSelected = selectedDataPoints.SelectedDataPoints.Any(e => e != null && e.Any(e => e != null && e.HasValue)),
                 };
 
                 OnDataPointSelection.InvokeAsync(selection);
