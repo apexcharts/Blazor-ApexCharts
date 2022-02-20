@@ -47,6 +47,14 @@
         }
     },
 
+    appendData(id, data) {
+        var newData = JSON.parse(data);
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            return chart.appendData(newData);
+        }
+    },
+
     zoomX(id, start, end) {
         var chart = this.findChart(id);
         if (chart !== undefined) {
