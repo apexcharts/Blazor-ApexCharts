@@ -249,16 +249,19 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
-        public async Task AppendDataAsync(int seriesIndex, IEnumerable<TItem> items)
+        public async Task AppendDataAsync(IEnumerable<TItem> items)
         {
-            var apxSeries = Series[seriesIndex];
-            var appendData = new AppendData<TItem>
+            // var apxSeries = Series[seriesIndex];
+            var seriesList = new List<AppendData<TItem>>();
+            foreach (var apxSeries in Series)
             {
-                Data = apxSeries.GenerateDataPoints(items),
-            };
+                seriesList.Add(new AppendData<TItem>
+                {
+                    Data = apxSeries.GenerateDataPoints(items)
+                });
 
-            var seriesList = new List<AppendData<TItem>>(seriesIndex + 1);
-            seriesList.Insert(seriesIndex, appendData);
+            }
+
 
             var json = Serialize(seriesList);
 
