@@ -1,6 +1,8 @@
 ﻿@using System.Diagnostics
 @using System.Text.Json
 
+<Checkbox Switch @bind-Value=unMarshalledJS Label="Use UnMarshalledJS" />
+
 <ItemSelect Label="Datapoints" Items=points @bind-SelectedValue=pointsToLoad Changed=LoadData />
 
 
@@ -8,6 +10,7 @@
                Title="Value"
                Height="150"
                XAxisType="XAxisType.Datetime"
+               UnMarshalledJS=unMarshalledJS
                @ref=chart>
 
 
@@ -32,8 +35,7 @@ else
 
 
 @code {
-
-
+    private bool unMarshalledJS = true;
     private ApexChart<TimeSeries> chart;
     private List<int> points = new List<int> { 100, 1000, 5000, 10000 };
     private int pointsToLoad = 100;
