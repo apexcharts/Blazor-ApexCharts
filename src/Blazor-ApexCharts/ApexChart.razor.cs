@@ -20,6 +20,7 @@ namespace ApexCharts
         [Parameter] public string Title { get; set; }
         [Parameter] public XAxisType? XAxisType { get; set; }
         [Parameter] public bool Debug { get; set; }
+        [Parameter] public bool UnMarshalledJS { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
@@ -39,13 +40,16 @@ namespace ApexCharts
         private string chartId;
         public string ChartId => ChartId;
         private IJSUnmarshalledRuntime jsUnmarshalled;
+        private IJSInProcessRuntime jsInprocess;
+
         private bool isWasm;
 
         protected override void OnInitialized()
         {
-            isWasm = this.JSRuntime is IJSInProcessRuntime;
+            isWasm = JSRuntime is IJSInProcessRuntime;
             if (isWasm)
             {
+                jsInprocess = (IJSInProcessRuntime)JSRuntime;
                 jsUnmarshalled = (IJSUnmarshalledRuntime)ServiceProvider.GetService(typeof(IJSUnmarshalledRuntime));
             }
         }
@@ -361,10 +365,16 @@ namespace ApexCharts
             Console.WriteLine($"Serialize {sw.ElapsedMilliseconds}");
 
 
-            if (jsUnmarshalled != null)
+            if (jsUnmarshalled != null && UnMarshalledJS)
             {
-                jsUnmarshalled.InvokeUnmarshalled<string, string, string, bool>("blazor_apexchart.testUnmarshalled", Options.Chart.Id, jsonSeries, animate.ToString());
+                jsUnmarshalled.InvokeUnmarshalled<string, string, string, string>("blazor_apexchart.testUnmarshalled", Options.Chart.Id, jsonSeries, animate.ToString().ToLower());
                 Console.WriteLine($"Invoke InvokeUnmarshalled {sw.ElapsedMilliseconds}");
+
+            }
+            else if (jsInprocess != null)
+            {
+                jsInprocess.InvokeVoid("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
+                Console.WriteLine($"Invoke Void {sw.ElapsedMilliseconds}");
 
             }
             else
@@ -377,7 +387,7 @@ namespace ApexCharts
             sw.Stop();
         }
 
-     
+
         /// <summary>
         /// For no axis charts only provide the seriesIndex value, set dataPointIndex to null
         /// </summary>
