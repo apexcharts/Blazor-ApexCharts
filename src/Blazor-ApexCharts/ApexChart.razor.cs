@@ -12,7 +12,8 @@ namespace ApexCharts
 {
     public partial class ApexChart<TItem> : IDisposable where TItem : class
     {
-        [Inject] public IJSRuntime JSRuntime { get; set; }
+        [Inject] private IServiceProvider ServiceProvider { get; set; }
+        [Inject] private IJSRuntime JSRuntime { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
@@ -342,9 +343,35 @@ namespace ApexCharts
 
             var jsonSeries = Serialize(Options.Series);
 
+            IJSUnmarshalledRuntime unmarshal = (IJSUnmarshalledRuntime)ServiceProvider.GetService(typeof(IJSUnmarshalledRuntime));
 
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
+            if (unmarshal != null)
+            {
+                unmarshal.InvokeUnmarshalled<string, string,string, bool>("blazor_apexchart.testUnmarshalled", Options.Chart.Id, jsonSeries,animate.ToString());
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
+
+            }
+            //JSRuntime.InvokeVoid("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
+
         }
+
+        //private string SendToJs()
+        //{
+
+        //    var unmarshalledRuntime = (IJSUnmarshalledRuntime)JSRuntime;
+
+        //    var jsUnmarshalledReference = unmarshalledRuntime
+        //        .InvokeUnmarshalled<IJSUnmarshalledObjectReference>(
+        //            "returnObjectReference");
+
+        //    callResultForString =
+        //        jsUnmarshalledReference.InvokeUnmarshalled<InteropStruct, string>(
+        //            "unmarshalledFunctionReturnString", GetStruct());
+
+        //}
 
         /// <summary>
         /// For no axis charts only provide the seriesIndex value, set dataPointIndex to null
