@@ -1,4 +1,13 @@
 ﻿window.blazor_apexchart = {
+    
+    testUnmarshalled(id, series, animate) {
+
+        //console.log(series);
+        const chartId = BINDING.conv_string(id);
+        const data = BINDING.conv_string(series);
+        //const chartAnimate = BINDING.conv_bool(animate);
+        this.updateSeries(chartId, data, true);
+    },
 
     getYAxisLabel(value, index, w) {
 
