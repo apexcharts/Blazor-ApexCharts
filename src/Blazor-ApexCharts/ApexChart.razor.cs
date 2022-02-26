@@ -43,7 +43,7 @@ namespace ApexCharts
 
         protected override void OnInitialized()
         {
-            var isWasm = this.JSRuntime is IJSInProcessRuntime;
+            isWasm = this.JSRuntime is IJSInProcessRuntime;
             if (isWasm)
             {
                 jsUnmarshalled = (IJSUnmarshalledRuntime)ServiceProvider.GetService(typeof(IJSUnmarshalledRuntime));
