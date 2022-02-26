@@ -3,23 +3,23 @@
 
 <ItemSelect Label="Datapoints" Items=points @bind-SelectedValue=pointsToLoad Changed=LoadData />
 
-<Dimmer Active=isLoading ShowSpinner=false>
+
     <ApexChart TItem="TimeSeries"
                Title="Value"
                Height="150"
                XAxisType="XAxisType.Datetime"
                @ref=chart>
 
-      
+
         <ApexPointSeries TItem="TimeSeries"
                          Items="timeSeries.Take(pointsToLoad)"
                          Name="Value"
                          SeriesType="SeriesType.Line"
-                         XValue="@(e => e.Date)"
+                         XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
                          YValue="@( e=> e.Value)"
                          Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
     </ApexChart>
-</Dimmer>
+
 
 @if (isLoading)
 {
@@ -37,9 +37,9 @@ else
     private ApexChart<TimeSeries> chart;
     private List<int> points = new List<int> { 100, 1000, 5000, 10000 };
     private int pointsToLoad = 100;
-    private IEnumerable<TimeSeries> timeSeries = new TimeSeriesGenerator(10000).TimeSeries;
+    private List<TimeSeries> timeSeries = new TimeSeriesGenerator(10000).TimeSeries;
     private string message;
-    private IEnumerable<DataPoint<TimeSeries>> data;
+    private List<DataPoint<TimeSeries>> data;
 
     private bool isLoading;
 
@@ -50,18 +50,24 @@ else
 
     private async Task LoadData()
     {
-        isLoading = true;
-        await Task.Delay(10);
-        PopulateData();
         var sw = new Stopwatch();
         sw.Start();
+        isLoading = true;
 
         await Task.Delay(10);
+
+
+        PopulateData();
+        message = $"{pointsToLoad} Points: Populate Data {sw.ElapsedMilliseconds.ToString("N0")}ms, ";
+        sw.Restart();
+
+        //await Task.Delay(10);
 
         await chart.UpdateSeriesAsync(false);
         sw.Stop();
+        
 
-        message = $"Updated {pointsToLoad} points in {sw.ElapsedMilliseconds.ToString("N0")}ms";
+        message += $"Update Chart {sw.ElapsedMilliseconds.ToString("N0")}ms";
         isLoading = false;
     }
 
@@ -73,7 +79,7 @@ else
                 X = e.Date,
                 Y = e.Value,
                 Items = new List<TimeSeries> { e }
-            });
+            }).ToList();
     }
 
     private void SerializeTest()

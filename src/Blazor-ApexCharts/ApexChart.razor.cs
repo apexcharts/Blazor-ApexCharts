@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -37,10 +38,21 @@ namespace ApexCharts
         private bool forceRender = true;
         private string chartId;
         public string ChartId => ChartId;
+        private IJSUnmarshalledRuntime jsUnmarshalled;
+        private bool isWasm;
+
+        protected override void OnInitialized()
+        {
+            var isWasm = this.JSRuntime is IJSInProcessRuntime;
+            if (isWasm)
+            {
+                jsUnmarshalled = (IJSUnmarshalledRuntime)ServiceProvider.GetService(typeof(IJSUnmarshalledRuntime));
+            }
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
+            if (firstRender && isReady == false)
             {
                 isReady = true;
                 ObjectReference = DotNetObjectReference.Create(this);
@@ -338,41 +350,34 @@ namespace ApexCharts
 
         public async Task UpdateSeriesAsync(bool animate = true)
         {
+            var sw = new Stopwatch();
+            sw.Start();
+
             SetSeries();
+            Console.WriteLine($"SetSeries {sw.ElapsedMilliseconds}");
             UpdateDataForNoAxisCharts();
-
+            Console.WriteLine($"UpdateDataForNoAxisCharts {sw.ElapsedMilliseconds}");
             var jsonSeries = Serialize(Options.Series);
+            Console.WriteLine($"Serialize {sw.ElapsedMilliseconds}");
 
-            IJSUnmarshalledRuntime unmarshal = (IJSUnmarshalledRuntime)ServiceProvider.GetService(typeof(IJSUnmarshalledRuntime));
 
-            if (unmarshal != null)
+            if (jsUnmarshalled != null)
             {
-                unmarshal.InvokeUnmarshalled<string, string,string, bool>("blazor_apexchart.testUnmarshalled", Options.Chart.Id, jsonSeries,animate.ToString());
+                jsUnmarshalled.InvokeUnmarshalled<string, string, string, bool>("blazor_apexchart.testUnmarshalled", Options.Chart.Id, jsonSeries, animate.ToString());
+                Console.WriteLine($"Invoke InvokeUnmarshalled {sw.ElapsedMilliseconds}");
+
             }
             else
             {
                 await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
+                Console.WriteLine($"Invoke Async {sw.ElapsedMilliseconds}");
 
             }
-            //JSRuntime.InvokeVoid("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
 
+            sw.Stop();
         }
 
-        //private string SendToJs()
-        //{
-
-        //    var unmarshalledRuntime = (IJSUnmarshalledRuntime)JSRuntime;
-
-        //    var jsUnmarshalledReference = unmarshalledRuntime
-        //        .InvokeUnmarshalled<IJSUnmarshalledObjectReference>(
-        //            "returnObjectReference");
-
-        //    callResultForString =
-        //        jsUnmarshalledReference.InvokeUnmarshalled<InteropStruct, string>(
-        //            "unmarshalledFunctionReturnString", GetStruct());
-
-        //}
-
+     
         /// <summary>
         /// For no axis charts only provide the seriesIndex value, set dataPointIndex to null
         /// </summary>
