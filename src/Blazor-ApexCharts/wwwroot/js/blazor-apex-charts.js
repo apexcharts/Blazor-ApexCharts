@@ -1,12 +1,7 @@
 ﻿window.blazor_apexchart = {
 
     testUnmarshalled(id, series, animate) {
-        //const chartId = BINDING.conv_string(id);
-        //const data = BINDING.conv_string(series);
-        //const animateString = BINDING.conv_string(animate);
-
         var chartAnimate = (BINDING.conv_string(animate).toLowerCase() === 'true');
-
         this.updateSeries(BINDING.conv_string(id), BINDING.conv_string(series), chartAnimate);
     },
 

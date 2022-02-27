@@ -20,7 +20,7 @@ namespace ApexCharts
         [Parameter] public string Title { get; set; }
         [Parameter] public XAxisType? XAxisType { get; set; }
         [Parameter] public bool Debug { get; set; }
-        [Parameter] public bool UnMarshalledJS { get; set; }
+        [Parameter] public JSInteropStrategy JSInteropStrategy { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
@@ -365,16 +365,16 @@ namespace ApexCharts
             Console.WriteLine($"Serialize {sw.ElapsedMilliseconds}");
 
 
-            if (jsUnmarshalled != null && UnMarshalledJS)
+            if (jsUnmarshalled != null && JSInteropStrategy == JSInteropStrategy.UnMarshalled)
             {
                 jsUnmarshalled.InvokeUnmarshalled<string, string, string, string>("blazor_apexchart.testUnmarshalled", Options.Chart.Id, jsonSeries, animate.ToString().ToLower());
-                Console.WriteLine($"Invoke InvokeUnmarshalled {sw.ElapsedMilliseconds}");
+                Console.WriteLine($"Invoke Unmarshalled {sw.ElapsedMilliseconds}");
 
             }
-            else if (jsInprocess != null)
+            else if (jsInprocess != null && JSInteropStrategy == JSInteropStrategy.Sync)
             {
                 jsInprocess.InvokeVoid("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
-                Console.WriteLine($"Invoke Void {sw.ElapsedMilliseconds}");
+                Console.WriteLine($"Invoke Sync {sw.ElapsedMilliseconds}");
 
             }
             else
