@@ -3,27 +3,27 @@
 
 
 
-<ItemSelect Label="JS Interop Strategy" Items="@(EnumHelper.GetList<JSInteropStrategy>())" @bind-SelectedValue="@jsInteropStrategy" Changed=LoadData/>
+<ItemSelect Label="JS Interop Strategy" Items="@(EnumHelper.GetList<JSInteropStrategy>())" @bind-SelectedValue="@jsInteropStrategy" Changed=LoadData />
 
 <ItemSelect Label="Datapoints" Items=points @bind-SelectedValue=pointsToLoad Changed=LoadData />
 
 
-    <ApexChart TItem="TimeSeries"
-               Title="Value"
-               Height="150"
-               XAxisType="XAxisType.Datetime"
-               JSInteropStrategy=jsInteropStrategy
-               @ref=chart>
+<ApexChart TItem="TimeSeries"
+           Title="Value"
+           Height="150"
+           XAxisType="XAxisType.Datetime"
+           JSInteropStrategy=jsInteropStrategy
+           @ref=chart>
 
 
-        <ApexPointSeries TItem="TimeSeries"
-                         Items="timeSeries.Take(pointsToLoad)"
-                         Name="Value"
-                         SeriesType="SeriesType.Line"
-                         XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
-                         YValue="@( e=> e.Value)"
-                         Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
-    </ApexChart>
+    <ApexPointSeries TItem="TimeSeries"
+                     Items="timeSeries.Take(pointsToLoad)"
+                     Name="Value"
+                     SeriesType="SeriesType.Line"
+                     XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
+                     YValue="@( e=> e.Value)"
+                     Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
+</ApexChart>
 
 
 @if (isLoading)
@@ -39,9 +39,9 @@ else
 @code {
     private JSInteropStrategy jsInteropStrategy = JSInteropStrategy.UnMarshalled;
     private ApexChart<TimeSeries> chart;
-    private List<int> points = new List<int> { 100, 1000, 5000, 10000 };
+    private List<int> points = new List<int> { 100, 1000, 5000, 10000,25000 };
     private int pointsToLoad = 100;
-    private List<TimeSeries> timeSeries = new TimeSeriesGenerator(10000).TimeSeries;
+    private List<TimeSeries> timeSeries = new TimeSeriesGenerator(25000).TimeSeries;
     private string message;
     private List<DataPoint<TimeSeries>> data;
 
@@ -58,18 +58,13 @@ else
         sw.Start();
         isLoading = true;
 
-        await Task.Delay(10);
-
+        await Task.Delay(1);
 
         PopulateData();
         message = $"{pointsToLoad} Points: Populate Data {sw.ElapsedMilliseconds.ToString("N0")}ms, ";
         sw.Restart();
-
-        //await Task.Delay(10);
-
         await chart.UpdateSeriesAsync(false);
         sw.Stop();
-        
 
         message += $"Update Chart {sw.ElapsedMilliseconds.ToString("N0")}ms";
         isLoading = false;
@@ -85,18 +80,4 @@ else
                 Items = new List<TimeSeries> { e }
             }).ToList();
     }
-
-    private void SerializeTest()
-    {
-        var series = chart.Options.Series;
-        var options = new ChartSerializer().GetOptions<TimeSeries>();
-        var sw = new Stopwatch();
-        sw.Start();
-
-        // var result = serializer.
-        var result = System.Text.Json.JsonSerializer.Serialize(series, options);
-        sw.Stop();
-        message = $"Test [{pointsToLoad}] {sw.ElapsedMilliseconds.ToString("N")}ms";
-    }
-
     }
