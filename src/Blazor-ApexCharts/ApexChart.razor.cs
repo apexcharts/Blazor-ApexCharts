@@ -20,7 +20,6 @@ namespace ApexCharts
         [Parameter] public string Title { get; set; }
         [Parameter] public XAxisType? XAxisType { get; set; }
         [Parameter] public bool Debug { get; set; }
-        [Parameter] public JSInteropStrategy JSInteropStrategy { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
@@ -39,20 +38,9 @@ namespace ApexCharts
         private bool forceRender = true;
         private string chartId;
         public string ChartId => ChartId;
-        private IJSUnmarshalledRuntime jsUnmarshalled;
-        private IJSInProcessRuntime jsInprocess;
 
-        private bool isWasm;
 
-        protected override void OnInitialized()
-        {
-            isWasm = JSRuntime is IJSInProcessRuntime;
-            if (isWasm)
-            {
-                jsInprocess = (IJSInProcessRuntime)JSRuntime;
-                jsUnmarshalled = (IJSUnmarshalledRuntime)ServiceProvider.GetService(typeof(IJSUnmarshalledRuntime));
-            }
-        }
+
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -354,37 +342,10 @@ namespace ApexCharts
 
         public async Task UpdateSeriesAsync(bool animate = true)
         {
-            var sw = new Stopwatch();
-            sw.Start();
-
             SetSeries();
-            Console.WriteLine($"SetSeries {sw.ElapsedMilliseconds}");
             UpdateDataForNoAxisCharts();
-            Console.WriteLine($"UpdateDataForNoAxisCharts {sw.ElapsedMilliseconds}");
             var jsonSeries = Serialize(Options.Series);
-            Console.WriteLine($"Serialize {sw.ElapsedMilliseconds}");
-
-
-            if (jsUnmarshalled != null && JSInteropStrategy == JSInteropStrategy.UnMarshalled)
-            {
-                jsUnmarshalled.InvokeUnmarshalled<string, string, string, string>("blazor_apexchart.testUnmarshalled", Options.Chart.Id, jsonSeries, animate.ToString().ToLower());
-                Console.WriteLine($"Invoke Unmarshalled {sw.ElapsedMilliseconds}");
-
-            }
-            else if (jsInprocess != null && JSInteropStrategy == JSInteropStrategy.Sync)
-            {
-                jsInprocess.InvokeVoid("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
-                Console.WriteLine($"Invoke Sync {sw.ElapsedMilliseconds}");
-
-            }
-            else
-            {
-                await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
-                Console.WriteLine($"Invoke Async {sw.ElapsedMilliseconds}");
-
-            }
-
-            sw.Stop();
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
         }
 
 
