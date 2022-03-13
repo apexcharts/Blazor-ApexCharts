@@ -3,7 +3,6 @@
 
 
 
-<ItemSelect Label="JS Interop Strategy" Items="@(EnumHelper.GetList<JSInteropStrategy>())" @bind-SelectedValue="@jsInteropStrategy" Changed=LoadData />
 
 <ItemSelect Label="Datapoints" Items=points @bind-SelectedValue=pointsToLoad Changed=LoadData />
 
@@ -12,9 +11,7 @@
            Title="Value"
            Height="150"
            XAxisType="XAxisType.Datetime"
-           JSInteropStrategy=jsInteropStrategy
            @ref=chart>
-
 
     <ApexPointSeries TItem="TimeSeries"
                      Items="timeSeries.Take(pointsToLoad)"
@@ -37,9 +34,8 @@ else
 
 
 @code {
-    private JSInteropStrategy jsInteropStrategy = JSInteropStrategy.UnMarshalled;
     private ApexChart<TimeSeries> chart;
-    private List<int> points = new List<int> { 100, 1000, 5000, 10000,25000 };
+    private List<int> points = new List<int> { 100, 1000, 5000, 10000, 15000, 20000 };
     private int pointsToLoad = 100;
     private List<TimeSeries> timeSeries = new TimeSeriesGenerator(25000).TimeSeries;
     private string message;

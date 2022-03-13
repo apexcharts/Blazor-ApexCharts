@@ -1,10 +1,6 @@
 ﻿window.blazor_apexchart = {
 
-    testUnmarshalled(id, series, animate) {
-        var chartAnimate = (BINDING.conv_string(animate).toLowerCase() === 'true');
-        this.updateSeries(BINDING.conv_string(id), BINDING.conv_string(series), chartAnimate);
-    },
-
+ 
     getYAxisLabel(value, index, w) {
 
         if (window.wasmBinaryFile === undefined) {
