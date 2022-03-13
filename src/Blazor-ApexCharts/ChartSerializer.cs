@@ -6,7 +6,7 @@ namespace BlazorApexCharts
 {
     public class ChartSerializer
     {
-        private static Dictionary<string, JsonSerializerOptions> _serializerOptions = new Dictionary<string, JsonSerializerOptions>();
+        private static Dictionary<object, JsonSerializerOptions> _serializerOptions = new Dictionary<object, JsonSerializerOptions>();
 
         private JsonSerializerOptions GenerateOptions<TItem>() where TItem : class
         {
@@ -24,7 +24,7 @@ namespace BlazorApexCharts
 
         public JsonSerializerOptions GetOptions<TItem>() where TItem : class
         {
-            string key = typeof(TItem).ToString();
+            var key = typeof(TItem);
             if (_serializerOptions.ContainsKey(key))
             {
                 return _serializerOptions[key];
