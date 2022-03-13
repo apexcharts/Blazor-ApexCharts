@@ -1,4 +1,5 @@
 ﻿using ApexCharts.Models;
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 
@@ -6,7 +7,7 @@ namespace BlazorApexCharts
 {
     public class ChartSerializer
     {
-        private static Dictionary<object, JsonSerializerOptions> _serializerOptions = new Dictionary<object, JsonSerializerOptions>();
+        private static Dictionary<Type, JsonSerializerOptions> _serializerOptions = new Dictionary<Type, JsonSerializerOptions>();
 
         private JsonSerializerOptions GenerateOptions<TItem>() where TItem : class
         {
