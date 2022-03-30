@@ -1,5 +1,9 @@
 ﻿window.tabBlazor = {
 
+    getUserAgent: function () {
+        return navigator.userAgent;
+    },
+
     saveAsFile: function (filename, href) {
         var link = document.createElement('a');
         link.download = filename;
