@@ -21,6 +21,9 @@
 
 
   <ItemGroup>
+    <Content Update="wwwroot\js\apex-charts.debug.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\js\apex-charts.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
