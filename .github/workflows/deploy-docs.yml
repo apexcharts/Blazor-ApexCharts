@@ -1,4 +1,4 @@
-name: Build and Deploy Net5 Docs
+name: Build and Deploy Docs
 on:
   workflow_dispatch:
   push:
@@ -11,7 +11,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.400
+        dotnet-version: 6.0.x
         
     - name: Publish with dotnet
       run: dotnet publish -c Release -o public -p:GHPages=true
