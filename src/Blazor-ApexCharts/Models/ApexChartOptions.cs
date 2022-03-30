@@ -1294,6 +1294,29 @@ namespace ApexCharts
         public AxisTitle Title { get; set; }
         public AxisTooltip Tooltip { get; set; }
         public XAxisType? Type { get; set; }
+        public XAxisGroups Group { get; set; }
+    }
+
+    public class XAxisGroups
+    {
+        public List<XAxisGroup> Groups { get; set; }
+        public XAxisGroupStyle Style { get; set; }
+
+    }
+
+    public class XAxisGroup
+    {
+        public string Title { get; set; }
+        public int Cols { get; set; }
+    }
+
+    public class XAxisGroupStyle
+    {
+        public List<string> Colors { get; set; }
+        public string FontSize { get; set; }
+        public string FontFamily { get; set; }
+        public string FontWeight { get; set; }
+        public string CssClass { get; set; }
     }
 
     public enum TickPlacement
