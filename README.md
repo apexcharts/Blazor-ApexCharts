@@ -6,6 +6,9 @@ A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
 
 **Please note: Development in progress, expect breaking changes.**
 
+## .NET 6 or higher is required as of v0.9.0-beta
+
+
 ## Breaking Changes v0.6.0-alpha
 Version v0.6.0 introduces support for all Apex chart types, this comes with a number of breaking changes
 - Chart Type is no longer set on chart level
