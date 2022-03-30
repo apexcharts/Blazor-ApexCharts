@@ -1,0 +1,25 @@
+﻿<DemoContainer>
+
+    <ApexChart TItem="Order"
+               Title="Order Gross Value"
+               Options=options>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Pie"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.Legend = new Legend { Position = LegendPosition.Top, FontSize ="20px", HorizontalAlign = Align.Center };
+    }
+    }
