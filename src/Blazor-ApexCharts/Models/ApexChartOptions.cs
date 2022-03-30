@@ -797,14 +797,22 @@ namespace ApexCharts
 
     public class PlotOptionsBar
     {
-        public string BarHeight { get; set; }
-        public PlotOptionsBarColors Colors { get; set; }
-        public string ColumnWidth { get; set; }
-        public PlotOptionsBarDataLabels DataLabels { get; set; }
-        public bool? Distributed { get; set; }
-        public Shape? EndingShape { get; set; }
         public bool? Horizontal { get; set; }
+        public double? BorderRadius { get; set; }
+        public string ColumnWidth { get; set; }
+        public string BarHeight { get; set; }
+        public bool? Distributed { get; set; }
         public bool? RangeBarOverlap { get; set; }
+        public bool? RangeBarGroupRows { get; set; }
+
+        public PlotOptionsBarColors Colors { get; set; }
+      
+        public PlotOptionsBarDataLabels DataLabels { get; set; }
+    
+        [Obsolete("Deprecated since 3.24.0")]
+        public Shape? EndingShape { get; set; }
+
+        [Obsolete("Deprecated since 3.24.0")]
         public Shape? StartingShape { get; set; }
     }
 
