@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "donut-charts",
+      "launchUrl": "rangebar-charts#grouped",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

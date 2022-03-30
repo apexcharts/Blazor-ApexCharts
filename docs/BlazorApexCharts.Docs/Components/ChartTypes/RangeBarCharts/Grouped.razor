@@ -1,0 +1,39 @@
+﻿<DemoContainer>
+    <ApexChart TItem="SupportIncident"
+               Title="Incident Severity"
+               Options=options>
+
+        <ApexRangeSeries TItem="SupportIncident"
+                         Items="incidents"
+                         XValue="@(e => e.Source.ToString())"
+                         YValue="@(e =>e.Severity)"
+                         Name="Main Incidents" />
+
+        <ApexRangeSeries TItem="SupportIncident"
+                         Items="incidents"
+                         XValue="@(e => e.Source.ToString())"
+                         YValue="@(e => e.Severity + 50)"
+                         Name="Test Incidents" />
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidentsForRange();
+    private ApexChartOptions<SupportIncident> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<SupportIncident>
+            {
+                PlotOptions = new PlotOptions
+                {
+                    Bar = new PlotOptionsBar
+                    {
+                        Horizontal = true,
+                        RangeBarGroupRows = true,
+                    }
+                }
+            };
+    }
+    }
