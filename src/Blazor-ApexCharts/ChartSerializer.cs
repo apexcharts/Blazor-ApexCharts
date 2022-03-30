@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorApexCharts
 {
@@ -14,7 +15,7 @@ namespace BlazorApexCharts
             var serializerOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                IgnoreNullValues = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             };
             serializerOptions.Converters.Add(new DataPointConverter<TItem>());
             serializerOptions.Converters.Add(new SeriesConverter<TItem>());
