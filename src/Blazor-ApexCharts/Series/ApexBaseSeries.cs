@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -16,6 +17,8 @@ namespace ApexCharts
         [Parameter] public IEnumerable<TItem> Items { get; set; }
         [Parameter] public SeriesStroke Stroke { get; set; }
         [Parameter] public string Color { get; set; }
+
+        [Parameter] public Func<TItem, string> PointColor { get; set; }
         public async Task Toggle()
         {
             await Chart?.ToggleSeriesAsync(Name);
@@ -29,6 +32,18 @@ namespace ApexCharts
         public async Task Hide()
         {
             await Chart?.HideSeriesAsync(Name);
+        }
+
+        public string GetPointColor(TItem item)
+        {
+            if (PointColor == null || item == null) { return null; }
+            return PointColor.Invoke(item);
+        }
+
+        public string GetPointColor(IEnumerable<TItem> items)
+        {
+            if (PointColor == null || items == null || !items.Any()) { return null; }
+            return PointColor.Invoke(items.First());
         }
 
     }

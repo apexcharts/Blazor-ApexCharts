@@ -11,7 +11,7 @@ namespace ApexCharts
     {
         [Parameter] public Func<IEnumerable<TItem>, decimal> YAggregate { get; set; }
         [Parameter] public Func<IEnumerable<TItem>, decimal> ZAggregate { get; set; }
-        [Parameter] public Func< BubblePoint<TItem>, object> OrderBy { get; set; }
+        [Parameter] public Func<BubblePoint<TItem>, object> OrderBy { get; set; }
         [Parameter] public Func<BubblePoint<TItem>, object> OrderByDescending { get; set; }
 
         protected override void OnInitialized()
@@ -32,7 +32,8 @@ namespace ApexCharts
                 X = d.Key,
                 Y = YAggregate.Invoke(d),
                 Z = ZAggregate.Invoke(d),
-                Items = d.ToList()
+                Items = d.ToList(),
+                FillColor = GetPointColor(d)
             });
 
             if (OrderBy != null)

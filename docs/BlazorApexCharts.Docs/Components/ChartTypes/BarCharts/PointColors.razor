@@ -1,0 +1,30 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y"
+                         SeriesType="SeriesType.Bar"
+                         Color="#005ba3"
+                         PointColor="e=> GetColor(e)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+
+    private string GetColor(Order order)
+    {
+        if (order.Country == "France")
+        {
+            return "#ffd500";
+        }
+        return null;
+    }
+
+
+    }

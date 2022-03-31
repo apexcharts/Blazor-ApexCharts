@@ -111,7 +111,8 @@ namespace BlazorApexCharts.Docs
             .RuleFor(o => o.Severity, f => f.Random.Number(severityMin, severityMax))
             .RuleFor(o => o.Source, f => f.PickRandom<IncidentSource>())
              .RuleFor(o => o.LeadTime, f => f.Random.Number(1, 10))
-            .RuleFor(o => o.WeekNumber, f => f.Random.Number(1, 20));
+            .RuleFor(o => o.WeekNumber, f => f.Random.Number(1, 20))
+            .RuleFor(o => o.PointColor, f=> f.Internet.Color());
 
             var test = fakeIncidents.Generate(300);
             return test;
@@ -122,14 +123,14 @@ namespace BlazorApexCharts.Docs
         {
             return new List<SupportIncident>
            {
-               new SupportIncident { Source = IncidentSource.Customer, Severity = 20},
-               new SupportIncident { Source = IncidentSource.Customer, Severity = 35},
-               new SupportIncident { Source = IncidentSource.Integration, Severity = 5},
-               new SupportIncident { Source = IncidentSource.Integration, Severity = 70},
-               new SupportIncident { Source = IncidentSource.Internal, Severity = 55},
-               new SupportIncident { Source = IncidentSource.Internal, Severity = 83},
-               new SupportIncident { Source = IncidentSource.ThridParty, Severity = 12},
-               new SupportIncident { Source = IncidentSource.ThridParty, Severity = 24},
+               new SupportIncident { Source = IncidentSource.Customer, Severity = 20, PointColor="#e3001b"},
+               new SupportIncident { Source = IncidentSource.Customer, Severity = 35,  PointColor="#e3001b"},
+               new SupportIncident { Source = IncidentSource.Integration, Severity = 5, PointColor="#005ba3"},
+               new SupportIncident { Source = IncidentSource.Integration, Severity = 70,PointColor="#005ba3"},
+               new SupportIncident { Source = IncidentSource.Internal, Severity = 55, PointColor="#ffd500"},
+               new SupportIncident { Source = IncidentSource.Internal, Severity = 83, PointColor="#ffd500"},
+               new SupportIncident { Source = IncidentSource.ThridParty, Severity = 12, PointColor="#00783c"},
+               new SupportIncident { Source = IncidentSource.ThridParty, Severity = 24, PointColor="#00783c"},
            };
         }
 

@@ -7,6 +7,7 @@ namespace ApexCharts
   
     public class DataPoint<TItem> : IDataPoint<TItem>
     {
+        public string FillColor { get; set; }
         public object X { get; set; }
         
         [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
