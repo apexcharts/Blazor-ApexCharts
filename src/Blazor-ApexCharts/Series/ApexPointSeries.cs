@@ -52,7 +52,7 @@ namespace ApexCharts
                 case SeriesType.Treemap:
                     return ChartType.Treemap;
                 default:
-                    throw new SystemException($"SeriesType {SeriesType} can not be converted to CartType");
+                    throw new SystemException($"SeriesType {SeriesType} can not be converted to ChartType");
             }
         }
 
@@ -66,7 +66,8 @@ namespace ApexCharts
                 {
                     X = XValue.Invoke(e),
                     Y = YValue.Invoke(e),
-                    Items = new List<TItem> { e }
+                    Items = new List<TItem> { e },
+                    FillColor = GetPointColor(e)
                 });
 
             }
@@ -77,7 +78,8 @@ namespace ApexCharts
                {
                    X = d.Key,
                    Y = YAggregate.Invoke(d),
-                   Items = d.ToList()
+                   Items = d.ToList(),
+                   FillColor = GetPointColor(d)
                });
             }
             else

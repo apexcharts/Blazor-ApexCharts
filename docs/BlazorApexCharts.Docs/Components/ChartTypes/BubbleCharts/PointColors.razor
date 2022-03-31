@@ -1,0 +1,30 @@
+﻿<DemoContainer>
+    <ApexChart TItem="SupportIncident"
+               Title="Support Incidents">
+
+    @foreach (var data in incidents.GroupBy(e=> e.Source))
+   {
+         <ApexBubbleSeries TItem="SupportIncident"
+                    Items="data.ToList()"
+                    Name="@data.Key.ToString()"
+                     XValue="@(e => e.WeekName)"
+                    YAggregate="@(e => (decimal)e.Sum(e => e.LeadTime))"
+                    ZAggregate="@(e => (int)e.Average(e => e.Severity))"
+                    PointColor = "e=> GetPointColor(e) "/>
+   }
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(); 
+
+    private string GetPointColor(SupportIncident incident)
+    {
+        if (incident.Severity > 70)
+        {
+            return "#ba4e8e";
+        }
+        return null;
+    }
+
+    }

@@ -58,6 +58,7 @@ namespace ApexCharts
 
         protected override void OnParametersSet()
         {
+            if (Options == null) { Options = new ApexChartOptions<TItem>(); }
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
             if (string.IsNullOrEmpty(chartId))
@@ -216,6 +217,14 @@ namespace ApexCharts
 
             var noAxisSeries = Options.Series.First();
             Options.Labels = noAxisSeries.Data.Select(e => e.X?.ToString()).ToList();
+
+            var colors = noAxisSeries.Data.Where(e=> !string.IsNullOrWhiteSpace(e.FillColor)).Select(e => e.FillColor).ToList();
+            if(colors.Any())
+            {
+                Options.Colors = colors;
+            }
+           
+
         }
 
         private void FixLineDataSelection()

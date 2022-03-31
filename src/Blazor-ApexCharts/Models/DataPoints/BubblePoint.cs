@@ -6,7 +6,8 @@ namespace ApexCharts
 {
     public class BubblePoint<TItem> : IDataPoint<TItem>
     {
-      
+        public string FillColor { get; set; }
+
         public object X { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
@@ -17,7 +18,6 @@ namespace ApexCharts
       
         [JsonIgnore]
         public IEnumerable<TItem> Items { get; set; }
-
-     
+    
     }
 }

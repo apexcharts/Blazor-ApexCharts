@@ -9,6 +9,7 @@ namespace ApexCharts
 {
     public class ApexRangeSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
+
         [Parameter] public Func<TItem, decimal> YValue { get; set; }
         [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
         [Parameter] public Func<ListPoint<TItem>, object> OrderByDescending { get; set; }
@@ -25,7 +26,8 @@ namespace ApexCharts
 
         private void CheckInput()
         {
-            if (YValue == null && (YMinValue == null || YMinValue == null)) {
+            if (YValue == null && (YMinValue == null || YMinValue == null))
+            {
                 throw new ArgumentNullException($"You have to set YValue or YMinValue and YMaxValue");
             }
 
@@ -34,7 +36,7 @@ namespace ApexCharts
         {
             return ChartType.RangeBar;
         }
-       
+
         public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
             IEnumerable<ListPoint<TItem>> data;
@@ -46,7 +48,8 @@ namespace ApexCharts
                        {
                            X = XValue.Invoke(e),
                            Y = new List<decimal?> { YMinValue.Invoke(e), YMaxValue.Invoke(e) },
-                           Items = new List<TItem> { e }
+                           Items = new List<TItem> { e },
+                           FillColor = GetPointColor(e)
                        });
             }
             else
@@ -57,7 +60,8 @@ namespace ApexCharts
                  {
                      X = d.Key,
                      Y = new List<decimal?> { d.AsQueryable().Min(YValue), d.AsQueryable().Max(YValue) },
-                     Items = d
+                     Items = d,
+                     FillColor = GetPointColor(d)
                  });
             }
 
@@ -83,6 +87,6 @@ namespace ApexCharts
             Chart.RemoveSeries(this);
         }
 
-        
+
     }
 }
