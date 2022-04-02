@@ -1,0 +1,35 @@
+﻿<DemoContainer>
+    <ApexChart TItem="StockPrice"
+               XAxisType="XAxisType.Datetime">
+
+        <ApexCandleSeries TItem="StockPrice"
+                          Items="stockPrices"
+                          Name="Apex Stock Price"
+                          XValue="@(e => e.Date.DayOnly().ToUnixTimeMilliseconds())"
+                          Open="@(e => e.Open)"
+                          High="@(e => e.High)"
+                          Low="@(e => e.Low)"
+                          Close="@(e => e.Close)"
+                          OrderByDescending="e=> e.X" 
+                          Stroke="@(new SeriesStroke{ Width=1 })"
+                          />
+
+        <ApexPointSeries Items=stockPrices
+                         TItem="StockPrice"
+                         Name="Line"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Date.DayOnly().ToUnixTimeMilliseconds())"
+                         YValue="@(e => e.Low - 3)"
+                         OrderByDescending="@(e=> e.X)"
+                         Stroke="@(new SeriesStroke{ Width=3, DashSpace=3, Color="#ff3300" })"
+                          />
+
+
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<StockPrice> stockPrices { get; set; } = SampleData.GetStockPrices();
+  
+    }
