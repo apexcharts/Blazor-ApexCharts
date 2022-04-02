@@ -4,7 +4,6 @@
 A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
 ## [Demo](https://apexcharts.github.io/Blazor-ApexCharts)
 
-**Please note: Development in progress, expect breaking changes.**
 
 ## .NET 6 or higher is required as of v0.9.0-beta
 
@@ -47,3 +46,5 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 Apex Chart options is available in the ApexChartOptions class that can be passed to the chart. More info in Apex documentation [ApexCharts Docs](https://apexcharts.com/docs/options/).
 
 
+
+[![Stargazers repo roster for @apexcharts/Blazor-ApexCharts](https://reporoster.com/stars/dark/apexcharts/Blazor-ApexCharts)](https://github.com/apexcharts/Blazor-ApexCharts/stargazers)
