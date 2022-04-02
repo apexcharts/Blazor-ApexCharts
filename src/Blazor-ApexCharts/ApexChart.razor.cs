@@ -469,6 +469,10 @@ namespace ApexCharts
                     return MixedType.Area;
                 case ChartType.Bubble:
                     return MixedType.Bubble;
+                case ChartType.Candlestick:
+                    return MixedType.Candlestick;
+                case ChartType.BoxPlot:
+                    return MixedType.BoxPlot;
                 case ChartType.Bar:
                     if (Options?.PlotOptions?.Bar?.Horizontal == true)
                     {
@@ -480,7 +484,7 @@ namespace ApexCharts
                     }
 
                 default:
-                    throw new Exception($"Chart Type {chartType} connot be mixed");
+                    throw new Exception($"Chart Type {chartType} can not be mixed");
             }
 
         }

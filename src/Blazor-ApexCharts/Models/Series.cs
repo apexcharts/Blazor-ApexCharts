@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -42,6 +39,8 @@ namespace ApexCharts
         Column,
         Bar,
         Scatter,
-        Bubble
+        Bubble,
+        Candlestick,
+        BoxPlot
     }
 }
