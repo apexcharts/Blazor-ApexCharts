@@ -39,9 +39,6 @@ namespace ApexCharts
         private string chartId;
         public string ChartId => ChartId;
 
-
-
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && isReady == false)
@@ -223,13 +220,28 @@ namespace ApexCharts
             {
                 Options.Colors = colors;
             }
-           
+        }
 
+
+        private bool ShouldFixDataSelection()
+        {
+            if (!OnDataPointSelection.HasDelegate || !Options.Series.Any()) { return false; }
+
+            if(Options.Chart?.Type != null && Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area || Options.Chart.Type == ChartType.Radar)
+            {
+                return true;
+            }
+
+            if(Options.Series.Any(e=> e.Type == MixedType.Line || e.Type == MixedType.Area)) {
+                return true;
+            }
+
+            return false;
         }
 
         private void FixLineDataSelection()
         {
-            if ((Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area || Options.Chart.Type == ChartType.Radar) && OnDataPointSelection.HasDelegate)
+            if (ShouldFixDataSelection())
             {
                 if (Options.Tooltip == null) { Options.Tooltip = new Tooltip(); }
                 if (Options.Markers == null) { Options.Markers = new Markers(); }
