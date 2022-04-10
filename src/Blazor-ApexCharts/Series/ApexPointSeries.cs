@@ -16,6 +16,8 @@ namespace ApexCharts
         [Parameter] public Func<DataPoint<TItem>, object> OrderBy { get; set; }
         [Parameter] public Func<DataPoint<TItem>, object> OrderByDescending { get; set; }
         [Parameter] public SeriesType SeriesType { get; set; }
+        [Parameter] public Action<DataPoint<TItem>> UpdateDataPoint { get; set; }
+
 
         protected override void OnInitialized()
         {
