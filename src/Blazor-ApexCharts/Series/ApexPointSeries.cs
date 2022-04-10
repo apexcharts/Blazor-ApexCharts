@@ -10,12 +10,13 @@ namespace ApexCharts
 {
     public class ApexPointSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
-        //[Parameter] public IEnumerable<IDataPoint<TItem>> Data { get; set; }
         [Parameter] public Func<TItem, decimal?> YValue { get; set; }
         [Parameter] public Func<IEnumerable<TItem>, decimal?> YAggregate { get; set; }
         [Parameter] public Func<DataPoint<TItem>, object> OrderBy { get; set; }
         [Parameter] public Func<DataPoint<TItem>, object> OrderByDescending { get; set; }
         [Parameter] public SeriesType SeriesType { get; set; }
+        [Parameter] public Action<DataPoint<TItem>> UpdateDataPoint { get; set; }
+
 
         protected override void OnInitialized()
         {
@@ -97,12 +98,7 @@ namespace ApexCharts
                 data = data.OrderByDescending(OrderByDescending);
             }
 
-            return data;
-        }
-
-        public IEnumerable<IDataPoint<TItem>> GetData()
-        {
-            return GenerateDataPoints(Items);
+            return UpdateDataPoints(data, UpdateDataPoint);
         }
 
         public void Dispose()
