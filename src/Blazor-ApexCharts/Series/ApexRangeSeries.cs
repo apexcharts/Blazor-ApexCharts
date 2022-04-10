@@ -16,7 +16,7 @@ namespace ApexCharts
 
         [Parameter] public Func<TItem, decimal> YMinValue { get; set; }
         [Parameter] public Func<TItem, decimal> YMaxValue { get; set; }
-        [Parameter] public Action<ListPoint<TItem>> UpdateDataPoint { get; set; }
+        [Parameter] public Action<ListPoint<TItem>> DataPointMutator { get; set; }
 
         protected override void OnInitialized()
         {
@@ -75,7 +75,7 @@ namespace ApexCharts
                 data = data.OrderByDescending(OrderByDescending);
             }
 
-            return UpdateDataPoints(data, UpdateDataPoint);
+            return UpdateDataPoints(data, DataPointMutator);
         }
 
         public IEnumerable<IDataPoint<TItem>> GetData()

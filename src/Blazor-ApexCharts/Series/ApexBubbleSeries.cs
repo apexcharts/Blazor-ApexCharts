@@ -13,7 +13,7 @@ namespace ApexCharts
         [Parameter] public Func<IEnumerable<TItem>, decimal> ZAggregate { get; set; }
         [Parameter] public Func<BubblePoint<TItem>, object> OrderBy { get; set; }
         [Parameter] public Func<BubblePoint<TItem>, object> OrderByDescending { get; set; }
-        [Parameter] public Action<BubblePoint<TItem>> UpdateDataPoint { get; set; }
+        [Parameter] public Action<BubblePoint<TItem>> DataPointMutator { get; set; }
 
 
         protected override void OnInitialized()
@@ -47,7 +47,7 @@ namespace ApexCharts
                 data = data.OrderByDescending(OrderByDescending);
             }
 
-            return UpdateDataPoints(data, UpdateDataPoint);
+            return UpdateDataPoints(data, DataPointMutator);
         }
 
         public void Dispose()

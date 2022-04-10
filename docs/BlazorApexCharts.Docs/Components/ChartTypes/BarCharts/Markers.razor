@@ -9,7 +9,7 @@
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
                          OrderByDescending="e=>e.Y"
                          SeriesType="SeriesType.Bar"
-                         UpdateDataPoint=SetMarkers />
+                         DataPointMutator=SetMarkers />
 
 
     </ApexChart>
@@ -36,7 +36,6 @@
             case "Brazil":
                 goal.StrokeColor = "#145A32";
                 goal.StrokeHeight = 10;
-                goal.StrokeLineCap = StrokeLineCap.Butt;
                 goal.Value = 290000;
                 break;
 
