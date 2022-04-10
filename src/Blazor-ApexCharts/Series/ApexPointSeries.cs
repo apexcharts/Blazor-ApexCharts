@@ -15,7 +15,7 @@ namespace ApexCharts
         [Parameter] public Func<DataPoint<TItem>, object> OrderBy { get; set; }
         [Parameter] public Func<DataPoint<TItem>, object> OrderByDescending { get; set; }
         [Parameter] public SeriesType SeriesType { get; set; }
-        [Parameter] public Action<DataPoint<TItem>> UpdateDataPoint { get; set; }
+        [Parameter] public Action<DataPoint<TItem>> DataPointMutator { get; set; }
 
 
         protected override void OnInitialized()
@@ -98,7 +98,7 @@ namespace ApexCharts
                 data = data.OrderByDescending(OrderByDescending);
             }
 
-            return UpdateDataPoints(data, UpdateDataPoint);
+            return UpdateDataPoints(data, DataPointMutator);
         }
 
         public void Dispose()

@@ -12,7 +12,7 @@ namespace ApexCharts
         [Parameter] public Func<TItem, decimal?> YValue { get; set; }
         [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
         [Parameter] public Func<ListPoint<TItem>, object> OrderByDescending { get; set; }
-        [Parameter] public Action<ListPoint<TItem>> UpdateDataPoint { get; set; }
+        [Parameter] public Action<ListPoint<TItem>> DataPointMutator { get; set; }
 
 
         protected override void OnInitialized()
@@ -46,7 +46,7 @@ namespace ApexCharts
                 data = data.OrderByDescending(OrderByDescending);
             }
 
-            return UpdateDataPoints(data, UpdateDataPoint);
+            return UpdateDataPoints(data, DataPointMutator);
         }
 
         public void Dispose()
