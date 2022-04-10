@@ -46,5 +46,20 @@ namespace ApexCharts
             return PointColor.Invoke(items.First());
         }
 
+
+        public  List<T> UpdateDataPoints<T>(IEnumerable<T> items, Action<T>  updateMethod)
+        {
+            var data = items.ToList();
+            if(updateMethod == null)
+            {
+                return data;
+            }
+
+            foreach (T item in data)
+            {
+                updateMethod(item);
+            }
+            return data;
+        }
     }
 }

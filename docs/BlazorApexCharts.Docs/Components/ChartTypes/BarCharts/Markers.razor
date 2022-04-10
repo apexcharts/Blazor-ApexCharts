@@ -21,30 +21,58 @@
     private void SetMarkers(DataPoint<Order> datapoint)
     {
         datapoint.Goals = new();
+        var goal = new DataPointGoal { Name = "Target" };
+        datapoint.Goals.Add(goal);
 
-        if (datapoint.X.ToString() == "France")
+        switch (datapoint.X.ToString())
         {
-            datapoint.Goals.Add(new Goal
-                {
-                    Name = "Goal",
-                    StrokeHeight = 5,
-                    StrokeDashArray = 5,
-                    Value = 250000,
-                    StrokeColor = "#e3001b"
-                });
-        }
-        else
-        {
-            datapoint.Goals.Add(new Goal
-                {
-                    Name = "Goal",
-                    StrokeHeight = 20,
-                    Value = 200000,
-                    StrokeColor = "#ffd500"
-                });
+            case "France":
+                goal.StrokeColor = "#e3001b";
+                goal.StrokeDashArray = 5;
+                goal.StrokeHeight = 5;
+                goal.Value = 240000;
+                break;
+
+            case "Brazil":
+                goal.StrokeColor = "#145A32";
+                goal.StrokeHeight = 10;
+                goal.StrokeLineCap = StrokeLineCap.Butt;
+                goal.Value = 290000;
+                break;
+
+            default:
+                goal.StrokeColor = "#ffd500";
+                goal.StrokeHeight = 13;
+                goal.StrokeWidth = 0;
+                goal.StrokeLineCap = StrokeLineCap.Round;
+                goal.Value = 200000;
+                break;
+
         }
 
+        //if (datapoint.X.ToString() == "France")
+        //{
+        //    datapoint.Goals.Add(new DataPointGoal
+        //        {
+        //            Name = "Goal",
+        //            StrokeHeight = 5,
+        //            StrokeDashArray = 5,
+        //            Value = 250000,
+        //            StrokeColor = "#e3001b"
+        //        });
+        //}
+        //else
+        //{
+        //    datapoint.Goals.Add(new DataPointGoal
+        //        {
+        //            Name = "Goal",
+        //            StrokeHeight = 20,
+        //            Value = 200000,
+        //            StrokeColor = "#ffd500"
+        //        });
+        //}
 
-        var test = datapoint;
+
+        //var test = datapoint;
     }
 }
