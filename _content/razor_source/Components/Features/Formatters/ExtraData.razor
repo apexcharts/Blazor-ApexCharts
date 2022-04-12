@@ -1,0 +1,76 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+    Options="options"
+    Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" ShowDataLabels 
+                        DataPointMutator=SetCustomData/>
+
+        
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Order>();
+
+        options.Yaxis = new List<YAxis>();
+        options.Yaxis.Add(new YAxis
+            {
+                Labels = new YAxisLabels
+                {
+                    Formatter = @"function (value) {
+                    return '$' + Number(value).toLocaleString();}"
+                }
+            }
+        );
+
+        options.Xaxis = new XAxis
+            {
+                Labels = new XAxisLabels
+                {
+                    Formatter = @"function (value) {
+                    if (value === undefined) {return '';}
+                    return value.toUpperCase();}"
+                }
+            };
+
+        options.DataLabels = new DataLabels
+            {
+                Formatter = @"function(value, opts) {
+            return  Number(value).toLocaleString();}"
+            };
+
+        options.Tooltip = new ApexCharts.Tooltip
+            {
+                X = new TooltipX
+                {
+                    Formatter = @"function(value, opts) {
+                    if (value === undefined) {return '';}
+                    let extra =  opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].extra;                   
+                    return  opts.w.globals.categoryLabels[value-1] + ':' + value + ' [' + extra.label + ']'}"
+                }
+            };
+    }
+
+    private void SetCustomData(DataPoint<Order> datapoint)
+    {
+        datapoint.Extra = new AdditionalData { Label = "Extra Data!" };
+    }
+
+    public class AdditionalData
+    {
+        public string Label { get; set; }
+    }
+    }
