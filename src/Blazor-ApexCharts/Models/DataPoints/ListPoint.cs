@@ -13,8 +13,9 @@ namespace ApexCharts
         public object X { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
         public IEnumerable<decimal?> Y { get; set; }
-      
-       
+
+        public object Extra { get; set; }
+
         [JsonIgnore]
         public IEnumerable<TItem> Items { get; set; }
     }

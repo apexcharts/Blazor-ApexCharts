@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ApexCharts
@@ -17,7 +16,6 @@ namespace ApexCharts
         [Parameter] public IEnumerable<TItem> Items { get; set; }
         [Parameter] public SeriesStroke Stroke { get; set; }
         [Parameter] public string Color { get; set; }
-
         [Parameter] public Func<TItem, string> PointColor { get; set; }
         public async Task Toggle()
         {
@@ -46,11 +44,10 @@ namespace ApexCharts
             return PointColor.Invoke(items.First());
         }
 
-
-        public  List<T> UpdateDataPoints<T>(IEnumerable<T> items, Action<T>  updateMethod)
+        public List<T> UpdateDataPoints<T>(IEnumerable<T> items, Action<T> updateMethod)
         {
             var data = items.ToList();
-            if(updateMethod == null)
+            if (updateMethod == null)
             {
                 return data;
             }

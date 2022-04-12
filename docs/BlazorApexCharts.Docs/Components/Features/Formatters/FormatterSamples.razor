@@ -1,6 +1,7 @@
 ﻿@page "/features/formatters"
 
 <DocExamples Title="Formatters">
+       
 
      <CodeSnippet Title="Use javascript" ClassName=@typeof(UseJavascript).ToString()>
         <Snippet>
@@ -8,7 +9,12 @@
         </Snippet>
     </CodeSnippet>
 
-    
+     <CodeSnippet Title="Pass Extra Data" ClassName=@typeof(ExtraData).ToString()>
+        <Snippet>
+            <ExtraData />
+        </Snippet>
+    </CodeSnippet>
+
     <CodeSnippet Title="Use DotNet" ClassName=@typeof(UseDotnet).ToString()>
         <Description>
             <Alert BackgroundColor=TablerColor.Danger>

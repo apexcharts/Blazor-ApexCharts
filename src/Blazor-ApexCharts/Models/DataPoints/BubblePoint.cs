@@ -15,7 +15,8 @@ namespace ApexCharts
        
         public decimal Z { get; set; }
 
-      
+        public object Extra { get; set; }
+
         [JsonIgnore]
         public IEnumerable<TItem> Items { get; set; }
     

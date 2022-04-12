@@ -17,6 +17,7 @@ namespace ApexCharts
         [JsonIgnore]
         public IEnumerable<TItem> Items { get; set; }
 
+        public object Extra { get; set; }
     }
 
     public class DataPointGoal
