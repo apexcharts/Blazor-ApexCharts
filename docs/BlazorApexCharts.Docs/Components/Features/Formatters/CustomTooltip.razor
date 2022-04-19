@@ -1,0 +1,49 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               Options=options
+    OnDataPointEnter=DataPointEnter>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new ApexChartOptions<Order>();
+
+    protected override void OnInitialized()
+    {
+        //      var tooltip = @"function({series, seriesIndex, dataPointIndex, w}) {
+        //  return '<div class='arrow_box'>' + '<span>JOcke</span>' +
+        //    '<span>' + series[seriesIndex][dataPointIndex] + '</span>' +
+        //    '</div>'
+        //}";
+
+        var tooltip = @"function({series, seriesIndex, dataPointIndex, w}) {
+    return '<div> JOcke <div>Kalle</div> </div>';}";
+
+        //options.Tooltip = new ApexCharts.Tooltip { Custom = tooltip };
+
+    }
+
+    private void DataPointEnter(SelectedData<Order> selectedData)
+    {
+        var kalle = "anka";
+    }
+
+    }

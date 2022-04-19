@@ -212,6 +212,18 @@
                 dotNetObject.invokeMethodAsync('DataPointSelected', selection);
             },
 
+            dataPointMouseEnter: (event, chartContext, config) => {
+                if (chartContext.opts.hasDataPointEnter === false) {
+                    return;
+                }
+                var selection = {
+                    dataPointIndex: config.dataPointIndex,
+                    seriesIndex: config.seriesIndex,
+                    selectedDataPoints: config.selectedDataPoints
+                }
+                dotNetObject.invokeMethodAsync('DataPointEnter', selection);
+            },
+
             legendClick: (chartContext, seriesIndex, config) => {
                 if (chartContext.opts.hasLegendClick === false) {
                     return;

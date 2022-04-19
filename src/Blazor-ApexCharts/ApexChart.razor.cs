@@ -22,6 +22,7 @@ namespace ApexCharts
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
+        [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointEnter { get; set; }
         [Parameter] public EventCallback<LegendClicked<TItem>> OnLegendClicked { get; set; }
 
         [Parameter] public EventCallback OnRendered { get; set; }
@@ -224,7 +225,7 @@ namespace ApexCharts
 
         private bool ShouldFixDataSelection()
         {
-            if (!OnDataPointSelection.HasDelegate || !Options.Series.Any()) { return false; }
+            if ((!OnDataPointSelection.HasDelegate && !OnDataPointEnter.HasDelegate) || !Options.Series.Any()) { return false; }
 
             if(Options.Chart?.Type != null && Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area || Options.Chart.Type == ChartType.Radar)
             {
@@ -411,6 +412,7 @@ namespace ApexCharts
         private void SetEvents()
         {
             Options.HasDataPointSelection = OnDataPointSelection.HasDelegate;
+            Options.HasDataPointEnter = OnDataPointEnter.HasDelegate;
             Options.HasLegendClick = OnLegendClicked.HasDelegate;
 
         }
@@ -567,5 +569,25 @@ namespace ApexCharts
                 OnDataPointSelection.InvokeAsync(selection);
             }
         }
+
+        [JSInvokable]
+        public void DataPointEnter(JSDataPointSelection selectedDataPoints)
+        {
+            if (OnDataPointEnter.HasDelegate)
+            {
+                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
+                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+
+                var selection = new SelectedData<TItem>
+                {
+                    Series = series,
+                    DataPoint = dataPoint,
+                    //IsSelected = selectedDataPoints.SelectedDataPoints.Any(e => e != null && e.Any(e => e != null && e.HasValue)),
+                };
+
+                OnDataPointEnter.InvokeAsync(selection);
+            }
+        }
+
     }
 }
