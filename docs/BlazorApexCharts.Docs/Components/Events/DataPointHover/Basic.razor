@@ -1,5 +1,4 @@
-﻿
-<Row>
+﻿<Row>
     <RowCol Md=12 Lg=6>
         <ApexChart TItem="Order"
                    Title="Order Net Value"
@@ -42,11 +41,6 @@
     </RowCol>
 </Row>
 
-
-
-
-
-
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
     private HoverData<Order> hoverData;
@@ -60,5 +54,4 @@
     {
         this.hoverData = null;
     }
-
     }
