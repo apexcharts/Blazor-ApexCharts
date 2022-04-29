@@ -15,6 +15,7 @@ namespace ApexCharts
         [Inject] private IServiceProvider ServiceProvider { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter] public RenderFragment<HoverData<TItem>> ApexPointTooltip { get; set; }
         [Parameter] public ApexChartOptions<TItem> Options { get; set; } = new ApexChartOptions<TItem>();
         [Parameter] public string Title { get; set; }
         [Parameter] public XAxisType? XAxisType { get; set; }
@@ -22,6 +23,8 @@ namespace ApexCharts
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
+        [Parameter] public EventCallback<HoverData<TItem>> OnDataPointEnter { get; set; }
+        [Parameter] public EventCallback<HoverData<TItem>> OnDataPointLeave { get; set; }
         [Parameter] public EventCallback<LegendClicked<TItem>> OnLegendClicked { get; set; }
 
         [Parameter] public EventCallback OnRendered { get; set; }
@@ -36,7 +39,9 @@ namespace ApexCharts
         private bool isReady;
         private bool forceRender = true;
         private string chartId;
-        public string ChartId => ChartId;
+        private HoverData<TItem> tooltipData;
+
+        public string ChartId => chartId;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -214,8 +219,8 @@ namespace ApexCharts
             var noAxisSeries = Options.Series.First();
             Options.Labels = noAxisSeries.Data.Select(e => e.X?.ToString()).ToList();
 
-            var colors = noAxisSeries.Data.Where(e=> !string.IsNullOrWhiteSpace(e.FillColor)).Select(e => e.FillColor).ToList();
-            if(colors.Any())
+            var colors = noAxisSeries.Data.Where(e => !string.IsNullOrWhiteSpace(e.FillColor)).Select(e => e.FillColor).ToList();
+            if (colors.Any())
             {
                 Options.Colors = colors;
             }
@@ -224,14 +229,15 @@ namespace ApexCharts
 
         private bool ShouldFixDataSelection()
         {
-            if (!OnDataPointSelection.HasDelegate || !Options.Series.Any()) { return false; }
+            if ((!OnDataPointSelection.HasDelegate && !OnDataPointEnter.HasDelegate && ApexPointTooltip == null) || !Options.Series.Any()) { return false; }
 
-            if(Options.Chart?.Type != null && Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area || Options.Chart.Type == ChartType.Radar)
+            if (Options.Chart?.Type != null && Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area || Options.Chart.Type == ChartType.Radar)
             {
                 return true;
             }
 
-            if(Options.Series.Any(e=> e.Type == MixedType.Line || e.Type == MixedType.Area)) {
+            if (Options.Series.Any(e => e.Type == MixedType.Line || e.Type == MixedType.Area))
+            {
                 return true;
             }
 
@@ -406,11 +412,31 @@ namespace ApexCharts
             UpdateDataForNoAxisCharts();
             SetDotNetFormatters();
             SetEvents();
+            SetCustomTooltip();
+        }
+
+        private void SetCustomTooltip()
+        {
+            if (ApexPointTooltip == null) { return; }
+            if (Options.Tooltip == null) {  Options.Tooltip = new Tooltip(); }
+            var customTooltip = @"function({series, seriesIndex, dataPointIndex, w}) {
+                                var sourceId = 'apex-tooltip-' + w.globals.chartID;
+                                var source = document.getElementById(sourceId);
+                                if (source) {
+                                return source.innerHTML;
+                                }
+                                return '...'
+                                }";
+
+            Options.Tooltip.Custom = customTooltip;
+
         }
 
         private void SetEvents()
         {
             Options.HasDataPointSelection = OnDataPointSelection.HasDelegate;
+            Options.HasDataPointEnter = OnDataPointEnter.HasDelegate || ApexPointTooltip != null;
+            Options.HasDataPointLeave = OnDataPointLeave.HasDelegate;
             Options.HasLegendClick = OnLegendClicked.HasDelegate;
 
         }
@@ -559,13 +585,68 @@ namespace ApexCharts
 
                 var selection = new SelectedData<TItem>
                 {
+                    Chart = this,
                     Series = series,
                     DataPoint = dataPoint,
                     IsSelected = selectedDataPoints.SelectedDataPoints.Any(e => e != null && e.Any(e => e != null && e.HasValue)),
+                    DataPointIndex = selectedDataPoints.DataPointIndex,
+                    SeriesIndex = selectedDataPoints.SeriesIndex
                 };
 
                 OnDataPointSelection.InvokeAsync(selection);
             }
         }
+
+        [JSInvokable]
+        public void DataPointEnter(JSDataPointSelection selectedDataPoints)
+        {
+            if (OnDataPointEnter.HasDelegate || ApexPointTooltip != null)
+            {
+                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
+                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+
+                var hoverData = new HoverData<TItem>
+                {
+                    Chart = this,
+                    Series = series,
+                    DataPoint = dataPoint,
+                    DataPointIndex = selectedDataPoints.DataPointIndex,
+                    SeriesIndex = selectedDataPoints.SeriesIndex
+                };
+
+                OnDataPointEnter.InvokeAsync(hoverData);
+
+                if (ApexPointTooltip != null)
+                {
+                    tooltipData = hoverData;
+                    StateHasChanged();
+                }
+
+              
+
+            }
+        }
+
+        [JSInvokable]
+        public void DataPointLeave(JSDataPointSelection selectedDataPoints)
+        {
+            if (OnDataPointLeave.HasDelegate)
+            {
+                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
+                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+
+                var hoverData = new HoverData<TItem>
+                {
+                    Chart = this,
+                    Series = series,
+                    DataPoint = dataPoint,
+                    DataPointIndex = selectedDataPoints.DataPointIndex,
+                    SeriesIndex = selectedDataPoints.SeriesIndex
+                };
+
+                OnDataPointLeave.InvokeAsync(hoverData);
+            }
+        }
+
     }
 }

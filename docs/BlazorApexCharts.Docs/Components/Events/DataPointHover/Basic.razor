@@ -1,0 +1,57 @@
+﻿<Row>
+    <RowCol Md=12 Lg=6>
+        <ApexChart TItem="Order"
+                   Title="Order Net Value"
+                   OnDataPointEnter="DataPointEnter"
+                   OnDataPointLeave=DataPointLeave>
+
+            <ApexPointSeries TItem="Order"
+                             Items="Orders"
+                             Name="Net Value"
+                             SeriesType="SeriesType.Line"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.NetValue))"
+                             OrderByDescending="e=>e.X" />
+
+            <ApexPointSeries TItem="Order"
+                             Items="Orders"
+                             Name="Gross Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                             OrderByDescending="e=>e.X" />
+        </ApexChart>
+    </RowCol>
+    <RowCol Md=12 Lg=6>
+        @if (hoverData != null)
+        {
+            <Row>
+                <RowCol Auto>
+                    <div class=p-3>
+                        @{
+                            var dataPoint = (DataPoint<Order>)hoverData.DataPoint;
+                            <h1>@hoverData.DataPoint.X</h1>
+                            <div>Name: @hoverData.Series.Name</div>
+                            <div>Value: @dataPoint.Y?.ToString("N0")</div>
+                        }
+                    </div>
+                </RowCol>
+            </Row>
+        }
+    </RowCol>
+</Row>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private HoverData<Order> hoverData;
+
+    public void DataPointEnter(HoverData<Order> hoverData)
+    {
+        this.hoverData = hoverData;
+    }
+
+    public void DataPointLeave(HoverData<Order> hoverData)
+    {
+        this.hoverData = null;
+    }
+    }
