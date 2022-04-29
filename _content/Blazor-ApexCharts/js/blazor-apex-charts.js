@@ -1,5 +1,4 @@
 ﻿window.blazor_apexchart = {
-
  
     getYAxisLabel(value, index, w) {
 
@@ -212,6 +211,30 @@
                     selectedDataPoints: config.selectedDataPoints
                 }
                 dotNetObject.invokeMethodAsync('DataPointSelected', selection);
+            },
+
+            dataPointMouseEnter: (event, chartContext, config) => {
+                if (chartContext.opts.hasDataPointEnter === false) {
+                    return;
+                }
+                
+                var selection = {
+                    dataPointIndex: config.dataPointIndex,
+                    seriesIndex: config.seriesIndex                    
+                }
+                dotNetObject.invokeMethodAsync('DataPointEnter', selection);
+            },
+
+            dataPointMouseLeave: (event, chartContext, config) => {
+                if (chartContext.opts.hasDataPointEnter === false) {
+                    return;
+                }
+
+                var selection = {
+                    dataPointIndex: config.dataPointIndex,
+                    seriesIndex: config.seriesIndex
+                    }
+                dotNetObject.invokeMethodAsync('DataPointLeave', selection);
             },
 
             legendClick: (chartContext, seriesIndex, config) => {
