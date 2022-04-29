@@ -1,8 +1,18 @@
-﻿
-@typeparam TItem
+﻿@typeparam TItem
 @namespace ApexCharts
 
 <div @ref=ChartContainer id="@chartId" />
 <CascadingValue Value="(ApexChart<TItem>)this" Name="Chart">
     @ChildContent
+
+    @if (ApexPointTooltip != null)
+    {
+        <div style="display:none" id="apex-tooltip-@ChartId">
+            @if (tooltipData != null)
+            {
+                @ApexPointTooltip(tooltipData)
+            }
+        </div>
+    }
+
 </CascadingValue>

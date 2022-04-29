@@ -9,6 +9,7 @@ namespace ApexCharts
         public bool Debug { get; set; }
         public bool HasDataPointSelection { get; internal set; }
         public bool HasDataPointEnter { get; internal set; }
+        public bool HasDataPointLeave { get; internal set; }
         public bool HasLegendClick { get; internal set; }
 
         /// <summary>
