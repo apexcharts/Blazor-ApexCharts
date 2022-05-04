@@ -6,16 +6,14 @@
         <ApexPointTooltip>
             <div class="p-1">
                 @{
-                    var dataPoint = (DataPoint<Order>)context.DataPoint;
                     <h3>@context.DataPoint.X</h3>
-
                     <Row class="mb-2">
                         <RowCol Auto>
                             <Badge style="background-color:#FF0000">Gross Value</Badge>
                         </RowCol>
                         <RowCol Auto>
                             <span class="@(context.SeriesIndex == 0 ? "strong": "")">
-                                @dataPoint.Items.Sum(e=> e.GrossValue).ToString("n0")
+                                @context.DataPoint.Items.Sum(e=> e.GrossValue).ToString("n0")
                             </span>
                         </RowCol>
                     </Row>
@@ -26,7 +24,7 @@
                         </RowCol>
                         <RowCol Auto>
                             <span class="@(context.SeriesIndex == 1 ? "strong": "")">
-                                @dataPoint.Items.Sum(e=> e.NetValue).ToString("n0")
+                                @context.DataPoint.Items.Sum(e=> e.NetValue).ToString("n0")
                             </span>
                         </RowCol>
                     </Row>
