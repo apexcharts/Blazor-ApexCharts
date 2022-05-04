@@ -226,7 +226,7 @@
             },
 
             dataPointMouseLeave: (event, chartContext, config) => {
-                if (chartContext.opts.hasDataPointEnter === false) {
+                if (chartContext.opts.hasDataPointLeave === false) {
                     return;
                 }
 
