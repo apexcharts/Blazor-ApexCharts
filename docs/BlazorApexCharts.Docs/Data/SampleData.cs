@@ -79,10 +79,10 @@ namespace BlazorApexCharts.Docs
         {
             var result = new List<Project>();
 
-            result.Add(new Project { Name = "Design", StartDate = DateTime.Now.AddDays(-30), EndDate = DateTime.Now.AddDays(-10) });
-            result.Add(new Project { Name = "Construct", StartDate = DateTime.Now.AddDays(-20), EndDate = DateTime.Now.AddDays(-5) });
-            result.Add(new Project { Name = "Install", StartDate = DateTime.Now.AddDays(-14), EndDate = DateTime.Now.AddDays(0) });
-            result.Add(new Project { Name = "Train", StartDate = DateTime.Now.AddDays(-18), EndDate = DateTime.Now.AddDays(5) });
+            result.Add(new Project { Name = "Design", StartDate = DateTime.Now.AddDays(-30), EndDate = DateTime.Now.AddDays(-10), Score = 20 });
+            result.Add(new Project { Name = "Construct", StartDate = DateTime.Now.AddDays(-20), EndDate = DateTime.Now.AddDays(-5), Score = -12 });
+            result.Add(new Project { Name = "Install", StartDate = DateTime.Now.AddDays(-14), EndDate = DateTime.Now.AddDays(0), Score = -4 });
+            result.Add(new Project { Name = "Train", StartDate = DateTime.Now.AddDays(-18), EndDate = DateTime.Now.AddDays(5),  Score = 26 });
             return result;
 
         }
