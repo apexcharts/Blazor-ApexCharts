@@ -1,0 +1,34 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Project"
+               Title="Project Score">
+
+        <ApexPointSeries TItem="Project"
+                         Items="Projects"
+                         Name="Score"
+                         XValue="@(e => e.Name)"
+                         YAggregate="@(e => e.Sum(e => e.Score))"
+                         SeriesType="SeriesType.Bar"
+                         Color="#003399"
+                         DataPointMutator="PointMutator" />
+
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Project> Projects { get; set; } = SampleData.GetProjects();
+
+    private void PointMutator(IDataPoint<Project> point)
+    {
+        var dataPoint = (DataPoint<Project>)point;
+        if (dataPoint.Y > 0)
+        {
+            dataPoint.FillColor = "#003399";
+        }
+        else
+        {
+            dataPoint.FillColor = "#e62e00";
+        }
+    }
+
+}

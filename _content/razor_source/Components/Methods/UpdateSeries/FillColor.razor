@@ -1,0 +1,58 @@
+﻿<DemoContainer>
+
+     <Button Size="ButtonSize.Small" class="mb-2" OnClick=UpdateChartSeries BackgroundColor="TablerColor.Primary">Update Series</Button>
+      <Button Size="ButtonSize.Small" class="mb-2" OnClick=RenderChart BackgroundColor="TablerColor.Primary">Render Chart</Button>
+
+
+    <ApexChart TItem="Order"
+               Title="Order Gross Value"
+     @ref=chart
+    Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Pie"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.X"
+                         PointColor="e=> GetPointColor(e)"/>
+    </ApexChart>
+</DemoContainer>
+
+<div>
+@message
+</div>
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    private ApexChart<Order> chart;
+    private string message;
+    private async Task UpdateChartSeries()
+    {
+        var order = orders.First();
+        message = order.Country;
+        order.GrossValue = order.GrossValue * (decimal)1.6; 
+       // await chart.UpdateSeriesAsync(true);
+        await chart.UpdateOptionsAsync(false, false, false);
+    }
+
+     private async Task RenderChart()
+    {
+       
+        await chart.RenderAsync();
+    }
+
+    public string GetPointColor(Order order)
+    {
+        if (order.GrossValue > 90000)
+        {
+            return "#FF0000";
+        }
+        else
+        {
+            return "#FFFF00";
+        }
+     
+    }
+
+    }
