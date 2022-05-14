@@ -1,0 +1,71 @@
+﻿<DemoContainer>
+
+    <div class="mb-2">
+        <Button Size=ButtonSize.Small BackgroundColor=TablerColor.Primary OnClick=UpdateOptions>Update Options</Button>
+        <Button Size=ButtonSize.Small BackgroundColor=TablerColor.Danger OnClick=RenderChart>Render Chart </Button>
+    </div>
+
+    <Row class="mb-2">
+        <RowCol Auto>
+            <Checkbox Switch @bind-Value="@redrawPaths" Label="RedrawPaths" />
+        </RowCol>
+        <RowCol Auto>
+            <Checkbox Switch @bind-Value="@animate" Label="Animate" />
+        </RowCol>
+    </Row>
+
+    <ApexChart @ref=chart TItem="Order"
+               Title=@GetTitle()
+               Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y"
+                         Color=@currentColor />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Order> chart;
+    private List<Order> orders = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
+
+    private bool redrawPaths = true;
+    private bool animate = false;
+    private string currentColor = "#FF0000";
+
+    private string GetTitle()
+    {
+        return "Time: " + DateTimeOffset.Now.ToString("T");
+    }
+
+    private void ToogleColor()
+    {
+        if (currentColor == "#FF0000")
+        {
+            currentColor = "#FFFF00";
+        }
+        else
+        {
+            currentColor = "#FF0000";
+        }
+    }
+
+    private async Task RenderChart()
+    {
+        ToogleColor();
+        await Task.Delay(10);
+        await chart.RenderAsync();
+    }
+
+    private async Task UpdateOptions()
+    {
+        ToogleColor();
+        await Task.Delay(10);
+        await chart.UpdateOptionsAsync(redrawPaths, animate, false);
+    }
+}
