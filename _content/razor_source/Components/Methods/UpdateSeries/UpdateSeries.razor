@@ -2,21 +2,35 @@
 
 <DocExamples Title="Update Series">
 
-@*    <CodeSnippet Title="Fill Color" ClassName=@typeof(FillColor).ToString()>
-        <Snippet>
-            <FillColor />
-        </Snippet>
-    </CodeSnippet>*@
+    <Description>
+        <Alert BackgroundColor=TablerColor.Info>
 
-     <CodeSnippet Title=Basic ClassName=@typeof(Basic).ToString()>
-        <Snippet>
-        <Basic />
-        </Snippet>
+            <div class="d-flex">
+                <div class="me-2">
+                    <Icon TextColor=TablerColor.Info IconType=@Icons.Alert_triangle Size=40 />
+                </div>
+                <div>
+                    <p class="mb-0">
+                        Please note that UpdateSeries method is only updating the vales in the series. For a no axis chart this is limited to the actually values, other settings such as labels, colors are not send.
+                        If it's a requirement to send a complete set of data, the UpdateOptionsAsync method is a better choice.
+                    </p>
+                </div>
+            </div>
+        </Alert>
+    </Description>
+
+    <ChildContent>
+     
+        <CodeSnippet Title=Basic ClassName=@typeof(Basic).ToString()>
+            <Snippet>
+                <Basic />
+            </Snippet>
         </CodeSnippet>
 
         <CodeSnippet Title=Realtime ClassName=@typeof(RealTime).ToString()>
-        <Snippet>
-        <RealTime />
-        </Snippet>
+            <Snippet>
+                <RealTime />
+            </Snippet>
         </CodeSnippet>
+    </ChildContent>
 </DocExamples>

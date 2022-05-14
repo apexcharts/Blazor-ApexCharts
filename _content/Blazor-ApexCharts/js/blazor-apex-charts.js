@@ -54,6 +54,8 @@
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "updateOptions", options);
+            console.log('redrawPaths: ' + redrawPaths);
+            console.log('Animate: ' + animate);
             chart.updateOptions(data, redrawPaths, animate, updateSyncedCharts);
         }
     },
