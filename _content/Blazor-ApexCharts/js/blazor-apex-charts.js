@@ -1,5 +1,5 @@
 ﻿window.blazor_apexchart = {
- 
+
     getYAxisLabel(value, index, w) {
 
         if (window.wasmBinaryFile === undefined) {
@@ -54,8 +54,6 @@
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "updateOptions", options);
-            console.log('redrawPaths: ' + redrawPaths);
-            console.log('Animate: ' + animate);
             chart.updateOptions(data, redrawPaths, animate, updateSyncedCharts);
         }
     },
@@ -219,10 +217,10 @@
                 if (chartContext.opts.hasDataPointEnter === false) {
                     return;
                 }
-                
+
                 var selection = {
                     dataPointIndex: config.dataPointIndex,
-                    seriesIndex: config.seriesIndex                    
+                    seriesIndex: config.seriesIndex
                 }
                 dotNetObject.invokeMethodAsync('DataPointEnter', selection);
             },
@@ -235,7 +233,7 @@
                 var selection = {
                     dataPointIndex: config.dataPointIndex,
                     seriesIndex: config.seriesIndex
-                    }
+                }
                 dotNetObject.invokeMethodAsync('DataPointLeave', selection);
             },
 

@@ -1,0 +1,48 @@
+﻿<DemoContainer>
+    <ApexChart TItem="SupportIncident"
+               Title="Incident Severity"
+               Options=options>
+
+        <ApexPointTooltip>
+            <div class="m-2">
+                @{
+                    var point = (ListPoint<SupportIncident>)context.DataPoint;
+
+                    <h3>@point.X</h3>
+                    <span class="me-1">Min:@point.Y?.Min()</span>
+                    <span class="me-1">Max:@point.Y?.Max()</span>
+                    <span class="me-1">Avg:@point.Y?.Average()</span>
+                    <span class="me-1">Count:@point.Y?.Count()</span>
+
+                }
+            </div>
+        </ApexPointTooltip>
+
+        <ChildContent>
+
+            <ApexRangeSeries TItem="SupportIncident"
+                             Items="incidents"
+                             XValue="@(e => e.Source.ToString())"
+                             YValue="@(e =>e.Severity)" />
+        </ChildContent>
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidentsForRange();
+    private ApexChartOptions<SupportIncident> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<SupportIncident>
+            {
+                PlotOptions = new PlotOptions
+                {
+                    Bar = new PlotOptionsBar
+                    {
+                        Horizontal = true
+                    }
+                }
+            };
+    }
+    }
