@@ -14,7 +14,7 @@
     {
         Internal,
         Customer,
-        ThridParty,
+        ThirdParty,
         Integration
     }
 

@@ -129,8 +129,8 @@ namespace BlazorApexCharts.Docs
                new SupportIncident { Source = IncidentSource.Integration, Severity = 70,PointColor="#005ba3"},
                new SupportIncident { Source = IncidentSource.Internal, Severity = 55, PointColor="#ffd500"},
                new SupportIncident { Source = IncidentSource.Internal, Severity = 83, PointColor="#ffd500"},
-               new SupportIncident { Source = IncidentSource.ThridParty, Severity = 12, PointColor="#00783c"},
-               new SupportIncident { Source = IncidentSource.ThridParty, Severity = 24, PointColor="#00783c"},
+               new SupportIncident { Source = IncidentSource.ThirdParty, Severity = 12, PointColor="#00783c"},
+               new SupportIncident { Source = IncidentSource.ThirdParty, Severity = 24, PointColor="#00783c"},
            };
         }
 
