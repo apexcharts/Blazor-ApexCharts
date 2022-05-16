@@ -1,0 +1,48 @@
+﻿@using System.Net.Http
+@using System.Text.Json
+<DemoContainer>
+
+    @if (chartIsReady)
+    {
+        <ApexChart TItem="Order"
+               Title="Order Gross Value"
+               Options=options
+               Debug>
+
+            <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Area"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.X" />
+        </ApexChart>
+    }
+
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    [Inject] public HttpClient client { get; set; }
+
+    private bool chartIsReady;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var serializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+
+        var seLocal = await client.GetStringAsync("_content/Blazor-ApexCharts/locales/se.json"); // .GetJsonAsync<ChartLocale>("locales/se.json");
+        var locale = JsonSerializer.Deserialize<ChartLocale>(seLocal, serializerOptions);
+        options.Chart = new Chart();
+        options.Chart.Locales = new List<ChartLocale>();
+        options.Chart.Locales.Add(locale);
+        options.Chart.DefaultLocale = "se";
+
+        chartIsReady = true;
+    }
+    }

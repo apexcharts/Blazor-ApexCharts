@@ -1,0 +1,28 @@
+﻿<DemoContainer>
+
+    <ApexChart TItem="Order"
+               Title="Order Gross Value"
+               Options=options Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Area"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart();
+        options.Chart.Locales = new List<ChartLocale>();
+        options.Chart.Locales.Add(new ChartLocale { Name = "en", Options = new LocaleOptions { Toolbar = new LocaleToolbar { ZoomIn = "Super Zoom" } } });
+        options.Chart.DefaultLocale = "en";
+    }
+    }
