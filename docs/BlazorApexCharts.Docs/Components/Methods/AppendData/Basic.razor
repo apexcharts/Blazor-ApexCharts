@@ -3,9 +3,8 @@
 <DemoContainer>
     <ApexChart @ref=chart TItem="TimeSeries"
                Title="Order Net Value"
-               XAxisType="XAxisType.Datetime"
-               >
-
+               XAxisType="XAxisType.Datetime">
+<ChildContent>
         <ApexPointSeries TItem="TimeSeries"
                          Items="timeSeries"
                          Name="Value"
@@ -23,7 +22,8 @@
                          YValue="@(e => e.Quantity)"
                          OrderBy="e=>e.X"
                          Stroke="@(new SeriesStroke { Width = 2, Color="#E51534"})" />
-    </ApexChart>
+    </ChildContent>
+                     </ApexChart>
 </DemoContainer>
 
 @code {

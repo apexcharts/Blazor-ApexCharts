@@ -287,7 +287,6 @@ namespace ApexCharts
 
         public async Task AppendDataAsync(IEnumerable<TItem> items)
         {
-            var seriesList = new List<AppendData<TItem>>();
 
             if (IsNoAxisChart && Series.Any())
             {
@@ -308,12 +307,20 @@ namespace ApexCharts
                 return;
             }
 
-            foreach (var apxSeries in Series)
+            var seriesList = new List<AppendData<TItem>>();
+
+            foreach (var apxSeries in Options.Series)
             {
+          
+                var data = apxSeries.ApexSeries.GenerateDataPoints(items);
+                var updatedData = apxSeries.Data.ToList();
+                updatedData.AddRange(data);
+                apxSeries.Data = updatedData;
+                //apxSeries
                 seriesList.Add(new AppendData<TItem>
                 {
-                    Data = apxSeries.GenerateDataPoints(items)
-                });
+                    Data = data
+                }); ;
             }
 
             var json = Serialize(seriesList);
@@ -418,7 +425,7 @@ namespace ApexCharts
         private void SetCustomTooltip()
         {
             if (ApexPointTooltip == null) { return; }
-            if (Options.Tooltip == null) {  Options.Tooltip = new Tooltip(); }
+            if (Options.Tooltip == null) { Options.Tooltip = new Tooltip(); }
             var customTooltip = @"function({series, seriesIndex, dataPointIndex, w}) {
                                 var sourceId = 'apex-tooltip-' + w.globals.chartID;
                                 var source = document.getElementById(sourceId);
@@ -622,7 +629,7 @@ namespace ApexCharts
                     StateHasChanged();
                 }
 
-              
+
 
             }
         }
