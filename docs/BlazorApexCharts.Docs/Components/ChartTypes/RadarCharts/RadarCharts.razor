@@ -1,0 +1,36 @@
+﻿@page "/radar-charts"
+
+<DocExamples Title="Radar Charts" >
+
+    <CodeSnippet Title=Basic ClassName=@typeof(Basic).ToString()>
+        <Snippet>
+             <Basic/>
+        </Snippet>
+    </CodeSnippet>
+
+     <CodeSnippet Title="Data Labels" ClassName=@typeof(DataLabels).ToString()>
+       <Description>
+        <Alert BackgroundColor=TablerColor.Info>
+
+            <div class="d-flex">
+                <div class="me-2">
+                    <Icon TextColor=TablerColor.Info IconType=@Icons.Alert_triangle Size=40 />
+                </div>
+                <div>
+                    <p class="mb-0">
+                  In a Radar chart it's not possible to set the DataLabels on individual series. 
+                  If one series has DataLabels set all series will have datalabels. This is a limitation in Apexcharts.js 
+                  <a href="https://apexcharts.com/docs/chart-types/radar/" target="_blank">Radar Chart</a>
+                    </p>
+                </div>
+            </div>
+        </Alert>
+    </Description>
+        <Snippet>
+             <DataLabels/>
+        </Snippet>
+    </CodeSnippet>
+
+    
+
+</DocExamples>
