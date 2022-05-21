@@ -1,0 +1,40 @@
+﻿
+<Button OnClick="UpdateSize">Update Size</Button>
+
+<ApexChart TItem="Order"
+               Title="Order Gross Value"
+   @ref=chart
+Options=options
+Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" 
+                         />
+    </ApexChart>
+
+
+@code {
+    private ApexChart<Order> chart;
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new ApexChartOptions<Order>();
+    private int width = 200;
+    private int height = 200;
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart { Width = "300px", Height = "500px" };
+    }
+
+    private async Task UpdateSize()
+    {
+        width = (int)(width * 1.1);
+       await chart.RenderAsync();
+    }
+
+
+    }
