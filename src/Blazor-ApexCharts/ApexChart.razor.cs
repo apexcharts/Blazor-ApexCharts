@@ -168,26 +168,33 @@ namespace ApexCharts
 
         private void SetDataLabels()
         {
-            if (Options?.Series == null) { return; }
+            if (Options?.Series == null || !Options.Series.Any()) { return; }
 
             if (Options.DataLabels == null) { Options.DataLabels = new DataLabels(); }
-            if (Options.DataLabels.EnabledOnSeries == null) { Options.DataLabels.EnabledOnSeries = new List<double>(); }
 
-            foreach (var series in Options.Series)
+            if (Options.Series.First().ApexSeries.GetChartType() != ChartType.Radar)
             {
-                var index = Options.Series.FindIndex(e => e == series);
-                if (series.ApexSeries.ShowDataLabels)
+
+
+                if (Options.DataLabels.EnabledOnSeries == null) { Options.DataLabels.EnabledOnSeries = new List<double>(); }
+
+                foreach (var series in Options.Series)
                 {
-                    if (!Options.DataLabels.EnabledOnSeries.Contains(index))
+                    var index = Options.Series.FindIndex(e => e == series);
+
+                    if (series.ApexSeries.ShowDataLabels)
                     {
-                        Options.DataLabels.EnabledOnSeries.Add(index);
+                        if (!Options.DataLabels.EnabledOnSeries.Contains(index))
+                        {
+                            Options.DataLabels.EnabledOnSeries.Add(index);
+                        }
                     }
-                }
-                else
-                {
-                    if (Options.DataLabels.EnabledOnSeries.Contains(index))
+                    else
                     {
-                        Options.DataLabels.EnabledOnSeries.Remove(index);
+                        if (Options.DataLabels.EnabledOnSeries.Contains(index))
+                        {
+                            Options.DataLabels.EnabledOnSeries.Remove(index);
+                        }
                     }
                 }
             }
@@ -311,7 +318,7 @@ namespace ApexCharts
 
             foreach (var apxSeries in Options.Series)
             {
-          
+
                 var data = apxSeries.ApexSeries.GenerateDataPoints(items);
                 var updatedData = apxSeries.Data.ToList();
                 updatedData.AddRange(data);
