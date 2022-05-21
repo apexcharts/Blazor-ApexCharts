@@ -76,9 +76,16 @@ namespace ApexCharts
 
             Options.Chart.Id = chartId;
             Options.Debug = Debug;
-            Options.Chart.Width = Width;
-            Options.Chart.Height = Height;
+            
+            if (Width != null) {
+                Options.Chart.Width = Width;
+            }
 
+            if (Height != null)
+            {
+                Options.Chart.Height = Height;
+            }
+            
             if (XAxisType != null)
             {
                 if (Options.Xaxis == null) { Options.Xaxis = new XAxis(); }

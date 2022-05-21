@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "radar-charts",
+      "launchUrl": "line-charts",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
