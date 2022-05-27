@@ -21,6 +21,7 @@ namespace BlazorApexCharts
             serializerOptions.Converters.Add(new SeriesConverter<TItem>());
             serializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
             serializerOptions.Converters.Add(new ValueOrListConverter<string>());
+            serializerOptions.Converters.Add(new ValueOrListConverter<double>());
 
             return serializerOptions;
         }
