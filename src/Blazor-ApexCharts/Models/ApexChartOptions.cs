@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Runtime.Serialization;
+using System.Linq;
 
 namespace ApexCharts
 {
@@ -1439,7 +1440,7 @@ namespace ApexCharts
 
     public class AxisLabelStyle
     {
-        public Color? Colors { get; set; }
+        public Color Colors { get; set; }
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
@@ -1564,42 +1565,45 @@ namespace ApexCharts
 
     public enum XAxisType { Category, Datetime, Numeric };
 
-
-    public struct Download
+    public class ValueOrList<T> 
     {
-        public bool? Bool;
-        public string String;
+        private readonly T _str;
+        private readonly List<T> _list;
+        public bool IsList { get; private set; }
 
-        public static implicit operator Download(bool Bool) => new Download { Bool = Bool };
-        public static implicit operator Download(string String) => new Download { String = String };
+        public T GetValue => _str;
+        public IEnumerable<T> GetList => _list;
+
+        public ValueOrList(T value)
+        {
+            _str = value;
+        }
+
+        public ValueOrList(IEnumerable<T> list)
+        {
+            IsList = true;
+            _list = list.ToList();
+        }
     }
 
-    public struct Color
-    {
-        public string String;
-        public List<string> StringArray;
 
-        public static implicit operator Color(string String) => new Color { String = String };
-        public static implicit operator Color(List<string> StringArray) => new Color { StringArray = StringArray };
+    public class Color : ValueOrList<string>
+    {
+        public Color(string value) : base(value)
+        {
+        }
+        public Color(IEnumerable<string> list) : base(list)
+        {
+        }
     }
 
-    public struct Opacity
+    public class Opacity : ValueOrList<double>
     {
-        public double? Double;
-        public List<double> DoubleArray;
-
-        public static implicit operator Opacity(double Double) => new Opacity { Double = Double };
-        public static implicit operator Opacity(List<double> DoubleArray) => new Opacity { DoubleArray = DoubleArray };
+        public Opacity(double value) : base(value)
+        {
+        }
+        public Opacity(IEnumerable<double> list) : base(list)
+        {
+        }
     }
-
-    public struct ShapeUnion
-    {
-        public ShapeEnum? Enum;
-        public List<string> StringArray;
-
-        public static implicit operator ShapeUnion(ShapeEnum Enum) => new ShapeUnion { Enum = Enum };
-        public static implicit operator ShapeUnion(List<string> StringArray) => new ShapeUnion { StringArray = StringArray };
-    }
-
-   
 }

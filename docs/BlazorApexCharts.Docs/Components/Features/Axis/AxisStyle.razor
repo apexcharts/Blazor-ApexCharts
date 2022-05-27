@@ -1,0 +1,53 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               Options=options
+               Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         SeriesType="SeriesType.Bar" />
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.Yaxis = new List<YAxis>();
+
+        options.Yaxis.Add(new YAxis
+            {
+                Title = new AxisTitle { Text = "Value" },
+                DecimalsInFloat = 0,
+                TickAmount=6,
+               
+                Labels = new YAxisLabels
+                {
+                    Style = new AxisLabelStyle { FontSize = "20px", Colors = new Color("red") }
+                }
+            });
+
+
+        options.Xaxis = new XAxis
+            {
+                Labels = new XAxisLabels
+                {
+                    Style = new AxisLabelStyle
+                    {
+                        FontSize = "18px",
+                        FontWeight = "bolder",
+                        Colors = new Color(new List<string> { "red", "blue", "Orange", "Green" })
+                    }
+                }
+            };
+
+    }
+
+}
