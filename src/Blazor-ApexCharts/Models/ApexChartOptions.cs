@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Runtime.Serialization;
+using System.Linq;
 
 namespace ApexCharts
 {
@@ -1439,7 +1440,7 @@ namespace ApexCharts
 
     public class AxisLabelStyle
     {
-        public Color? Colors { get; set; }
+        public Color Colors { get; set; }
         public string CssClass { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
@@ -1574,14 +1575,67 @@ namespace ApexCharts
         public static implicit operator Download(string String) => new Download { String = String };
     }
 
-    public struct Color
-    {
-        public string String;
-        public List<string> StringArray;
 
-        public static implicit operator Color(string String) => new Color { String = String };
-        public static implicit operator Color(List<string> StringArray) => new Color { StringArray = StringArray };
+    public class ValueOrList<T> 
+    {
+        private readonly T _str;
+        private readonly List<T> _list;
+        public bool IsList { get; private set; }
+
+        public T GetValue => _str;
+        public IEnumerable<T> GetList => _list;
+
+        public ValueOrList(T value)
+        {
+            _str = value;
+        }
+
+        public ValueOrList(IEnumerable<T> list)
+        {
+            IsList = true;
+            _list = list.ToList();
+        }
     }
+
+    //public class StringOrArray
+    //{
+    //    private readonly string _str;
+    //    private readonly List<string> _list;
+    //    public bool IsList;
+
+    //    public string GetString => _str;
+    //    public IEnumerable<string> GetList => _list;
+
+    //    public StringOrArray(string text)
+    //    {
+    //        _str = text;
+    //    }
+
+    //    public StringOrArray(IEnumerable<string> texts)
+    //    {
+    //        IsList = true;
+    //        _list = texts.ToList();
+    //    }
+    //}
+
+    public class Color : ValueOrList<string>
+    {
+        public Color(string value) : base(value)
+        {
+        }
+        public Color(IEnumerable<string> list) : base(list)
+        {
+        }
+    }
+
+    //public struct Color
+    //{
+    //    public string String;
+    //    public List<string> StringArray;
+
+    //    public static implicit operator Color(string String) => new Color { String = String };
+    //    public static implicit operator Color(List<string> StringArray) => new Color { StringArray = StringArray };
+    //}
 
     public struct Opacity
     {

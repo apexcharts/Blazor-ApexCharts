@@ -26,8 +26,27 @@
             {
                 Title = new AxisTitle { Text = "Value" },
                 DecimalsInFloat = 0,
-                Labels = new YAxisLabels { Style = new AxisLabelStyle { FontSize = "20px", Colors = new Color { String = "red" } } }
+                TickAmount=6,
+               
+                Labels = new YAxisLabels
+                {
+                    Style = new AxisLabelStyle { FontSize = "20px", Colors = new Color("red") }
+                }
             });
+
+
+        options.Xaxis = new XAxis
+            {
+                Labels = new XAxisLabels
+                {
+                    Style = new AxisLabelStyle
+                    {
+                        FontSize = "18px",
+                        FontWeight = "bolder",
+                        Colors = new Color(new List<string> { "red", "blue", "Orange", "Green" })
+                    }
+                }
+            };
 
     }
 
