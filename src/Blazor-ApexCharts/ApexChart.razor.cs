@@ -76,8 +76,9 @@ namespace ApexCharts
 
             Options.Chart.Id = chartId;
             Options.Debug = Debug;
-            
-            if (Width != null) {
+
+            if (Width != null)
+            {
                 Options.Chart.Width = Width;
             }
 
@@ -85,7 +86,7 @@ namespace ApexCharts
             {
                 Options.Chart.Height = Height;
             }
-            
+
             if (XAxisType != null)
             {
                 if (Options.Xaxis == null) { Options.Xaxis = new XAxis(); }
@@ -548,7 +549,7 @@ namespace ApexCharts
         }
 
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             GC.SuppressFinalize(this);
             if (Options.Chart?.Id != null && isReady)
