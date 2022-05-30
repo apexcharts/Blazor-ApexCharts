@@ -23,8 +23,7 @@ Debug>
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
     private ApexChartOptions<Order> options { get; set; } = new ApexChartOptions<Order>();
     private int width = 200;
-    private int height = 200;
-
+   
     protected override void OnInitialized()
     {
         options.Chart = new Chart { Width = "300px", Height = "500px" };
