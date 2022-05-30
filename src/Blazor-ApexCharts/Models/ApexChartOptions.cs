@@ -705,7 +705,7 @@ namespace ApexCharts
 
     public class LegendLabels
     {
-        public Color? Colors { get; set; }
+        public Color Colors { get; set; }
         public bool? UseSeriesColors { get; set; }
     }
 
@@ -735,7 +735,7 @@ namespace ApexCharts
     {
         public List<string> Colors { get; set; }
         public List<MarkersDiscrete> Discrete { get; set; }
-        public Opacity? FillOpacity { get; set; }
+        public Opacity FillOpacity { get; set; }
         public MarkersHover Hover { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
@@ -743,10 +743,10 @@ namespace ApexCharts
         public ShapeEnum? Shape { get; set; }
         public bool? ShowNullDataPoints { get; set; }
         public double? Size { get; set; }
-        public Color? StrokeColors { get; set; }
-        public Opacity? StrokeDashArray { get; set; }
-        public Opacity? StrokeOpacity { get; set; }
-        public Opacity? StrokeWidth { get; set; }
+        public Color StrokeColors { get; set; }
+        public Opacity StrokeDashArray { get; set; }
+        public Opacity StrokeOpacity { get; set; }
+        public Opacity StrokeWidth { get; set; }
     }
 
     public class MarkersDiscrete
@@ -976,10 +976,10 @@ namespace ApexCharts
 
     public class PurplePolygons
     {
-        public Color? ConnectorColors { get; set; }
+        public Color ConnectorColors { get; set; }
         public TentacledFill Fill { get; set; }
-        public Color? StrokeColors { get; set; }
-        public Color? StrokeWidth { get; set; }
+        public Color StrokeColors { get; set; }
+        public Color StrokeWidth { get; set; }
     }
 
     public class TentacledFill
