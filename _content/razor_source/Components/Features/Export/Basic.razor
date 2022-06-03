@@ -20,6 +20,7 @@
 
     protected override void OnInitialized()
     {
+        var fileName = "Country Gross Value";
         options.Chart = new Chart();
 
         options.Chart.Toolbar = new Toolbar
@@ -28,9 +29,11 @@
             {
                 Csv = new ExportCSV
                 {
-                    Filename = "Country Gross Value",
+                    Filename = fileName,
                     HeaderCategory = "Country",
-                }
+                },
+                Png = new ExportPng { Filename = fileName},
+                Svg = new ExportSvg { Filename = fileName}
             }
         };
 
