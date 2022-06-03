@@ -1,0 +1,39 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               Options=options Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         SeriesType="SeriesType.Bar" />
+
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart();
+
+        options.Chart.Toolbar = new Toolbar
+        {
+            Export = new ChartExport
+            {
+                Csv = new ExportCSV
+                {
+                    Filename = "Country Gross Value",
+                    HeaderCategory = "Country",
+                }
+            }
+        };
+
+    }
+
+}
