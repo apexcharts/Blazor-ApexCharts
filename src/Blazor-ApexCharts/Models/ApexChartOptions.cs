@@ -5,13 +5,60 @@ using System.Linq;
 
 namespace ApexCharts
 {
-    public class ApexChartOptions<TItem> where TItem : class
+    public class ApexChartOptions<TItem> : ApexChartBaseOptions where TItem : class
     {
-        public bool Debug { get; set; }
+        public ApexChartOptions()
+        { }
+
+        public ApexChartOptions(ApexChartBaseOptions options)
+        {
+            if(options == null)
+            {
+                return;
+            }
+
+            Debug = options.Debug;
+            Annotations = options.Annotations;
+            Chart = options.Chart;
+            Colors = options.Colors;
+            DataLabels = options.DataLabels;
+            Fill = options.Fill;
+            Grid = options.Grid;
+            Labels = options.Labels;
+            Legend = options.Legend;    
+            Markers = options.Markers;
+            NoData = options.NoData;
+            PlotOptions = options.PlotOptions;
+            Responsive = options.Responsive;
+            ForecastDataPoints = options.ForecastDataPoints;
+            States = options.States;
+            Stroke = options.Stroke;
+            Subtitle = options.Subtitle;
+            Theme = options.Theme;
+            Title = options.Title;
+            Tooltip = options.Tooltip;
+            Xaxis = options.Xaxis;
+            Yaxis = options.Yaxis;
+
+        }
+
+        /// <summary>
+        /// Series for specifying chart-type-specific configuration.
+        /// See https://apexcharts.com/docs/options/series/
+        /// </summary>
+        public List<Series<TItem>> Series { get; set; }
+
         public bool HasDataPointSelection { get; internal set; }
         public bool HasDataPointEnter { get; internal set; }
         public bool HasDataPointLeave { get; internal set; }
         public bool HasLegendClick { get; internal set; }
+
+    }
+
+        public class ApexChartBaseOptions
+    {
+        public bool Debug { get; set; }
+      
 
         /// <summary>
         /// Annotations options
@@ -73,13 +120,7 @@ namespace ApexCharts
         /// </summary>
         public List<Responsive> Responsive { get; set; }
 
-        /// <summary>
-        /// Series for specifying chart-type-specific configuration.
-        /// See https://apexcharts.com/docs/options/series/
-        /// </summary>
-        public List<Series<TItem>> Series { get; set; }
-
-
+       
         public ForecastDataPoints ForecastDataPoints { get; set; }
 
         public States States { get; set; }

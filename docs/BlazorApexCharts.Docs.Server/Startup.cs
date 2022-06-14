@@ -1,3 +1,4 @@
+using ApexCharts;
 using BlazorApexCharts.Docs.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +25,7 @@ namespace BlazorApexCharts.Docs.Server
             services.AddServerSideBlazor();
             services.AddDocs();
             services.AddScoped<ICodeSnippetService, LocalSnippetService>();
+            services.AddApexCharts(new ApexChartBaseOptions { Theme = new Theme { Mode = Mode.Light, Palette = PaletteType.Palette6} });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
