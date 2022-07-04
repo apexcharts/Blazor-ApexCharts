@@ -1,20 +1,25 @@
-﻿<ApexChart TItem="SupportIncident"
+﻿<ApexChart TItem="BoxPlotSample"
            Options=options
            Title="BoxPlot">
 
-    <ApexBoxPlotSeries TItem="SupportIncident"
-                       Items="incidents.OrderBy(e=>e.WeekNumber)"
+    <ApexBoxPlotSeries TItem="BoxPlotSample"
+                       Items="incidents"
                        Name="incidents"
-                       XValue="@(e => e.WeekName)"
-                       YValue="@(e => e.Severity)" />
+                    XValue="@(e => e.Name)"
+                    Max="@(e => e.Max)"
+                    Min="@(e => e.Min)"
+                    Quantile1="@(e => e.Q1)"
+                    Quantile3="@(e => e.Q3)"
+                    Median="@(e => e.Median)"
+                       />
 
 
 </ApexChart>
 
 
 @code {
-    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(30, 60);
-    private ApexChartOptions<SupportIncident> options = new ApexChartOptions<SupportIncident>();
+    private List<BoxPlotSample> incidents { get; set; } = SampleData.GetBoxPlotData();
+    private ApexChartOptions<BoxPlotSample> options = new ApexChartOptions<BoxPlotSample>();
     protected override void OnInitialized()
     {
         base.OnInitialized();

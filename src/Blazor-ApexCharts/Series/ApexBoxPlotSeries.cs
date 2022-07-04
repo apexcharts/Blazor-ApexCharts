@@ -9,7 +9,12 @@ namespace ApexCharts
 {
     public class ApexBoxPlotSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
-        [Parameter] public Func<TItem, decimal?> YValue { get; set; }
+        [Parameter] public Func<TItem, decimal> Min { get; set; }
+        [Parameter] public Func<TItem, decimal> Quantile1 { get; set; }
+        [Parameter] public Func<TItem, decimal> Median { get; set; }
+        [Parameter] public Func<TItem, decimal> Quantile3 { get; set; }
+        [Parameter] public Func<TItem, decimal> Max { get; set; }
+
         [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
         [Parameter] public Func<ListPoint<TItem>, object> OrderByDescending { get; set; }
         [Parameter] public Action<ListPoint<TItem>> DataPointMutator { get; set; }
@@ -26,16 +31,24 @@ namespace ApexCharts
             return ChartType.BoxPlot;
         }
 
-       
+
 
         public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
-            var data = items.GroupBy(XValue).Select(d => new ListPoint<TItem>
-            {
-                X = d.Key,
-                Y = d.AsQueryable().Select(YValue).OrderBy(o => o),
-                Items = d
-            });
+            var data = items
+       .Select(d => new ListPoint<TItem>
+       {
+           X = XValue.Invoke(d),
+           Y = new List<decimal?>
+           {
+                       Min.Invoke(d),
+                       Quantile1.Invoke(d),
+                       Median.Invoke(d),
+                       Quantile3.Invoke(d),
+                       Max.Invoke(d)
+           },
+           Items = new List<TItem> { d }
+       });
 
             if (OrderBy != null)
             {

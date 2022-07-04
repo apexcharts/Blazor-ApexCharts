@@ -1,5 +1,5 @@
 ﻿<DemoContainer>
-    <ApexChart TItem="BoxPlotSample" Debug>
+    <ApexChart TItem="BoxPlotSample" Options=options>
        
         <ApexBoxPlotSeries TItem="BoxPlotSample"
                     Items="incidents"
@@ -16,4 +16,12 @@
 
 @code {
     private List<BoxPlotSample> incidents { get; set; } = SampleData.GetBoxPlotData();
+    private ApexChartOptions<BoxPlotSample> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.PlotOptions = new PlotOptions { BoxPlot = new PlotOptionsBoxPlot { Colors = new BloxPlotColors { Lower = "#ffa500", Upper = "#ee82ee" } } };
+
+    }
+
 }

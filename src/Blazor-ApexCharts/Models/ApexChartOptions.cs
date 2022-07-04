@@ -818,6 +818,7 @@ namespace ApexCharts
     /// </summary>
     public class PlotOptions
     {
+        public PlotOptionsBoxPlot BoxPlot { get; set; }
         public PlotOptionsBar Bar { get; set; }
         public PlotOptionsBubble Bubble { get; set; }
         public PlotOptionsCandlestick Candlestick { get; set; }
@@ -829,7 +830,18 @@ namespace ApexCharts
         public PlotOptionsTreemap Treemap { get; set; }
     }
 
-    public class PlotOptionsBar
+    public class PlotOptionsBoxPlot
+    {
+        public BloxPlotColors Colors { get; set; }
+    }
+
+    public class BloxPlotColors
+    {
+        public string Upper { get; set; }
+        public string Lower { get; set; }
+    }
+
+        public class PlotOptionsBar
     {
         public bool? Horizontal { get; set; }
         public double? BorderRadius { get; set; }
