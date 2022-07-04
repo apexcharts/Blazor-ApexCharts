@@ -1,0 +1,92 @@
+﻿<Row>
+
+    <RowCol Lg=6>
+        <ApexChart @ref=chart1 TItem="Order"
+                   Title="Chart 1"
+                   Options=options1
+        OnLegendClicked=LegendClicked
+        >
+
+            <ApexPointSeries TItem="Order"
+                             Items="orders"
+                             Name="Gross Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                             OrderByDescending="e=>e.Y"
+                             />
+
+            <ApexPointSeries TItem="Order"
+                             Items="orders"
+                             Name="Net Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.NetValue))"
+                             OrderByDescending="e=>e.Y" />
+
+
+        </ApexChart>
+    </RowCol>
+</Row>
+
+<Row>
+
+    <RowCol Lg=6>
+        <ApexChart @ref=chart2 TItem="Order"
+                   Title="Chart 2"
+                   Options=options2
+        >
+
+                    <ApexPointSeries TItem="Order"
+                             Items="orders"
+                             Name="Gross Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                             OrderByDescending="e=>e.Y" />
+
+            <ApexPointSeries TItem="Order"
+                             Items="orders"
+                             Name="Net Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.NetValue))"
+                             OrderByDescending="e=>e.Y" />
+
+
+        </ApexChart>
+    </RowCol>
+</Row>
+
+
+
+@code {
+    private List<Order> orders = SampleData.GetOrders();
+    private ApexChart<Order> chart1;
+    private ApexChart<Order> chart2;
+    private ApexChartOptions<Order> options1 = new ApexChartOptions<Order>();
+    private ApexChartOptions<Order> options2 = new ApexChartOptions<Order>();
+
+    protected override void OnInitialized()
+    {
+        options1.Legend = new Legend { HorizontalAlign = Align.Center, Position = LegendPosition.Top };
+        options2.Legend = new Legend { Show = false };
+    }
+
+
+    private async Task LegendClicked(LegendClicked<Order> legendClicked)
+    {
+
+        if(legendClicked.Collapsed)
+        {
+            await chart2.HideSeriesAsync(legendClicked.Series.Name);
+        }
+        else
+        {
+            await chart2.ShowSeriesAsync(legendClicked.Series.Name);
+        }
+
+      
+    }
+
+}
