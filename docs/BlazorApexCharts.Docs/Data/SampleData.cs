@@ -6,6 +6,20 @@ namespace BlazorApexCharts.Docs
 {
     public static class SampleData
     {
+        public static List<BoxPlotSample> GetBoxPlotData()
+        {
+
+            var now = DateTimeOffset.Now;
+            var result = new List<BoxPlotSample>();
+
+            result.Add(new BoxPlotSample { Name = "Eva", EventDate=now.AddDays(-10), Min = 40, Q1 = 52, Median = 56.59m, Q3 = 60, Max = 63.85m } );
+            result.Add(new BoxPlotSample { Name = "Jonas", EventDate = now.AddDays(-9), Min = 43.66m, Q1 = 44.99m, Median = 51.35m, Q3 = 52.95m, Max = 59.42m });
+            result.Add(new BoxPlotSample { Name = "Bart", EventDate = now.AddDays(-8), Min = 52.76m, Q1 = 57.35m, Median = 59.15m, Q3 = 63.03m, Max = 67.98m });
+            result.Add(new BoxPlotSample { Name = "Cecilia", EventDate = now.AddDays(-7), Min = 48m, Q1 = 49m, Median = 52m, Q3 = 62m, Max =68m });
+            result.Add(new BoxPlotSample { Name = "Ann", EventDate = now.AddDays(-6), Min = 38m, Q1 = 41m, Median = 45m, Q3 = 52m, Max = 55m });
+            return result;
+        }
+
 
         public static List<SimpleValue> GetSimpleValues()
         {
