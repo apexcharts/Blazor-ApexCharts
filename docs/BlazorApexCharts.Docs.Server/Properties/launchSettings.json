@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "boxplot-charts",
+      "launchUrl": "methods/multi-charts",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
