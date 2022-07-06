@@ -1,0 +1,78 @@
+﻿<ApexChart TItem="TimeSeries"
+           Title="Quantity"
+           Options=options
+           Height="150"
+           XAxisType="XAxisType.Datetime"
+           OnSelection=Selected>
+
+    <ApexPointSeries TItem="TimeSeries"
+                     Items="data"
+                     Name="Quantity"
+                     SeriesType="SeriesType.Bar"
+                     XValue="@(e => e.Date)"
+                     YValue="@(e => e.Quantity)"
+                     OrderBy="e=>e.X"
+                     Stroke="@(new SeriesStroke { Width = 2, Color="#E51C15"})" />
+</ApexChart>
+
+
+<h3 class="mt-2">Selection</h3>
+    <Row>
+        <RowCol Auto>
+            XAxis Min: @XMin?.ToString("d")
+        </RowCol>
+        <RowCol Auto>
+             XAxis Min: @XMax?.ToString("d")
+        </RowCol>
+    </Row>
+
+@code {
+    private List<TimeSeries> data { get; set; } = new TimeSeriesGenerator(100).TimeSeries;
+    private ApexChartOptions<TimeSeries> options = new();
+    private SelectionData<TimeSeries> currentSelection;
+
+    private DateTimeOffset? XMin;
+    private DateTimeOffset? XMax;
+
+    protected override void OnInitialized()
+    {
+        var selectionStart = data.Min(e => e.Date).AddDays(30);
+        options.Chart.Toolbar = new Toolbar { Show = false };
+        options.Xaxis = new XAxis { TickPlacement = TickPlacement.On };
+        options.Chart.Brush = new ApexCharts.Brush { Enabled = true };
+        options.Chart.Selection = new ApexCharts.Selection
+            {
+                Enabled = true,
+                Xaxis = new SelectionXaxis
+                {
+                    Min = selectionStart.ToUnixTimeMilliseconds(),
+                    Max = selectionStart.AddDays(40).ToUnixTimeMilliseconds()
+                }
+            };
+    }
+
+    private void Selected(SelectionData<TimeSeries> selection)
+    {
+        currentSelection = selection;
+
+        var min = selection?.XAxis?.Min;
+        if (min != null)
+        {
+            XMin = DateTimeOffset.FromUnixTimeMilliseconds((long)min);
+        }
+        else
+        {
+            min = null;
+        }
+
+         var max = selection?.XAxis?.Max;
+        if (max != null)
+        {
+            XMax = DateTimeOffset.FromUnixTimeMilliseconds((long)max);
+        }
+        else
+        {
+            max = null;
+        }
+    }
+    }

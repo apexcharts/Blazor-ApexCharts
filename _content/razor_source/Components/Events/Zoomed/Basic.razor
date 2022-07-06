@@ -1,0 +1,55 @@
+﻿<ApexChart TItem="TimeSeries"
+           Title="Value"
+           Height="150"
+           XAxisType="XAxisType.Datetime"
+           OnZoomed=Zoom>
+
+    <ApexPointSeries TItem="TimeSeries"
+                     Items="timeSeries"
+                     Name="Value"
+                     SeriesType="SeriesType.Line"
+                     XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
+                     YValue="@( e=> e.Value)"
+                     Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
+</ApexChart>
+
+<h3 class="mt-2">Zoomed</h3>
+    <Row>
+        <RowCol Auto>
+            XAxis Min: @xMin
+        </RowCol>
+        <RowCol Auto>
+             XAxis Max: @xMax
+        </RowCol>
+    </Row>
+
+
+@code {
+    private List<TimeSeries> timeSeries = new TimeSeriesGenerator(100).TimeSeries;
+    private DateTimeOffset xMin;
+    private DateTimeOffset xMax;
+
+
+    private void Zoom(ZoomedData<TimeSeries> zoomedData)
+    {
+
+        if(zoomedData.XAxis?.Min == null)
+        {
+            xMin = timeSeries.Min(e => e.Date);
+        }
+        else
+        {
+            xMin = DateTimeOffset.FromUnixTimeMilliseconds((long)zoomedData.XAxis.Min);
+        }
+
+        
+        if(zoomedData.XAxis?.Max == null)
+        {
+            xMax = timeSeries.Max(e => e.Date);
+        }
+        else
+        {
+            xMax = DateTimeOffset.FromUnixTimeMilliseconds((long)zoomedData.XAxis.Max);
+        }
+    }
+    }
