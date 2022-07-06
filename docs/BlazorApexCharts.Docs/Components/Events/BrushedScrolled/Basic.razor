@@ -1,0 +1,95 @@
+﻿<ApexChart TItem="TimeSeries"
+           Title="Value"
+           Options=options1
+           Height="150"
+           XAxisType="XAxisType.Datetime"
+          >
+
+    <ApexPointSeries TItem="TimeSeries"
+                     Items="data"
+                     Name="Value"
+                     SeriesType="SeriesType.Line"
+                     XValue="@(e => e.Date)"
+                     YAggregate="@(e => e.Sum(e => e.Value))"
+                     OrderBy="e=>e.X"
+                     Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
+</ApexChart>
+
+<ApexChart TItem="TimeSeries"
+           Title="Quantity"
+           Options=options2
+           Height="150"
+           XAxisType="XAxisType.Datetime"
+            OnBrushScrolled=BrushScroll>
+
+    <ApexPointSeries TItem="TimeSeries"
+                     Items="data"
+                     Name="Quantity"
+                     SeriesType="SeriesType.Bar"
+                     XValue="@(e => e.Date)"
+                     YValue="@(e => e.Quantity)"
+                     OrderBy="e=>e.X"
+                     Stroke="@(new SeriesStroke { Width = 2, Color="#E51C15"})" />
+</ApexChart>
+
+<h3 class="mt-2">Selection</h3>
+    <Row>
+        <RowCol Auto>
+            XAxis Min: @XMin.ToString("d")
+        </RowCol>
+        <RowCol Auto>
+             XAxis Max: @XMax.ToString("d")
+        </RowCol>
+    </Row>
+
+@code {
+    private List<TimeSeries> data { get; set; } = new TimeSeriesGenerator(100).TimeSeries;
+    private ApexChartOptions<TimeSeries> options1 = new();
+    private ApexChartOptions<TimeSeries> options2 = new();
+
+    private DateTimeOffset XMin;
+    private DateTimeOffset XMax;
+
+    protected override void OnInitialized()
+    {
+        const string mainChartId = "mainChart";
+
+        options1.Chart.Id = mainChartId;
+        options1.Chart.Toolbar = new Toolbar { AutoSelected = AutoSelected.Pan, Show = false };
+
+        XMin = data.Min(e => e.Date).AddDays(30);
+        XMax = XMin.AddDays(40);
+
+        options2.Chart.Toolbar = new Toolbar { Show = false };
+        options2.Xaxis = new XAxis { TickPlacement = TickPlacement.On };
+        options2.Chart.Brush = new ApexCharts.Brush { Enabled = true, Target = mainChartId };
+        options2.Chart.Selection = new Selection
+            {
+                Enabled = true,
+                Xaxis = new SelectionXaxis
+                {
+                    Min = XMin.ToUnixTimeMilliseconds(),
+                    Max = XMax.ToUnixTimeMilliseconds()
+                }
+            };
+    }
+
+  private void BrushScroll(SelectionData<TimeSeries> selection)
+    {
+       
+        var min = selection?.XAxis?.Min;
+        if (min != null)
+        {
+            XMin = DateTimeOffset.FromUnixTimeMilliseconds((long)min);
+        }
+  
+
+         var max = selection?.XAxis?.Max;
+        if (max != null)
+        {
+            XMax = DateTimeOffset.FromUnixTimeMilliseconds((long)max);
+        }
+    
+    }
+
+    }
