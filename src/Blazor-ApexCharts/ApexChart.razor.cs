@@ -26,6 +26,8 @@ namespace ApexCharts
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointEnter { get; set; }
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointLeave { get; set; }
         [Parameter] public EventCallback<LegendClicked<TItem>> OnLegendClicked { get; set; }
+        [Parameter] public EventCallback<SelectionData<TItem>> OnSelection { get; set; }
+        [Parameter] public EventCallback<SelectionData<TItem>> OnBrushScrolled { get; set; }
 
         [Parameter] public EventCallback OnRendered { get; set; }
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
@@ -460,7 +462,8 @@ namespace ApexCharts
             Options.HasDataPointEnter = OnDataPointEnter.HasDelegate || ApexPointTooltip != null;
             Options.HasDataPointLeave = OnDataPointLeave.HasDelegate;
             Options.HasLegendClick = OnLegendClicked.HasDelegate;
-
+            Options.HasSelection = OnSelection.HasDelegate;
+            Options.HasBrushScrolled = OnBrushScrolled.HasDelegate;
         }
 
         private async Task RenderChartAsync()
@@ -563,8 +566,8 @@ namespace ApexCharts
             }
         }
 
-        [JSInvokable]
-        public string GetFormattedYAxisValue(object value)
+        [JSInvokable("JSGetFormattedYAxisValue")]
+        public string JSGetFormattedYAxisValue(object value)
         {
             if (value == null) { return ""; }
             if (FormatYAxisLabel == null) { return value.ToString(); }
@@ -577,8 +580,34 @@ namespace ApexCharts
             return value.ToString();
         }
 
-        [JSInvokable]
-        public void LegendClicked(JSLegendClicked jsLegendClicked)
+        [JSInvokable("JSBrushScrolled")]
+        public void JSBrushScrolled(JSSelection jsSelection)
+        {
+            var selectionData = new SelectionData<TItem>
+            {
+                Chart = this,
+                YAxis = jsSelection.YAxis,
+                XAxis = jsSelection.XAxis
+            };
+
+            OnBrushScrolled.InvokeAsync(selectionData);
+        }
+
+        [JSInvokable("JSSelected")]
+        public void JSSelected(JSSelection jsSelection)
+        {
+            var selectionData = new SelectionData<TItem>
+            {
+                Chart = this,
+                YAxis = jsSelection.YAxis,
+                XAxis = jsSelection.XAxis
+            };
+
+            OnSelection.InvokeAsync(selectionData);
+        }
+
+        [JSInvokable("JSLegendClicked")]
+        public void JSLegendClicked(JSLegendClicked jsLegendClicked)
         {
 
             var series = Options.Series.ElementAt(jsLegendClicked.SeriesIndex);
@@ -597,8 +626,8 @@ namespace ApexCharts
             OnLegendClicked.InvokeAsync(legendClicked);
         }
 
-        [JSInvokable]
-        public void DataPointSelected(JSDataPointSelection selectedDataPoints)
+        [JSInvokable("JSDataPointSelected")]
+        public void JSDataPointSelected(JSDataPointSelection selectedDataPoints)
         {
             if (OnDataPointSelection.HasDelegate)
             {
@@ -619,8 +648,8 @@ namespace ApexCharts
             }
         }
 
-        [JSInvokable]
-        public void DataPointEnter(JSDataPointSelection selectedDataPoints)
+        [JSInvokable("JSDataPointEnter")]
+        public void JSDataPointEnter(JSDataPointSelection selectedDataPoints)
         {
             if (OnDataPointEnter.HasDelegate || ApexPointTooltip != null)
             {
@@ -643,14 +672,11 @@ namespace ApexCharts
                     tooltipData = hoverData;
                     StateHasChanged();
                 }
-
-
-
             }
         }
 
-        [JSInvokable]
-        public void DataPointLeave(JSDataPointSelection selectedDataPoints)
+        [JSInvokable("JSDataPointLeave")]
+        public void JSDataPointLeave(JSDataPointSelection selectedDataPoints)
         {
             if (OnDataPointLeave.HasDelegate)
             {

@@ -8,11 +8,11 @@
         }
 
         if (w !== undefined) {
-            return w.config.dotNetObject.invokeMethod('GetFormattedYAxisValue', value);
+            return w.config.dotNetObject.invokeMethod('JSGetFormattedYAxisValue', value);
         };
 
         if (index !== undefined) {
-            return index.w.config.dotNetObject.invokeMethod('GetFormattedYAxisValue', value);
+            return index.w.config.dotNetObject.invokeMethod('JSGetFormattedYAxisValue', value);
         }
 
         return value;
@@ -199,57 +199,63 @@
         options.dotNetObject = dotNetObject;
 
 
-        options.chart.events = {
-            dataPointSelection: (event, chartContext, config) => {
+        options.chart.events = {};
 
-                if (chartContext.opts.hasDataPointSelection === false) {
-                    return;
+        if (options.hasDataPointLeave === true) {
+            options.chart.events.dataPointMouseLeave = function (event, chartContext, config) {
+                var selection = {
+                    dataPointIndex: config.dataPointIndex,
+                    seriesIndex: config.seriesIndex
                 }
+                dotNetObject.invokeMethodAsync('JSDataPointLeave', selection);
+            }
+        };
+
+        if (options.hasDataPointEnter === true) {
+            options.chart.events.dataPointMouseEnter = function (event, chartContext, config) {
+                var selection = {
+                    dataPointIndex: config.dataPointIndex,
+                    seriesIndex: config.seriesIndex
+                }
+                dotNetObject.invokeMethodAsync('JSDataPointEnter', selection);
+            }
+        };
+
+
+        if (options.hasDataPointSelection === true) {
+            options.chart.events.dataPointSelection = function (event, chartContext, config) {
                 var selection = {
                     dataPointIndex: config.dataPointIndex,
                     seriesIndex: config.seriesIndex,
                     selectedDataPoints: config.selectedDataPoints
                 }
-                dotNetObject.invokeMethodAsync('DataPointSelected', selection);
-            },
+                dotNetObject.invokeMethodAsync('JSDataPointSelected', selection);
+            }
+        };
 
-            dataPointMouseEnter: (event, chartContext, config) => {
-                if (chartContext.opts.hasDataPointEnter === false) {
-                    return;
-                }
-
-                var selection = {
-                    dataPointIndex: config.dataPointIndex,
-                    seriesIndex: config.seriesIndex
-                }
-                dotNetObject.invokeMethodAsync('DataPointEnter', selection);
-            },
-
-            dataPointMouseLeave: (event, chartContext, config) => {
-                if (chartContext.opts.hasDataPointLeave === false) {
-                    return;
-                }
-
-                var selection = {
-                    dataPointIndex: config.dataPointIndex,
-                    seriesIndex: config.seriesIndex
-                }
-                dotNetObject.invokeMethodAsync('DataPointLeave', selection);
-            },
-
-            legendClick: (chartContext, seriesIndex, config) => {
-                if (chartContext.opts.hasLegendClick === false) {
-                    return;
-                }
+        if (options.hasLegendClick === true) {
+            options.chart.events.legendClick = function (chartContext, seriesIndex, config) {
                 var legendClick = {
-
                     seriesIndex: seriesIndex,
                     collapsed: config.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1
                 }
 
-                dotNetObject.invokeMethodAsync('LegendClicked', legendClick);
+                dotNetObject.invokeMethodAsync('JSLegendClicked', legendClick);
             }
-        }
+        };
+
+        if (options.hasSelection === true) {
+            options.chart.events.selection = function (chartContext, config) {
+                dotNetObject.invokeMethodAsync('JSSelected', config);
+            };
+        };
+
+        if (options.hasBrushScrolled === true) {
+            options.chart.events.brushScrolled = function (chartContext, config) {
+                dotNetObject.invokeMethodAsync('JSBrushScrolled', config);
+            };
+        };
+
 
         //Always destry chart if it exists
         this.destroyChart(options.chart.id);
