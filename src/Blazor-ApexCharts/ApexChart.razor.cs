@@ -28,6 +28,7 @@ namespace ApexCharts
         [Parameter] public EventCallback<LegendClicked<TItem>> OnLegendClicked { get; set; }
         [Parameter] public EventCallback<SelectionData<TItem>> OnSelection { get; set; }
         [Parameter] public EventCallback<SelectionData<TItem>> OnBrushScrolled { get; set; }
+        [Parameter] public EventCallback<ZoomedData<TItem>> OnZoomed { get; set; }
 
         [Parameter] public EventCallback OnRendered { get; set; }
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
@@ -464,6 +465,7 @@ namespace ApexCharts
             Options.HasLegendClick = OnLegendClicked.HasDelegate;
             Options.HasSelection = OnSelection.HasDelegate;
             Options.HasBrushScrolled = OnBrushScrolled.HasDelegate;
+            Options.HasZoomed = OnZoomed.HasDelegate;
         }
 
         private async Task RenderChartAsync()
@@ -578,6 +580,19 @@ namespace ApexCharts
             }
 
             return value.ToString();
+        }
+
+        [JSInvokable("JSZoomed")]
+        public void JSZoomed(JSZoomed jSZoomed)
+        {
+            var data = new ZoomedData<TItem>
+            {
+                Chart = this,
+                YAxis = jSZoomed.YAxis,
+                XAxis = jSZoomed.XAxis
+            };
+
+            OnZoomed.InvokeAsync(data);
         }
 
         [JSInvokable("JSBrushScrolled")]

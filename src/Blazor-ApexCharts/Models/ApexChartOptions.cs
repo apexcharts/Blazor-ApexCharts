@@ -14,6 +14,7 @@ namespace ApexCharts
         public bool HasLegendClick { get; internal set; }
         public bool HasSelection { get; internal set; }
         public bool HasBrushScrolled { get; internal set; }
+        public bool HasZoomed { get; internal set; }
 
         /// <summary>
         /// Annotations options

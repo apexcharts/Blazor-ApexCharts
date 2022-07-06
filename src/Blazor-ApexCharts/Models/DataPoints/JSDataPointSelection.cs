@@ -31,6 +31,14 @@ namespace ApexCharts
 
     }
 
+    public class ZoomedData<TItem> where TItem : class
+    {
+        public ApexChart<TItem> Chart { get; set; }
+
+        public SelectionXAxis XAxis { get; set; }
+        public List<object> YAxis { get; set; }
+    }
+
     public class SelectionData<TItem> where TItem : class
     {
         public ApexChart<TItem> Chart { get; set; }

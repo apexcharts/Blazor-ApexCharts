@@ -256,6 +256,11 @@
             };
         };
 
+        if (options.hasZoomed === true) {
+            options.chart.events.zoomed = function (chartContext, config) {
+                dotNetObject.invokeMethodAsync('JSZoomed', config);
+            };
+        };
 
         //Always destry chart if it exists
         this.destroyChart(options.chart.id);
