@@ -1,47 +1,55 @@
-﻿<DemoContainer>
-    <ApexChart TItem="Order"
-               Title="Order Net Value"
-               OnZoomed=Zoom>
+﻿<ApexChart TItem="TimeSeries"
+           Title="Value"
+           Height="150"
+           XAxisType="XAxisType.Datetime"
+           OnZoomed=Zoom>
 
-        <ApexPointSeries TItem="Order"
-                         Items="Orders"
-                         Name="Gross Value"
-                         SeriesType="SeriesType.Line"
-                         XValue="@(e => e.Country)"
-                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                         OrderByDescending="e=>e.Y" />
-
-        <ApexPointSeries TItem="Order"
-                         Items="Orders"
-                         Name="Net Value"
-                         SeriesType="SeriesType.Line"
-                         XValue="@(e => e.Country)"
-                         YAggregate="@(e => e.Sum(e => e.NetValue))"
-                         OrderByDescending="e=>e.Y" />
-    </ApexChart>
-</DemoContainer>
-
+    <ApexPointSeries TItem="TimeSeries"
+                     Items="timeSeries"
+                     Name="Value"
+                     SeriesType="SeriesType.Line"
+                     XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
+                     YValue="@( e=> e.Value)"
+                     Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
+</ApexChart>
 
 <h3 class="mt-2">Zoomed</h3>
-<Row>
-    <RowCol Auto>
-        XAxis Min: @xMin
-    </RowCol>
-    <RowCol Auto>
-        XAxis Max: @xMax
-    </RowCol>
-</Row>
+    <Row>
+        <RowCol Auto>
+            XAxis Min: @xMin
+        </RowCol>
+        <RowCol Auto>
+             XAxis Max: @xMax
+        </RowCol>
+    </Row>
+
 
 @code {
-    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private List<TimeSeries> timeSeries = new TimeSeriesGenerator(100).TimeSeries;
+    private DateTimeOffset xMin;
+    private DateTimeOffset xMax;
 
-    private decimal? xMin;
-    private decimal? xMax;
 
-
-    private void Zoom(ZoomedData<Order> zoomedData)
+    private void Zoom(ZoomedData<TimeSeries> zoomedData)
     {
-        xMin = zoomedData.XAxis.Min;
-        xMax = zoomedData.XAxis.Max;
+
+        if(zoomedData.XAxis?.Min == null)
+        {
+            xMin = timeSeries.Min(e => e.Date);
+        }
+        else
+        {
+            xMin = DateTimeOffset.FromUnixTimeMilliseconds((long)zoomedData.XAxis.Min);
+        }
+
+        
+        if(zoomedData.XAxis?.Max == null)
+        {
+            xMax = timeSeries.Max(e => e.Date);
+        }
+        else
+        {
+            xMax = DateTimeOffset.FromUnixTimeMilliseconds((long)zoomedData.XAxis.Max);
+        }
     }
     }

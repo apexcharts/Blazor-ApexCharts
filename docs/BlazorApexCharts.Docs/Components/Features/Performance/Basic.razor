@@ -1,11 +1,7 @@
 ﻿@using System.Diagnostics
 @using System.Text.Json
 
-
-
-
 <ItemSelect Label="Datapoints" Items=points @bind-SelectedValue=pointsToLoad Changed=LoadData />
-
 
 <ApexChart TItem="TimeSeries"
            Title="Value"
@@ -22,7 +18,6 @@
                      Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
 </ApexChart>
 
-
 @if (isLoading)
 {
     <h3>Loading<span class="animated-dots"></span></h3>
@@ -31,7 +26,6 @@ else
 {
     <h3>@message</h3>
 }
-
 
 @code {
     private ApexChart<TimeSeries> chart;
