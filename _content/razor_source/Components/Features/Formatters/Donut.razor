@@ -1,0 +1,41 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Gross Value"
+               Options=options>
+
+        <ApexPointSeries TItem="Order"
+                         ShowDataLabels
+                         Items="Orders"
+                         SeriesType="SeriesType.Donut"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options;
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Order>();
+
+
+        options.DataLabels = new DataLabels
+            {
+                Formatter = @"function(value, opts) {
+            return  Math.round(Number(value)) + '%';}"
+            };
+
+        options.Tooltip = new ApexCharts.Tooltip
+            {
+                Y = new TooltipY
+                {
+                    Formatter = @"function(value, opts) {
+                    if (value === undefined) {return '';}
+                    return   '$' + Number(value).toLocaleString();}"
+                }
+            };
+    }
+    }
