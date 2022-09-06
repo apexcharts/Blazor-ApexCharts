@@ -844,7 +844,7 @@ namespace ApexCharts
         public string Lower { get; set; }
     }
 
-        public class PlotOptionsBar
+    public class PlotOptionsBar
     {
         public bool? Horizontal { get; set; }
         public double? BorderRadius { get; set; }
@@ -1154,8 +1154,15 @@ namespace ApexCharts
 
     public class StatesFilter
     {
-        public string Type { get; set; }
+        public StatesFilterType Type { get; set; }
         public double? Value { get; set; }
+    }
+
+    public enum StatesFilterType
+    {
+        none,
+        lighten,
+        darken
     }
 
     /// <summary>

@@ -1,8 +1,7 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
                Title="Order Net Value"
-               Options=options
-               Debug>
+               Options=options>
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"
@@ -25,13 +24,29 @@
             {
                 Active = new StatesActive
                 {
-                    Filter = new StatesFilter { Type = "none", Value = 0 }
+                    Filter = new StatesFilter
+                    {
+                        Type = StatesFilterType.none
+
+                    }
+                },
+               Normal = new StatesNormal
+               {
+                    Filter = new StatesFilter
+                    {
+                        Type = StatesFilterType.lighten,
+                        Value = 0.1
+                    }
+               },
+                Hover = new StatesHover
+                {
+                    Filter = new StatesFilter
+                    {
+                        Type = StatesFilterType.darken,
+                        Value = 0.3
+                    }
                 }
+
             };
-
-
-
-
     }
-
 }
