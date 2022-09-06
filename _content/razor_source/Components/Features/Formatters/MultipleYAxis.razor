@@ -1,0 +1,62 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               Options=options>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         SeriesType="SeriesType.Bar" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Discount"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Average(e => e.DiscountPrecentage))"
+                         SeriesType="SeriesType.Line" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.Yaxis = new List<YAxis>();
+
+        options.Yaxis.Add(new YAxis
+            {
+                Title = new AxisTitle { Text = "Value" },
+                DecimalsInFloat = 0,
+
+            });
+        options.Yaxis.Add(new YAxis
+            {
+                Title = new AxisTitle { Text = "Percentage" },
+                DecimalsInFloat = 0,
+                Opposite = true
+            });
+
+        options.Tooltip = new ApexCharts.Tooltip
+            {
+                Y = new TooltipY
+                {
+                    Formatter = @"function(value, opts) {
+                    if (value === undefined) {return '';}
+                    return  'YY:' + value}"
+                },
+                X = new TooltipX
+                {
+                    Formatter = @"function(value, opts) {
+                    if (value === undefined) {return '';}
+                    return  'XX:' + value}"
+                }
+            };
+
+
+    }
+
+}
