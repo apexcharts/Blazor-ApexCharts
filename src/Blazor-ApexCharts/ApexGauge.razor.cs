@@ -12,6 +12,8 @@ namespace ApexCharts
     {
         [Parameter] public string Title { get; set; }
         [Parameter] public decimal Percentage { get; set; }
+        [Obsolete("This property is obsolete. Use Percentage instead.", false)]
+        [Parameter] public decimal Precentage { get => Percentage; set => Percentage = value; }
         [Parameter] public string Label { get; set; }
         [Parameter] public ApexChartOptions<GaugeValue> Options { get; set; } = new ApexChartOptions<GaugeValue>();
 
