@@ -831,6 +831,19 @@ namespace ApexCharts
         public PlotOptionsRadar Radar { get; set; }
         public PlotOptionsRadialBar RadialBar { get; set; }
         public PlotOptionsTreemap Treemap { get; set; }
+        public PlotOptionsArea Area { get; set; }
+    }
+
+    public class PlotOptionsArea
+    {
+        public AreaFillTo? FillTo { get; set; }
+
+    }
+
+    public enum AreaFillTo
+    {
+        End,
+        Origin
     }
 
     public class PlotOptionsBoxPlot
