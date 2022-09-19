@@ -1,0 +1,41 @@
+﻿<div class="mb-3">
+    <ItemSelect Label="FillTo" ShowCheckBoxes TItem=AreaFillTo TValue=AreaFillTo Items="EnumHelper.GetList<AreaFillTo>()" SelectedValue=areaFillTo SelectedValueChanged=AreaFillToChanged />
+</div>
+
+<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Fill Sample"
+               Options=options
+               @ref=chart>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType="@SeriesType.Area"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue)-200000)" />
+    </ApexChart>
+</DemoContainer>
+@code {
+    private List<Order> orders = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
+    private ApexChart<Order> chart;
+    private AreaFillTo areaFillTo = AreaFillTo.Origin;
+
+    protected override void OnInitialized()
+    {
+        SetPlotOptions();
+    }
+
+    private void SetPlotOptions()
+    {
+        options.PlotOptions = new PlotOptions { Area = new PlotOptionsArea { FillTo = areaFillTo } };
+    }
+
+    private async Task AreaFillToChanged(AreaFillTo areaFillTo)
+    {
+        this.areaFillTo = areaFillTo;
+        SetPlotOptions();
+        await chart.RenderAsync();
+    }
+ }
