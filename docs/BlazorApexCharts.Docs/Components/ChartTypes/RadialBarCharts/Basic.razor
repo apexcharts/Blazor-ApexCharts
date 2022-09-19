@@ -8,7 +8,7 @@
                      SeriesType=SeriesType.RadialBar
                      Name="Gross Value"
                      XValue="@(e => e.Country)"
-                     YAggregate="@(e => decimal.Round(e.Average(e => e.DiscountPrecentage)))"
+                     YAggregate="@(e => decimal.Round(e.Average(e => e.DiscountPercentage)))"
                      OrderByDescending="e=>e.Y" />
     </ApexChart>
 </DemoContainer>
