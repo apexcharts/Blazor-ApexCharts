@@ -8,7 +8,7 @@
                     Items="Orders"
                     Name="Gross Value"
                     SeriesType="SeriesType.Bar"
-                    XValue="@(e => e.DiscountPrecentage)"
+                    XValue="@(e => e.DiscountPercentage)"
                     YAggregate="@(e => e.Sum(e => e.GrossValue))"
                     OrderByDescending="e=>e.Y" />
 

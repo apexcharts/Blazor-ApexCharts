@@ -6,7 +6,7 @@
                          Items="orders"
                          Name="% Gross"
                          SeriesType="SeriesType.Scatter"
-                         XValue="@(e => e.DiscountPrecentage)"
+                         XValue="@(e => e.DiscountPercentage)"
                          YValue="@(e => e.GrossValue)"
                          OrderByDescending="e=>e.X" />
 
@@ -14,7 +14,7 @@
                          Items="orders"
                          SeriesType="SeriesType.Scatter"
                          Name="% Net"
-                         XValue="@(e => e.DiscountPrecentage)"
+                         XValue="@(e => e.DiscountPercentage)"
                          YValue="@(e => e.NetValue)"
                          OrderByDescending="e=>e.X" />
     </ApexChart>

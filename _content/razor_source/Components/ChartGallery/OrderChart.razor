@@ -9,7 +9,7 @@
                      Items="orders"
                      Name="Gross Value"
                      SeriesType=PointType
-                     XValue="@(e => e.DiscountPrecentage)"
+                     XValue="@(e => e.DiscountPercentage)"
                      YValue="@(e => e.GrossValue)"
                      OrderByDescending="e=>e.X" />
 
@@ -17,7 +17,7 @@
                      Items="orders"
                      SeriesType=PointType
                      Name="Net Value"
-                     XValue="@(e => e.DiscountPrecentage)"
+                     XValue="@(e => e.DiscountPercentage)"
                      YValue="@(e => e.NetValue)"
                      OrderByDescending="e=>e.X" />
     }
@@ -29,7 +29,7 @@
                      SeriesType=PointType
                      Name="Gross Value"
                      XValue="@(e => e.Country)"
-                     YAggregate="@(e => decimal.Round(e.Average(e => e.DiscountPrecentage)))"
+                     YAggregate="@(e => decimal.Round(e.Average(e => e.DiscountPercentage)))"
                      OrderByDescending="e=>e.Y" />
 
 
