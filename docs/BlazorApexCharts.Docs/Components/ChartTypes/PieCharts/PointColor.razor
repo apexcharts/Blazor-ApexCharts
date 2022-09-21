@@ -1,6 +1,6 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
-               Title="Order Gross Value">
+               Title="Order Gross Value" Options=options Debug>
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"
@@ -9,12 +9,19 @@
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
                          OrderByDescending="e=>e.Y"
-                         PointColor="e=> GetPointColor(e)" />
+                         PointColor="e=> GetPointColor(e)" ShowDataLabels  />
     </ApexChart>
 </DemoContainer>
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.DataLabels = new DataLabels { DropShadow = new DropShadow { Enabled = false } };
+    }
+
 
     private string GetPointColor(Order order)
     {
@@ -28,12 +35,12 @@
                 return "#ffd500";
             case "Spain":
                 return "#00783c";
-                default:
-                 return "#87775d";
+            default:
+                return "#87775d";
         }
 
 
-       
+
     }
 
     }
