@@ -2,7 +2,7 @@
     @if (projects == null)
     {
         <div class="text-center text-muted" style="min-height:300px">
-             <h3>Loading chart<span class="animated-dots"></span></h3>
+            <h3>Loading chart<span class="animated-dots"></span></h3>
         </div>
     }
     else
@@ -36,9 +36,15 @@
                     {
                         Horizontal = true
                     }
+                },
+                Tooltip = new ApexCharts.Tooltip
+                {
+                    X = new TooltipX
+                    {
+                        Format = "dd MMM yyyy HH:mm"
+                    }
                 }
             };
-
         projects = await LoadProjects();
     }
 
@@ -47,5 +53,4 @@
         await Task.Delay(3000);
         return SampleData.GetProjects();
     }
-
-    }
+}
