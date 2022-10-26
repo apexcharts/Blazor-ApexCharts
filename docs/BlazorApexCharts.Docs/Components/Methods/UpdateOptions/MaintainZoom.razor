@@ -52,8 +52,10 @@
 
     private async Task Reset()
     {
+        zoomOptions = null;
         await chart.ResetSeriesAsync(true, true);
     }
+
     private async Task UpdateOptions()
     {
         //Animations must be turned of or you will get a flickering
