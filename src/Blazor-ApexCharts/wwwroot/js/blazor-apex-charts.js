@@ -58,6 +58,19 @@
         }
     },
 
+    updateOptionsWithZoom(id, options, redrawPaths, animate, updateSyncedCharts, start, end) {
+        var data = JSON.parse(options, (key, value) =>
+            (key === 'formatter' || key === 'dateFormatter' || key === 'custom') && value.length !== 0 ? eval("(" + value + ")") : value
+        );
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            this.LogMethodCall(chart, 'updateOptionsWithZoom ' + start + ', ' + end, options);
+
+            chart.updateOptions(data, redrawPaths, animate, updateSyncedCharts);
+            chart.zoomX(start, end);
+        }
+    },
+
     appendData(id, data) {
         var newData = JSON.parse(data);
         var chart = this.findChart(id);

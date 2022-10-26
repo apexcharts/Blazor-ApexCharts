@@ -399,6 +399,12 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
         }
 
+        public async Task UpdateOptionsWithZoomAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, decimal start, decimal end)
+        {
+            PrepareChart();
+            var json = Serialize(Options);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateOptionsWithZoom", Options.Chart.Id, json, redrawPaths, animate, updateSyncedCharts, start, end);
+        }
 
         /// <summary>
         /// For no axis charts only provide the seriesIndex value, set dataPointIndex to null
