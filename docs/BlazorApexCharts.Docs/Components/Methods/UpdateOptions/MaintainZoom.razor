@@ -1,16 +1,16 @@
-﻿<Button OnClick="UpdateOptions" BackgroundColor=TablerColor.Primary>Update Options</Button>
+<Button OnClick="UpdateOptions" BackgroundColor=TablerColor.Primary>Update Options</Button>
 <Button OnClick="Reset" BackgroundColor=TablerColor.Danger>Reset Zoom</Button>
 
 <DemoContainer>
     <ApexChart @ref=chart TItem="TimeSeries"
-               Title="Order Net Value"
+               Title="@_title"
                XAxisType="XAxisType.Datetime"
                OnZoomed="Zoomed"
                Options=options>
 
         <ApexPointSeries TItem="TimeSeries"
                          Items="generator.TimeSeries"
-                         Name="Gross Value"
+                         Name="@_seriesName"
                          SeriesType="SeriesType.Line"
                          XValue="@(e => e.Date)"
                          YValue="@(e => e.Value)"
@@ -25,6 +25,9 @@
     private TimeSeriesGenerator generator = new TimeSeriesGenerator(100);
 
     private ZoomOptions zoomOptions = new();
+
+    String _title = "Order Net Value";
+    String _seriesName = "Gross Value";
 
     protected override void OnInitialized()
     {
@@ -61,6 +64,11 @@
         //Animations must be turned of or you will get a flickering
         options.Chart.Animations = new Animations { Enabled = false } ;
         options.Subtitle = new Subtitle { Text = "Options updated:" + DateTime.Now.ToLongTimeString() };
+
+        _title = $"Order Net Value: {DateTime.Now.ToLongTimeString()}";
+        _seriesName = $"Gross: {DateTime.Now.ToLongTimeString()}";
+
+        generator.Update();
 
         await chart.UpdateOptionsAsync(false, false, false, zoomOptions);
 
