@@ -345,6 +345,12 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.appendData", Options.Chart.Id, json);
         }
 
+        public async Task ZoomXAsync(ZoomOptions zoomOptions)
+        {
+            if(zoomOptions == null) {  throw new ArgumentNullException(nameof(zoomOptions)); }
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.zoomX", Options.Chart.Id, zoomOptions.Start, zoomOptions.End);
+        }
+
         public async Task ZoomXAsync(decimal start, decimal end)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.zoomX", Options.Chart.Id, start, end);
@@ -384,11 +390,11 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.removeAnnotation", Options.Chart.Id, id);
         }
 
-        public async Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts)
+        public async Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null)
         {
             PrepareChart();
             var json = Serialize(Options);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateOptions", Options.Chart.Id, json, redrawPaths, animate, updateSyncedCharts);
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateOptions", Options.Chart.Id, json, redrawPaths, animate, updateSyncedCharts, zoom);
         }
 
         public async Task UpdateSeriesAsync(bool animate = true)

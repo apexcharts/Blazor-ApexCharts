@@ -37,6 +37,8 @@ namespace ApexCharts
 
         public SelectionXAxis XAxis { get; set; }
         public List<object> YAxis { get; set; }
+
+        public bool IsZoomed => XAxis?.Min != null && XAxis?.Max != null;
     }
 
     public class SelectionData<TItem> where TItem : class

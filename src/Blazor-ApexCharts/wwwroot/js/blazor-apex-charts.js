@@ -47,7 +47,7 @@
         }
     },
 
-    updateOptions(id, options, redrawPaths, animate, updateSyncedCharts) {
+    updateOptions(id, options, redrawPaths, animate, updateSyncedCharts, zoom) {
         var data = JSON.parse(options, (key, value) =>
             (key === 'formatter' || key === 'dateFormatter' || key === 'custom') && value.length !== 0 ? eval("(" + value + ")") : value
         );
@@ -55,6 +55,10 @@
         if (chart !== undefined) {
             this.LogMethodCall(chart, "updateOptions", options);
             chart.updateOptions(data, redrawPaths, animate, updateSyncedCharts);
+
+            if (zoom !== null) {
+                chart.zoomX(zoom.start, zoom.end);
+            }
         }
     },
 
