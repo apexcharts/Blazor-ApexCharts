@@ -59,6 +59,7 @@
             if (zoom !== null) {
                 chart.zoomX(zoom.start, zoom.end);
             }
+
         }
     },
 
