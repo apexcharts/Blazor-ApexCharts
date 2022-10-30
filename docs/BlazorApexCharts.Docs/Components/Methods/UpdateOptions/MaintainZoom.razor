@@ -3,7 +3,7 @@
 
 <DemoContainer>
     <ApexChart @ref=chart TItem="TimeSeries"
-               Title="Order Net Value"
+               Title=@title
                XAxisType="XAxisType.Datetime"
                OnZoomed="Zoomed"
                Options=options>
@@ -25,9 +25,11 @@
     private TimeSeriesGenerator generator = new TimeSeriesGenerator(100);
 
     private ZoomOptions zoomOptions = new();
+    private string title = "Order Net Value";
 
     protected override void OnInitialized()
     {
+
         zoomOptions.Start = generator.TimeSeries.Min(e => e.Date).AddDays(5).ToUnixTimeMilliseconds();
         zoomOptions.End = generator.TimeSeries.Min(e => e.Date).AddDays(15).ToUnixTimeMilliseconds();
         options = new ApexChartOptions<TimeSeries>();
@@ -49,6 +51,10 @@
         }
     }
 
+    private void SetTitle()
+    {
+        title = "Order Net Value" + DateTime.Now.ToLongTimeString();
+    }
 
     private async Task Reset()
     {
@@ -56,9 +62,14 @@
     }
     private async Task UpdateOptions()
     {
+        var dateString = DateTime.Now.ToLongTimeString();
+
         //Animations must be turned of or you will get a flickering
-        options.Chart.Animations = new Animations { Enabled = false } ;
-        options.Subtitle = new Subtitle { Text = "Options updated:" + DateTime.Now.ToLongTimeString() };
+        options.Chart.Animations = new Animations { Enabled = false };
+        options.Subtitle = new Subtitle { Text = "Options updated: " + dateString };
+       
+        title = "Order Net Value " + dateString;
+        await Task.Delay(1); // We need this in order to update the title
 
         await chart.UpdateOptionsAsync(false, false, false, zoomOptions);
 
