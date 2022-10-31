@@ -10,7 +10,7 @@
 
         <ApexPointSeries TItem="TimeSeries"
                          Items="generator.TimeSeries"
-                         Name="Gross Value"
+                         Name="@seriesName"
                          SeriesType="SeriesType.Line"
                          XValue="@(e => e.Date)"
                          YValue="@(e => e.Value)"
@@ -26,7 +26,7 @@
 
     private ZoomOptions zoomOptions = new();
     private string title = "Order Net Value";
-
+    private string seriesName = "Gross Value";
     protected override void OnInitialized()
     {
 
@@ -51,10 +51,6 @@
         }
     }
 
-    private void SetTitle()
-    {
-        title = "Order Net Value" + DateTime.Now.ToLongTimeString();
-    }
 
     private async Task Reset()
     {
@@ -67,9 +63,11 @@
         //Animations must be turned of or you will get a flickering
         options.Chart.Animations = new Animations { Enabled = false };
         options.Subtitle = new Subtitle { Text = "Options updated: " + dateString };
-       
+
         title = "Order Net Value " + dateString;
-        await Task.Delay(1); // We need this in order to update the title
+        seriesName = "Gross Value " + dateString;
+        
+        await Task.Delay(1); // We need this in order to update the title and series name
 
         await chart.UpdateOptionsAsync(false, false, false, zoomOptions);
 
