@@ -899,6 +899,24 @@ namespace ApexCharts
         public double? MaxItems { get; set; }
         public Orientation? Orientation { get; set; }
         public string Position { get; set; }
+        public BarTotalDataLabels Total { get; set; }
+    }
+
+    public class BarTotalDataLabels
+    {
+        public bool Enabled { get; set; }
+        public string Formatter { get; set; }
+        public double? OffsetX { get; set; }
+        public double? OffsetY { get; set; }
+        public BarDataLabelsStyle Style { get; set; }        
+    }
+
+    public class BarDataLabelsStyle
+    {
+        public string Color { get; set; }
+        public string FontSize { get; set; }
+        public string FontFamily { get; set; }
+        public object FontWeight { get; set; }
     }
 
     public class PlotOptionsBubble
