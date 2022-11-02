@@ -904,7 +904,7 @@ namespace ApexCharts
 
     public class BarTotalDataLabels
     {
-        public bool Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
         public string Formatter { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
