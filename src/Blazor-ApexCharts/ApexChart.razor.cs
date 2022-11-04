@@ -292,18 +292,18 @@ namespace ApexCharts
             forceRender = true;
         }
 
-        public async Task RenderAsync()
+        public virtual async Task RenderAsync()
         {
             await RenderChartAsync();
         }
 
-        public async Task AddPointAnnotationAsync(AnnotationsPoint annotationsPoint, bool pushToMemory)
+        public virtual async Task AddPointAnnotationAsync(AnnotationsPoint annotationsPoint, bool pushToMemory)
         {
             var json = Serialize(annotationsPoint);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
-        public async Task AppendDataAsync(IEnumerable<TItem> items)
+        public virtual async Task AppendDataAsync(IEnumerable<TItem> items)
         {
 
             if (IsNoAxisChart && Series.Any())
@@ -345,59 +345,59 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.appendData", Options.Chart.Id, json);
         }
 
-        public async Task ZoomXAsync(ZoomOptions zoomOptions)
+        public virtual async Task ZoomXAsync(ZoomOptions zoomOptions)
         {
             if(zoomOptions == null) {  throw new ArgumentNullException(nameof(zoomOptions)); }
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.zoomX", Options.Chart.Id, zoomOptions.Start, zoomOptions.End);
         }
 
-        public async Task ZoomXAsync(decimal start, decimal end)
+        public virtual async Task ZoomXAsync(decimal start, decimal end)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.zoomX", Options.Chart.Id, start, end);
         }
 
-        public async Task ResetSeriesAsync(bool shouldUpdateChart, bool shouldResetZoom)
+        public virtual async Task ResetSeriesAsync(bool shouldUpdateChart, bool shouldResetZoom)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.resetSeries", Options.Chart.Id, shouldUpdateChart, shouldResetZoom);
         }
 
-        public async Task<string> GetDataUriAsync(DataUriOptions dataUriOptions)
+        public virtual async Task<string> GetDataUriAsync(DataUriOptions dataUriOptions)
         {
             var json = Serialize(dataUriOptions);
             var result = await JSRuntime.InvokeAsync<DataUriResult>("blazor_apexchart.dataUri", Options.Chart.Id, json);
             return result.ImgURI;
         }
 
-        public async Task AddXAxisAnnotationAsync(AnnotationsXAxis annotationsXAxis, bool pushToMemory)
+        public virtual async Task AddXAxisAnnotationAsync(AnnotationsXAxis annotationsXAxis, bool pushToMemory)
         {
             var json = Serialize(annotationsXAxis);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addXaxisAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
-        public async Task AddYAxisAnnotationAsync(AnnotationsYAxis annotationsYAxis, bool pushToMemory)
+        public virtual async Task AddYAxisAnnotationAsync(AnnotationsYAxis annotationsYAxis, bool pushToMemory)
         {
             var json = Serialize(annotationsYAxis);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addYaxisAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
-        public async Task ClearAnnotationsAsync()
+        public virtual async Task ClearAnnotationsAsync()
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.clearAnnotations", Options.Chart.Id);
         }
 
-        public async Task RemoveAnnotationAsync(string id)
+        public virtual async Task RemoveAnnotationAsync(string id)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.removeAnnotation", Options.Chart.Id, id);
         }
 
-        public async Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null)
+        public virtual async Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null)
         {
             PrepareChart();
             var json = Serialize(Options);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateOptions", Options.Chart.Id, json, redrawPaths, animate, updateSyncedCharts, zoom);
         }
 
-        public async Task UpdateSeriesAsync(bool animate = true)
+        public virtual async Task UpdateSeriesAsync(bool animate = true)
         {
             SetSeries();
             UpdateDataForNoAxisCharts();
@@ -412,23 +412,23 @@ namespace ApexCharts
         /// <param name="seriesIndex"></param>
         /// <param name="dataPointIndex"></param>
         /// <returns></returns>
-        public async Task ToggleDataPointSelectionAsync(int seriesIndex, int? dataPointIndex)
+        public virtual async Task ToggleDataPointSelectionAsync(int seriesIndex, int? dataPointIndex)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleDataPointSelection", Options.Chart.Id, seriesIndex, dataPointIndex);
 
         }
 
-        public async Task ToggleSeriesAsync(string seriesName)
+        public virtual async Task ToggleSeriesAsync(string seriesName)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleSeries", Options.Chart.Id, seriesName);
         }
 
-        public async Task ShowSeriesAsync(string seriesName)
+        public virtual async Task ShowSeriesAsync(string seriesName)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.showSeries", Options.Chart.Id, seriesName);
         }
 
-        public async Task HideSeriesAsync(string seriesName)
+        public virtual async Task HideSeriesAsync(string seriesName)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.hideSeries", Options.Chart.Id, seriesName);
         }
