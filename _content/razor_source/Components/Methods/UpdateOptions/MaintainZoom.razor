@@ -33,8 +33,6 @@
         zoomOptions.Start = generator.TimeSeries.Min(e => e.Date).AddDays(5).ToUnixTimeMilliseconds();
         zoomOptions.End = generator.TimeSeries.Min(e => e.Date).AddDays(15).ToUnixTimeMilliseconds();
         options = new ApexChartOptions<TimeSeries>();
-
-
     }
 
     private void Zoomed(ZoomedData<TimeSeries> zoomedData)
@@ -50,7 +48,6 @@
             zoomOptions = null;
         }
     }
-
 
     private async Task Reset()
     {
@@ -69,6 +66,5 @@
 
         await Task.Yield(); // We need this in order to update the title and series name
         await chart.UpdateOptionsAsync(false, false, false, zoomOptions);
-
     }
 }
