@@ -66,9 +66,8 @@
 
         title = "Order Net Value " + dateString;
         seriesName = "Gross Value " + dateString;
-        
-        await Task.Delay(1); // We need this in order to update the title and series name
 
+        await Task.Yield(); // We need this in order to update the title and series name
         await chart.UpdateOptionsAsync(false, false, false, zoomOptions);
 
     }
