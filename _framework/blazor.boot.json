@@ -8,8 +8,8 @@
   "resources": {
     "assembly": {
       "Blazor-ApexCharts.dll": "sha256-kCfkOF9gGo\/lTFqRVR81m\/ceqSR8ibFzoWgu2Dl36L4=",
-      "BlazorApexCharts.Docs.dll": "sha256-aDSdi3bJgIoFLiPcxSRhCeh0nCdzk3qBCluDOdn5wvs=",
-      "BlazorApexCharts.Docs.Wasm.dll": "sha256-NjLKFDSJLP+UvzyYzQkX6602kHp2ulxFG4NZvCVqxnU=",
+      "BlazorApexCharts.Docs.dll": "sha256-+fUfYLKxLze+3ISV\/HndU5Xox7NkMD03MtAZGEsX9As=",
+      "BlazorApexCharts.Docs.Wasm.dll": "sha256-sBde3XaWQnFDFKYt3KekYSC+uInp2yNxHuAlX\/ZB4Qo=",
       "Bogus.dll": "sha256-IgFEwQyP1GQSj7cjhmsEcYuEABesDe9Y3oby2kbVnnc=",
       "ColorCode.Core.dll": "sha256-aIfJCjDE9QfwEHpKt97+\/fHH0ahMOa\/TdeVTcU3lBsY=",
       "ColorCode.HTML.dll": "sha256-HKP0W0ZaaitLH4eoIUYTqVMArDi2WugRXgZOSjrj9\/k=",
@@ -53,7 +53,7 @@
       "System.Private.Runtime.InteropServices.JavaScript.dll": "sha256-fux9X0reBdsqICRQFsaUvLdV\/hku6\/RQy+Jxcz5uzLs=",
       "System.Private.Uri.dll": "sha256-WxN4VqEFKAH9HWdLCz3lPCT1vJ6uWFRVgRXtXRWDDoY=",
       "System.Runtime.CompilerServices.Unsafe.dll": "sha256-5IU6GUX8qOctLAYHuQ7clOc3ohNJ6aky7koryZ5i6W8=",
-      "System.Runtime.dll": "sha256-NYYYgaVIcmcv40Z+Qi+yXPWBJxQiKDQz8L6g92pdt4o=",
+      "System.Runtime.dll": "sha256-3dDwUjyguwwBjM99rzKPkzhajPhML79R\/G03DGPx\/MI=",
       "System.Runtime.Extensions.dll": "sha256-vZuZ8hlIyecWSnbdhvX2IP\/b7JfkgKT0twT9zjMDvMY=",
       "System.Runtime.InteropServices.RuntimeInformation.dll": "sha256-9rGbEpeC8inq5CWi8vxf4tyKRJosx9fuElsIhUUpPsY=",
       "System.Runtime.Serialization.Primitives.dll": "sha256-4muPA5NNo6KNbPT5n+7IHrtk\/aa+mDqNnVBoYjDLyZ4=",
