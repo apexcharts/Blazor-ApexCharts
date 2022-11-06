@@ -8,13 +8,13 @@
   "resources": {
     "assembly": {
       "Blazor-ApexCharts.dll": "sha256-kCfkOF9gGo\/lTFqRVR81m\/ceqSR8ibFzoWgu2Dl36L4=",
-      "BlazorApexCharts.Docs.dll": "sha256-1wCWFJ6R4N1+YLMM0F0Rkc0Bh\/w9\/zY4f9DMDHd75Rg=",
-      "BlazorApexCharts.Docs.Wasm.dll": "sha256-sBde3XaWQnFDFKYt3KekYSC+uInp2yNxHuAlX\/ZB4Qo=",
+      "BlazorApexCharts.Docs.dll": "sha256-1b98zqZUy657lVaDkrub\/jG\/3ET87Z3i3Km54Xiudkg=",
+      "BlazorApexCharts.Docs.Wasm.dll": "sha256-LamwYmk\/7uJsSuwHCPQkzXlmLHhrh8d6QLsAtFJnTkE=",
       "Bogus.dll": "sha256-IgFEwQyP1GQSj7cjhmsEcYuEABesDe9Y3oby2kbVnnc=",
       "ColorCode.Core.dll": "sha256-aIfJCjDE9QfwEHpKt97+\/fHH0ahMOa\/TdeVTcU3lBsY=",
       "ColorCode.HTML.dll": "sha256-HKP0W0ZaaitLH4eoIUYTqVMArDi2WugRXgZOSjrj9\/k=",
       "LinqKit.Core.dll": "sha256-yu0yxyDgp8zWN8rsgq35f6IS87ZD21553YdSpfAbPsI=",
-      "Microsoft.AspNetCore.Components.dll": "sha256-W1LaHCXIvgaIuXBfACJ1nkNRYRy1R89yv0NbsC\/btc4=",
+      "Microsoft.AspNetCore.Components.dll": "sha256-wJaZY0FXFdplbD80jSv\/sKlpMQ6FSvSWf+KzNXTyzQc=",
       "Microsoft.AspNetCore.Components.Forms.dll": "sha256-MM\/CXph26ArJiO+Rd2sbxlbVHuvmEOIzym5kavXcMxA=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-EQig8ERT1Yl4scsTTqp8+\/KXryh8\/4nFBLmw2VDKKNM=",
       "Microsoft.AspNetCore.Components.WebAssembly.dll": "sha256-HMV+UaT3TOl6LdFI8JqngEgA\/BuD3P0gQj4cMnWm\/lQ=",

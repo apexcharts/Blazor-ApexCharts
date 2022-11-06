@@ -1,0 +1,25 @@
+﻿
+<ApexChart TItem="Order"
+           Title="Scatter Sample" Height="200">
+
+    <ApexPointSeries TItem="Order"
+                Items="orders"
+                 SeriesType="@SeriesType.Area"
+                Name="Gross Value"
+                XValue="@(e => e.Country)"
+                YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                OrderByDescending="e=>e.Y" />
+
+    <ApexPointSeries TItem="Order"
+                Items="orders"
+                 SeriesType="@SeriesType.Area"
+                Name="Net Value"
+                XValue="@(e => e.Country)"
+                YAggregate="@(e => e.Sum(e => e.NetValue))"
+                OrderByDescending="e=>e.Y" />
+</ApexChart>
+
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    }
