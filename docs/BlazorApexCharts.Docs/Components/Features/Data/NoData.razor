@@ -1,0 +1,57 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Null"
+               Options="options"
+               @ref=chart>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType="@SeriesType.Area"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType="@SeriesType.Area"
+                         Name="Net Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+
+    @if(isLoading) {
+        <Progress Indeterminate />
+    }
+  
+
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; }
+    private ApexChartOptions<Order> options { get; set; } = new();
+    private ApexChart<Order> chart;
+    private bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        options.NoData = new ApexCharts.NoData { Text = "No Data..." };
+        await LoadData();
+    }
+
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+
+        await Task.Delay(3000); //Simulate Slow api 
+        orders = SampleData.GetOrders();
+        StateHasChanged();
+        await chart.UpdateSeriesAsync(true);
+
+        isLoading = false;
+    }
+
+
+}

@@ -40,6 +40,11 @@ namespace ApexCharts
 
         public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
+            if (items == null)
+            {
+                return Enumerable.Empty<IDataPoint<TItem>>();
+            }
+
             IEnumerable<ListPoint<TItem>> data;
 
             if (YMinValue != null && YMaxValue != null)
