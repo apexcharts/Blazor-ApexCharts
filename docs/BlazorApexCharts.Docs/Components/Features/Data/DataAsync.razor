@@ -2,12 +2,11 @@
     @if (orders != null)
     {
         <ApexChart TItem="Order"
-               Title="Null"
+               Title="Load data async"
                Options="options"
-               @ref=chart>
+               @ref="chart">
 
-               @if(1==2) {
-                <ApexPointSeries TItem="Order"
+                       <ApexPointSeries TItem="Order"
                          Items="orders"
                          SeriesType="@SeriesType.Bar"
                          Name="Gross Value"
@@ -22,8 +21,7 @@
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.NetValue))"
                          OrderByDescending="e=>e.Y" />
-               }
-           
+            
         </ApexChart>
 
     }

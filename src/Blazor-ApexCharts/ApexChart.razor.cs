@@ -502,6 +502,8 @@ namespace ApexCharts
             Options.Series = new List<Series<TItem>>();
             var isMixed = apexSeries.Select(e => e.GetChartType()).Distinct().Count() > 1;
 
+            if (apexSeries == null || !apexSeries.Any()) { throw new Exception($"Chart {chartId} must have at least one series"); };
+
             foreach (var apxSeries in apexSeries)
             {
                 var series = new Series<TItem>
