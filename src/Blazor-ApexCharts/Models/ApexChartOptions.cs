@@ -790,8 +790,10 @@ namespace ApexCharts
         public double? SeriesIndex { get; set; }
         public double? Size { get; set; }
         public string StrokeColor { get; set; }
+        public ShapeEnum? Shape  { get; set; }
     }
 
+  
     public class MarkersHover
     {
         public double? Size { get; set; }
@@ -1631,7 +1633,7 @@ namespace ApexCharts
 
     public enum LegendPosition { Bottom, Left, Right, Top };
 
-    public enum ShapeEnum { Circle, Square };
+    public enum ShapeEnum { Circle, Square, Rect };
 
     public enum VerticalAlign { Bottom, Middle, Top };
 
