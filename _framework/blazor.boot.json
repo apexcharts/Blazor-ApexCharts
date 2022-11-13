@@ -7,9 +7,9 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "Blazor-ApexCharts.dll": "sha256-g9SsGh9+RChsNuWPB88gNX2Zm5twKSC96KoL0y911ac=",
-      "BlazorApexCharts.Docs.dll": "sha256-53IDRT7HfzmV80\/\/Q9xjwMtEQsuQWeSgevfuJ2ZxugY=",
-      "BlazorApexCharts.Docs.Wasm.dll": "sha256-IfBcZdgPenli9jMF4l5gOr3FPBObdFnVUXJgMkUdYa0=",
+      "Blazor-ApexCharts.dll": "sha256-+pJNj1kBCmDQw9PjEQKBwXDjV2tlpxF7mNE3rqSyU3o=",
+      "BlazorApexCharts.Docs.dll": "sha256-aV0WWeLLO5bsr1q048qWDgCZq7ObcnWIpYhXjye1Up0=",
+      "BlazorApexCharts.Docs.Wasm.dll": "sha256-heYWu0z4PmKdBDLgBRO+IpPWc35zeIBtUNu2YsDikRo=",
       "Bogus.dll": "sha256-IgFEwQyP1GQSj7cjhmsEcYuEABesDe9Y3oby2kbVnnc=",
       "ColorCode.Core.dll": "sha256-aIfJCjDE9QfwEHpKt97+\/fHH0ahMOa\/TdeVTcU3lBsY=",
       "ColorCode.HTML.dll": "sha256-HKP0W0ZaaitLH4eoIUYTqVMArDi2WugRXgZOSjrj9\/k=",
