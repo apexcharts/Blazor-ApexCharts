@@ -73,6 +73,10 @@
 .datepicker-days[b-lumjoiahh4] {
     margin-top: 0.5em;
 }
+/* _content/TabBlazor/Components/ObjectBrowser/PropertyValueLink.razor.rz.scp.css */
+.value-wrapper[b-qdx4wf37x5] {
+  overflow-wrap: break-word
+}
 /* _content/TabBlazor/Components/Popovers/Popover.razor.rz.scp.css */
 .popover-container[b-ln8dyv3yn7] {
     position: relative;
@@ -241,14 +245,14 @@
 span[b-qwrsjj0686] {
     visibility: hidden;
     position: absolute;
-    width: 120px;
+   /* width: 120px;*/
     bottom: 100%;
     left: 50%;
     margin-left: -60px;
     background-color: #363636;
     color: #fff;
     text-align: center;
-    padding: 5px 0;
+    padding: 5px 5px;
     border-radius: 6px;
     z-index: 1;
 }

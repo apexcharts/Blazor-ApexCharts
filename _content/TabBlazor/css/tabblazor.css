@@ -57,8 +57,12 @@
   background-color: lightgray;
 }
 
-.nav-item, dropdown-menu {
+.nav-item {
   z-index: 1029;
+}
+
+.dropdown-menu {
+  z-index: 1030;
 }
 
 .tree, .tree ul {
@@ -174,35 +178,5 @@ Dimmer
   text-align: right;
 }
 .tabler-table .sorting {
-  position: relative;
-}
-.tabler-table .sorting:after {
-  position: absolute;
-  right: 3px;
-  bottom: 2px;
-  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'  width='12' height='12' viewBox='0 0 24 24' stroke-width='1.5' stroke='%239C27B0' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpolyline points='6 9 12 15 18 9' /%3E%3C/svg%3E");
-}
-.tabler-table .sorting:before {
-  position: absolute;
-  right: 3px;
-  top: 2px;
-  content: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" stroke-width="1.5" stroke="%239C27B0" fill="none" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpath stroke="none" d="M0 0h24v24H0z" fill="none"/%3E%3Cpolyline points="6 15 12 9 18 15" /%3E%3C/svg%3E');
-}
-.tabler-table .sorting_desc {
-  position: relative;
-}
-.tabler-table .sorting_desc:after {
-  position: absolute;
-  right: 3px;
-  bottom: 2px;
-  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'  width='12' height='12' viewBox='0 0 24 24' stroke-width='1.5' stroke='%239C27B0' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpolyline points='6 9 12 15 18 9' /%3E%3C/svg%3E");
-}
-.tabler-table .sorting_asc {
-  position: relative;
-}
-.tabler-table .sorting_asc:before {
-  position: absolute;
-  right: 3px;
-  top: 2px;
-  content: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" stroke-width="1.5" stroke="%239C27B0" fill="none" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpath stroke="none" d="M0 0h24v24H0z" fill="none"/%3E%3Cpolyline points="6 15 12 9 18 15" /%3E%3C/svg%3E');
+  opacity: 0.3;
 }
