@@ -1,0 +1,64 @@
+﻿<DemoContainer>
+    @if (orders != null)
+    {
+        <ApexChart TItem="Order"
+               Title="Load data async"
+               Options="options"
+               @ref="chart">
+
+                       <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType="@SeriesType.Bar"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+
+            <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType="@SeriesType.Bar"
+                         Name="Net Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+            
+        </ApexChart>
+
+    }
+    else
+    {
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; display: block; max-height: 250px;" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+            <g transform="rotate(180 50 50)">
+                <rect x="15" y="15" width="10" height="40" fill="#ebebeb">
+                    <animate attributeName="height" values="50;70;30;50" keyTimes="0;0.33;0.66;1" dur="1s" repeatCount="indefinite" calcMode="spline" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" begin="-0.4s"></animate>
+                </rect>
+                <rect x="35" y="15" width="10" height="40" fill="#f0f0f0">
+                    <animate attributeName="height" values="50;70;30;50" keyTimes="0;0.33;0.66;1" dur="1s" repeatCount="indefinite" calcMode="spline" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" begin="-0.2s"></animate>
+                </rect>
+                <rect x="55" y="15" width="10" height="40" fill="#ebebeb">
+                    <animate attributeName="height" values="50;70;30;50" keyTimes="0;0.33;0.66;1" dur="1s" repeatCount="indefinite" calcMode="spline" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" begin="-0.6s"></animate>
+                </rect>
+                <rect x="75" y="15" width="10" height="40" fill="#f0f0f0">
+                    <animate attributeName="height" values="50;70;30;50" keyTimes="0;0.33;0.66;1" dur="1s" repeatCount="indefinite" calcMode="spline" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" begin="-1s"></animate>
+                </rect>
+            </g>
+        </svg>
+    }
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; }
+    private ApexChartOptions<Order> options { get; set; } = new();
+    private ApexChart<Order> chart;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        await Task.Delay(3000); //Simulate External Api call
+        orders = SampleData.GetOrders();
+    }
+}

@@ -3,7 +3,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "eatures/chart-size",
+      "launchUrl": "features/chart-data",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

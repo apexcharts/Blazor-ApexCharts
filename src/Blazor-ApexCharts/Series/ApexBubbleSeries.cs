@@ -29,6 +29,11 @@ namespace ApexCharts
 
         public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
+            if(items == null)
+            {
+                return Enumerable.Empty<IDataPoint<TItem>>();
+            }
+  
             var data = items.GroupBy(XValue).Select(d => new BubblePoint<TItem>
             {
                 X = d.Key,

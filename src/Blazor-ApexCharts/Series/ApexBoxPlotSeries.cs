@@ -31,10 +31,13 @@ namespace ApexCharts
             return ChartType.BoxPlot;
         }
 
-
-
         public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
+            if (items == null)
+            {
+                return Enumerable.Empty<IDataPoint<TItem>>(); 
+             }
+
             var data = items
        .Select(d => new ListPoint<TItem>
        {
