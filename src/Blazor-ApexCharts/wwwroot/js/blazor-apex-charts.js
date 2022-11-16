@@ -2,7 +2,7 @@
 
     getYAxisLabel(value, index, w) {
 
-        if (window.wasmBinaryFile === undefined) {
+        if (window.wasmBinaryFile === undefined && window.WebAssembly === undefined) {
             console.warn("YAxis labels is only supported in Blazor WASM");
             return value;
         }
