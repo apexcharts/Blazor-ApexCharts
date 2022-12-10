@@ -790,10 +790,10 @@ namespace ApexCharts
         public double? SeriesIndex { get; set; }
         public double? Size { get; set; }
         public string StrokeColor { get; set; }
-        public ShapeEnum? Shape  { get; set; }
+        public ShapeEnum? Shape { get; set; }
     }
 
-  
+
     public class MarkersHover
     {
         public double? Size { get; set; }
@@ -863,6 +863,10 @@ namespace ApexCharts
     {
         public bool? Horizontal { get; set; }
         public double? BorderRadius { get; set; }
+
+        public BorderRadiusApplication? BorderRadiusApplication { get; set; }
+        public BorderRadiusWhenStacked? BorderRadiusWhenStacked { get; set; }
+
         public string ColumnWidth { get; set; }
         public string BarHeight { get; set; }
         public bool? Distributed { get; set; }
@@ -878,6 +882,17 @@ namespace ApexCharts
 
         [Obsolete("Deprecated since 3.24.0")]
         public Shape? StartingShape { get; set; }
+    }
+
+    public enum BorderRadiusApplication
+    {
+        Around,
+        End
+    }
+    public enum BorderRadiusWhenStacked
+    {
+        All,
+        Last
     }
 
     public class PlotOptionsBarColors
@@ -910,7 +925,7 @@ namespace ApexCharts
         public string Formatter { get; set; }
         public double? OffsetX { get; set; }
         public double? OffsetY { get; set; }
-        public BarDataLabelsStyle Style { get; set; }        
+        public BarDataLabelsStyle Style { get; set; }
     }
 
     public class BarDataLabelsStyle
