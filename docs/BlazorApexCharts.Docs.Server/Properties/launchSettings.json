@@ -3,7 +3,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "features/chart-data",
+      "launchUrl": "radialbar-charts",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
