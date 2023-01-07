@@ -1,0 +1,48 @@
+﻿
+<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Discount"
+               Options="options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType=SeriesType.RadialBar
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => decimal.Round(e.Average(e => e.DiscountPercentage)))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+
+
+@code {
+    private List<Order> orders = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new();
+
+    protected override void OnInitialized()
+    {
+
+        options.PlotOptions = new PlotOptions
+            {
+                RadialBar = new PlotOptionsRadialBar
+                {
+                    DataLabels = new RadialBarDataLabels
+                    {
+                        Total = new RadialBarDataLabelsTotal
+                        {
+                            Show = true,
+                            Label = "My Total",
+                            FontSize = "24",
+                            Formatter = @"function (w) {
+                    return '[' + w.globals.seriesTotals.reduce((a, b) => {
+                      return a + b
+                    }, 0) / w.globals.series.length + '%' + ']'
+                  }"
+                        }
+                    }
+                }
+            };
+
+    }
+}

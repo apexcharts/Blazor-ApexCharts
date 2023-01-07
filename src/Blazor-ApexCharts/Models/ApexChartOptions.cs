@@ -1119,6 +1119,7 @@ namespace ApexCharts
         public object FontWeight { get; set; }
         public string Label { get; set; }
         public bool? Show { get; set; }
+        public string Formatter { get; set; }
     }
 
     public class RadialBarDataLabelsValue
