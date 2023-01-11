@@ -3,7 +3,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "radialbar-charts",
+      "launchUrl": "rangebar-charts",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
