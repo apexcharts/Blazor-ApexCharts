@@ -1,0 +1,96 @@
+﻿<DemoContainer>
+    @if (projects == null)
+    {
+        <div class="text-center text-muted" style="min-height:300px">
+            <h3>Loading chart<span class="animated-dots"></span></h3>
+        </div>
+    }
+    else
+    {
+        <ApexChart TItem="Project"
+               Title="Projects"
+               Options=options
+               XAxisType="XAxisType.Datetime"
+        OnSelection="OnSelection" Debug
+        >
+            <ApexRangeSeries TItem="Project"
+                         Items="projects"
+                         XValue="@(e => e.Name)"
+                         YMinValue="@(e =>e.StartDate.ToUnixTimeMilliseconds())"
+                         YMaxValue="@(e =>e.EndDate.ToUnixTimeMilliseconds())" />
+
+                               
+        </ApexChart>
+    }
+
+    @if(currentSelection != null)
+    {
+        <h3>@currentSelection.XAxis.Min - @currentSelection.XAxis.Max </h3>
+    }
+
+</DemoContainer>
+
+@code {
+    private List<Project> projects = SampleData.GetProjects();
+    private ApexChartOptions<Project> options;
+    private SelectionData<Project> currentSelection;
+
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Project>
+            {
+                PlotOptions = new PlotOptions
+                {
+                    Bar = new PlotOptionsBar
+                    {
+                        Horizontal = true
+                    }
+                },
+                Tooltip = new ApexCharts.Tooltip
+                {
+                    X = new TooltipX
+                    {
+                        Format = "dd MMM yyyy HH:mm"
+                    }
+                },
+               
+                Chart = new()
+                {
+                    Toolbar = new Toolbar
+                    {
+                        Tools = new()
+                        {
+                            Zoom = true,
+                            Selection = true,
+                            Pan = true,
+                            Reset = true,
+                            Zoomin = true,
+                            Zoomout = true,
+                            Download = true
+                        },
+                        Show = true
+                    },
+                    Selection = new ApexCharts.Selection
+                    {
+                        Enabled = true,
+                      
+                    }
+                    //Brush = new ApexCharts.Brush { Enabled = true }
+                }
+
+
+
+
+            };
+
+      
+
+    }
+
+    private void OnSelection(SelectionData<Project> selection)
+    {
+        currentSelection = selection;
+
+    }
+}
