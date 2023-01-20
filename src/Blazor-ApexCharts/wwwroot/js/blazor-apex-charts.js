@@ -238,6 +238,18 @@
             }
         };
 
+        if (options.hasMarkerClick === true) {
+            options.chart.events.markerClick = function (event, chartContext, config) {
+                var selection = {
+                    dataPointIndex: config.dataPointIndex,
+                    seriesIndex: config.seriesIndex,
+                    selectedDataPoints: config.selectedDataPoints
+                }
+                dotNetObject.invokeMethodAsync('JSMarkerClick', selection);
+            }
+        };
+
+
         if (options.hasLegendClick === true) {
             options.chart.events.legendClick = function (chartContext, seriesIndex, config) {
                 var legendClick = {
