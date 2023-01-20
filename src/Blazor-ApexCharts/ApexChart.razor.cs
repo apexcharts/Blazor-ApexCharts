@@ -22,6 +22,8 @@ namespace ApexCharts
         [Parameter] public bool Debug { get; set; }
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
+
+        [Parameter] public EventCallback<SelectedData<TItem>> OnMarkerClick { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointEnter { get; set; }
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointLeave { get; set; }
@@ -469,6 +471,7 @@ namespace ApexCharts
             Options.HasDataPointEnter = OnDataPointEnter.HasDelegate || ApexPointTooltip != null;
             Options.HasDataPointLeave = OnDataPointLeave.HasDelegate;
             Options.HasLegendClick = OnLegendClicked.HasDelegate;
+            Options.HasMarkerClick = OnMarkerClick.HasDelegate;
             Options.HasSelection = OnSelection.HasDelegate;
             Options.HasBrushScrolled = OnBrushScrolled.HasDelegate;
             Options.HasZoomed = OnZoomed.HasDelegate;
@@ -648,6 +651,29 @@ namespace ApexCharts
 
             OnLegendClicked.InvokeAsync(legendClicked);
         }
+
+        [JSInvokable("JSMarkerClick")]
+        public void JSMarkerClick(JSDataPointSelection selectedDataPoints)
+        {
+            if (OnMarkerClick.HasDelegate)
+            {
+                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
+                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+
+                var selection = new SelectedData<TItem>
+                {
+                    Chart = this,
+                    Series = series,
+                    DataPoint = dataPoint,
+                    IsSelected = selectedDataPoints.SelectedDataPoints?.Any(e => e != null && e.Any(e => e != null && e.HasValue)) ?? false,
+                    DataPointIndex = selectedDataPoints.DataPointIndex,
+                    SeriesIndex = selectedDataPoints.SeriesIndex
+                };
+
+                OnMarkerClick.InvokeAsync(selection);
+            }
+        }
+
 
         [JSInvokable("JSDataPointSelected")]
         public void JSDataPointSelected(JSDataPointSelection selectedDataPoints)
