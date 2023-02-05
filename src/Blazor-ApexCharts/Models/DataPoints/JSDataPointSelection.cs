@@ -7,11 +7,15 @@ namespace ApexCharts
         public List<List<int?>> SelectedDataPoints { get; set; }
         public int DataPointIndex { get; set; }
         public int SeriesIndex { get; set; }
-
     }
 
+    public class JSXAxisLabelClick
+    {
+        public int LabelIndex { get; set; }
+        public string Caption { get; set; }
+    }
 
-    public class SelectedData<TItem> where TItem:class
+    public class SelectedData<TItem> where TItem : class
     {
         public ApexChart<TItem> Chart { get; set; }
         public Series<TItem> Series { get; set; }

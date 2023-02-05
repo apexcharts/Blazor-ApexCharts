@@ -249,7 +249,17 @@
             }
         };
 
+        if (options.hasXAxisLabelClick === true) {
+            options.chart.events.xAxisLabelClick = function (event, chartContext, config) {
+                var data = {
+                    labelIndex: config.labelIndex,
+                    caption: event.target.innerHTML
+                };
+                dotNetObject.invokeMethodAsync('JSXAxisLabelClick', data);
+            }
+        };
 
+       
         if (options.hasLegendClick === true) {
             options.chart.events.legendClick = function (chartContext, seriesIndex, config) {
                 var legendClick = {

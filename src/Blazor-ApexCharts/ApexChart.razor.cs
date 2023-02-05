@@ -23,6 +23,8 @@ namespace ApexCharts
         [Parameter] public object Width { get; set; }
         [Parameter] public object Height { get; set; }
 
+
+        [Parameter] public EventCallback<XAxisLabelClicked<TItem>> OnXAxisLabelClick { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnMarkerClick { get; set; }
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointEnter { get; set; }
@@ -349,7 +351,7 @@ namespace ApexCharts
 
         public virtual async Task ZoomXAsync(ZoomOptions zoomOptions)
         {
-            if(zoomOptions == null) {  throw new ArgumentNullException(nameof(zoomOptions)); }
+            if (zoomOptions == null) { throw new ArgumentNullException(nameof(zoomOptions)); }
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.zoomX", Options.Chart.Id, zoomOptions.Start, zoomOptions.End);
         }
 
@@ -472,6 +474,7 @@ namespace ApexCharts
             Options.HasDataPointLeave = OnDataPointLeave.HasDelegate;
             Options.HasLegendClick = OnLegendClicked.HasDelegate;
             Options.HasMarkerClick = OnMarkerClick.HasDelegate;
+            Options.HasXAxisLabelClick = OnXAxisLabelClick.HasDelegate;
             Options.HasSelection = OnSelection.HasDelegate;
             Options.HasBrushScrolled = OnBrushScrolled.HasDelegate;
             Options.HasZoomed = OnZoomed.HasDelegate;
@@ -650,6 +653,29 @@ namespace ApexCharts
             }
 
             OnLegendClicked.InvokeAsync(legendClicked);
+        }
+
+        [JSInvokable("JSXAxisLabelClick")]
+        public void JSXAxisLabelClick(JSXAxisLabelClick jsXAxisLabelClick)
+        {
+            if (OnXAxisLabelClick.HasDelegate)
+            {
+                var data = new XAxisLabelClicked<TItem>();
+                data.LabelIndex = jsXAxisLabelClick.LabelIndex;
+                data.Caption = jsXAxisLabelClick.Caption;
+                data.SeriesPoints = new List<SeriesDataPoint<TItem>>();
+
+                foreach (var series in Options.Series)
+                {
+                    data.SeriesPoints.Add(new SeriesDataPoint<TItem>
+                    {
+                        Series = series,
+                        DataPoint = series.Data.ElementAt(jsXAxisLabelClick.LabelIndex)
+                    });
+                }
+
+                OnXAxisLabelClick.InvokeAsync(data);
+            }
         }
 
         [JSInvokable("JSMarkerClick")]

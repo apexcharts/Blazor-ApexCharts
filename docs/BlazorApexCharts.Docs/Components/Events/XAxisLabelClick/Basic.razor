@@ -1,0 +1,49 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               OnXAxisLabelClick=XAxisLabelClick
+               @ref=chart>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.X" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@if (selectedData != null)
+{
+    <Alert BackgroundColor="TablerColor.Primary">
+        <h3>You clicked: @selectedData.Caption [@selectedData.LabelIndex] </h3>
+
+        @foreach (var seriesPoint in selectedData.SeriesPoints)
+        {
+            var dataPoint = (DataPoint<Order>)seriesPoint.DataPoint;
+            <div>@seriesPoint.Series.Name: @dataPoint.Y</div>
+        }
+
+    </Alert>
+}
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private XAxisLabelClicked<Order> selectedData;
+    private ApexChart<Order> chart;
+
+    private void XAxisLabelClick(XAxisLabelClicked<Order> data)
+    {
+        selectedData = data;
+
+    }
+}

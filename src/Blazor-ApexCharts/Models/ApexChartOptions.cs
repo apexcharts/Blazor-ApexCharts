@@ -13,6 +13,8 @@ namespace ApexCharts
         public bool HasDataPointLeave { get; internal set; }
         public bool HasLegendClick { get; internal set; }
         public bool HasMarkerClick { get; internal set; }
+        public bool HasXAxisLabelClick { get; internal set; }
+       
         public bool HasSelection { get; internal set; }
         public bool HasBrushScrolled { get; internal set; }
         public bool HasZoomed { get; internal set; }
