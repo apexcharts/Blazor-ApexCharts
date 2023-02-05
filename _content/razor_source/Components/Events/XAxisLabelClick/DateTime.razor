@@ -1,0 +1,102 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order" Title="Orders Value"
+               XAxisType="XAxisType.Datetime"
+               Options="options"
+               OnXAxisLabelClick=XAxisLabelClick
+               Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="SampleData.GetOrders()"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.OrderDate.FirstDayOfMonth())"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderBy="e=>e.X" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="SampleData.GetOrders()"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.OrderDate.FirstDayOfMonth())"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderBy="e=>e.X" />
+    </ApexChart>
+
+    @if (selectedData != null)
+    {
+        <Alert BackgroundColor="TablerColor.Primary">
+            <h3>You clicked: @selectedData.Caption [@selectedData.LabelIndex] </h3>
+
+            @foreach (var seriesPoint in selectedData.SeriesPoints)
+            {
+                var dataPoint = (DataPoint<Order>)seriesPoint.DataPoint;
+                <div>@seriesPoint.Series.Name - @dataPoint.Y</div>
+            }
+
+        </Alert>
+    }
+
+</DemoContainer>
+
+@code {
+    private ApexChartOptions<Order> options = new ApexCharts.ApexChartOptions<Order>();
+    private XAxisLabelClicked<Order> selectedData;
+    private void XAxisLabelClick(XAxisLabelClicked<Order> data)
+    {
+   
+        selectedData = data;
+
+    }
+
+    protected override void OnInitialized()
+    {
+
+        options.Debug = true;
+        options.ForecastDataPoints = new ForecastDataPoints
+            {
+                Count = 3,
+                DashArray = 4,
+                FillOpacity = 0.5,
+            };
+        options.Tooltip = new ApexCharts.Tooltip { X = new TooltipX { Format = @"MMMM \ yyyy" } };
+        options.Subtitle = new Subtitle { OffsetY = 15, Text = "DateTime sample with options" };
+        options.Tooltip = new ApexCharts.Tooltip
+            {
+                Y = new TooltipY
+                {
+                    Title = new TooltipYTitle { Formatter = @"function(name) { return name + ':' }" },
+                    Formatter = @"function(value, { series, seriesIndex, dataPointIndex, w }) { return '$' + value }"
+                },
+            };
+        options.Xaxis = new XAxis
+            {
+                Title = new AxisTitle
+                {
+                    OffsetY = 5,
+                    Text = "Month",
+                    Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" }
+                },
+                AxisBorder = new AxisBorder
+                {
+                    Height = 2
+                }
+            };
+        options.Yaxis = new List<YAxis>();
+        options.Yaxis.Add(new YAxis
+            {
+                DecimalsInFloat = 0,
+                Labels = new YAxisLabels { Rotate = -45, Style = new AxisLabelStyle { FontSize = "10px" } },
+                Title = new AxisTitle { Text = "Value", Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" } }
+            });
+
+        options.Annotations = new Annotations { Yaxis = new List<AnnotationsYAxis>() };
+        options.Annotations.Yaxis.Add(new AnnotationsYAxis
+            {
+                Y = 50000,
+                BorderWidth = 2,
+                StrokeDashArray = 5,
+                BorderColor = "red",
+                Label = new Label { Text = "Monthly Target" }
+            });
+    }
+}
