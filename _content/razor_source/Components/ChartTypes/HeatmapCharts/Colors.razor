@@ -1,0 +1,38 @@
+﻿<DemoContainer>
+    <ApexChart TItem="SupportIncident"
+               Title="Incident Severity"
+               Options="options">
+
+        @foreach (var source in incidents.GroupBy(e => e.Source).OrderBy(e => e.Key))
+        {
+            <ApexPointSeries TItem="SupportIncident"
+                         Items="source.OrderBy(e=>e.WeekNumber)"
+                         Name="@source.Key.ToString()"
+                         SeriesType="SeriesType.Heatmap"
+                         Color="@GetColor(source.Key)"
+                         XValue="@(e => e.WeekName)"
+                         YAggregate="@(e => (int)e.Average(a=>a.Severity))" />
+        }
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents();
+    private ApexChartOptions<SupportIncident> options = new();
+
+    private string GetColor(IncidentSource source)
+    {
+        switch (source)
+        {
+            case IncidentSource.Internal:
+                return "#FF0000";
+            case IncidentSource.ThirdParty:
+                return "#0000FF";
+            case IncidentSource.Integration:
+                return "#FF00FF";
+            default:
+                return "#008FFB";
+        }
+    }
+}
