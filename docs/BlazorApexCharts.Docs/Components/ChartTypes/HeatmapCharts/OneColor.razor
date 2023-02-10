@@ -1,7 +1,7 @@
 ﻿<DemoContainer>
     <ApexChart TItem="SupportIncident"
                Title="Incident Severity"
-               >
+               Options="options">
 
         @foreach (var source in incidents.GroupBy(e => e.Source))
         {
@@ -18,5 +18,13 @@
 
 @code {
     private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents();
-   
+    private ApexChartOptions<SupportIncident> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<SupportIncident>
+            {
+                Colors = new List<string> { "#008FFB" }
+            };
+    }
     }

@@ -21,4 +21,8 @@
     <ProjectReference Include="..\..\src\Blazor-ApexCharts\Blazor-ApexCharts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\Issues\" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,62 @@
+﻿<DemoContainer>
+    <ApexChart TItem="SupportIncident"
+               Title="Incident Severity"
+               Options="options"
+                Debug>
+
+        @foreach (var source in incidents.GroupBy(e => e.Source))
+        {
+            <ApexPointSeries TItem="SupportIncident"
+                         Items="source.OrderBy(e=>e.WeekNumber)"
+                         Name="@source.Key.ToString()"
+                         SeriesType="SeriesType.Heatmap"
+                         XValue="@(e => e.WeekName)"
+                         YAggregate="@(e => (int)e.Average(a=>a.Severity))" 
+                         ShowDataLabels=true
+                         />
+        }
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents();
+    private ApexChartOptions<SupportIncident> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<SupportIncident>
+            {
+                Stroke = new Stroke
+                {
+                    Width = 0
+                },
+                PlotOptions = new PlotOptions
+                {
+                    Heatmap = new PlotOptionsHeatmap
+                    {
+                        EnableShades = false,
+                        Radius = 300,
+                        ColorScale = new PlotOptionsHeatmapColorScale
+                        {
+                            Ranges = new List<PlotOptionsHeatmapColorScaleRange> {
+                            new PlotOptionsHeatmapColorScaleRange {
+                                Color = "#0000FF",
+                                From = 0,
+                                To=50
+                            },
+                            {
+                            new PlotOptionsHeatmapColorScaleRange
+                            {
+                                Color = "#FF0000",
+                                From = 50,
+                                To = 100
+                            }
+                        }
+                    }
+                        }
+                    }
+                }
+            };
+    }
+}
