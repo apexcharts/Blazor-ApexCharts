@@ -704,7 +704,11 @@ namespace ApexCharts
     /// </summary>
     public class Legend
     {
+        [Obsolete("This property is no longer availabe")]
         public LegendContainerMargin ContainerMargin { get; set; }
+        [Obsolete("This property is no longer availabe")]
+        public string TextAnchor { get; set; }
+
         public bool? Floating { get; set; }
         public string FontFamily { get; set; }
         public string FontSize { get; set; }
@@ -724,8 +728,11 @@ namespace ApexCharts
         public bool? ShowForNullSeries { get; set; }
         public bool? ShowForSingleSeries { get; set; }
         public bool? ShowForZeroSeries { get; set; }
-        public string TextAnchor { get; set; }
+       
         public double? Width { get; set; }
+        public string Formatter { get; set; }
+        public string TooltipHoverFormatter { get; set; }
+        public List<string> CustomLegendItems { get; set; }
     }
 
     public class LegendContainerMargin
