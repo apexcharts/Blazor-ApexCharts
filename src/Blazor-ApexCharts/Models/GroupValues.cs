@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace ApexCharts
 {
-    public class GroupValues
+    public class GroupPoints
     {
         /// <summary>
-        /// Indicates the max value of values to show, including the grouped values.
+        /// Indicates the max number of points to show, excluding the grouped values.
         /// </summary>
-        public int? MaxValuesCount { get; set; }
+        public int? MaxCount { get; set; }
+
+        /// <summary>
+        /// Indicates the min number of points to show, excluding the grouped values.
+        /// </summary>
+        public int? MinCount { get; set; }
 
         /// <summary>
         /// The precentage value that indicate if a value should be grouped.
@@ -19,7 +19,7 @@ namespace ApexCharts
         public decimal? PercentageThreshold { get; set; }
 
         public string Name { get; set; } = "Other";
-        public bool Show { get; set; } = true;
+       
     }
 
   

@@ -18,6 +18,11 @@ namespace ApexCharts
         public IEnumerable<TItem> Items { get; set; }
 
         public object Extra { get; set; }
+
+
+        [JsonIgnore]
+        public List<DataPoint<TItem>> GroupedPoints { get; internal set; }
+
     }
 
     public class DataPointGoal

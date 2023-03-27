@@ -46,7 +46,25 @@ namespace BlazorApexCharts.Docs
             return orders;
         }
 
-        public static List<Order> GetOrders()
+        public static List<Order> GetOrdersForGroup()
+        {
+            var orders = GetOrders();
+
+            orders.Add(new Order { CustomerName = "Expansion Inc", Country = "Andorra", OrderDate = DateTimeOffset.Now.AddDays(-12), GrossValue = 1234, DiscountPercentage = 21, OrderType = OrderType.Contract });
+            orders.Add(new Order { CustomerName = "Expansion Inc", Country = "Andorra", OrderDate = DateTimeOffset.Now.AddDays(-2), GrossValue = 12, DiscountPercentage = 14, OrderType = OrderType.Mail });
+
+            orders.Add(new Order { CustomerName = "Trick Corp.", Country = "San Marino", OrderDate = DateTimeOffset.Now.AddDays(-10), GrossValue = 3543, DiscountPercentage = 11, OrderType = OrderType.Web });
+            orders.Add(new Order { CustomerName = "Trick Corp.", Country = "San Marino", OrderDate = DateTimeOffset.Now.AddDays(-4), GrossValue = 126, DiscountPercentage = 17, OrderType = OrderType.Contract });
+
+            orders.Add(new Order { CustomerName = "Restless Group", Country = "Monaco", OrderDate = DateTimeOffset.Now.AddDays(-14), GrossValue = 1266, DiscountPercentage = 13, OrderType = OrderType.Web });
+
+
+
+            return orders;
+
+        }
+
+            public static List<Order> GetOrders()
         {
             var orders = new List<Order>();
             orders.Add(new Order { CustomerName = "Odio Corporation", Country = "Sweden", OrderDate = DateTimeOffset.Now.AddDays(-12), GrossValue = 34531, DiscountPercentage = 21, OrderType = OrderType.Contract });

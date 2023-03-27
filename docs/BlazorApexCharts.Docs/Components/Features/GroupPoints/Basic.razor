@@ -1,7 +1,8 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
                Title="Order Gross Value"
-               GroupValues="new ApexCharts.GroupValues { MaxValuesCount = 4}">
+               XAxisType = "XAxisType.Category"
+               GroupPoints="new ApexCharts.GroupPoints { MaxCount = 4}">
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"
@@ -14,5 +15,5 @@
 </DemoContainer>
 
 @code {
-    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private List<Order> Orders { get; set; } = SampleData.GetOrdersForGroup();
 }
