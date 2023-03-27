@@ -36,6 +36,7 @@ namespace ApexCharts
 
         [Parameter] public EventCallback OnRendered { get; set; }
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
+        [Parameter] public GroupValues GroupValues { get; set; }
 
         private ChartSerializer chartSerializer = new();
         public List<IApexSeries<TItem>> Series => apexSeries;
