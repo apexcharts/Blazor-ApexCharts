@@ -1,0 +1,19 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Gross Value"
+               XAxisType = "XAxisType.Category"
+               GroupPoints="new ApexCharts.GroupPoints { MaxCount = 4}">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Pie"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrdersForGroup();
+}
