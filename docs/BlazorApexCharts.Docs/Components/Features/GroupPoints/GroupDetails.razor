@@ -1,0 +1,71 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Gross Value"
+               XAxisType="XAxisType.Category"
+               GroupPoints="@(new ApexCharts.GroupPoints {PercentageThreshold = 2, Name="*Others*"})"
+               OnDataPointSelection="SelectDataPoint">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y"
+                         DataPointMutator="PointMutator" />
+    </ApexChart>
+
+    @if (selected != null)
+    {
+        var point = (DataPoint<Order>)selected.DataPoint;
+
+        <h3 class="mt-3">@point.X - @point.Y</h3>
+
+        @if (point.GroupedPoints != null)
+        {
+            <ol>
+                @foreach (var gPoint in point.GroupedPoints)
+                {
+                    <li>@gPoint.X - @gPoint.Y</li>
+                }
+
+            </ol>
+        }
+    }
+
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrdersForGroup();
+    private SelectedData<Order> selected;
+    private void SelectDataPoint(SelectedData<Order> selected)
+    {
+        this.selected = selected;
+
+
+    }
+
+    private void PointMutator(DataPoint<Order> point)
+    {
+        switch (point.X.ToString())
+        {
+            case "France":
+                point.FillColor = "#e3001b";
+                break;
+            case "Brazil":
+                point.FillColor = "#005ba3";
+                break;
+            case "Sweden":
+                point.FillColor = "#ffd500";
+                break;
+            case "Spain":
+                point.FillColor = "#00783c";
+                break;
+            default:
+                point.FillColor = "#BFC9CA";
+                break;
+        }
+
+    }
+
+}

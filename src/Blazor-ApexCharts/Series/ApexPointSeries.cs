@@ -57,7 +57,7 @@ namespace ApexCharts
             }
         }
 
-        public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items) 
+        public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
 
             if (items == null)
@@ -67,7 +67,7 @@ namespace ApexCharts
 
 
             IEnumerable<DataPoint<TItem>> data;
-           
+
 
             if (YValue != null)
             {
@@ -96,6 +96,8 @@ namespace ApexCharts
                 return new List<IDataPoint<TItem>>();
             }
 
+            data = GroupData(data.ToList());
+
 
             if (OrderBy != null)
             {
@@ -109,12 +111,89 @@ namespace ApexCharts
             return UpdateDataPoints(data, DataPointMutator);
         }
 
+        private List<DataPoint<TItem>> GroupData(List<DataPoint<TItem>> dataPoints)
+        {
+            if (Chart.GroupPoints == null || !dataPoints.Any())
+            {
+                return dataPoints;
+            }
+
+            if (Chart.XAxisType != XAxisType.Category)
+            {
+                throw new Exception("If chart GroupValues is specified then XAxisType must be set to Category.");
+            }
+
+            if (Chart.GroupPoints.PercentageThreshold == null && Chart.GroupPoints.MaxCount == null)
+            {
+                return dataPoints;
+            }
+
+
+            var newData = new List<DataPoint<TItem>>();
+            decimal? thresholdValue = null;
+            var maxCount = Chart.GroupPoints.MaxCount;
+            int currentCount = 0;
+            var groupedPoint = new DataPoint<TItem>
+            {
+                GroupedPoints = new List<DataPoint<TItem>>()
+            };
+
+            if (Chart.GroupPoints.PercentageThreshold != null)
+            {
+                thresholdValue = (decimal)(dataPoints.Sum(e => e.Y) * ((decimal)Chart.GroupPoints.PercentageThreshold / 100));
+            }
+
+            foreach (var dataPoint in dataPoints.OrderByDescending(e => e.Y))
+            {
+
+                if(ShouldGroup(maxCount, currentCount, dataPoint.Y, thresholdValue))
+                {
+                    groupedPoint.GroupedPoints.Add(dataPoint);
+                }
+                else
+                {
+                    newData.Add(dataPoint);
+                    currentCount++;
+                }
+            }
+
+            if (groupedPoint.GroupedPoints.Any())
+            {
+                groupedPoint.X = Chart.GroupPoints.Name;
+                groupedPoint.Y = groupedPoint.GroupedPoints.Sum(e => e.Y);
+                newData.Add(groupedPoint);
+            }
+
+            return newData;
+        }
+
+        private bool ShouldGroup(int? maxCount, int currentCount, decimal? currentValue, decimal? thresholdValue)
+        {
+            if(maxCount == null && thresholdValue == null)
+            {
+                return false;
+            }
+
+            if(maxCount != null && currentCount >= maxCount)
+            {
+                return true;
+            }
+
+            if (thresholdValue != null && currentValue < thresholdValue)
+            {
+                return true;
+            }
+            return false;
+
+       }
+
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);
             Chart.RemoveSeries(this);
         }
 
-     
+
     }
 }

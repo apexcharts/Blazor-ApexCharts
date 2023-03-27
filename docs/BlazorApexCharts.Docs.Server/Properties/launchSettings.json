@@ -3,7 +3,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "heatmap-charts",
+      "launchUrl": "features/group-points",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
