@@ -1,4 +1,5 @@
-﻿using Bogus;
+﻿using BlazorApexCharts.Docs.Data;
+using Bogus;
 using System;
 using System.Collections.Generic;
 
@@ -184,6 +185,20 @@ namespace BlazorApexCharts.Docs
             };
 
 
+        }
+
+        public static List<MeteoSample> GetMeteoSample()
+        {
+            return new List<MeteoSample>
+           {
+               new MeteoSample { Month = "Jan", CurrentTemperature = 6, LowestTemperature = -3, HighestTemperature = 13},
+               new MeteoSample { Month = "Feb", CurrentTemperature = 8, LowestTemperature = -2, HighestTemperature = 15},
+               new MeteoSample { Month = "Mar", CurrentTemperature = 10, LowestTemperature = 1, HighestTemperature = 18},
+               new MeteoSample { Month = "Apr", CurrentTemperature = 14, LowestTemperature = 4, HighestTemperature = 23},
+               new MeteoSample { Month = "May", CurrentTemperature = 20, LowestTemperature = 9, HighestTemperature = 25},
+               new MeteoSample { Month = "Jun", CurrentTemperature = 23, LowestTemperature = 12, HighestTemperature = 28},
+               new MeteoSample { Month = "Jul", CurrentTemperature = 27, LowestTemperature = 16, HighestTemperature = 33},
+           };
         }
 
     }

@@ -41,6 +41,7 @@ namespace ApexCharts
         Scatter,
         Bubble,
         Candlestick,
-        BoxPlot
+        BoxPlot,
+        RangeArea,
     }
 }
