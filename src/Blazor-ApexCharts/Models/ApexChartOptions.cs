@@ -1647,6 +1647,7 @@ namespace ApexCharts
         Scatter,
         Treemap,
         BoxPlot,
+        RangeArea,
     };
 
     public enum ZoomType { X, Xy, Y };

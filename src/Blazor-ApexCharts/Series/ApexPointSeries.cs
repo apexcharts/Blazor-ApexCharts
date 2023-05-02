@@ -52,6 +52,8 @@ namespace ApexCharts
                     return ChartType.Scatter;
                 case SeriesType.Treemap:
                     return ChartType.Treemap;
+                case SeriesType.RangeArea:
+                    return ChartType.RangeArea;
                 default:
                     throw new SystemException($"SeriesType {SeriesType} can not be converted to ChartType");
             }

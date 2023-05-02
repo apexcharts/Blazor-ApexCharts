@@ -1,0 +1,68 @@
+﻿@using BlazorApexCharts.Docs.Data;
+<DemoContainer>
+    <ApexChart TItem="MeteoSample"
+               Title="City Temperatures"
+               Options="options">
+
+        <ApexRangeAreaSeries TItem="MeteoSample"
+                             Items="temperatures"
+                             Name="Min - Max"
+                             XValue="@(e => e.Month)"
+                             Top="@(e => e.HighestTemperature)"
+                             Bottom="@(e => e.LowestTemperature)"
+                             Stroke="@(new SeriesStroke{ Width=0 })"/>
+
+        <ApexPointSeries TItem="MeteoSample" 
+                         Items="temperatures"
+                         Name="Current"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Month)"
+                         YValue="@(e => e.CurrentTemperature)"
+                         Stroke="@(new SeriesStroke{ Width=3, DashSpace=3, Color="#ff3300" })" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<MeteoSample> temperatures { get; set; } = SampleData.GetMeteoSample();
+    private ApexChartOptions<MeteoSample> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<MeteoSample>();
+        options.Chart = new Chart
+            {
+                Type = ChartType.RangeArea
+            };
+        options.DataLabels = new DataLabels
+            {
+                Enabled = false
+            };
+        options.Colors = new List<string> { "#d4526e", "#d4526e" };
+        options.Fill = new Fill
+            {
+                Opacity = new List<double> { 0.24, 1 }
+            };
+        options.Legend = new Legend
+        {
+            Show = true,
+            CustomLegendItems = new List<string> { "Temperature" }
+        };
+        options.Markers = new Markers
+            {
+                Hover = new MarkersHover
+                {
+                    SizeOffset = 5
+                }
+        };
+        options.Yaxis = new List<YAxis>();
+        options.Yaxis.Add(new YAxis
+            {
+                Labels = new YAxisLabels
+                {
+                    Formatter = @"function(val) {
+                              return val + '°C'
+                            }"
+                }
+            });
+    }
+}

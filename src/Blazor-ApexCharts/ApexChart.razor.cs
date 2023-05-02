@@ -552,6 +552,8 @@ namespace ApexCharts
                     return MixedType.Candlestick;
                 case ChartType.BoxPlot:
                     return MixedType.BoxPlot;
+                case ChartType.RangeArea:
+                    return MixedType.RangeArea;
                 case ChartType.Bar:
                     if (Options?.PlotOptions?.Bar?.Horizontal == true)
                     {

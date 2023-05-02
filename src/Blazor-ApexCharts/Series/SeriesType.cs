@@ -13,6 +13,7 @@
         Radar,
         RadialBar,
         Scatter,
-        Treemap
+        Treemap,
+        RangeArea,
     }
 }
