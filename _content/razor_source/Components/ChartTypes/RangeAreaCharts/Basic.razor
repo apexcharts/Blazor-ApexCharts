@@ -1,0 +1,35 @@
+﻿@using BlazorApexCharts.Docs.Data;
+<DemoContainer>
+    <ApexChart TItem="MeteoSample"
+        Title="City Temperatures"
+        Options="options">
+
+        <ApexRangeAreaSeries TItem="MeteoSample"
+                             Items="temperatures"
+                             Name="Temperatures"
+                             XValue="@(e => e.Month)"
+                             Top="@(e => e.HighestTemperature)"
+                             Bottom="@(e => e.LowestTemperature)"
+                             />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<MeteoSample> temperatures { get; set; } = SampleData.GetMeteoSample();
+    private ApexChartOptions<MeteoSample> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<MeteoSample>();
+        options.Yaxis = new List<YAxis>();
+        options.Yaxis.Add(new YAxis
+                {
+                    Labels = new YAxisLabels
+                    {
+                        Formatter = @"function(val) {
+                              return val + '°C'
+                            }"
+                    }
+                });
+    }
+}

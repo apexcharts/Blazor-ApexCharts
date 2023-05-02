@@ -34,7 +34,15 @@
 
 
     }
-
+    else if (PointType == SeriesType.RangeArea)
+    {
+        <ApexRangeAreaSeries TItem="Order"
+                     Items="orders"
+                     Name="Min/Max Values"
+                     XValue="@(e => e.OrderDate.DateTime)"
+                     Top="@(e => e.DiscountPercentage + (e.DiscountPercentage * ((decimal)0.8)))"
+                     Bottom="@(e => e.DiscountPercentage)" />
+    }
     else if (IsXYChart())
     {
         <ApexPointSeries TItem="Order"
