@@ -1047,6 +1047,7 @@ namespace ApexCharts
         public string Label { get; set; }
         public bool Show { get; set; } = true;
         public bool? ShowAlways { get; set; }
+        public string Formatter { get; set; }
     }
 
     public class DonutLabelValue
