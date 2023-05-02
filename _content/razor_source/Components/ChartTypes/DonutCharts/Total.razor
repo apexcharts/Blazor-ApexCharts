@@ -1,0 +1,37 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Gross Value" Options="options"
+
+    >
+
+        <ApexPointSeries TItem="Order"
+                    Items="Orders"
+                    SeriesType="SeriesType.Donut"
+                    Name="Gross Value"
+                    XValue="@(e => e.Country)"
+                    YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                    OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.PlotOptions = new PlotOptions
+            {
+                Pie = new PlotOptionsPie
+                {
+                    Donut = new PlotOptionsDonut
+                    {
+                        Labels = new DonutLabels
+                        {
+                            Total = new DonutLabelTotal { FontSize="24px", Color = "#D807B8", Formatter = @"function (w) {return w.globals.seriesTotals.reduce((a, b) => { return (a + b) }, 0)}" }
+                        }
+                    }
+                }
+            };
+    }
+}
