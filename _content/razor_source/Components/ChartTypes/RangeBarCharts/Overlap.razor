@@ -1,0 +1,62 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Activity"
+               Title="Incident Severity"
+               Options=options
+               Debug
+               XAxisType="XAxisType.Datetime">
+
+        @foreach (var personGroup in activities.GroupBy(e => e.Person))
+        {
+            <ApexRangeSeries TItem="Activity"
+                         Items="personGroup"
+                         XValue="@(e=> e.Name)"
+                         YMinValue="@(e=> e.Start.ToUnixTimeMilliseconds())"
+                         YMaxValue="@(e=> e.End.ToUnixTimeMilliseconds())"
+                         Name="@personGroup.Key" />
+        }
+
+
+
+
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Activity> activities { get; set; } = new();
+    private ApexChartOptions<Activity> options;
+
+    protected override void OnInitialized()
+    {
+        var date = DateTime.Now;
+        activities.Add(new Activity { Person = "Bob", Name = "Code", Start = date.AddDays(-30), End = date.AddDays(-10) });
+        activities.Add(new Activity { Person = "Bob", Name = "Validate", Start = date.AddDays(-15), End = date });
+        activities.Add(new Activity { Person = "Bob", Name = "Validate", Start = date.AddDays(-4), End = date.AddDays(5) });
+
+        activities.Add(new Activity { Person = "Peter", Name = "Code", Start = date.AddDays(-35), End = date.AddDays(-6) });
+        activities.Add(new Activity { Person = "Peter", Name = "Validate", Start = date.AddDays(-20), End = date.AddDays(-5) });
+
+        options = new ApexChartOptions<Activity>
+            {
+                PlotOptions = new PlotOptions
+                {
+                    Bar = new PlotOptionsBar
+                    {
+                        Horizontal = true,
+                        RangeBarOverlap = false,
+                        BarHeight = "80%"
+                    }
+                }
+            };
+    }
+
+
+
+    private class Activity
+    {
+        public string Person { get; set; }
+        public string Name { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+    }
+}
