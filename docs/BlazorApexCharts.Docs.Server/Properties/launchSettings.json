@@ -11,6 +11,7 @@
     "BlazorApexCharts.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "features/performance",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
