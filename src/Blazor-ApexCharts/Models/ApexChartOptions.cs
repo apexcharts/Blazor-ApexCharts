@@ -14,7 +14,7 @@ namespace ApexCharts
         public bool HasLegendClick { get; internal set; }
         public bool HasMarkerClick { get; internal set; }
         public bool HasXAxisLabelClick { get; internal set; }
-       
+
         public bool HasSelection { get; internal set; }
         public bool HasBrushScrolled { get; internal set; }
         public bool HasZoomed { get; internal set; }
@@ -728,7 +728,7 @@ namespace ApexCharts
         public bool? ShowForNullSeries { get; set; }
         public bool? ShowForSingleSeries { get; set; }
         public bool? ShowForZeroSeries { get; set; }
-       
+
         public double? Width { get; set; }
         public string Formatter { get; set; }
         public string TooltipHoverFormatter { get; set; }
@@ -999,6 +999,8 @@ namespace ApexCharts
 
     public class PlotOptionsPie
     {
+        public double? StartAngle { get; set; }
+        public double? EndAngle { get; set; }
         public double? CustomScale { get; set; }
         public PieDataLabels DataLabels { get; set; }
         public PlotOptionsDonut Donut { get; set; }
