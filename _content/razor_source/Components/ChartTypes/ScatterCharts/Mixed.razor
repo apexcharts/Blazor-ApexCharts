@@ -1,0 +1,42 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Scatter Sample" XAxisType="XAxisType.Numeric" Debug Options="options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="% Gross"
+                         SeriesType="SeriesType.Scatter"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.GrossValue)"
+                         OrderByDescending="e=>e.X" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="GetTrendOrders()"
+                         SeriesType="SeriesType.Line"
+                         Name="Trend"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.GrossValue)"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+    @code {
+    private List<Order> orders = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new();
+
+    protected override void OnInitialized()
+    {
+        options.Tooltip = new ApexCharts.Tooltip { Shared = false, Intersect = true };
+        options.Markers = new Markers {  Size = 6 };
+    }
+
+    private List<Order> GetTrendOrders()
+    {
+        var trendOrders = new List<Order>();
+        trendOrders.Add(new Order { DiscountPercentage = 5, GrossValue = 30000 });
+        trendOrders.Add(new Order { DiscountPercentage = 70, GrossValue = 70000 });
+
+        return trendOrders;
+    }
+
+    }
