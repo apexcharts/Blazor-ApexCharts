@@ -4,6 +4,13 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Components\Issues\**" />
+    <Content Remove="Components\Issues\**" />
+    <EmbeddedResource Remove="Components\Issues\**" />
+    <None Remove="Components\Issues\**" />
+  </ItemGroup>
+
   
   <ItemGroup>
     <SupportedPlatform Include="browser" />
@@ -19,10 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Blazor-ApexCharts\Blazor-ApexCharts.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Issues\" />
   </ItemGroup>
 
 </Project>
