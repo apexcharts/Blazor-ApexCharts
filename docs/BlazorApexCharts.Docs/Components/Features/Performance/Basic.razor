@@ -3,20 +3,25 @@
 
 <ItemSelect Label="Datapoints" Items=points @bind-SelectedValue=pointsToLoad Changed=LoadData />
 
-<ApexChart TItem="TimeSeries"
+@if (pointsToLoad != 0)
+{
+    <ApexChart TItem="TimeSeries"
            Title="Value"
            Height="150"
            XAxisType="XAxisType.Datetime"
            @ref=chart>
 
-    <ApexPointSeries TItem="TimeSeries"
+        <ApexPointSeries TItem="TimeSeries"
                      Items="timeSeries.Take(pointsToLoad)"
                      Name="Value"
                      SeriesType="SeriesType.Line"
                      XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
                      YValue="@( e=> e.Value)"
                      Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
-</ApexChart>
+    </ApexChart>
+}
+
+
 
 @if (isLoading)
 {
@@ -29,8 +34,8 @@ else
 
 @code {
     private ApexChart<TimeSeries> chart;
-    private List<int> points = new List<int> {0, 100, 1000, 5000, 10000, 15000, 20000 };
-    private int pointsToLoad = 100;
+    private List<int> points = new List<int> { 0, 100, 1000, 5000, 10000, 15000, 20000 };
+    private int pointsToLoad = 0;
     private List<TimeSeries> timeSeries = new TimeSeriesGenerator(25000).TimeSeries;
     private string message;
     private List<DataPoint<TimeSeries>> data;
@@ -44,6 +49,12 @@ else
 
     private async Task LoadData()
     {
+        if (pointsToLoad == 0)
+        {
+            message = "";
+            return;
+        }
+
         var sw = new Stopwatch();
         sw.Start();
         isLoading = true;
@@ -70,4 +81,4 @@ else
                 Items = new List<TimeSeries> { e }
             }).ToList();
     }
-    }
+}
