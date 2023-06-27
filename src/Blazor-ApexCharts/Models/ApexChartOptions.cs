@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace ApexCharts
 {
@@ -1234,7 +1235,24 @@ namespace ApexCharts
     public class Stroke
     {
         public List<string> Colors { get; set; }
+        
+        [JsonIgnore]
         public Curve? Curve { get; set; }
+        
+        [JsonIgnore]
+        public List<Curve> Curves { get; set; }
+        
+        [JsonPropertyName("curve")]
+        public object JsonCurve
+        {
+            get
+            {
+                if (Curves is not null)
+                    return Curves;
+                return Curve;
+            }
+        }
+        
         public object DashArray { get; set; }
         public LineCap? LineCap { get; set; }
         public bool Show { get; set; } = true;
