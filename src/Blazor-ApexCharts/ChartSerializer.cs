@@ -1,6 +1,6 @@
 ﻿using ApexCharts.Models;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -8,7 +8,7 @@ namespace BlazorApexCharts
 {
     public class ChartSerializer
     {
-        private static Dictionary<Type, JsonSerializerOptions> _serializerOptions = new Dictionary<Type, JsonSerializerOptions>();
+        private static ConcurrentDictionary<Type, JsonSerializerOptions> _serializerOptions = new();
 
         private JsonSerializerOptions GenerateOptions<TItem>() where TItem : class
         {
@@ -35,7 +35,7 @@ namespace BlazorApexCharts
             }
 
             var newOptions = GenerateOptions<TItem>();
-            _serializerOptions.Add(key, newOptions);
+            _serializerOptions.TryAdd(key, newOptions);
 
             return newOptions;
         }
