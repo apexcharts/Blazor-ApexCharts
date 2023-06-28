@@ -1,0 +1,34 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Scatter Sample">
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="% Gross"
+                         SeriesType="SeriesType.Scatter"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.GrossValue)"
+                         OrderByDescending="e=>e.X" 
+                         PointColor="GetColor" />
+
+       
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+
+
+    private string GetColor(Order order)
+    {
+        if (order.GrossValue > 50000)
+        {
+            return "#3633FF";
+        }
+
+        return "#E51C15";
+
+
+    }
+
+    }

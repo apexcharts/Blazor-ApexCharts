@@ -11,7 +11,7 @@
     "BlazorApexCharts.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "rangebar-charts",
+      "launchUrl": "line-charts",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
