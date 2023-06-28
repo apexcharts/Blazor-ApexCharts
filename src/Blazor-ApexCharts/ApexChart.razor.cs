@@ -274,7 +274,9 @@ namespace ApexCharts
                 if (Options.Tooltip == null) { Options.Tooltip = new Tooltip(); }
                 if (Options.Markers == null) { Options.Markers = new Markers(); }
 
-                if (Options.Markers.Size == null || Options.Markers.Size <= 0)
+
+                if ((Options.Markers.Size == null || Options.Markers.Size <= 0) &&
+                    (Options.Markers.Sizes == null || !Options.Markers.Sizes.Any()))
                 {
                     Options.Markers.Size = 5;
                 }

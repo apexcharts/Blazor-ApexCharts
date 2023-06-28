@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace ApexCharts
 {
@@ -786,7 +787,24 @@ namespace ApexCharts
         public double? Radius { get; set; }
         public ShapeEnum? Shape { get; set; }
         public bool? ShowNullDataPoints { get; set; }
+
+        [JsonIgnore]
         public double? Size { get; set; }
+
+        [JsonIgnore]
+        public List<double> Sizes { get; set; }
+
+        [JsonPropertyName("size")]
+        public object JsonSize
+        {
+            get
+            {
+                if (Sizes is not null)
+                    return Sizes;
+                return Size;
+            }
+        }
+
         public Color StrokeColors { get; set; }
         public Opacity StrokeDashArray { get; set; }
         public Opacity StrokeOpacity { get; set; }
