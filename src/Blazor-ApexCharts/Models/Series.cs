@@ -23,6 +23,7 @@ namespace ApexCharts
     {
         public IEnumerable<IDataPoint<TItem>> Data { get; set; }
         public string Name { get; set; }
+        public string Group { get; set; }
         public MixedType? Type { get; set; }
 
         [JsonIgnore]

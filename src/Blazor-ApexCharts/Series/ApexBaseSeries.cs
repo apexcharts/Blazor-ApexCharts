@@ -16,6 +16,7 @@ namespace ApexCharts
         [Parameter] public IEnumerable<TItem> Items { get; set; }
         [Parameter] public SeriesStroke Stroke { get; set; }
         [Parameter] public string Color { get; set; }
+        [Parameter] public string Group { get; set; }
         [Parameter] public Func<TItem, string> PointColor { get; set; }
         public async Task Toggle()
         {

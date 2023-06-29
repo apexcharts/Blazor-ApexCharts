@@ -12,7 +12,7 @@ namespace ApexCharts
         Func<TItem, object> XValue { get; set; }
         IEnumerable<TItem> Items { get; set; }
         string Color { get; set; }
-        
+        string Group { get; set; }
         bool ShowDataLabels { get; set; }
         SeriesStroke Stroke { get; set; }
         public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items);

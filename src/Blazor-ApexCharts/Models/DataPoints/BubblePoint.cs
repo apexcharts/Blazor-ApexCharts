@@ -14,7 +14,7 @@ namespace ApexCharts
         public decimal? Y{ get; set; }
        
         public decimal Z { get; set; }
-
+      
         public object Extra { get; set; }
 
         [JsonIgnore]

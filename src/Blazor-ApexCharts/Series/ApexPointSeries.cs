@@ -17,6 +17,7 @@ namespace ApexCharts
         [Parameter] public SeriesType SeriesType { get; set; }
         [Parameter] public Action<DataPoint<TItem>> DataPointMutator { get; set; }
 
+       
 
         protected override void OnInitialized()
         {
