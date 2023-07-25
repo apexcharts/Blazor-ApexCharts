@@ -6,13 +6,14 @@ using System.Text.Json.Serialization;
 
 namespace ApexCharts
 {
-	/// <summary>
-	/// Main class to configure options that are to be serialized and passed to the JavaScript.
-	/// </summary>
-	/// <typeparam name="TItem">The data type to be used in the chart to create data points.</typeparam>
-	public class ApexChartOptions<TItem> where TItem : class
+    /// <summary>
+    /// Main class to configure options that are to be serialized and passed to the JavaScript.
+    /// </summary>
+    /// <typeparam name="TItem">The data type to be used in the chart to create data points.</typeparam>
+    public class ApexChartOptions<TItem> where TItem : class
 	{
-		public bool Debug { get; set; }
+#pragma warning disable CS1591 // Primarily for internal use
+        public bool Debug { get; set; }
 
 		public bool HasDataPointSelection { get; internal set; }
 
@@ -31,15 +32,16 @@ namespace ApexCharts
 		public bool HasBrushScrolled { get; internal set; }
 
 		public bool HasZoomed { get; internal set; }
+#pragma warning restore CS1591
 
-		/// <inheritdoc cref="ApexCharts.Annotations" />
-		public Annotations Annotations { get; set; }
+        /// <inheritdoc cref="ApexCharts.Annotations" />
+        public Annotations Annotations { get; set; }
 
 		/// <inheritdoc cref="ApexCharts.Chart" />
 		public Chart Chart { get; set; } = new();
 
 		/// <summary>
-		/// Colors for the chart’s series. When all colors of the array are used, it starts from the beginning.
+		/// Colors for the chart's series. When all colors of the array are used, it starts from the beginning.
 		/// </summary>
 		/// <remarks>
 		/// You should only provide either hex or rgb/rgba format. Color names are not accepted at the moment.
@@ -169,7 +171,7 @@ namespace ApexCharts
 		public double? ShadeIntensity { get; set; }
 
 		/// <summary>
-		/// When turned on, each series in a treemap will have it’s own lowest and highest range and colors will be shaded for each series. Default value is false.
+		/// When turned on, each series in a treemap will have it's own lowest and highest range and colors will be shaded for each series. Default value is false.
 		/// </summary>
 		public bool? Distributed { get; set; }
 
@@ -217,12 +219,12 @@ namespace ApexCharts
 	public class TreemapRanges
 	{
 		/// <summary>
-		/// Value indicating range’s upper limit
+		/// Value indicating range's upper limit
 		/// </summary>
 		public double? From { get; set; }
 
 		/// <summary>
-		/// Value indicating range’s lower limit
+		/// Value indicating range's lower limit
 		/// </summary>
 		public double? To { get; set; }
 
@@ -329,7 +331,7 @@ namespace ApexCharts
 		public AnnotationMarker Marker { get; set; }
 
 		/// <summary>
-		/// In a multiple series, you will have to specify which series the annotation’s y value belongs to. Not required for single series
+		/// In a multiple series, you will have to specify which series the annotation's y value belongs to. Not required for single series
 		/// </summary>
 		public double? SeriesIndex { get; set; }
 
@@ -344,7 +346,7 @@ namespace ApexCharts
 		public double? Y { get; set; }
 
 		/// <summary>
-		/// When there are multiple y-axis, setting this options will put the point annotation for that particular y-axis’ y value
+		/// When there are multiple y-axis, setting this options will put the point annotation for that particular y-axis' y value
 		/// </summary>
 		public double? YAxisIndex { get; set; }
 	}
@@ -380,36 +382,118 @@ namespace ApexCharts
 		public double? Width { get; set; }
 	}
 
-	public class Label
+    /// <summary>
+    /// Defines the options for an annotation label
+    /// </summary>
+    public class Label
 	{
-		public string BorderColor { get; set; }
-		public double? BorderWidth { get; set; }
-		public double? OffsetX { get; set; }
-		public double? OffsetY { get; set; }
-		public string Orientation { get; set; }
-		public string Position { get; set; }
-		public Style Style { get; set; }
-		public string Text { get; set; }
-		public string TextAnchor { get; set; }
+        /// <summary>
+        /// Border Color of the label
+        /// </summary>
+        public string BorderColor { get; set; }
+
+        /// <summary>
+        /// Border width of the label
+        /// </summary>
+        public double? BorderWidth { get; set; }
+
+        /// <summary>
+        /// Sets the left offset for annotation label
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Sets the top offset for annotation label
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public string Orientation { get; set; }
+
+        /// <summary>
+        /// Where to place the label
+        /// </summary>
+        public string Position { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.Style" />
+        public Style Style { get; set; }
+
+        /// <summary>
+        /// Text for tha annotation label
+        /// </summary>
+        public string Text { get; set; }
+
+        /// <summary>
+        /// The alignment of text relative to label's drawing position
+        /// </summary>
+        public string TextAnchor { get; set; }
 	}
 
-	public class Style
+    /// <summary>
+    /// Defines the styling options for the annotation label
+    /// </summary>
+    public class Style
 	{
-		public string Background { get; set; }
-		public string Color { get; set; }
-		public string CssClass { get; set; }
-		public string FontFamily { get; set; }
-		public string FontSize { get; set; }
-		public object FontWeight { get; set; }
-		public Padding Padding { get; set; }
+        /// <summary>
+        /// Background Color for the annotation label
+        /// </summary>
+        public string Background { get; set; }
+
+        /// <summary>
+        /// Fore color for the annotation label
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// A custom Css Class to give to the annotation label elements
+        /// </summary>
+        public string CssClass { get; set; }
+
+        /// <summary>
+        /// Font-family for the annotation label
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font size for the annotation label
+        /// </summary>
+        public string FontSize { get; set; }
+
+        /// <summary>
+        /// Font-weight for the annotation label
+        /// </summary>
+        public object FontWeight { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.Padding"/>
+        public Padding Padding { get; set; }
 	}
 
-	public class Padding
+    /// <summary>
+    /// Defines the padding values for an object
+    /// </summary>
+    public class Padding
 	{
-		public double? Bottom { get; set; }
-		public double? Left { get; set; }
-		public double? Right { get; set; }
-		public double? Top { get; set; }
+        /// <summary>
+        /// Bottom padding for the item
+        /// </summary>
+        public double? Bottom { get; set; }
+
+        /// <summary>
+        /// Left padding for the item
+        /// </summary>
+        public double? Left { get; set; }
+
+        /// <summary>
+        /// Right padding for the item
+        /// </summary>
+        public double? Right { get; set; }
+
+        /// <summary>
+        /// Top padding for the item
+        /// </summary>
+        public double? Top { get; set; }
 	}
 
 	/// <summary>
@@ -801,7 +885,7 @@ namespace ApexCharts
 		/// Enables stacked option for axis charts.
 		/// </summary>
 		/// <remarks>
-		/// A stacked chart works only for same chart types and won’t work in combo/mixed charts combinations. So, an area series combined with a column series will not work.
+		/// A stacked chart works only for same chart types and won't work in combo/mixed charts combinations. So, an area series combined with a column series will not work.
 		/// </remarks>
 		public bool? Stacked { get; set; }
 
@@ -822,12 +906,12 @@ namespace ApexCharts
 		/// Width of the chart.
 		/// </summary>
 		/// <remarks>
-		/// Accepts Number (400) OR String (‘400px’)
+		/// Accepts Number (400) OR String ('400px')
 		/// </remarks>
 		public object Width { get; set; }
 
 		/// <summary>
-		/// Height of the chart. The default value ‘auto’ is calculated based on the golden ratio 1.618 which roughly translates to a 16:10 aspect ratio. Examples:
+		/// Height of the chart. The default value 'auto' is calculated based on the golden ratio 1.618 which roughly translates to a 16:10 aspect ratio. Examples:
 		/// 
 		/// <code>
 		/// height: 400 
@@ -844,58 +928,166 @@ namespace ApexCharts
 		public Zoom Zoom { get; set; }
 	}
 
+	/// <summary>
+	/// Defines the options to use when exporting charts
+	/// </summary>
 	public class ExportOptions
 	{
-		public ExportCSV Csv { get; set; }
-		public ExportSvg Svg { get; set; }
-		public ExportPng Png { get; set; }
+        /// <inheritdoc cref="ApexCharts.ExportCSV" />
+        public ExportCSV Csv { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ExportSvg" />
+        public ExportSvg Svg { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ExportPng" />
+        public ExportPng Png { get; set; }
 	}
 
+	/// <summary>
+	/// Defines the options to use when exporting a chart to SVG
+	/// </summary>
 	public class ExportSvg
 	{
-		public string Filename { get; set; }
+        /// <summary>
+        /// Name of the SVG file. Defaults to auto generated chart ID
+        /// </summary>
+        public string Filename { get; set; }
 	}
 
-	public class ExportPng
+    /// <summary>
+    /// Defines the options to use when exporting a chart to PNG
+    /// </summary>
+    public class ExportPng
 	{
-		public string Filename { get; set; }
+        /// <summary>
+        /// Name of the PNG file. Defaults to auto generated chart ID
+        /// </summary>
+        public string Filename { get; set; }
 	}
 
-	public class ExportCSV
+    /// <summary>
+    /// Defines the options to use when exporting a chart to CSV
+    /// </summary>
+    public class ExportCSV
 	{
-		public string Filename { get; set; }
-		public string ColumnDelimiter { get; set; }
-		public string HeaderCategory { get; set; }
-		public string HeaderValue { get; set; }
-		public string DateFormatter { get; set; }
+        /// <summary>
+        /// Name of the csv file. Defaults to auto generated chart ID
+        /// </summary>
+        public string Filename { get; set; }
+
+        /// <summary>
+        /// Delimeter to separate data-items. Defaults to comma.
+        /// </summary>
+        public string ColumnDelimiter { get; set; }
+
+        /// <summary>
+        /// Column Title of X values
+        /// </summary>
+        public string HeaderCategory { get; set; }
+
+        /// <summary>
+        /// Column Title of Y values
+        /// </summary>
+        public string HeaderValue { get; set; }
+
+        /// <summary>
+        /// If timestamps are provided as X values, those timestamps can be formatted to convert them to date strings.
+        /// </summary>
+        public string DateFormatter { get; set; }
 	}
 
-	public class Animations
+    /// <summary>
+    /// ApexCharts provides a smooth experience with the help of svgjs's built in animations.
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.com/docs/animations">JavaScript Documentation</see>,
+    /// <see href="https://apexcharts.com/docs/options/chart/animations">JavaScript Reference</see>
+    /// </remarks>
+    public class Animations
 	{
-		public AnimateGradually AnimateGradually { get; set; }
-		public DynamicAnimation DynamicAnimation { get; set; }
-		public Easing? Easing { get; set; }
-		public bool Enabled { get; set; } = true;
-		public double? Speed { get; set; }
+        /// <inheritdoc cref="ApexCharts.AnimateGradually" />
+        public AnimateGradually AnimateGradually { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.DynamicAnimation" />
+        public DynamicAnimation DynamicAnimation { get; set; }
+
+        /// <summary>
+        /// The type of animation to use
+        /// </summary>
+        public Easing? Easing { get; set; }
+
+        /// <summary>
+        /// Enable or disable all the animations that happen initially or during data update.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Speed at which animation runs.
+        /// </summary>
+        public double? Speed { get; set; }
 	}
 
-	public class AnimateGradually
+    /// <summary>
+    /// Defines options for animations that run individually
+    /// </summary>
+    public class AnimateGradually
 	{
-		public double? Delay { get; set; }
-		public bool Enabled { get; set; } = true;
+        /// <summary>
+        /// Speed at which gradual (one by one) animation runs.
+        /// </summary>
+        public double? Delay { get; set; }
+
+        /// <summary>
+        /// Gradually animate one by one every data in the series instead of animating all at once.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
 	}
 
-	public class DynamicAnimation
+    /// <summary>
+    /// Defines options for animations that run as the chart data changes
+    /// </summary>
+    public class DynamicAnimation
 	{
-		public bool Enabled { get; set; } = true;
-		public double? Speed { get; set; }
+        /// <summary>
+        /// Animate the chart when data is changed and chart is re-rendered.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Speed at which dynamic animation runs whenever data changes.
+        /// </summary>
+        public double? Speed { get; set; }
 	}
 
-	public class Brush
+    /// <summary>
+    /// Defines options to use for generating a brush chart
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.com/docs/options/chart/brush">JavaScript Reference</see>
+    /// </remarks>
+    public class Brush
 	{
-		public bool? AutoScaleYaxis { get; set; }
-		public bool Enabled { get; set; } = true;
-		public string Target { get; set; }
+        /// <summary>
+        /// If set to true, the Y-axis will automatically scale based on the visible min/max range.
+        /// </summary>
+		/// <remarks>
+		/// Note: One important configuration to set in a brush chart is the chart.selection option. The range which you set in chart.selection will act as brush in the brush chart
+		/// </remarks>
+        public bool? AutoScaleYaxis { get; set; }
+
+        /// <summary>
+        /// Turn on this option to enable brush chart options. After you enable brush, you need to set target chart ID to allow the brush chart to capture events on the target chart.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Chart ID of the target chart to sync the brush chart and the target chart. If you have an array of multiple chart IDs, use targets property instead.
+        /// </summary>
+        public string Target { get; set; }
 	}
 
 	/// <summary>
@@ -939,127 +1131,416 @@ namespace ApexCharts
 		public List<double> EnabledOnSeries { get; set; }
 	}
 
-	public class ChartLocale
+    /// <summary>
+    /// Defines localization options to use with the chart
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.com/docs/localization">JavaScript Documentation</see>,
+    /// <see href="https://apexcharts.com/docs/options/chart/locales">JavaScript Reference</see>
+    /// </remarks>
+    public class ChartLocale
 	{
-		public string Name { get; set; }
-		public LocaleOptions Options { get; set; }
+        /// <summary>
+        /// Name of the locale you will be defining options for. Can be en, fr, etc
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.LocaleOptions" />
+        public LocaleOptions Options { get; set; }
 	}
 
+	/// <summary>
+	/// Defines required properties to provide a localization
+	/// </summary>
 	public class LocaleOptions
 	{
-		public List<string> Days { get; set; }
-		public List<string> Months { get; set; }
-		public List<string> ShortDays { get; set; }
-		public List<string> ShortMonths { get; set; }
-		public LocaleToolbar Toolbar { get; set; }
+        /// <summary>
+        /// Full names of days in your language
+        /// </summary>
+        public List<string> Days { get; set; }
+
+        /// <summary>
+        /// Full month names in your preferred language
+        /// </summary>
+        public List<string> Months { get; set; }
+
+        /// <summary>
+        /// Abbreviated day names
+        /// </summary>
+        public List<string> ShortDays { get; set; }
+
+        /// <summary>
+        /// Abbreviations of months
+        /// </summary>
+        public List<string> ShortMonths { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.LocaleToolbar" />
+        public LocaleToolbar Toolbar { get; set; }
 	}
 
+	/// <summary>
+	/// Defines tooltip text required to provide a localization
+	/// </summary>
 	public class LocaleToolbar
 	{
-		public string Download { get; set; }
-		public string Pan { get; set; }
-		public string Reset { get; set; }
-		public string Selection { get; set; }
-		public string SelectionZoom { get; set; }
-		public string ZoomIn { get; set; }
-		public string ZoomOut { get; set; }
+        /// <summary>
+        /// Tooltip title text which appears when you hover over download icon
+        /// </summary>
+        public string Download { get; set; }
+
+        /// <summary>
+        /// Tooltip title text which appears when you hover over pan icon
+        /// </summary>
+        public string Pan { get; set; }
+
+        /// <summary>
+        /// Tooltip title text which appears when you hover over reset icon
+        /// </summary>
+        public string Reset { get; set; }
+
+        /// <summary>
+        /// Tooltip title text which appears when you hover over selection icon
+        /// </summary>
+        public string Selection { get; set; }
+
+        /// <summary>
+        /// Tooltip title text which appears when you hover over selection zoom icon
+        /// </summary>
+        public string SelectionZoom { get; set; }
+
+        /// <summary>
+        /// Tooltip title text which appears when you hover over zoom in icon
+        /// </summary>
+        public string ZoomIn { get; set; }
+
+        /// <summary>
+        /// Tooltip title text which appears when you hover over zoom out icon
+        /// </summary>
+        public string ZoomOut { get; set; }
 	}
 
-	public class Selection
+    /// <summary>
+    /// Defines options and styling to apply to the chart when items are selected within it
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="">Blazor Example</see>,
+    /// <see href="">JavaScript Documentation</see>,
+    /// <see href="https://apexcharts.com/docs/options/chart/selection">JavaScript Reference</see>
+    /// </remarks>
+    public class Selection
 	{
-		public bool Enabled { get; set; } = true;
-		public SelectionFill Fill { get; set; }
-		public SelectionStroke Stroke { get; set; }
-		public string Type { get; set; }
-		public SelectionXaxis Xaxis { get; set; }
-		public SelectionYaxis Yaxis { get; set; }
+        /// <summary>
+        /// To allow selection in axis charts. Selection will not be enabled for category x-axis charts, but only for charts having numeric x-axis. For eg., timeline charts.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        /// <inheritdoc cref="ApexCharts.SelectionFill" />
+        public SelectionFill Fill { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.SelectionStroke" />
+        public SelectionStroke Stroke { get; set; }
+
+        /// <summary>
+        /// Allow selection either on both x-axis, y-axis or on both axis.
+        /// </summary>
+        public string Type { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.SelectionXaxis" />
+        public SelectionXaxis Xaxis { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.SelectionYaxis" />
+        public SelectionYaxis Yaxis { get; set; }
 	}
 
-	public class SelectionFill
+    /// <summary>
+    /// Defines styling options for the fill of selections
+    /// </summary>
+    public class SelectionFill
 	{
-		public string Color { get; set; }
-		public double? Opacity { get; set; }
+        /// <summary>
+        /// Background color of the selection rect which is drawn when user drags on the chart.
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Opacity of background color of the selection rect.
+        /// </summary>
+        public double? Opacity { get; set; }
 	}
 
-	public class SelectionStroke
+    /// <summary>
+    /// Defines styling options for the stroke of selections
+    /// </summary>
+    public class SelectionStroke
 	{
-		public string Color { get; set; }
-		public double? DashArray { get; set; }
-		public double? Opacity { get; set; }
-		public double? Width { get; set; }
+        /// <summary>
+        /// Colors of selection border.
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Creates dashes in borders of svg path. Higher number creates more space between dashes in the border.
+        /// </summary>
+        public double? DashArray { get; set; }
+
+        /// <summary>
+        /// Opacity of selection border.
+        /// </summary>
+        public double? Opacity { get; set; }
+
+        /// <summary>
+        /// Border thickness of the selection rect.
+        /// </summary>
+        public double? Width { get; set; }
 	}
 
-	public class SelectionXaxis
+    /// <summary>
+    /// Defines parameters for selections on the X-axis
+    /// </summary>
+    public class SelectionXaxis
 	{
-		public double? Max { get; set; }
-		public double? Min { get; set; }
+        /// <summary>
+        /// End value of x-axis. For a time-series chart, a timestamp should be provided.
+        /// </summary>
+        public double? Max { get; set; }
+
+        /// <summary>
+        /// Start value of x-axis. For a time-series chart, a timestamp should be provided
+        /// </summary>
+        public double? Min { get; set; }
 	}
 
-	public class SelectionYaxis
+    /// <summary>
+    /// Defines parameters for the selections on the Y-axis
+    /// </summary>
+    public class SelectionYaxis
 	{
-		public double? Max { get; set; }
-		public double? Min { get; set; }
+        /// <summary>
+        /// End value of y-axis (if used in a multiple y-axes chart, this considers the 1st y-axis).
+        /// </summary>
+        public double? Max { get; set; }
+
+        /// <summary>
+        /// Start value of y-axis. (if used in a multiple y-axes chart, this considers the 1st y-axis).
+        /// </summary>
+        public double? Min { get; set; }
 	}
 
-	public class ChartSparkline
+    /// <summary>
+    /// Defines options to use when creating sparklines for the chart
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.com/docs/options/chart/sparkline">JavaScript Reference</see>
+    /// </remarks>
+    public class ChartSparkline
 	{
-		public bool Enabled { get; set; } = true;
+        /// <summary>
+        /// Sparkline hides all the elements of the charts other than the primary paths. Helps to visualize data in small areas
+        /// </summary>
+        public bool Enabled { get; set; } = true;
 	}
 
-	public class Toolbar
+    /// <summary>
+    /// Defines options for the toolbar to display in the top-right of the chart
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.com/docs/options/chart/toolbar">JavaScript Reference</see>
+    /// </remarks>
+    public class Toolbar
 	{
-		public AutoSelected? AutoSelected { get; set; }
-		public double? OffsetX { get; set; }
-		public double? OffsetY { get; set; }
-		public bool Show { get; set; } = true;
-		public Tools Tools { get; set; }
-		public ExportOptions Export { get; set; }
+        /// <summary>
+        /// Automatically select one of the following tools when the chart loads.
+        /// </summary>
+        public AutoSelected? AutoSelected { get; set; }
+
+        /// <summary>
+        /// Sets the left offset of the toolbar.
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Sets the top offset of the toolbar.
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// Display the toolbar / menu in the top right corner.
+        /// </summary>
+        public bool Show { get; set; } = true;
+
+        /// <inheritdoc cref="ApexCharts.Tools" />
+        public Tools Tools { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ExportOptions" />
+        public ExportOptions Export { get; set; }
 	}
 
+	/// <summary>
+	/// Defines the options to display the toolbar with
+	/// </summary>
 	public class Tools
 	{
-		public List<ToolCustomIcon> CustomIcons { get; set; }
-		public bool Download { get; set; } = true;
-		public bool Pan { get; set; } = true;
-		public bool Reset { get; set; } = true;
-		public bool Selection { get; set; } = true;
-		public bool Zoom { get; set; } = true;
-		public bool Zoomin { get; set; } = true;
-		public bool Zoomout { get; set; } = true;
+        /// <inheritdoc cref="ApexCharts.ToolCustomIcon" />
+        public List<ToolCustomIcon> CustomIcons { get; set; }
+
+        /// <summary>
+        /// Show the download menu / hamburger icon in the toolbar. If you want to display a custom icon instead of hamburger icon, you can provide HTML string in this property.
+        /// 
+        /// <code>
+        /// download: true 
+        /// download: '&lt;img src="/static/icons/download.png" class="ico-download" width="20"&gt;'
+        /// </code>
+        /// 
+        /// ApexCharts has built-in support to allow exporting the chart to popular image formats like PNG or SVG and also allows exporting the chart data to a CSV file.
+        /// By default, all XY charts have the toolbar enabled in them which has a hamburger icon at the top right corner. Clicking the hamburger icon opens a menu which has following options to download.
+        /// </summary>
+        public bool Download { get; set; } = true;
+
+        /// <summary>
+        /// Show the panning icon in the toolbar.
+        /// </summary>
+        public bool Pan { get; set; } = true;
+
+        /// <summary>
+        /// Reset the chart data to it's initial state after zommin/zoomout/panning. If you want to display a custom icon for reset, you can provide HTML string in this property.
+        /// </summary>
+        public bool Reset { get; set; } = true;
+
+        /// <summary>
+        /// Show the rectangle selection icon in the toolbar. If you want to display a custom icon for selection, you can provide HTML string in this property.
+        /// </summary>
+        public bool Selection { get; set; } = true;
+
+        /// <summary>
+        /// Show the zoom icon which is used for zooming by dragging selection on the chart area. If you want to display a custom icon for zoom, you can provide HTML string in this property.
+        /// </summary>
+        public bool Zoom { get; set; } = true;
+
+        /// <summary>
+        /// Show the zoom-in icon which zooms in 50% from the visible chart area. If you want to display a custom icon for zoom-in, you can provide HTML string in this property.
+        /// </summary>
+        public bool Zoomin { get; set; } = true;
+
+        /// <summary>
+        /// Show the zoom-out icon which zooms out 50% from the visible chart area. If you want to display a custom icon for zoom-out, you can provide HTML string in this property.
+        /// </summary>
+        public bool Zoomout { get; set; } = true;
 	}
 
-	public class ToolCustomIcon
+    /// <summary>
+    /// Allows to add additional icon buttons in the toolbar. In the below example, index should be used to place at a particular position in the toolbar.
+    /// </summary>
+    public class ToolCustomIcon
 	{
+		/// <summary>
+		/// URL for the icon to display
+		/// </summary>
 		public string Icon { get; set; }
+
+		/// <summary>
+		/// Ordering within the group of icons
+		/// </summary>
 		public double? Index { get; set; }
+
+		/// <summary>
+		/// Tooltip to display for the icon
+		/// </summary>
 		public string Title { get; set; }
 	}
 
-	public class Zoom
+    /// <summary>
+    /// Defines options to configure how zooming works on the chart
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.com/docs/options/chart/zoom">JavaScript Reference</see>
+    /// </remarks>
+    public class Zoom
 	{
-		public bool? AutoScaleYaxis { get; set; }
-		public bool Enabled { get; set; } = true;
-		public ZoomType? Type { get; set; }
-		public ZoomedArea ZoomedArea { get; set; }
+        /// <summary>
+        /// When this option is turned on, the chart's y-axis re-scales to a new low and high based on the visible area. Helpful in situations where the user zoomed in to a small area to get a better view.
+        /// </summary>
+		/// <remarks>
+		/// Known Issue: This option doesn't work in a multi-axis chart (when you have more than 1 y-axis)
+		/// </remarks>
+        public bool? AutoScaleYaxis { get; set; }
+
+        /// <summary>
+        /// To allow zooming in axis charts.
+        /// </summary>
+		/// <remarks>
+		/// Note: In a category x-axis chart, to enable zooming, you will also need to set xaxis.tickPlacement: 'on'.
+		/// </remarks>
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Allow zooming either on both x-axis, y-axis or on both axis.
+        /// </summary>
+		/// <remarks>
+		/// Known Issue: In synchronized charts, xy or y will not update charts in sync, while x will work correctly.
+		/// </remarks>
+        public ZoomType? Type { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ZoomedArea" />
+        public ZoomedArea ZoomedArea { get; set; }
 	}
 
+	/// <summary>
+	/// Defines styling options to apply to the area of the chart that is zoomed into
+	/// </summary>
 	public class ZoomedArea
 	{
-		public ZoomedAreaFill Fill { get; set; }
-		public ZoomedAreaStroke Stroke { get; set; }
+        /// <inheritdoc cref="ApexCharts.ZoomedAreaFill" />
+        public ZoomedAreaFill Fill { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ZoomedAreaStroke" />
+        public ZoomedAreaStroke Stroke { get; set; }
 	}
 
+	/// <summary>
+	/// Defines how to style the fill for the zoomed area of the chart
+	/// </summary>
 	public class ZoomedAreaFill
 	{
-		public string Color { get; set; }
-		public double? Opacity { get; set; }
+        /// <summary>
+        /// Background color of the selection zoomed area
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Sets the transparency level of the selection fill
+        /// </summary>
+        public double? Opacity { get; set; }
 	}
 
-	public class ZoomedAreaStroke
+    /// <summary>
+    /// Defines how to style the stroke for the zoomed area of the chart
+    /// </summary>
+    public class ZoomedAreaStroke
 	{
-		public string Color { get; set; }
-		public double? Opacity { get; set; }
-		public double? Width { get; set; }
+        /// <summary>
+        /// Border color of the selection zoomed area
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Sets the transparency level of the selection border
+        /// </summary>
+        public double? Opacity { get; set; }
+
+        /// <summary>
+        /// Sets the width selection border
+        /// </summary>
+        public double? Width { get; set; }
 	}
 
 	/// <summary>
@@ -1090,7 +1571,7 @@ namespace ApexCharts
 		public bool Enabled { get; set; } = true;
 
 		/// <summary>
-		/// Allows showing series only on specific series in a multi-series chart. For eg., if you have a line and a column chart, you can show dataLabels only on the line chart by specifying it’s index in this array property.
+		/// Allows showing series only on specific series in a multi-series chart. For eg., if you have a line and a column chart, you can show dataLabels only on the line chart by specifying it's index in this array property.
 		/// </summary>
 		public List<double> EnabledOnSeries { get; set; }
 
@@ -1108,7 +1589,7 @@ namespace ApexCharts
 		public DataLabelsStyle Style { get; set; }
 
 		/// <summary>
-		/// The alignment of text relative to dataLabel’s drawing position
+		/// The alignment of text relative to dataLabel's drawing position
 		/// </summary>
 		public TextAnchor? TextAnchor { get; set; }
 
@@ -1126,24 +1607,74 @@ namespace ApexCharts
 		public string Formatter { get; set; }
 	}
 
+	/// <summary>
+	/// Defines the styling options to apply to the background for data labels
+	/// </summary>
 	public class DataLabelsBackground
 	{
-		public string BorderColor { get; set; }
-		public double? BorderRadius { get; set; }
-		public double? BorderWidth { get; set; }
-		public DropShadow DropShadow { get; set; }
-		public bool Enabled { get; set; } = true;
-		public string ForeColor { get; set; }
-		public double? Opacity { get; set; }
-		public double? Padding { get; set; }
+        /// <summary>
+        /// Border color of the background rect.
+        /// </summary>
+        public string BorderColor { get; set; }
+
+        /// <summary>
+        /// Border radius of the background rect.
+        /// </summary>
+        public double? BorderRadius { get; set; }
+
+        /// <summary>
+        /// Border width of the background rect.
+        /// </summary>
+        public double? BorderWidth { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.DropShadow" />
+        public DropShadow DropShadow { get; set; }
+
+        /// <summary>
+        /// Should draw a background rectangle around the label
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Color of the label when background is enabled. This will override the colors above in style key.
+        /// </summary>
+        public string ForeColor { get; set; }
+
+        /// <summary>
+        /// Opacity of the background color.
+        /// </summary>
+        public double? Opacity { get; set; }
+
+        /// <summary>
+        /// The amount of padding to apply to the data label background
+        /// </summary>
+        public double? Padding { get; set; }
 	}
 
-	public class DataLabelsStyle
+    /// <summary>
+    /// Defines the styling options to apply to the data labels
+    /// </summary>
+    public class DataLabelsStyle
 	{
-		public List<string> Colors { get; set; }
-		public string FontFamily { get; set; }
-		public string FontSize { get; set; }
-		public object FontWeight { get; set; }
+        /// <summary>
+        /// Fore colors for the dataLabels. Accepts an array of string colors (['#333', '#999']) or an array of functions ([function(opts) { return '#333' }]) (Each index in the array corresponds to the series).
+        /// </summary>
+        public List<string> Colors { get; set; }
+
+        /// <summary>
+        /// Font family for the label
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font size for the label
+        /// </summary>
+        public string FontSize { get; set; }
+
+        /// <summary>
+        /// Font weight for the label. Can be String ('bold') or number (400/500)
+        /// </summary>
+        public object FontWeight { get; set; }
 	}
 
 	/// <summary>
@@ -1203,55 +1734,137 @@ namespace ApexCharts
 		public List<FillType> Type { get; set; }
 	}
 
-	public enum FillType
+#pragma warning disable CS1591 // Enum values are self-explanatory
+    /// <summary>
+    /// A list of fill options for charts
+    /// </summary>
+    public enum FillType
 	{
 		Solid,
 		Gradient,
 		Pattern,
 		Image
 	}
-	public enum GradientShade
+
+    /// <summary>
+    /// A list of gradient options for chart fills
+    /// </summary>
+    public enum GradientShade
 	{
 		Light,
 		Dark
 	}
 
-	public enum GradientType
+    /// <summary>
+    /// A list of gradient types for chart fills
+    /// </summary>
+    public enum GradientType
 	{
 		Horizontal,
 		Vertical,
 		Diagonal1,
 		Diagonal2
 	}
+#pragma warning restore CS1591
 
-	public class FillGradient
+    /// <summary>
+    /// Defines the styling options to use when filling a chart with a gradient
+    /// </summary>
+    public class FillGradient
 	{
-		public List<string> GradientToColors { get; set; }
-		public bool? InverseColors { get; set; }
-		public double? OpacityFrom { get; set; }
-		public double? OpacityTo { get; set; }
-		public GradientShade? Shade { get; set; }
-		public double? ShadeIntensity { get; set; }
-		public List<double> Stops { get; set; }
-		public GradientType Type { get; set; }
+        /// <summary>
+        /// Optional colors that ends the gradient to. The main colors array becomes the gradientFromColors and this array becomes the end colors of the gradient. Each index in the array corresponds to the series-index.
+        /// </summary>
+        public List<string> GradientToColors { get; set; }
+
+        /// <summary>
+        /// Inverse the start and end colors of the gradient.
+        /// </summary>
+        public bool? InverseColors { get; set; }
+
+        /// <summary>
+        /// Start color's opacity. If you want different opacity for different series, you can pass an array of numbers. For eg., opacityFrom: [0.2, 0.8]
+        /// </summary>
+        public double? OpacityFrom { get; set; }
+
+        /// <summary>
+        /// End color's opacity
+        /// </summary>
+        public double? OpacityTo { get; set; }
+
+        /// <summary>
+        /// The option to use for shading the gradient
+        /// </summary>
+        public GradientShade? Shade { get; set; }
+
+        /// <summary>
+        /// Intensity of the gradient shade. Accepts from 0 to 1
+        /// </summary>
+        public double? ShadeIntensity { get; set; }
+
+        /// <summary>
+        /// Stops defines the ramp of colors to use on a gradient
+        /// </summary>
+        public List<double> Stops { get; set; }
+
+        /// <summary>
+        /// The type of gradient to generate
+        /// </summary>
+        public GradientType Type { get; set; }
 	}
 
-	public class FillImage
+    /// <summary>
+    /// Defines the styling options to use when filling a chart with an image
+    /// </summary>
+    public class FillImage
 	{
-		public double? Height { get; set; }
-		public List<string> Src { get; set; }
-		public double? Width { get; set; }
+        /// <summary>
+        /// Height of each image for all the series
+        /// </summary>
+        public double? Height { get; set; }
+
+        /// <summary>
+        /// Src accepts an array of image paths which will correspond to each series.
+        /// </summary>
+        public List<string> Src { get; set; }
+
+        /// <summary>
+        /// Width of each image for all the series
+        /// </summary>
+        public double? Width { get; set; }
 	}
 
-	public class FillPattern
+    /// <summary>
+    /// Defines the styling options to use when filling a chart with a pattern
+    /// </summary>
+    public class FillPattern
 	{
-		public double? Height { get; set; }
-		public double? StrokeWidth { get; set; }
-		public FillPatternStyle? Style { get; set; }
-		public double? Width { get; set; }
+        /// <summary>
+        /// Pattern height which will be repeated at this interval
+        /// </summary>
+        public double? Height { get; set; }
+
+        /// <summary>
+        /// Pattern lines width indicates the thickness of the stroke of pattern.
+        /// </summary>
+        public double? StrokeWidth { get; set; }
+
+        /// <summary>
+        /// The type of pattern to fill the chart with
+        /// </summary>
+        public FillPatternStyle? Style { get; set; }
+
+        /// <summary>
+        /// Pattern width which will be repeated at this interval
+        /// </summary>
+        public double? Width { get; set; }
 	}
 
-	public enum FillPatternStyle
+#pragma warning disable CS1591 // Enum values are self-explanatory
+    /// <summary>
+    /// A list of fill options for pattern-based fills
+    /// </summary>
+    public enum FillPatternStyle
 	{
 		VerticalLines,
 		HorizontalLines,
@@ -1259,17 +1872,18 @@ namespace ApexCharts
 		Squares,
 		Circles
 	}
+#pragma warning restore CS1591
 
-	/// <summary>
-	/// Grid is the plot area excluding legends, title, subtitle, x-axis, and y-axis. Grid’s coordinates are used extensively in calculations in the chart in determining where to plot the actual chart elements.
-	/// </summary>
-	/// <remarks>
-	/// Links:
-	/// 
-	/// <see href="https://apexcharts.com/docs/grid">JavaScript Documentation</see>,
-	/// <see href="https://apexcharts.com/docs/options/grid">JavaScript Reference</see>
-	/// </remarks>
-	public class Grid
+    /// <summary>
+    /// Grid is the plot area excluding legends, title, subtitle, x-axis, and y-axis. Grid's coordinates are used extensively in calculations in the chart in determining where to plot the actual chart elements.
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.com/docs/grid">JavaScript Documentation</see>,
+    /// <see href="https://apexcharts.com/docs/options/grid">JavaScript Reference</see>
+    /// </remarks>
+    public class Grid
 	{
 		/// <summary>
 		/// Colors of grid borders / lines
@@ -1307,33 +1921,75 @@ namespace ApexCharts
 		public GridYAxis Yaxis { get; set; }
 	}
 
+	/// <summary>
+	/// Defines how to style the columns for the grid
+	/// </summary>
 	public class GridColumn
 	{
-		public List<string> Colors { get; set; }
-		public double? Opacity { get; set; }
+        /// <summary>
+        /// Grid background colors filling in column pattern. Each column will be filled with colors based on the index in this array. If less colors are specified, colors are repeated.
+        /// </summary>
+        public List<string> Colors { get; set; }
+
+        /// <summary>
+        /// Opacity of the column background colors. Accepts values from 0 to 1
+        /// </summary>
+        public double? Opacity { get; set; }
 	}
 
-	public class GridRow
+    /// <summary>
+    /// Defines how to style the rows for the grid
+    /// </summary>
+    public class GridRow
 	{
-		public List<string> Colors { get; set; }
-		public double? Opacity { get; set; }
+        /// <summary>
+        /// Grid background colors filling in row pattern. Each row will be filled with colors based on the index in this array. If less colors are specified, colors are repeated.
+        /// </summary>
+        public List<string> Colors { get; set; }
+
+        /// <summary>
+        /// Opacity of the row background colors. Accepts values from 0 to 1
+        /// </summary>
+        public double? Opacity { get; set; }
 	}
 
-	public class GridXAxis
+    /// <summary>
+    /// Defines how to style the X-axis for the grid
+    /// </summary>
+    public class GridXAxis
 	{
-		public Lines Lines { get; set; }
+        /// <inheritdoc cref="ApexCharts.Lines" />
+        public Lines Lines { get; set; }
 	}
 
+	/// <summary>
+	/// Defines options for grid lines
+	/// </summary>
 	public class Lines
 	{
-		public double? OffsetX { get; set; }
-		public double? OffsetY { get; set; }
-		public bool? Show { get; set; }
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// Whether to show / hide y-axis lines
+        /// </summary>
+        public bool? Show { get; set; }
 	}
 
-	public class GridYAxis
+    /// <summary>
+    /// Defines how to style the Y-axis for the grid
+    /// </summary>
+    public class GridYAxis
 	{
-		public Lines Lines { get; set; }
+        /// <inheritdoc cref="ApexCharts.Lines" />
+        public Lines Lines { get; set; }
 	}
 
 	/// <summary>
@@ -1427,7 +2083,7 @@ namespace ApexCharts
 		public bool? Show { get; set; }
 
 		/// <summary>
-		/// Allows you to hide a particular legend if it’s series contains all null values.
+		/// Allows you to hide a particular legend if it's series contains all null values.
 		/// </summary>
 		public bool? ShowForNullSeries { get; set; }
 
@@ -1437,7 +2093,7 @@ namespace ApexCharts
 		public bool? ShowForSingleSeries { get; set; }
 
 		/// <summary>
-		/// Allows you to hide a particular legend if it’s series contains all 0 values.
+		/// Allows you to hide a particular legend if it's series contains all 0 values.
 		/// </summary>
 		public bool? ShowForZeroSeries { get; set; }
 
@@ -1460,7 +2116,7 @@ namespace ApexCharts
 		public string Formatter { get; set; }
 
 		/// <summary>
-		/// A formatter function to allow showing data values in the legend while hovering on the chart. This can be useful when you have multiple series, and you don’t want to show tooltips for each series together. Example:
+		/// A formatter function to allow showing data values in the legend while hovering on the chart. This can be useful when you have multiple series, and you don't want to show tooltips for each series together. Example:
 		/// 
 		/// <code>
 		/// legend: {
@@ -1478,44 +2134,113 @@ namespace ApexCharts
 		public List<string> CustomLegendItems { get; set; }
 	}
 
-	public class LegendContainerMargin
+#pragma warning disable CS1591 // Documentation not available for obsolete properties
+    [Obsolete("This property is no longer availabe")]
+    public class LegendContainerMargin
 	{
 		public double? Left { get; set; }
 		public double? Top { get; set; }
 	}
+#pragma warning restore CS1591
 
-	public class LegendItemMargin
+    /// <summary>
+    /// Defines the margin to apply to legend items
+    /// </summary>
+    public class LegendItemMargin
 	{
-		public double? Horizontal { get; set; }
-		public double? Vertical { get; set; }
+        /// <summary>
+        /// Horizontal margin for individual legend item.
+        /// </summary>
+        public double? Horizontal { get; set; }
+
+        /// <summary>
+        /// Vertical margin for individual legend item.
+        /// </summary>
+        public double? Vertical { get; set; }
 	}
 
-	public class LegendLabels
+    /// <summary>
+    /// Defines the styling to apply to legend item labels
+    /// </summary>
+    public class LegendLabels
 	{
-		public Color Colors { get; set; }
-		public bool? UseSeriesColors { get; set; }
+        /// <summary>
+        /// Custom text colors for legend labels. Accepts an array of colors where each index corresponds to the series index
+        /// </summary>
+        public Color Colors { get; set; }
+
+        /// <summary>
+        /// Whether to use primary colors or not.
+        /// </summary>
+        public bool? UseSeriesColors { get; set; }
 	}
 
-	public class LegendMarkers
+    /// <summary>
+    /// Defines the styling to apply to legend item markers
+    /// </summary>
+    public class LegendMarkers
 	{
-		public List<string> FillColors { get; set; }
-		public double? Height { get; set; }
-		public double? OffsetX { get; set; }
-		public double? OffsetY { get; set; }
-		public double? Radius { get; set; }
-		public string StrokeColor { get; set; }
-		public double? StrokeWidth { get; set; }
-		public double? Width { get; set; }
+        /// <summary>
+        /// Fill Colors of the marker point.
+        /// </summary>
+        public List<string> FillColors { get; set; }
+
+        /// <summary>
+        /// Height of the marker.
+        /// </summary>
+        public double? Height { get; set; }
+
+        /// <summary>
+        /// Sets the left offset of the marker
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Sets the top offset of the marker
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// Border Radius of the marker
+        /// </summary>
+        public double? Radius { get; set; }
+
+        /// <summary>
+        /// Stroke Color of the marker point.
+        /// </summary>
+        public string StrokeColor { get; set; }
+
+        /// <summary>
+        /// Stroke Size of the marker point.
+        /// </summary>
+        public double? StrokeWidth { get; set; }
+
+        /// <summary>
+        /// Width of the marker that appears before series name.
+        /// </summary>
+        public double? Width { get; set; }
 	}
 
-	public class LegendOnItemClick
+    /// <summary>
+    /// Defines options to execute for when a legend item is clicked
+    /// </summary>
+    public class LegendOnItemClick
 	{
-		public bool? ToggleDataSeries { get; set; }
+        /// <summary>
+        /// When clicked on legend item, it will toggle the visibility of the series in chart.
+        /// </summary>
+        public bool? ToggleDataSeries { get; set; }
 	}
 
-	public class LegendOnItemHover
+    /// <summary>
+    /// Defines options to execute for when a legend item is hovered
+    /// </summary>
+    public class LegendOnItemHover
 	{
-		public bool? HighlightDataSeries { get; set; }
+        /// <summary>
+        /// When hovered on legend item, it will highlight the paths of the hovered series in chart.
+        /// </summary>
+        public bool? HighlightDataSeries { get; set; }
 	}
 
 	/// <summary>
@@ -1641,20 +2366,56 @@ namespace ApexCharts
 		public Opacity StrokeWidth { get; set; }
 	}
 
-	public class MarkersDiscrete
+    /// <summary>
+    /// Allows you to target individual data-points and style particular markers differently
+    /// </summary>
+    public class MarkersDiscrete
 	{
-		public double? DataPointIndex { get; set; }
-		public string FillColor { get; set; }
-		public double? SeriesIndex { get; set; }
-		public double? Size { get; set; }
-		public string StrokeColor { get; set; }
-		public ShapeEnum? Shape { get; set; }
+        /// <summary>
+        /// The index of the marker to apply styling to
+        /// </summary>
+        public double? DataPointIndex { get; set; }
+
+        /// <summary>
+        /// The color to fill the marker with
+        /// </summary>
+        public string FillColor { get; set; }
+
+        /// <summary>
+        /// The index within the data series to apply styling to
+        /// </summary>
+        public double? SeriesIndex { get; set; }
+
+        /// <summary>
+        /// The size to apply to the marker
+        /// </summary>
+        public double? Size { get; set; }
+
+        /// <summary>
+        /// The stroke color to apply to the marker
+        /// </summary>
+        public string StrokeColor { get; set; }
+
+        /// <summary>
+        /// The type of shape to use for the marker
+        /// </summary>
+        public ShapeEnum? Shape { get; set; }
 	}
 
+	/// <summary>
+	/// Defines styling properties for when a marker is hovered
+	/// </summary>
 	public class MarkersHover
 	{
-		public double? Size { get; set; }
-		public double? SizeOffset { get; set; }
+        /// <summary>
+        /// Fixed size of the marker when it is active
+        /// </summary>
+        public double? Size { get; set; }
+
+        /// <summary>
+        /// Unlike the fixed size, this option takes the original markers.size and increases/decreases the value based on it. So, if markers.size: 6, markers.hover.sizeOffset: 3 will make the marker's size 9 when hovered.
+        /// </summary>
+        public double? SizeOffset { get; set; }
 	}
 
 	/// <summary>
@@ -1697,11 +2458,25 @@ namespace ApexCharts
 		public VerticalAlign? VerticalAlign { get; set; }
 	}
 
+	/// <summary>
+	/// Styling options to apply when there is no data in the chart
+	/// </summary>
 	public class NoDataStyle
 	{
-		public string Color { get; set; }
-		public string FontFamily { get; set; }
-		public string FontSize { get; set; }
+        /// <summary>
+        /// Fore color of the text
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Font family of the text
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font size of the text
+        /// </summary>
+        public string FontSize { get; set; }
 	}
 
 	/// <summary>
@@ -1766,23 +2541,28 @@ namespace ApexCharts
 		public AreaFillTo? FillTo { get; set; }
 	}
 
-	public enum AreaFillTo
+#pragma warning disable CS1591 // Enum values are self-explanatory
+    /// <summary>
+    /// A list of fill options
+    /// </summary>
+    public enum AreaFillTo
 	{
 		End,
 		Origin
 	}
+#pragma warning restore CS1591
 
-	/// <summary>
-	/// Defines options specific to <see cref="ChartType.BoxPlot"/>
-	/// </summary>
-	/// <remarks>
-	/// Links:
-	/// 
-	/// <see href="https://apexcharts.github.io/Blazor-ApexCharts/boxplot-charts">Blazor Example</see>,
-	/// <see href="https://apexcharts.com/docs/chart-types/boxplot">JavaScript Documentation</see>,
-	/// <see href="https://apexcharts.com/docs/options/plotoptions/boxplot">JavaScript Reference</see>
-	/// </remarks>
-	public class PlotOptionsBoxPlot
+    /// <summary>
+    /// Defines options specific to <see cref="ChartType.BoxPlot"/>
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/boxplot-charts">Blazor Example</see>,
+    /// <see href="https://apexcharts.com/docs/chart-types/boxplot">JavaScript Documentation</see>,
+    /// <see href="https://apexcharts.com/docs/options/plotoptions/boxplot">JavaScript Reference</see>
+    /// </remarks>
+    public class PlotOptionsBoxPlot
 	{
 		/// <inheritdoc cref="ApexCharts.BloxPlotColors" />
 		public BloxPlotColors Colors { get; set; }
@@ -1837,12 +2617,12 @@ namespace ApexCharts
 		public BorderRadiusWhenStacked? BorderRadiusWhenStacked { get; set; }
 
 		/// <summary>
-		/// In column charts, columnWidth is the percentage of the available width in the grid-rect. Accepts ‘0%’ to ‘100%’
+		/// In column charts, columnWidth is the percentage of the available width in the grid-rect. Accepts '0%' to '100%'
 		/// </summary>
 		public string ColumnWidth { get; set; }
 
 		/// <summary>
-		/// In horizontal bar charts, barHeight is the percentage of the available height in the grid-rect. Accepts ‘0%’ to ‘100%’
+		/// In horizontal bar charts, barHeight is the percentage of the available height in the grid-rect. Accepts '0%' to '100%'
 		/// </summary>
 		public string BarHeight { get; set; }
 
@@ -1876,22 +2656,30 @@ namespace ApexCharts
 #pragma warning restore CS1591
 	}
 
-	public enum BorderRadiusApplication
+#pragma warning disable CS1591 // Enum values are self-explanatory
+    /// <summary>
+    /// A list of border radius options
+    /// </summary>
+    public enum BorderRadiusApplication
 	{
 		Around,
 		End
 	}
 
-	public enum BorderRadiusWhenStacked
+    /// <summary>
+    /// A list of border radius options
+    /// </summary>
+    public enum BorderRadiusWhenStacked
 	{
 		All,
 		Last
 	}
+#pragma warning restore CS1591
 
-	/// <summary>
-	/// Defines how to color the bar chart
-	/// </summary>
-	public class PlotOptionsBarColors
+    /// <summary>
+    /// Defines how to color the bar chart
+    /// </summary>
+    public class PlotOptionsBarColors
 	{
 		/// <summary>
 		/// Custom colors for background rects. The number of colors in the array is repeated if fewer colors than data points are specified.
@@ -1923,12 +2711,12 @@ namespace ApexCharts
 		public string Color { get; set; }
 
 		/// <summary>
-		/// Value indicating range’s upper limit
+		/// Value indicating range's upper limit
 		/// </summary>
 		public double? From { get; set; }
 
 		/// <summary>
-		/// Value indicating range’s lower limit
+		/// Value indicating range's lower limit
 		/// </summary>
 		public double? To { get; set; }
 	}
@@ -1944,7 +2732,7 @@ namespace ApexCharts
 		public bool? HideOverflowingLabels { get; set; }
 
 		/// <summary>
-		/// Maximum limit of data-labels that can be displayed on a bar chart. If data-points exceed this number, data-labels won’t be shown.
+		/// Maximum limit of data-labels that can be displayed on a bar chart. If data-points exceed this number, data-labels won't be shown.
 		/// </summary>
 		public double? MaxItems { get; set; }
 
@@ -2101,7 +2889,7 @@ namespace ApexCharts
 		public PlotOptionsHeatmapColorScale ColorScale { get; set; }
 
 		/// <summary>
-		/// When turned on, each row in a heatmap will have it’s own lowest and highest range and colors will be shaded for each series. Default value is turned off.
+		/// When turned on, each row in a heatmap will have it's own lowest and highest range and colors will be shaded for each series. Default value is turned off.
 		/// </summary>
 		public bool? Distributed { get; set; }
 
@@ -2171,7 +2959,7 @@ namespace ApexCharts
 		public string ForeColor { get; set; }
 
 		/// <summary>
-		/// Value indicating range’s upper limit
+		/// Value indicating range's upper limit
 		/// </summary>
 		public double? From { get; set; }
 
@@ -2181,7 +2969,7 @@ namespace ApexCharts
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Value indicating range’s lower limit
+		/// Value indicating range's lower limit
 		/// </summary>
 		public double? To { get; set; }
 	}
@@ -2304,17 +3092,17 @@ namespace ApexCharts
 	public class DonutLabelName
 	{
 		/// <summary>
-		/// Color of the name in the donut’s label
+		/// Color of the name in the donut's label
 		/// </summary>
 		public string Color { get; set; }
 
 		/// <summary>
-		/// Font family of the name in donut’s label
+		/// Font family of the name in donut's label
 		/// </summary>
 		public string FontFamily { get; set; }
 
 		/// <summary>
-		/// Font size of the name in donut’s label
+		/// Font size of the name in donut's label
 		/// </summary>
 		public string FontSize { get; set; }
 
@@ -2329,7 +3117,7 @@ namespace ApexCharts
 		public double? OffsetY { get; set; }
 
 		/// <summary>
-		/// Show the name of the respective bar associated with it’s value
+		/// Show the name of the respective bar associated with it's value
 		/// </summary>
 		public bool Show { get; set; } = true;
 	}
@@ -2375,7 +3163,7 @@ namespace ApexCharts
 		public bool? ShowAlways { get; set; }
 
 		/// <summary>
-		/// A custom formatter function to apply on the total value. It accepts one parameter w which contains the chart’s config and global objects. Defaults to a total of all series percentage divided by the length of series.
+		/// A custom formatter function to apply on the total value. It accepts one parameter w which contains the chart's config and global objects. Defaults to a total of all series percentage divided by the length of series.
 		/// </summary>
 		public string Formatter { get; set; }
 	}
@@ -2610,7 +3398,7 @@ namespace ApexCharts
 		public double? OffsetY { get; set; }
 
 		/// <summary>
-		/// Show the name of the respective bar associated with it’s value
+		/// Show the name of the respective bar associated with it's value
 		/// </summary>
 		public bool? Show { get; set; }
 	}
@@ -2651,7 +3439,7 @@ namespace ApexCharts
 		public bool? Show { get; set; }
 
 		/// <summary>
-		/// A custom formatter function to apply on the total value. It accepts one parameter w which contains the chart’s config and global objects. Defaults to a total of all series percentage divided by the length of series.
+		/// A custom formatter function to apply on the total value. It accepts one parameter w which contains the chart's config and global objects. Defaults to a total of all series percentage divided by the length of series.
 		/// </summary>
 		public string Formatter { get; set; }
 	}
@@ -2716,7 +3504,7 @@ namespace ApexCharts
 		public string Image { get; set; }
 
 		/// <summary>
-		/// If true, the image doesn’t exceeds the hollow area and is contained within.
+		/// If true, the image doesn't exceeds the hollow area and is contained within.
 		/// </summary>
 		public bool? ImageClipped { get; set; }
 
@@ -2822,24 +3610,26 @@ namespace ApexCharts
 		public object Options { get; set; }
 	}
 
-	public class PurpleDatum
+#pragma warning disable CS1591 // Documentation not available for current version of ApexCharts.js
+    public class PurpleDatum
 	{
 		public string FillColor { get; set; }
 		public string StrokeColor { get; set; }
 		public object X { get; set; }
 		public object Y { get; set; }
 	}
+#pragma warning restore CS1591
 
-	/// <summary>
-	/// Class to define stypes that are applied on various interaction states with the chart.
-	/// </summary>
-	/// <remarks>
-	/// Links:
-	/// 
-	/// <see href="https://apexcharts.github.io/Blazor-ApexCharts/features/state">Blazor Example</see>,
-	/// <see href="https://apexcharts.com/docs/options/states">JavaScript Reference</see>
-	/// </remarks>
-	public class States
+    /// <summary>
+    /// Class to define styles that are applied on various interaction states with the chart.
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/features/state">Blazor Example</see>,
+    /// <see href="https://apexcharts.com/docs/options/states">JavaScript Reference</see>
+    /// </remarks>
+    public class States
 	{
 		/// <inheritdoc cref="ApexCharts.StatesActive" />
 		public StatesActive Active { get; set; }
@@ -2851,46 +3641,75 @@ namespace ApexCharts
 		public StatesNormal Normal { get; set; }
 	}
 
+	/// <summary>
+	/// Defines styles to apply during the active state
+	/// </summary>
 	public class StatesActive
 	{
-		public bool? AllowMultipleDataPointsSelection { get; set; }
-		public StatesFilter Filter { get; set; }
+        /// <summary>
+        /// Whether to allow selection of multiple datapoints and give them active state or allow one dataPoint selection at a time.
+        /// </summary>
+        public bool? AllowMultipleDataPointsSelection { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.StatesFilter" />
+        public StatesFilter Filter { get; set; }
 	}
 
-
-	public class StatesHover
+    /// <summary>
+    /// Defines styles to apply during the hover state
+    /// </summary>
+    public class StatesHover
 	{
-		public StatesFilter Filter { get; set; }
+        /// <inheritdoc cref="ApexCharts.StatesFilter" />
+        public StatesFilter Filter { get; set; }
 	}
 
-
-	public class StatesNormal
+    /// <summary>
+    /// Defines styles to apply during the normal state
+    /// </summary>
+    public class StatesNormal
 	{
-		public StatesFilter Filter { get; set; }
+        /// <inheritdoc cref="ApexCharts.StatesFilter" />
+        public StatesFilter Filter { get; set; }
 	}
 
+	/// <summary>
+	/// Defines the options to apply to the current state
+	/// </summary>
 	public class StatesFilter
 	{
-		public StatesFilterType Type { get; set; }
-		public double? Value { get; set; }
+        /// <summary>
+        /// The filter function to apply on hover state.
+        /// </summary>
+        public StatesFilterType Type { get; set; }
+
+        /// <summary>
+        /// A larger value intensifies the filter effect. Accepts values between 0 and 1
+        /// </summary>
+        public double? Value { get; set; }
 	}
 
-	public enum StatesFilterType
+#pragma warning disable CS1591 // Enum values are self-explanatory
+    /// <summary>
+    /// A list of shading options to apply to various data point states
+    /// </summary>
+    public enum StatesFilterType
 	{
 		none,
 		lighten,
 		darken
 	}
+#pragma warning restore CS1591
 
-	/// <summary>
-	/// Class to define how lines on charts should be generated.
-	/// </summary>
-	/// <remarks>
-	/// Links:
-	/// 
-	/// <see href="https://apexcharts.com/docs/options/stroke">JavaScript Reference</see>
-	/// </remarks>
-	public class Stroke
+    /// <summary>
+    /// Class to define how lines on charts should be generated.
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.com/docs/options/stroke">JavaScript Reference</see>
+    /// </remarks>
+    public class Stroke
 	{
 		/// <summary>
 		/// Colors to fill the border for paths.
@@ -2991,16 +3810,34 @@ namespace ApexCharts
 		public string Text { get; set; }
 	}
 
+	/// <summary>
+	/// Defines the style options to apply to the subtitle
+	/// </summary>
 	public class SubtitleStyle
 	{
-		public string Color { get; set; }
-		public string FontFamily { get; set; }
-		public string FontSize { get; set; }
-		public object FontWeight { get; set; }
+        /// <summary>
+        /// Fore color of the subtitle text
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Font Family of the subtitle text
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font Size of the subtitle text
+        /// </summary>
+        public string FontSize { get; set; }
+
+        /// <summary>
+        /// Font Weight of the subtitle text
+        /// </summary>
+        public object FontWeight { get; set; }
 	}
 
 	/// <summary>
-	/// If you don’t want to define your own colorPalette, choose a pre-defined palette in theme.palette property. ApexCharts has 10+ built in color palettes to choose from. To apply palette globally to all charts, set Apex.theme.palette property.
+	/// If you don't want to define your own colorPalette, choose a pre-defined palette in theme.palette property. ApexCharts has 10+ built in color palettes to choose from. To apply palette globally to all charts, set Apex.theme.palette property.
 	/// </summary>
 	/// <remarks>
 	/// Links:
@@ -3025,12 +3862,30 @@ namespace ApexCharts
 		public PaletteType? Palette { get; set; }
 	}
 
-	public class ThemeMonochrome
+    /// <summary>
+    /// Single color is used as a base and shades are generated from that color.
+    /// </summary>
+    public class ThemeMonochrome
 	{
-		public string Color { get; set; }
-		public bool Enabled { get; set; } = true;
-		public double? ShadeIntensity { get; set; }
-		public Mode? ShadeTo { get; set; }
+        /// <summary>
+        /// A hex color which will be used as the base color for generating shades
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Whether to enable monochrome theme option.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// What should be the intensity while generating shades. Accepts from 0 to 1
+        /// </summary>
+        public double? ShadeIntensity { get; set; }
+
+        /// <summary>
+        /// The type of shade to apply
+        /// </summary>
+        public Mode? ShadeTo { get; set; }
 	}
 
 	/// <summary>
@@ -3077,12 +3932,30 @@ namespace ApexCharts
 		public string Text { get; set; }
 	}
 
-	public class TitleStyle
+    /// <summary>
+    /// Defines the style options to apply to the title
+    /// </summary>
+    public class TitleStyle
 	{
-		public string Color { get; set; }
-		public string FontFamily { get; set; }
-		public string FontSize { get; set; }
-		public object FontWeight { get; set; }
+        /// <summary>
+        /// Fore color of the title text
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Font Family of the title text
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font Size of the title text
+        /// </summary>
+        public string FontSize { get; set; }
+
+        /// <summary>
+        /// Font Weight of the title text
+        /// </summary>
+        public object FontWeight { get; set; }
 	}
 
 	/// <summary>
@@ -3131,7 +4004,7 @@ namespace ApexCharts
 		public TooltipFixed Fixed { get; set; }
 
 		/// <summary>
-		/// Follow user’s cursor position instead of putting tooltip on actual data points.
+		/// Follow user's cursor position instead of putting tooltip on actual data points.
 		/// </summary>
 		public bool? FollowCursor { get; set; }
 
@@ -3184,63 +4057,163 @@ namespace ApexCharts
 		public TooltipZ Z { get; set; }
 	}
 
+	/// <summary>
+	/// Defines options to create a fixed-position tooltip
+	/// </summary>
 	public class TooltipFixed
 	{
-		public bool Enabled { get; set; } = true;
-		public double? OffsetX { get; set; }
-		public double? OffsetY { get; set; }
-		public string Position { get; set; }
+        /// <summary>
+        /// Set the tooltip to a fixed position
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Sets the left offset for the tooltip container in fixed position
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Sets the top offset for the tooltip container in fixed position
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// When having a fixed tooltip, select a predefined position.
+        /// </summary>
+        public string Position { get; set; }
 	}
 
+	/// <summary>
+	/// Defines style options to apply to tooltips
+	/// </summary>
 	public class TooltipItems
 	{
-		public string Display { get; set; }
+        /// <summary>
+        /// The css property of each tooltip item container.
+        /// </summary>
+        public string Display { get; set; }
 	}
 
+	/// <summary>
+	/// Defines options to apply to tooltip markers
+	/// </summary>
 	public class TooltipMarker
 	{
-		public List<string> FillColors { get; set; }
-		public bool? Show { get; set; }
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public List<string> FillColors { get; set; }
+
+        /// <summary>
+        /// Whether to show the color coded marker shape in front of Series Name which helps to identify series in multiple datasets.
+        /// </summary>
+        public bool? Show { get; set; }
 	}
 
+	/// <summary>
+	/// Defines options for hovering over the data set of the chart
+	/// </summary>
 	public class TooltipOnDatasetHover
 	{
-		public bool? HighlightDataSeries { get; set; }
+        /// <summary>
+        /// When user hovers over a datapoint of a particular series, other series will be grayed out making the current series highlight.
+        /// </summary>
+        public bool? HighlightDataSeries { get; set; }
 	}
 
-	public class TooltipStyle
+    /// <summary>
+    /// Defines style options to apply to tooltips
+    /// </summary>
+    public class TooltipStyle
 	{
-		public string FontFamily { get; set; }
-		public string FontSize { get; set; }
+        /// <summary>
+        /// Font-family to apply on tooltip texts
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font-size to apply on tooltip texts
+        /// </summary>
+        public string FontSize { get; set; }
 	}
 
+	/// <summary>
+	/// Defines options to apply to the X-axis value of a tooltip
+	/// </summary>
 	public class TooltipX
 	{
-		public string Format { get; set; }
-		public bool? Show { get; set; }
-		public string Formatter { get; set; }
+        /// <summary>
+        /// The format of the x-axis value to show on the tooltip. To view how to format datetime Strings, view the Datetime Formatter guide.
+        /// </summary>
+        public string Format { get; set; }
+
+        /// <summary>
+        /// Whether to show the tooltip title (x-axis values) on tooltip or not
+        /// </summary>
+        public bool? Show { get; set; }
+
+        /// <summary>
+        /// A custom formatter function which you can override and display according to your needs (a use case can be a date formatted using complex moment.js functions)
+        /// </summary>
+        public string Formatter { get; set; }
 	}
 
-	public class PurpleY
+#pragma warning disable CS1591 // Documentation not available for current version of ApexCharts.js
+    public class PurpleY
 	{
 		public Dictionary<string, object> Title { get; set; }
 	}
+#pragma warning restore CS1591
 
-	public class TooltipYTitle
+	/// <summary>
+	/// Defines options on how to format the title of a tooltip
+	/// </summary>
+    public class TooltipYTitle
 	{
-		public string Formatter { get; set; }
+        /// <summary>
+        /// The series name which appears besides values can be formatted using this function. Default behaviour is (seriesName) => returns seriesName
+        /// </summary>
+        public string Formatter { get; set; }
 	}
 
-	public class TooltipY
+    /// <summary>
+    /// Defines options to apply to the Y-axis value of a tooltip
+    /// </summary>
+    public class TooltipY
 	{
-		public TooltipYTitle Title { get; set; }
-		public string Formatter { get; set; }
+        /// <inheritdoc cref="ApexCharts.TooltipYTitle" />
+        public TooltipYTitle Title { get; set; }
+
+        /// <summary>
+        /// To format the Y-axis values of tooltip, you can define a custom formatter function. By default, these values will be formatted according yaxis.labels.formatter function which will be overrided by this function if you define it.
+		/// 
+		/// <code>
+		/// tooltip: {
+		///     y: {
+		///         formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
+		///             return value
+		///         }
+		///     }
+		/// }
+		/// </code>
+        /// </summary>
+        public string Formatter { get; set; }
 	}
 
-	public class TooltipZ
+    /// <summary>
+    /// Defines options to  apply to the Z-axis value of a tooltip
+    /// </summary>
+    public class TooltipZ
 	{
-		public string Title { get; set; }
-		public string Formatter { get; set; }
+        /// <summary>
+        /// A custom text for the z values of Bubble Series.
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
+        /// To format the z values of a Bubble series, you can use this function.
+        /// </summary>
+        public string Formatter { get; set; }
 	}
 
 	/// <summary>
@@ -3317,7 +4290,7 @@ namespace ApexCharts
 		public bool? Sorted { get; set; }
 
 		/// <summary>
-		/// Number of Tick Intervals to show. Note: tickAmount doesn’t have any effect when xaxis.type = datetime
+		/// Number of Tick Intervals to show. Note: tickAmount doesn't have any effect when xaxis.type = datetime
 		/// </summary>
 		/// <remarks>
 		/// f you have a numeric xaxis xaxis.type = 'numeric', you can specify tickAmount: 'dataPoints' which would make the number of ticks equal to the number of dataPoints in the chart.
@@ -3344,164 +4317,564 @@ namespace ApexCharts
 		public XAxisGroups Group { get; set; }
 	}
 
+	/// <summary>
+	/// Defines options to apply to groups within the X-axis
+	/// </summary>
 	public class XAxisGroups
 	{
-		public List<XAxisGroup> Groups { get; set; }
-		public XAxisGroupStyle Style { get; set; }
+        /// <inheritdoc cref="ApexCharts.XAxisGroup" />
+        public List<XAxisGroup> Groups { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.XAxisGroupStyle" />
+        public XAxisGroupStyle Style { get; set; }
 	}
 
+	/// <summary>
+	/// Defines an individual group within the X-axis
+	/// </summary>
 	public class XAxisGroup
 	{
-		public string Title { get; set; }
-		public int Cols { get; set; }
+        /// <summary>
+        /// The name to apply to the group
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
+        /// The number of columns in the group
+        /// </summary>
+        public int Cols { get; set; }
 	}
 
+	/// <summary>
+	/// Defines styling to apply to X-axis groups
+	/// </summary>
 	public class XAxisGroupStyle
 	{
-		public List<string> Colors { get; set; }
-		public string FontSize { get; set; }
-		public string FontFamily { get; set; }
-		public string FontWeight { get; set; }
-		public string CssClass { get; set; }
+        /// <summary>
+        /// Fore color for the x-axis groups label.
+        /// </summary>
+        public List<string> Colors { get; set; }
+
+        /// <summary>
+        /// Font size for the x-axis group label
+        /// </summary>
+        public string FontSize { get; set; }
+
+        /// <summary>
+        /// Font family for the x-axis group label
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font-weight for the x-axis group label
+        /// </summary>
+        public string FontWeight { get; set; }
+
+        /// <summary>
+        /// A custom Css Class to give to the label elements
+        /// </summary>
+        public string CssClass { get; set; }
 	}
 
-	public enum TickPlacement
+#pragma warning disable CS1591 // Enum values are self-explanatory
+    /// <summary>
+    /// A list of placement options for ticks
+    /// </summary>
+    public enum TickPlacement
 	{
 		On,
 		Beteween
 	}
+#pragma warning restore CS1591
 
-	public class AxisBorder
+    /// <summary>
+    /// Defines styling to apply to the border of an axis
+    /// </summary>
+    public class AxisBorder
 	{
-		public string Color { get; set; }
-		public double? OffsetX { get; set; }
-		public double? OffsetY { get; set; }
-		public bool? Show { get; set; }
-		public double? Height { get; set; }
+        /// <summary>
+        /// Color of the axis border
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Sets the left offset of the axis border
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Sets the top offset of the axis border
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// Draw a border on the axis
+        /// </summary>
+        public bool? Show { get; set; }
+
+        /// <summary>
+        /// Sets the border height of the axis line
+        /// </summary>
+        public double? Height { get; set; }
 	}
 
+	/// <summary>
+	/// Defines styling to apply to the ticks of an axis
+	/// </summary>
 	public class AxisTicks
 	{
-		public string BorderType { get; set; }
-		public string Color { get; set; }
-		public double? Height { get; set; }
-		public double? OffsetX { get; set; }
-		public double? OffsetY { get; set; }
-		public bool? Show { get; set; }
+        /// <summary>
+        /// The type of border to apply
+        /// </summary>
+        public string BorderType { get; set; }
+
+        /// <summary>
+        /// Color of the ticks
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Height of the ticks
+        /// </summary>
+        public double? Height { get; set; }
+
+        /// <summary>
+        /// Sets the left offset of the ticks
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Sets the top offset of the ticks
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// Draw ticks on the axis to specify intervals
+        /// </summary>
+        public bool? Show { get; set; }
 	}
 
+	/// <summary>
+	/// Defines styling options to apply to chart crosshairs
+	/// </summary>
 	public class AxisCrosshairs
 	{
-		public CrosshairsDropShadow DropShadow { get; set; }
-		public CrosshairsFill Fill { get; set; }
-		public double? Opacity { get; set; }
-		public string Position { get; set; }
-		public bool? Show { get; set; }
-		public CrosshairStroke Stroke { get; set; }
-		public object Width { get; set; }
+        /// <inheritdoc cref="ApexCharts.CrosshairsDropShadow" />
+        public CrosshairsDropShadow DropShadow { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.CrosshairsFill" />
+        public CrosshairsFill Fill { get; set; }
+
+        /// <summary>
+        /// Opacity of the crosshairs
+        /// </summary>
+        public double? Opacity { get; set; }
+
+        /// <summary>
+        /// Where to place the crosshairs
+        /// </summary>
+        public string Position { get; set; }
+
+        /// <summary>
+        /// Show crosshairs on axis when user moves the mouse over chart area
+        /// </summary>
+        public bool? Show { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.CrosshairStroke" />
+        public CrosshairStroke Stroke { get; set; }
+
+        /// <summary>
+        /// Defines the width to apply to the crosshairs
+        /// </summary>
+		/// <remarks>
+		/// Options:
+		/// 
+		/// Any number,
+		/// tickWidth: takes the tick intervals on axis and creates a crosshair of that width,
+		/// barWidth: takes the barWidth and creates a crosshair of that width – only applicable to vertical bar charts
+		/// </remarks>
+        public object Width { get; set; }
 	}
 
+	/// <summary>
+	/// Defines how to style a shadow to display with the crosshairs
+	/// </summary>
 	public class CrosshairsDropShadow
 	{
-		public double? Blur { get; set; }
-		public string Color { get; set; }
-		public bool Enabled { get; set; } = true;
-		public double? Left { get; set; }
-		public double? Opacity { get; set; }
-		public double? Top { get; set; }
+        /// <summary>
+        /// Set blur distance for shadow
+        /// </summary>
+        public double? Blur { get; set; }
+
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Enable a dropshadow for crosshairs
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Set left offset for shadow
+        /// </summary>
+        public double? Left { get; set; }
+
+        /// <summary>
+        /// Set the opacity of shadow.
+        /// </summary>
+        public double? Opacity { get; set; }
+
+        /// <summary>
+        /// Set top offset for shadow
+        /// </summary>
+        public double? Top { get; set; }
 	}
 
-	public class CrosshairsFill
+    /// <summary>
+    /// Defines a styling to fill the crosshairs with
+    /// </summary>
+    public class CrosshairsFill
 	{
-		public string Color { get; set; }
-		public FluffyGradient Gradient { get; set; }
-		public string Type { get; set; }
+        /// <summary>
+        /// Fill color of crosshairs
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.FluffyGradient" />
+        public FluffyGradient Gradient { get; set; }
+
+        /// <summary>
+        /// The type of fill to use in the crosshairs
+        /// </summary>
+        public string Type { get; set; }
 	}
 
+	/// <summary>
+	/// Defines a styling for a gradient to fill the crosshairs with
+	/// </summary>
 	public class FluffyGradient
 	{
-		public string ColorFrom { get; set; }
-		public string ColorTo { get; set; }
-		public double? OpacityFrom { get; set; }
-		public double? OpacityTo { get; set; }
-		public List<double> Stops { get; set; }
+        /// <summary>
+        /// Crosshairs Gradient Color from
+        /// </summary>
+        public string ColorFrom { get; set; }
+
+        /// <summary>
+        /// Crosshairs Gradient Color to
+        /// </summary>
+        public string ColorTo { get; set; }
+
+        /// <summary>
+        /// Crosshairs fill opacity from
+        /// </summary>
+        public double? OpacityFrom { get; set; }
+
+        /// <summary>
+        /// Crosshairs fill opacity to
+        /// </summary>
+        public double? OpacityTo { get; set; }
+
+        /// <summary>
+        /// Stops defines the ramp of colors to use on a gradient
+        /// </summary>
+        public List<double> Stops { get; set; }
 	}
 
+	/// <summary>
+	/// Defines how to style the border of the crosshairs
+	/// </summary>
 	public class CrosshairStroke
 	{
-		public string Color { get; set; }
-		public double? DashArray { get; set; }
-		public double? Width { get; set; }
+        /// <summary>
+        /// Border Color of crosshairs
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Creates dashes in borders of crosshairs. A higher number creates more space between dashes in the border.
+        /// </summary>
+        public double? DashArray { get; set; }
+
+        /// <summary>
+        /// Border Width of crosshairs
+        /// </summary>
+        public double? Width { get; set; }
 	}
 
+	/// <summary>
+	/// Defines how to style labels on the X-axis
+	/// </summary>
 	public class XAxisLabels
 	{
-		public DatetimeFormatter DatetimeFormatter { get; set; }
-		public bool? DatetimeUTC { get; set; }
-		public string Format { get; set; }
-		public string Formatter { get; set; }
-		public bool? HideOverlappingLabels { get; set; }
-		public double? MaxHeight { get; set; }
-		public double? MinHeight { get; set; }
-		public double? OffsetX { get; set; }
-		public double? OffsetY { get; set; }
-		public double? Rotate { get; set; }
-		public bool? RotateAlways { get; set; }
-		public bool? Show { get; set; }
-		public bool? ShowDuplicates { get; set; }
-		public AxisLabelStyle Style { get; set; }
-		public bool? Trim { get; set; }
+        /// <inheritdoc cref="ApexCharts.DatetimeFormatter" />
+        public DatetimeFormatter DatetimeFormatter { get; set; }
+
+        /// <summary>
+        /// When turned on, local DateTime is converted into UTC. Turn it off if you supply date with timezone info and want to preserve it.
+        /// </summary>
+        public bool? DatetimeUTC { get; set; }
+
+        /// <summary>
+        /// Formats the datetime value based on the format specifier.
+        /// </summary>
+        public string Format { get; set; }
+
+        /// <summary>
+        /// Overrides everything and applies a custom function for the xaxis value. The function accepts 3 arguments. The first one is the default formatted value and the second one as the raw timestamp which you can pass to any datetime handling function to suit your needs. The 3rd argument is present in date-time xaxis which includes a dateFormatter as described in the code below.
+		/// 
+		/// <code>
+		/// xaxis: {
+		///     labels: {
+		///         formatter: function(value, timestamp, opts) {
+		///             return opts.dateFormatter(new Date(timestamp)).format("dd MMM")
+		///         }
+		///     }
+		/// }
+		/// </code>
+        /// </summary>
+        public string Formatter { get; set; }
+
+        /// <summary>
+        /// When labels are too close and start to overlap on one another, this option prevents overlapping of the labels.
+        /// </summary>
+        public bool? HideOverlappingLabels { get; set; }
+
+        /// <summary>
+        /// Maximum height for the labels when they are rotated.
+        /// </summary>
+        public double? MaxHeight { get; set; }
+
+        /// <summary>
+        /// Minimum height for the labels
+        /// </summary>
+        public double? MinHeight { get; set; }
+
+        /// <summary>
+        /// Sets the left offset for label
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Sets the top offset for label
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// Rotate angle for the x-axis labels
+        /// </summary>
+        public double? Rotate { get; set; }
+
+        /// <summary>
+        /// Whether to rotate the labels always or to rotate only when the texts don't fit the available width
+        /// </summary>
+        public bool? RotateAlways { get; set; }
+
+        /// <summary>
+        /// Show labels on x-axis
+        /// </summary>
+        public bool? Show { get; set; }
+
+        /// <summary>
+        /// By default, duplicate labels are not printed to prevent congested values in a datetime series. If you intentionally want to display the same values in x-axis labels, turn on this option
+        /// </summary>
+        public bool? ShowDuplicates { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.AxisLabelStyle" />
+        public AxisLabelStyle Style { get; set; }
+
+        /// <summary>
+        /// Append ... to the text when it can't fit the available space and rotate is turned off
+        /// </summary>
+        public bool? Trim { get; set; }
 	}
 
-	public class YAxisLabels
+    /// <summary>
+    /// Defines how to style labels on the Y-axis
+    /// </summary>
+    public class YAxisLabels
 	{
-		public DatetimeFormatter DatetimeFormatter { get; set; }
-		public bool? DatetimeUTC { get; set; }
-		public string Format { get; set; }
-		public string Formatter { get; set; }
-		public bool? HideOverlappingLabels { get; set; }
-		public double? MaxWidth { get; set; }
-		public double? MinWidth { get; set; }
-		public double? OffsetX { get; set; }
-		public double? OffsetY { get; set; }
-		public double? Rotate { get; set; }
-		public bool? RotateAlways { get; set; }
-		public bool? Show { get; set; }
-		public bool? ShowDuplicates { get; set; }
-		public AxisLabelStyle Style { get; set; }
-		public bool? Trim { get; set; }
+        /// <inheritdoc cref="ApexCharts.DatetimeFormatter" />
+        public DatetimeFormatter DatetimeFormatter { get; set; }
+
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public bool? DatetimeUTC { get; set; }
+
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public string Format { get; set; }
+
+        /// <summary>
+        /// Applies a custom function for the yaxis value.
+		/// 
+		/// <code>
+		/// yaxis: {
+		///     labels: {
+		///         formatter: function(val, index) {
+		///             return val.toFixed(2);
+		///         }
+		///     }
+		/// }
+		/// </code>
+        /// </summary>
+		/// <remarks>
+		/// Note: In horizantal bar charts, the second parameters also contains additional data like dataPointIndex &amp; seriesIndex.
+		/// </remarks>
+        public string Formatter { get; set; }
+
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public bool? HideOverlappingLabels { get; set; }
+
+        /// <summary>
+        /// Maximum width for the y-axis labels
+        /// </summary>
+        public double? MaxWidth { get; set; }
+
+        /// <summary>
+        /// Minimum width for the y-axis labels
+        /// </summary>
+        public double? MinWidth { get; set; }
+
+        /// <summary>
+        /// Sets the left offset for label
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Sets the top offset for label
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// Rotate y-axis text label to a specific angle from it's center
+        /// </summary>
+        public double? Rotate { get; set; }
+
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public bool? RotateAlways { get; set; }
+
+        /// <summary>
+        /// Show labels on y-axis
+        /// </summary>
+        public bool? Show { get; set; }
+
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public bool? ShowDuplicates { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.AxisLabelStyle" />
+        public AxisLabelStyle Style { get; set; }
+
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public bool? Trim { get; set; }
 	}
 
-	public class DatetimeFormatter
+    /// <summary>
+    /// For the default timescale that is generated automatically based on the datetime difference, the below specifiers are used by default.
+    /// </summary>
+    public class DatetimeFormatter
 	{
-		public string Day { get; set; }
-		public string Hour { get; set; }
-		public string Minute { get; set; }
-		public string Month { get; set; }
-		public string Year { get; set; }
+        /// <summary>
+        /// Format specifier for the day of month.
+        /// </summary>
+        public string Day { get; set; }
+
+        /// <summary>
+        /// Format specifier for the hour of day.
+        /// </summary>
+        public string Hour { get; set; }
+
+        /// <summary>
+        /// Undefined
+        /// </summary>
+        public string Minute { get; set; }
+
+        /// <summary>
+        /// Format specifier for the month.
+        /// </summary>
+        public string Month { get; set; }
+
+        /// <summary>
+        /// Format specifier for the year.
+        /// </summary>
+        public string Year { get; set; }
 	}
 
+	/// <summary>
+	/// Defines styling to apply to the axis labels
+	/// </summary>
 	public class AxisLabelStyle
 	{
-		public Color Colors { get; set; }
-		public string CssClass { get; set; }
-		public string FontFamily { get; set; }
-		public string FontSize { get; set; }
-		public object FontWeight { get; set; }
+        /// <summary>
+        /// Fore color for the axis label. Accepts an array for distributed charts or accepts a single color string.
+        /// </summary>
+        public Color Colors { get; set; }
+
+        /// <summary>
+        /// A custom Css Class to give to the label elements
+        /// </summary>
+        public string CssClass { get; set; }
+
+        /// <summary>
+        /// Font family for the axis label
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font size for the axis label
+        /// </summary>
+        public string FontSize { get; set; }
+
+        /// <summary>
+        /// Font-weight for the axis label
+        /// </summary>
+        public object FontWeight { get; set; }
 	}
 
-
+	/// <summary>
+	/// Defines options to apply to axis tooltips
+	/// </summary>
 	public class AxisTooltip
 	{
-		public bool Enabled { get; set; } = true;
-		public double? OffsetY { get; set; }
-		public XAxisTooltipStyle Style { get; set; }
+        /// <summary>
+        /// Show tooltip on axis or not
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Sets the top offset for axis tooltip
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.AxisTooltipStyle" />
+        public AxisTooltipStyle Style { get; set; }
 	}
 
-	public class XAxisTooltipStyle
+    /// <summary>
+    /// Defines styling to apply to axis tooltips
+    /// </summary>
+    public class AxisTooltipStyle
 	{
-		public string FontFamily { get; set; }
-		public string FontSize { get; set; }
+        /// <summary>
+        /// Font family for the axis tooltip text
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font size for the axis tooltip text
+        /// </summary>
+        public string FontSize { get; set; }
 	}
 
 	/// <summary>
@@ -3525,7 +4898,7 @@ namespace ApexCharts
 		public AxisCrosshairs Crosshairs { get; set; }
 
 		/// <summary>
-		/// The number of fractions to display when there are floating values in y-axis. Note: If you have defined a custom formatter function in yaxis.labels.formatter, this won’t have any effect.
+		/// The number of fractions to display when there are floating values in y-axis. Note: If you have defined a custom formatter function in yaxis.labels.formatter, this won't have any effect.
 		/// </summary>
 		public int? DecimalsInFloat { get; set; }
 
@@ -3605,25 +4978,71 @@ namespace ApexCharts
 		public AxisTooltip Tooltip { get; set; }
 	}
 
-	public class AxisTitle
+    /// <summary>
+    /// Defines options to apply to the axis title
+    /// </summary>
+    public class AxisTitle
 	{
-		public double? OffsetX { get; set; }
-		public double? OffsetY { get; set; }
-		public double? Rotate { get; set; }
-		public AxisTitleStyle Style { get; set; }
-		public string Text { get; set; }
+        /// <summary>
+        /// Sets the left offset for axis title.
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Sets the top offset for the axis title.
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// Rotate the axis title either 90 or -90.
+        /// </summary>
+        public double? Rotate { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.AxisTitleStyle" />
+        public AxisTitleStyle Style { get; set; }
+
+        /// <summary>
+        /// Give the axis a title which will be displayed below the axis labels by default.
+        /// </summary>
+        public string Text { get; set; }
 	}
 
-	public class AxisTitleStyle
+    /// <summary>
+    /// Defines styling to apply to the axis title
+    /// </summary>
+    public class AxisTitleStyle
 	{
-		public string Color { get; set; }
-		public string CssClass { get; set; }
-		public string FontFamily { get; set; }
-		public string FontSize { get; set; }
-		public object FontWeight { get; set; }
+        /// <summary>
+        /// Fore color of the axis title
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// A custom CSS Class to give to the axis title
+        /// </summary>
+        public string CssClass { get; set; }
+
+        /// <summary>
+        /// Font family for the axis title
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font size for the axis title
+        /// </summary>
+        public string FontSize { get; set; }
+
+        /// <summary>
+        /// Font-weight for the axis title
+        /// </summary>
+        public object FontWeight { get; set; }
 	}
 
-	public enum Easing
+#pragma warning disable CS1591 // Enum values are self-explanatory
+    /// <summary>
+    /// A list of easing options for animations
+    /// </summary>
+    public enum Easing
 	{
 		Easein,
 		Easeinout,
@@ -3631,21 +5050,30 @@ namespace ApexCharts
 		Linear
 	};
 
-	public enum StackType
+    /// <summary>
+    /// A list of stacking options for stacked charts
+    /// </summary>
+    public enum StackType
 	{
 		Normal,
 		[EnumMember(Value = "100%")]
 		Percent100
 	};
 
-	public enum AutoSelected
+    /// <summary>
+    /// A list of toolbar items to select when the chart is loaded
+    /// </summary>
+    public enum AutoSelected
 	{
 		Pan,
 		Selection,
 		Zoom
 	};
 
-	public enum ChartType
+    /// <summary>
+    /// A list of chart types available to create
+    /// </summary>
+    public enum ChartType
 	{
 		Area,
 		Bar,
@@ -3666,34 +5094,49 @@ namespace ApexCharts
 		RangeArea,
 	};
 
-	public enum ZoomType
+    /// <summary>
+    /// A list of options to enable zooming on charts
+    /// </summary>
+    public enum ZoomType
 	{
 		X,
 		Xy,
 		Y
 	};
 
-	public enum TextAnchor
+    /// <summary>
+    /// A list of options to align data labels
+    /// </summary>
+    public enum TextAnchor
 	{
 		End,
 		Middle,
 		Start
 	};
 
-	public enum GridPosition
+    /// <summary>
+    /// A list of options to position generated gridss
+    /// </summary>
+    public enum GridPosition
 	{
 		Back,
 		Front
 	};
 
-	public enum Align
+    /// <summary>
+    /// A list of alignment options
+    /// </summary>
+    public enum Align
 	{
 		Center,
 		Left,
 		Right
 	};
 
-	public enum LegendPosition
+    /// <summary>
+    /// A list of areas to place the legend for charts
+    /// </summary>
+    public enum LegendPosition
 	{
 		Bottom,
 		Left,
@@ -3701,47 +5144,70 @@ namespace ApexCharts
 		Top
 	};
 
-	public enum ShapeEnum
+    /// <summary>
+    /// A list of shapes to generate data point markers with
+    /// </summary>
+    public enum ShapeEnum
 	{
 		Circle,
 		Square,
 		Rect
 	};
 
-	public enum VerticalAlign
+    /// <summary>
+    /// A list of alignment options for vertical placement
+    /// </summary>
+    public enum VerticalAlign
 	{
 		Bottom,
 		Middle,
 		Top
 	};
 
-	public enum Orientation
+    /// <summary>
+    /// A list of orientations for rotation
+    /// </summary>
+    public enum Orientation
 	{
 		Horizontal,
 		Vertical
 	};
+#pragma warning restore CS1591
 
-	public enum Shape
+#pragma warning disable CS1591 // Documentation not available for obsolete properties
+    [Obsolete("Deprecated since 3.24.0")]
+    public enum Shape
 	{
 		Flat,
 		Rounded
 	};
+#pragma warning restore CS1591
 
-	public enum Curve
+#pragma warning disable CS1591 // Enum values are self-explanatory
+    /// <summary>
+    /// A list of ways to generate lines
+    /// </summary>
+    public enum Curve
 	{
 		Smooth,
 		Stepline,
 		Straight
 	};
 
-	public enum LineCap
+    /// <summary>
+    /// A list of shapes to use for starting and ending points
+    /// </summary>
+    public enum LineCap
 	{
 		Butt,
 		Round,
 		Square
 	};
 
-	public enum Mode
+    /// <summary>
+    /// A list of theme options to use
+    /// </summary>
+    public enum Mode
 	{
 		Dark,
 		Light
@@ -3752,15 +5218,19 @@ namespace ApexCharts
 		DataPoints
 	};
 
-	public enum XAxisType
+    /// <summary>
+    /// A list of data types available for X-axis values
+    /// </summary>
+    public enum XAxisType
 	{
 		Category,
 		Datetime,
 		Numeric
 	};
+#pragma warning restore CS1591
 
-#pragma warning disable CS1591 // Primarily for internal use to enable multi-data-type values
-	public class ValueOrList<T>
+#pragma warning disable CS1591 // Primarily for internal use
+    public class ValueOrList<T>
 	{
 		private readonly T _str;
 		private readonly List<T> _list;
