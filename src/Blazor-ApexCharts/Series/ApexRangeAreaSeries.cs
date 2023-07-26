@@ -17,10 +17,29 @@ namespace ApexCharts
     /// </remarks>
     public class ApexRangeAreaSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
+        /// <summary>
+        /// Expression to get the upper Y-Value for each X-Value
+        /// </summary>
         [Parameter] public Func<TItem, decimal> Top { get; set; }
+
+        /// <summary>
+        /// Expression to get the lower Y-Value for each X-Value
+        /// </summary>
         [Parameter] public Func<TItem, decimal> Bottom { get; set; }
+
+        /// <summary>
+        /// Expression to determine the ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
+
+        /// <summary>
+        /// Expression to determine the inverse ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<ListPoint<TItem>, object> OrderByDescending { get; set; }
+
+        /// <summary>
+        /// Function to conditionally modify individual data points in the series
+        /// </summary>
         [Parameter] public Action<ListPoint<TItem>> DataPointMutator { get; set; }
 
         /// <inheritdoc/>

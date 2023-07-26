@@ -17,14 +17,44 @@ namespace ApexCharts
     /// </remarks>
     public class ApexBoxPlotSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
+        /// <summary>
+        /// Expression to get the lowest Y-Value for each X-Value. This will determine where the lower whisker is drawn.
+        /// </summary>
         [Parameter] public Func<TItem, decimal> Min { get; set; }
+
+        /// <summary>
+        /// Expression to get the Q1 Y-Value for each X-Value. This will determine where the bottom of the box is drawn.
+        /// </summary>
         [Parameter] public Func<TItem, decimal> Quantile1 { get; set; }
+
+        /// <summary>
+        /// Expression to get the median Y-Value for each X-Value. This will determine where the separator line between Q1 and Q3 is drawn.
+        /// </summary>
         [Parameter] public Func<TItem, decimal> Median { get; set; }
+
+        /// <summary>
+        /// Expression to get the Q3 Y-Value for each X-Value. This will determine where the top of the box is drawn.
+        /// </summary>
         [Parameter] public Func<TItem, decimal> Quantile3 { get; set; }
+
+        /// <summary>
+        /// Expression to get the highest Y-Value for each X-Value. This will determine where the upper whisker is drawn.
+        /// </summary>
         [Parameter] public Func<TItem, decimal> Max { get; set; }
 
+        /// <summary>
+        /// Expression to determine the ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
+
+        /// <summary>
+        /// Expression to determine the inverse ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<ListPoint<TItem>, object> OrderByDescending { get; set; }
+
+        /// <summary>
+        /// Function to conditionally modify individual data points in the series
+        /// </summary>
         [Parameter] public Action<ListPoint<TItem>> DataPointMutator { get; set; }
 
         /// <inheritdoc/>

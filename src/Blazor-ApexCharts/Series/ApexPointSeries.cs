@@ -16,11 +16,37 @@ namespace ApexCharts
     /// </remarks>
     public class ApexPointSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
+        /// <summary>
+        /// Expression to get the Y-value for each X-Value. Use when a single Y-value is available.
+        /// </summary>
         [Parameter] public Func<TItem, decimal?> YValue { get; set; }
+
+        /// <summary>
+        /// Expression to group Y-values for each X-Value. Use when a multiple Y-values are available.
+        /// </summary>
+        /// <remarks>
+        /// Will be ignored if <see cref="YValue"/> is set
+        /// </remarks>
         [Parameter] public Func<IEnumerable<TItem>, decimal?> YAggregate { get; set; }
+
+        /// <summary>
+        /// Expression to determine the ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<DataPoint<TItem>, object> OrderBy { get; set; }
+
+        /// <summary>
+        /// Expression to determine the inverse ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<DataPoint<TItem>, object> OrderByDescending { get; set; }
+
+        /// <summary>
+        /// Determines the type of data series to draw on the chart
+        /// </summary>
         [Parameter] public SeriesType SeriesType { get; set; }
+
+        /// <summary>
+        /// Function to conditionally modify individual data points in the series
+        /// </summary>
         [Parameter] public Action<DataPoint<TItem>> DataPointMutator { get; set; }
 
         /// <inheritdoc/>
@@ -138,6 +164,7 @@ namespace ApexCharts
             decimal? thresholdValue = null;
             var maxCount = Chart.GroupPoints.MaxCount;
             int currentCount = 0;
+
             var groupedPoint = new DataPoint<TItem>
             {
                 GroupedPoints = new List<DataPoint<TItem>>()
@@ -150,7 +177,6 @@ namespace ApexCharts
 
             foreach (var dataPoint in dataPoints.OrderByDescending(e => e.Y))
             {
-
                 if (ShouldGroup(maxCount, currentCount, dataPoint.Y, thresholdValue))
                 {
                     groupedPoint.GroupedPoints.Add(dataPoint);

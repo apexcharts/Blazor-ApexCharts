@@ -23,12 +23,19 @@ namespace ApexCharts
         /// <inheritdoc cref="IApexSeries{TItem}.Name"/>
         public string Name { get; set; }
 
+        /// <summary>
+        /// The internal type of this series
+        /// </summary>
 		public MixedType? Type { get; set; }
 
+        /// <summary>
+        /// Reference to the Apex data series for this object
+        /// </summary>
 		[JsonIgnore]
         public IApexSeries<TItem> ApexSeries { get; set; }
     }
 
+#pragma warning disable CS1591 // Primarily for internal use
     public enum MixedType
     {
         Line,
@@ -41,4 +48,5 @@ namespace ApexCharts
         BoxPlot,
         RangeArea
     }
+#pragma warning restore CS1591
 }

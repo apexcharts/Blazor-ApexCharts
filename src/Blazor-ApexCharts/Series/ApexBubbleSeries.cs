@@ -16,10 +16,29 @@ namespace ApexCharts
     /// </remarks>
     public class ApexBubbleSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
+        /// <summary>
+        /// Expression to group Y-Values with. This will determine where each bubble is drawn on the Y-axis.
+        /// </summary>
         [Parameter] public Func<IEnumerable<TItem>, decimal> YAggregate { get; set; }
+
+        /// <summary>
+        /// Expression to group Z-Values with. This will determine the size of each bubble.
+        /// </summary>
         [Parameter] public Func<IEnumerable<TItem>, decimal> ZAggregate { get; set; }
+
+        /// <summary>
+        /// Expression to determine the ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<BubblePoint<TItem>, object> OrderBy { get; set; }
+
+        /// <summary>
+        /// Expression to determine the inverse ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<BubblePoint<TItem>, object> OrderByDescending { get; set; }
+
+        /// <summary>
+        /// Function to conditionally modify individual data points in the series
+        /// </summary>
         [Parameter] public Action<BubblePoint<TItem>> DataPointMutator { get; set; }
 
         /// <inheritdoc/>

@@ -17,12 +17,45 @@ namespace ApexCharts
     /// </remarks>
     public class ApexCandleSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
+        /// <summary>
+        /// Expression to get the starting Y-Value for each X-Value. This will determine where the top and bottom of the box are drawn.
+        /// </summary>
+        /// <remarks>
+        /// If the open value is greater than the close value the candlestick will default to a red color.
+        /// </remarks>
         [Parameter] public Func<TItem, decimal> Open { get; set; }
+
+        /// <summary>
+        /// Expression to get the highest Y-Value for each X-Value. This will determine where the top of the wick is drawn.
+        /// </summary>
         [Parameter] public Func<TItem, decimal> High { get; set; }
+
+        /// <summary>
+        /// Expression to get the lowest Y-Value for each X-Value. This will determine where the bottom of the wick is drawn.
+        /// </summary>
         [Parameter] public Func<TItem, decimal> Low { get; set; }
+
+        /// <summary>
+        /// Expression to get the starting Y-Value for each X-Value. This will determine where the top and bottom of the box are drawn.
+        /// </summary>
+        /// <remarks>
+        /// If the close value is greater than the open value the candlestick will default to a green color.
+        /// </remarks>
         [Parameter] public Func<TItem, decimal> Close { get; set; }
+
+        /// <summary>
+        /// Expression to determine the ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
+
+        /// <summary>
+        /// Expression to determine the inverse ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<ListPoint<TItem>, object> OrderByDescending { get; set; }
+
+        /// <summary>
+        /// Function to conditionally modify individual data points in the series
+        /// </summary>
         [Parameter] public Action<ListPoint<TItem>> DataPointMutator { get; set; }
 
         /// <inheritdoc/>

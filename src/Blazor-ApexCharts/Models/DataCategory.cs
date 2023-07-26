@@ -1,5 +1,6 @@
 ﻿namespace ApexCharts
 {
+#pragma warning disable CS1591 // Unused
     public enum DataCategory
     {
         NoAxis,
@@ -9,4 +10,5 @@
         XYZ,
         Range
     }
+#pragma warning restore CS1591
 }

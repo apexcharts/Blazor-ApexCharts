@@ -21,7 +21,7 @@ namespace ApexCharts
         string Name { get; set; }
 
         /// <summary>
-        /// A function to return the X-value for each data point in the series
+        /// Expression to return the X-value for each data point in the series
         /// </summary>
         Func<TItem, object> XValue { get; set; }
 
