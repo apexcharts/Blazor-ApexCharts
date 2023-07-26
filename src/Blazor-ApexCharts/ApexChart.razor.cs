@@ -18,7 +18,13 @@ namespace ApexCharts
     {
         [Inject] private IServiceProvider ServiceProvider { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
+
+        /// <summary>
+        /// Used to contain the data within the chart
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        /// <inheritdoc cref="Tooltip"/>
         [Parameter] public RenderFragment<HoverData<TItem>> ApexPointTooltip { get; set; }
 
         /// <summary>
@@ -46,21 +52,135 @@ namespace ApexCharts
         /// <inheritdoc cref="Chart.Height"/>
         [Parameter] public object Height { get; set; }
 
+        /// <summary>
+        /// Fires when user clicks on the x-axis labels.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/xaxis-label-click">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// </remarks>
         [Parameter] public EventCallback<XAxisLabelClicked<TItem>> OnXAxisLabelClick { get; set; }
+
+        /// <summary>
+        /// Fires when user clicks on the markers.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/marker-click">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// </remarks>
         [Parameter] public EventCallback<SelectedData<TItem>> OnMarkerClick { get; set; }
+
+        /// <summary>
+        /// Fires when user clicks on a datapoint (bar/column/marker/bubble/donut-slice).
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/data-point-selection">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// </remarks>
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
+
+        /// <summary>
+        /// Fires when user's mouse enter on a datapoint (bar/column/marker/bubble/donut-slice).
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/data-point-hover">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// </remarks>
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointEnter { get; set; }
+
+        /// <summary>
+        /// MouseLeave event for a datapoint (bar/column/marker/bubble/donut-slice).
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/data-point-hover">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// </remarks>
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointLeave { get; set; }
+
+        /// <summary>
+        /// Fires when user clicks on legend.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/legend-click">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// </remarks>
         [Parameter] public EventCallback<LegendClicked<TItem>> OnLegendClicked { get; set; }
+
+        /// <summary>
+        /// Fires when user selects rect using the selection tool.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/selection">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// </remarks>
         [Parameter] public EventCallback<SelectionData<TItem>> OnSelection { get; set; }
+
+        /// <summary>
+        /// Fires when user drags the brush in a brush chart.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/brush-scrolled">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// </remarks>
         [Parameter] public EventCallback<SelectionData<TItem>> OnBrushScrolled { get; set; }
+
+        /// <summary>
+        /// Fires when user zooms in/out the chart using either the selection zooming tool or zoom in/out buttons.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/zoomed">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// </remarks>
         [Parameter] public EventCallback<ZoomedData<TItem>> OnZoomed { get; set; }
 
+        /// <summary>
+        /// Fires when <see cref="RenderAsync"/> completes
+        /// </summary>
         [Parameter] public EventCallback OnRendered { get; set; }
+
+        /// <summary>
+        /// A custom function to execute for generating Y-axis labels. Only supported in Blazor WebAssembly!
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/features/formatters">Blazor Example</see>
+        /// </remarks>
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
+
+        /// <summary>
+        /// Enables merging multiple data points into a single item in the chart
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/features/group-points">Blazor Example</see>
+        /// </remarks>
         [Parameter] public GroupPoints GroupPoints { get; set; }
 
         private ChartSerializer chartSerializer = new();
+
+        /// <summary>
+        /// The collection of data series to display on the chart
+        /// </summary>
         public List<IApexSeries<TItem>> Series => apexSeries;
 
         private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
@@ -71,6 +191,7 @@ namespace ApexCharts
         private string chartId;
         private HoverData<TItem> tooltipData;
 
+        /// <inheritdoc cref="Chart.Id"/>
         public string ChartId => chartId;
 
         /// <inheritdoc/>
@@ -191,7 +312,7 @@ namespace ApexCharts
 
             foreach (var series in Options.Series)
             {
-                strokeWidths.Add(series.ApexSeries.Stroke?.Width ?? 4); // 
+                strokeWidths.Add(series.ApexSeries.Stroke?.Width ?? 4);
                 strokeColors.Add(series.ApexSeries.Stroke?.Color ?? "#d3d3d3"); //Default is light gray
                 strokeDash.Add(series.ApexSeries.Stroke?.DashSpace ?? 0);
             }
@@ -296,9 +417,7 @@ namespace ApexCharts
                 if (Options.Tooltip == null) { Options.Tooltip = new Tooltip(); }
                 if (Options.Markers == null) { Options.Markers = new Markers(); }
 
-
-                if ((Options.Markers.Size == null || Options.Markers.Size <= 0) &&
-                    (Options.Markers.Sizes == null || !Options.Markers.Sizes.Any()))
+                if ((Options.Markers.Size == null || Options.Markers.Size <= 0) && (Options.Markers.Sizes == null || !Options.Markers.Sizes.Any()))
                 {
                     Options.Markers.Size = 5;
                 }
@@ -315,23 +434,55 @@ namespace ApexCharts
             return json;
         }
 
+#pragma warning disable CS1591 // Documentation not available for obsolete properties
         [Obsolete("Please use RenderAsync(), this method will be removed in future versions")]
         public void SetRerenderChart()
         {
             forceRender = true;
         }
+#pragma warning restore CS1591
 
+        /// <summary>
+        /// The render() method is responsible for drawing the chart on the page. It is the primary method that has to be called after configuring the options.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/render">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/methods/#render">JavaScript Documentation</see>
+        /// </remarks>
         public virtual async Task RenderAsync()
         {
             await RenderChartAsync();
         }
 
+        /// <summary>
+        /// The addPointAnnotation() method can be used to draw annotations after chart is rendered.
+        /// </summary>
+        /// <param name="annotationsPoint">This function accepts the same parameters as it accepts in the point annotations config.</param>
+        /// <param name="pushToMemory">When enabled, it preserves the annotations in subsequent chart updates. If you don't want it to be saved for the next updates, turn off this option</param>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/annotations">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/methods/#addpointannotation">JavaScript Documentation</see>
+        /// </remarks>
         public virtual async Task AddPointAnnotationAsync(AnnotationsPoint annotationsPoint, bool pushToMemory)
         {
             var json = Serialize(annotationsPoint);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
+        /// <summary>
+        /// This method allows you to append new data to the series array. If you have existing multiple series, provide the new array in the same indexed order.
+        /// </summary>
+        /// <param name="items">The data array to append the existing series datasets</param>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/append-data">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/methods/#appendData">JavaScript Documentation</see>
+        /// </remarks>
         public virtual async Task AppendDataAsync(IEnumerable<TItem> items)
         {
             if (IsNoAxisChart && Series.Any())
@@ -349,7 +500,6 @@ namespace ApexCharts
                 };
 
                 await JSRuntime.InvokeVoidAsync("blazor_apexchart.appendData", Options.Chart.Id, Serialize(appendData));
-
                 return;
             }
 
@@ -379,6 +529,7 @@ namespace ApexCharts
         /// <remarks>
         /// Links:
         /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/zoomx">Blazor Example</see>,
         /// <see href="https://apexcharts.com/docs/methods/#zoomX">JavaScript Documentation</see>
         /// </remarks>
         public virtual async Task ZoomXAsync(ZoomOptions zoomOptions)
@@ -395,6 +546,7 @@ namespace ApexCharts
         /// <remarks>
         /// Links:
         /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/zoomx">Blazor Example</see>,
         /// <see href="https://apexcharts.com/docs/methods/#zoomX">JavaScript Documentation</see>
         /// </remarks>
         public virtual async Task ZoomXAsync(decimal start, decimal end)
@@ -405,7 +557,7 @@ namespace ApexCharts
         /// <summary>
         /// Resets all toggled series and bring back the chart to its original state.
         /// </summary>
-        /// <param name="shouldUpdateChart">After resetting the series, the chart data should update and return to it’s original series.</param>
+        /// <param name="shouldUpdateChart">After resetting the series, the chart data should update and return to it's original series.</param>
         /// <param name="shouldResetZoom">If the user has zoomed in when this method is called, the zoom level should also reset.</param>
         /// <remarks>
         /// Links:
@@ -424,6 +576,7 @@ namespace ApexCharts
         /// <remarks>
         /// Links:
         /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/data-uri">Blazor Example</see>,
         /// <see href="https://apexcharts.com/docs/methods/#dataURI">JavaScript Documentation</see>
         /// </remarks>
         public virtual async Task<string> GetDataUriAsync(DataUriOptions dataUriOptions)
@@ -437,10 +590,11 @@ namespace ApexCharts
         /// The addXaxisAnnotation() method can be used to draw annotations after chart is rendered.
         /// </summary>
         /// <param name="annotationsXAxis">This function accepts the same parameters as it accepts in the annotations x-axis config.</param>
-        /// <param name="pushToMemory">When enabled, it preserves the annotations in subsequent chart updates. If you don’t want it to be saved for the next updates, turn off this option</param>
+        /// <param name="pushToMemory">When enabled, it preserves the annotations in subsequent chart updates. If you don't want it to be saved for the next updates, turn off this option</param>
         /// <remarks>
         /// Links:
         /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/annotations">Blazor Example</see>,
         /// <see href="https://apexcharts.com/docs/methods/#addxaxisannotation">JavaScript Documentation</see>
         /// </remarks>
         public virtual async Task AddXAxisAnnotationAsync(AnnotationsXAxis annotationsXAxis, bool pushToMemory)
@@ -453,10 +607,11 @@ namespace ApexCharts
         /// The addYaxisAnnotation() method can be used to draw annotations after chart is rendered.
         /// </summary>
         /// <param name="annotationsYAxis">This function accepts the same parameters as it accepts in the annotations y-axis config.</param>
-        /// <param name="pushToMemory">When enabled, it preserves the annotations in subsequent chart updates. If you don’t want it to be saved for the next updates, turn off this option</param>
+        /// <param name="pushToMemory">When enabled, it preserves the annotations in subsequent chart updates. If you don't want it to be saved for the next updates, turn off this option</param>
         /// <remarks>
         /// Links:
         /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/annotations">Blazor Example</see>,
         /// <see href="https://apexcharts.com/docs/methods/#addyaxisannotation">JavaScript Documentation</see>
         /// </remarks>
         public virtual async Task AddYAxisAnnotationAsync(AnnotationsYAxis annotationsYAxis, bool pushToMemory)
@@ -471,6 +626,7 @@ namespace ApexCharts
         /// <remarks>
         /// Links:
         /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/annotations">Blazor Example</see>,
         /// <see href="https://apexcharts.com/docs/methods/#clearAnnotations">JavaScript Documentation</see>
         /// </remarks>
         public virtual async Task ClearAnnotationsAsync()
@@ -502,6 +658,7 @@ namespace ApexCharts
         /// <remarks>
         /// Links:
         /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/update-options">Blazor Example</see>,
         /// <see href="https://apexcharts.com/docs/methods/#updateOptions">JavaScript Documentation</see>
         /// </remarks>
         public virtual async Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null)
@@ -518,6 +675,7 @@ namespace ApexCharts
         /// <remarks>
         /// Links:
         /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/update-series">Blazor Example</see>,
         /// <see href="https://apexcharts.com/docs/methods/#updateSeries">JavaScript Documentation</see>
         /// </remarks>
         public virtual async Task UpdateSeriesAsync(bool animate = true)
@@ -531,11 +689,12 @@ namespace ApexCharts
         /// <summary>
         /// This method allows you to select/deselect a data-point of a particular series.
         /// </summary>
-        /// <param name="seriesIndex">Index of the series array. If you are rendering a pie/donut/radialBar chart, this acts as dataPointIndex and is the only thing you have to provide as pie/donut/radialBar don’t support multi-series chart.</param>
+        /// <param name="seriesIndex">Index of the series array. If you are rendering a pie/donut/radialBar chart, this acts as dataPointIndex and is the only thing you have to provide as pie/donut/radialBar don't support multi-series chart.</param>
         /// <param name="dataPointIndex">Index of the data-point in the series selected in previous argument. Not required in pie/donut/radialBar</param>
         /// <remarks>
         /// Links:
         /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/toggle-data-point">Blazor Example</see>,
         /// <see href="https://apexcharts.com/docs/methods/#toggleDataPointSelection">JavaScript Documentation</see>
         /// </remarks>
         public virtual async Task ToggleDataPointSelectionAsync(int seriesIndex, int? dataPointIndex)
@@ -543,43 +702,22 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleDataPointSelection", Options.Chart.Id, seriesIndex, dataPointIndex);
         }
 
-        /// <summary>
-        /// This method allows you to toggle the visibility of series programmatically. Useful when you have a custom legend.
-        /// </summary>
+        /// <inheritdoc cref="IApexSeries{TItem}.Toggle"/>
         /// <param name="seriesName">The series name which you want to toggle visibility for.</param>
-        /// <remarks>
-        /// Links:
-        /// 
-        /// <see href="https://apexcharts.com/docs/methods/#toggleSeries">JavaScript Documentation</see>
-        /// </remarks>
         public virtual async Task ToggleSeriesAsync(string seriesName)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleSeries", Options.Chart.Id, seriesName);
         }
 
-        /// <summary>
-        /// This method allows you to show the hidden series. If the series is already visible, this doesn’t affect it.
-        /// </summary>
+        /// <inheritdoc cref="IApexSeries{TItem}.Show"/>
         /// <param name="seriesName">The series name which you want to show.</param>
-        /// <remarks>
-        /// Links:
-        /// 
-        /// <see href="https://apexcharts.com/docs/methods/#showSeries">JavaScript Documentation</see>
-        /// </remarks>
         public virtual async Task ShowSeriesAsync(string seriesName)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.showSeries", Options.Chart.Id, seriesName);
         }
 
-        /// <summary>
-        /// This method allows you to hide the visible series. If the series is already hidden, this method doesn’t affect it.
-        /// </summary>
+        /// <inheritdoc cref="IApexSeries{TItem}.Hide"/>
         /// <param name="seriesName">The series name which you want to hide.</param>
-        /// <remarks>
-        /// Links:
-        /// 
-        /// <see href="https://apexcharts.com/docs/methods/#hideSeries">JavaScript Documentation</see>
-        /// </remarks>
         public virtual async Task HideSeriesAsync(string seriesName)
         {
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.hideSeries", Options.Chart.Id, seriesName);
@@ -653,6 +791,7 @@ namespace ApexCharts
                                          }";
             }
         }
+
         private void SetSeries()
         {
             Options.Series = new List<Series<TItem>>();

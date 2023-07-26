@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 
 namespace ApexCharts
 {
-
 	/// <summary> 
 	/// The series is a set of data. You may have single or multiple data series. The series object can be of the following format: Single values, Paired values, Timeline Series, or Data for Pie/Donuts/RadialBars
 	/// </summary>
@@ -21,7 +20,8 @@ namespace ApexCharts
 		/// </summary>
 		public IEnumerable<IDataPoint<TItem>> Data { get; set; }
 
-		public string Name { get; set; }
+        /// <inheritdoc cref="IApexSeries{TItem}.Name"/>
+        public string Name { get; set; }
 
 		public MixedType? Type { get; set; }
 

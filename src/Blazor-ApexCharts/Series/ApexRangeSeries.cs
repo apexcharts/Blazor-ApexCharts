@@ -2,14 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace ApexCharts
 {
+    /// <summary>
+    /// Component to create a <see cref="ChartType.RangeBar"/> data series in Blazor
+    /// </summary>
+    /// <typeparam name="TItem">The data type to be used in the chart to create data points.</typeparam>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/rangebar-charts">Blazor Example</see>,
+    /// <see href="https://apexcharts.com/docs/chart-types/range-bar-chart">JavaScript Documentation</see>
+    /// </remarks>
     public class ApexRangeSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
-
         [Parameter] public Func<TItem, decimal> YValue { get; set; }
         [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
         [Parameter] public Func<ListPoint<TItem>, object> OrderByDescending { get; set; }
@@ -18,6 +25,7 @@ namespace ApexCharts
         [Parameter] public Func<TItem, decimal> YMaxValue { get; set; }
         [Parameter] public Action<ListPoint<TItem>> DataPointMutator { get; set; }
 
+        /// <inheritdoc/>
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -31,13 +39,15 @@ namespace ApexCharts
             {
                 throw new ArgumentNullException($"You have to set YValue or YMinValue and YMaxValue");
             }
-
         }
+
+        /// <inheritdoc/>
         public ChartType GetChartType()
         {
             return ChartType.RangeBar;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
             if (items == null)
@@ -88,11 +98,10 @@ namespace ApexCharts
             return GenerateDataPoints(Items);
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             Chart.RemoveSeries(this);
         }
-
-
     }
 }
