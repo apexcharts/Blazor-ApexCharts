@@ -1,30 +1,62 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace ApexCharts
 {
+    /// <summary>
+    /// Component to create various data series types in Blazor
+    /// </summary>
+    /// <typeparam name="TItem">The data type to be used in the chart to create data points.</typeparam>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.com/docs/chart-types">JavaScript Documentation</see>
+    /// </remarks>
     public class ApexPointSeries<TItem> : ApexBaseSeries<TItem>, IApexSeries<TItem> where TItem : class
     {
+        /// <summary>
+        /// Expression to get the Y-value for each X-Value. Use when a single Y-value is available.
+        /// </summary>
         [Parameter] public Func<TItem, decimal?> YValue { get; set; }
+
+        /// <summary>
+        /// Expression to group Y-values for each X-Value. Use when a multiple Y-values are available.
+        /// </summary>
+        /// <remarks>
+        /// Will be ignored if <see cref="YValue"/> is set
+        /// </remarks>
         [Parameter] public Func<IEnumerable<TItem>, decimal?> YAggregate { get; set; }
+
+        /// <summary>
+        /// Expression to determine the ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<DataPoint<TItem>, object> OrderBy { get; set; }
+
+        /// <summary>
+        /// Expression to determine the inverse ordering of X-Values in the series
+        /// </summary>
         [Parameter] public Func<DataPoint<TItem>, object> OrderByDescending { get; set; }
+
+        /// <summary>
+        /// Determines the type of data series to draw on the chart
+        /// </summary>
         [Parameter] public SeriesType SeriesType { get; set; }
+
+        /// <summary>
+        /// Function to conditionally modify individual data points in the series
+        /// </summary>
         [Parameter] public Action<DataPoint<TItem>> DataPointMutator { get; set; }
 
-       
-
+        /// <inheritdoc/>
         protected override void OnInitialized()
         {
             base.OnInitialized();
             Chart.AddSeries(this);
         }
 
+        /// <inheritdoc/>
         public ChartType GetChartType()
         {
             switch (SeriesType)
@@ -60,17 +92,15 @@ namespace ApexCharts
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerable<IDataPoint<TItem>> GenerateDataPoints(IEnumerable<TItem> items)
         {
-
             if (items == null)
             {
                 return Enumerable.Empty<IDataPoint<TItem>>();
             }
 
-
             IEnumerable<DataPoint<TItem>> data;
-
 
             if (YValue != null)
             {
@@ -101,7 +131,6 @@ namespace ApexCharts
 
             data = GroupData(data.ToList());
 
-
             if (OrderBy != null)
             {
                 data = data.OrderBy(OrderBy);
@@ -131,11 +160,11 @@ namespace ApexCharts
                 return dataPoints;
             }
 
-
             var newData = new List<DataPoint<TItem>>();
             decimal? thresholdValue = null;
             var maxCount = Chart.GroupPoints.MaxCount;
             int currentCount = 0;
+
             var groupedPoint = new DataPoint<TItem>
             {
                 GroupedPoints = new List<DataPoint<TItem>>()
@@ -148,8 +177,7 @@ namespace ApexCharts
 
             foreach (var dataPoint in dataPoints.OrderByDescending(e => e.Y))
             {
-
-                if(ShouldGroup(maxCount, currentCount, dataPoint.Y, thresholdValue))
+                if (ShouldGroup(maxCount, currentCount, dataPoint.Y, thresholdValue))
                 {
                     groupedPoint.GroupedPoints.Add(dataPoint);
                 }
@@ -172,12 +200,12 @@ namespace ApexCharts
 
         private bool ShouldGroup(int? maxCount, int currentCount, decimal? currentValue, decimal? thresholdValue)
         {
-            if(maxCount == null && thresholdValue == null)
+            if (maxCount == null && thresholdValue == null)
             {
                 return false;
             }
 
-            if(maxCount != null && currentCount >= maxCount)
+            if (maxCount != null && currentCount >= maxCount)
             {
                 return true;
             }
@@ -186,17 +214,15 @@ namespace ApexCharts
             {
                 return true;
             }
+
             return false;
+        }
 
-       }
-
-
+        /// <inheritdoc/>
         public void Dispose()
         {
             GC.SuppressFinalize(this);
             Chart.RemoveSeries(this);
         }
-
-
     }
 }

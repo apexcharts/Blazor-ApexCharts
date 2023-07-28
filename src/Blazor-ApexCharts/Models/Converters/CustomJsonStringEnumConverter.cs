@@ -8,8 +8,12 @@ using System.Text.Json.Serialization;
 
 namespace ApexCharts.Models
 {
-
-    //https://stackoverflow.com/questions/59059989/system-text-json-how-do-i-specify-a-custom-name-for-an-enum-value
+    /// <summary>
+    /// Facilitates serialization of enum values
+    /// </summary>
+    /// <remarks>
+    /// <see href="https://stackoverflow.com/questions/59059989/system-text-json-how-do-i-specify-a-custom-name-for-an-enum-value">Stackoverflow Discussion</see>
+    /// </remarks>
     public class CustomJsonStringEnumConverter : JsonConverterFactory
     {
         private readonly JsonNamingPolicy namingPolicy;
@@ -25,15 +29,19 @@ namespace ApexCharts.Models
             this.baseConverter = new JsonStringEnumConverter(namingPolicy, allowIntegerValues);
         }
 
+        /// <inheritdoc/>
         public override bool CanConvert(Type typeToConvert) => baseConverter.CanConvert(typeToConvert);
 
+        /// <inheritdoc/>
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
             var query = from field in typeToConvert.GetFields(BindingFlags.Public | BindingFlags.Static)
                         let attr = field.GetCustomAttribute<EnumMemberAttribute>()
                         where attr != null
                         select (field.Name, attr.Value);
+
             var dictionary = query.ToDictionary(p => p.Item1, p => p.Item2);
+
             if (dictionary.Count > 0)
             {
                 return new JsonStringEnumConverter(new DictionaryLookupNamingPolicy(dictionary, namingPolicy), allowIntegerValues).CreateConverter(typeToConvert, options);
@@ -51,6 +59,7 @@ namespace ApexCharts.Models
 
         public JsonNamingPolicyDecorator(JsonNamingPolicy underlyingNamingPolicy) => this.underlyingNamingPolicy = underlyingNamingPolicy;
 
+        /// <inheritdoc/>
         public override string ConvertName(string name) => underlyingNamingPolicy == null ? name : underlyingNamingPolicy.ConvertName(name);
     }
 
@@ -60,6 +69,7 @@ namespace ApexCharts.Models
 
         public DictionaryLookupNamingPolicy(Dictionary<string, string> dictionary, JsonNamingPolicy underlyingNamingPolicy) : base(underlyingNamingPolicy) => this.dictionary = dictionary ?? throw new ArgumentNullException();
 
+        /// <inheritdoc/>
         public override string ConvertName(string name) => dictionary.TryGetValue(name, out var value) ? value : base.ConvertName(name);
     }
 }

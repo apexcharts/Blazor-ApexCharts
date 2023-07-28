@@ -1,5 +1,9 @@
 ﻿namespace ApexCharts
 {
+#pragma warning disable CS1591 // Enum values are self-explanatory
+    /// <summary>
+    /// A listing of chart types available to create
+    /// </summary>
     public enum SeriesType
     {
         Area,
@@ -16,4 +20,5 @@
         Treemap,
         RangeArea,
     }
+#pragma warning restore CS1591
 }

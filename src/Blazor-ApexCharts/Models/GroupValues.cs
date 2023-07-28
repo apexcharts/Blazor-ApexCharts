@@ -1,6 +1,8 @@
-﻿
-namespace ApexCharts
+﻿namespace ApexCharts
 {
+    /// <summary>
+    /// Class to define properties on how to group data points on a chart
+    /// </summary>
     public class GroupPoints
     {
         /// <summary>
@@ -14,14 +16,13 @@ namespace ApexCharts
         public int? MinCount { get; set; }
 
         /// <summary>
-        /// The precentage value that indicate if a value should be grouped.
+        /// The percentage value that indicate if a value should be grouped.
         /// </summary>
         public decimal? PercentageThreshold { get; set; }
 
+        /// <summary>
+        /// The X-axis label to assign to the group
+        /// </summary>
         public string Name { get; set; } = "Other";
-       
     }
-
-  
-
 }

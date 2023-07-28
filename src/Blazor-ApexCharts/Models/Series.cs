@@ -3,36 +3,40 @@ using System.Text.Json.Serialization;
 
 namespace ApexCharts
 {
-
-    /// <summary> 
-    /// Chart Series options.
-    /// Use ApexNonAxisChartSeries for Pie and Donut charts.
-    /// See https://apexcharts.com/docs/options/series/
-    ///
-    /// According to the documentation at
-    /// https://apexcharts.com/docs/series/
-    /// Section 1: data can be a list of single numbers
-    /// Sections 2.1 and 3.1: data can be a list of tuples of two numbers
-    /// Sections 2.2 and 3.2: data can be a list of objects where x is a string
-    /// and y is a number
-    /// And according to the demos, data can contain null.
-    /// https://apexcharts.com/javascript-chart-demos/line-charts/null-values/
-    /// </summary>
-
-    public class Series<TItem> where TItem : class
+	/// <summary> 
+	/// The series is a set of data. You may have single or multiple data series. The series object can be of the following format: Single values, Paired values, Timeline Series, or Data for Pie/Donuts/RadialBars
+	/// </summary>
+	/// <typeparam name="TItem">The data type to be used in the chart to create data points.</typeparam>
+	/// <remarks>
+	/// Links:
+	/// 
+	/// <see href="https://apexcharts.com/docs/series">JavaScript Documentation</see>,
+	/// <see href="https://apexcharts.com/docs/options/series">JavaScript Reference</see>
+	/// </remarks>
+	public class Series<TItem> where TItem : class
     {
-        public IEnumerable<IDataPoint<TItem>> Data { get; set; }
+		/// <summary>
+		/// The group of individual data points to display on the chart.
+		/// </summary>
+		public IEnumerable<IDataPoint<TItem>> Data { get; set; }
+
+        /// <inheritdoc cref="IApexSeries{TItem}.Name"/>
         public string Name { get; set; }
         public string Group { get; set; }
-        public MixedType? Type { get; set; }
+      
+        /// <summary>
+        /// The internal type of this series
+        /// </summary>
+		public MixedType? Type { get; set; }
 
-        [JsonIgnore]
+        /// <summary>
+        /// Reference to the Apex data series for this object
+        /// </summary>
+		[JsonIgnore]
         public IApexSeries<TItem> ApexSeries { get; set; }
-
-        
-
     }
 
+#pragma warning disable CS1591 // Primarily for internal use
     public enum MixedType
     {
         Line,
@@ -43,6 +47,7 @@ namespace ApexCharts
         Bubble,
         Candlestick,
         BoxPlot,
-        RangeArea,
+        RangeArea
     }
+#pragma warning restore CS1591
 }
