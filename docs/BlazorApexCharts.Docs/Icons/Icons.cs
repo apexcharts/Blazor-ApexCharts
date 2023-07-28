@@ -36,5 +36,7 @@ namespace BlazorApexCharts.Docs
         public static IIconType Affiliate { get => new TablerIcon(@"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><path d='M5.931 6.936l1.275 4.249m5.607 5.609l4.251 1.275' /><path d='M11.683 12.317l5.759 -5.759' /><circle cx='5.5' cy='5.5' r='1.5' /><circle cx='18.5' cy='5.5' r='1.5' /><circle cx='18.5' cy='18.5' r='1.5' /><circle cx='8.5' cy='15.5' r='4.5' />"); }
         public static IIconType Apps { get => new TablerIcon(@"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><rect x='4' y='4' width='6' height='6' rx='1' /><rect x='4' y='14' width='6' height='6' rx='1' /><rect x='14' y='14' width='6' height='6' rx='1' /><line x1='14' y1='7' x2='20' y2='7' /><line x1='17' y1='4' x2='17' y2='10' />"); }
 
+        public static IIconType Triangle_inverted => new TablerIcon(@"<path stroke='none' d='M0 0h24v24H0z' fill='none' /><path d='M10.24 20.043l-8.422 -14.06a1.989 1.989 0 0 1 1.7 -2.983h16.845a1.989 1.989 0 0 1 1.7 2.983l-8.422 14.06a1.989 1.989 0 0 1 -3.4 0z' />");
+
     }
 }
