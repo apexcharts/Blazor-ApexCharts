@@ -4,13 +4,20 @@ using System.Text.Json.Serialization;
 
 namespace ApexCharts.Models
 {
+    /// <summary>
+    /// Facilitates serialization of <see cref="IDataPoint{TItem}"/>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class DataPointConverter<T> : JsonConverter<IDataPoint<T>>
     {
+        /// <inheritdoc/>
+        /// <exception cref="NotImplementedException"></exception>
         public override IDataPoint<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, IDataPoint<T> value, JsonSerializerOptions options)
         {
             if (value == null)
@@ -22,7 +29,6 @@ namespace ApexCharts.Models
                 var type = value.GetType();
                 JsonSerializer.Serialize(writer, value, type, options);
             }
-
         }
     }
 }

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     
-    <Version>0.1.0-Alpha</Version>
+    <Version>0.9.21-beta</Version>
     <Authors>Joakim Dangården</Authors>
     <Company />
     <Description>A blazor wrapper for Apex Charts</Description>
@@ -11,6 +11,7 @@
     <RepositoryUrl>https://github.com/apexcharts/Blazor-ApexCharts</RepositoryUrl>
     <PackageProjectUrl>https://apexcharts.github.io/Blazor-ApexCharts/</PackageProjectUrl>
     <Copyright>Copyright 2022 (c) Joakim Dangården. All rights reserved.</Copyright>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
 
@@ -25,5 +26,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <PropertyGroup>
+    <DocumentationFile>$(ProjectDir)Blazor-ApexCharts.xml</DocumentationFile>
+  </PropertyGroup>
 
 </Project>
