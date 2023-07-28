@@ -30,7 +30,7 @@ namespace BlazorApexCharts.Docs.Components.ChartGallery
             {
                 Sparkline = new ChartSparkline
                 {
-                    Enabled = PointType != SeriesType.Histogram 
+                    Enabled = true
                 }
             };
 

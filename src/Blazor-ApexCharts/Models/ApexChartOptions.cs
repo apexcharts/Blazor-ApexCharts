@@ -5081,7 +5081,6 @@ namespace ApexCharts
 		Candlestick,
 		Donut,
 		Heatmap,
-		Histogram,
 		Line,
 		Pie,
 		PolarArea,
