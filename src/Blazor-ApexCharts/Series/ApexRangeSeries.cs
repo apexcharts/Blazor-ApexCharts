@@ -27,7 +27,7 @@ namespace ApexCharts
 
         private void CheckInput()
         {
-            if (YValue == null && (YMinValue == null || YMinValue == null))
+            if (YValue == null && (YMinValue == null || YMaxValue == null))
             {
                 throw new ArgumentNullException($"You have to set YValue or YMinValue and YMaxValue");
             }
