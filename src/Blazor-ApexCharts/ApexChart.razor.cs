@@ -805,6 +805,7 @@ namespace ApexCharts
                 {
                     Data = apxSeries.GenerateDataPoints(apxSeries.Items),
                     Name = apxSeries.Name,
+                    Group = apxSeries.Group,
                     ApexSeries = apxSeries
                 };
 

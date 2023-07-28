@@ -19,6 +19,7 @@ namespace ApexCharts
         /// The Y-values for the data point to create on the chart
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+        
         public IEnumerable<decimal?> Y { get; set; }
 
         /// <inheritdoc cref="IDataPoint{TItem}.Extra"/>

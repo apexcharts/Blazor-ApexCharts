@@ -10,7 +10,6 @@
         Bar,
         Donut,
         Heatmap,
-        Histogram,
         Line,
         Pie,
         PolarArea,

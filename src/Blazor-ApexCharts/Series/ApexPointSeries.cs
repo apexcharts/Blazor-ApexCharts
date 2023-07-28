@@ -69,8 +69,6 @@ namespace ApexCharts
                     return ChartType.Donut;
                 case SeriesType.Heatmap:
                     return ChartType.Heatmap;
-                case SeriesType.Histogram:
-                    return ChartType.Histogram;
                 case SeriesType.Line:
                     return ChartType.Line;
                 case SeriesType.Pie:

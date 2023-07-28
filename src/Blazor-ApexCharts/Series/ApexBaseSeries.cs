@@ -41,6 +41,7 @@ namespace ApexCharts
         /// 
         /// <see href="https://apexcharts.com/docs/options/colors">JavaScript Reference</see>
         /// </remarks>
+        [Parameter] public string Group { get; set; }
         [Parameter] public Func<TItem, string> PointColor { get; set; }
 
         /// <inheritdoc cref="IApexSeries{TItem}.Toggle"/>

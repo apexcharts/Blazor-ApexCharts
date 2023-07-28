@@ -22,7 +22,8 @@ namespace ApexCharts
 
         /// <inheritdoc cref="IApexSeries{TItem}.Name"/>
         public string Name { get; set; }
-
+        public string Group { get; set; }
+      
         /// <summary>
         /// The internal type of this series
         /// </summary>
