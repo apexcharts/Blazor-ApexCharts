@@ -2982,6 +2982,31 @@
             In a multi-series range-Bar / timeline chart, group rows (horizontal bars) together instead of stacking up. Helpful when there are no overlapping rows but distinct values.
             </summary>
         </member>
+        <member name="P:ApexCharts.PlotOptionsBar.HideZeroBarsWhenGrouped">
+            <summary>
+            In a non-stacked (grouped or clustered) bar chart, do not occupy space for those bars whose value is zero.
+            </summary>
+        </member>
+        <member name="P:ApexCharts.PlotOptionsBar.IsDumbbell">
+            <summary>
+            Is chart a dumbbell
+            </summary>
+        </member>
+        <member name="P:ApexCharts.PlotOptionsBar.DumbbellColors">
+            <summary>
+            When dumbbell chart is enabled, use this option to set custom colors for the dots at the starting and ending shape.
+            </summary>
+        </member>
+        <member name="P:ApexCharts.PlotOptionsBar.IsFunnel">
+            <summary>
+            Is chart funnel
+            </summary>
+        </member>
+        <member name="P:ApexCharts.PlotOptionsBar.IsFunnel3d">
+            <summary>
+            Chart is funnel 3D
+            </summary>
+        </member>
         <member name="P:ApexCharts.PlotOptionsBar.Colors">
             <inheritdoc cref="T:ApexCharts.PlotOptionsBarColors" />
         </member>
