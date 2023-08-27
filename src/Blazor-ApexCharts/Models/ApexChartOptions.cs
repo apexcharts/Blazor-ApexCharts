@@ -3407,8 +3407,8 @@ namespace ApexCharts
         /// </summary>
         public double? OffsetY { get; set; }
 
-        /// <inheritdoc cref="ApexCharts.PurplePolygons" />
-        public PurplePolygons Polygons { get; set; }
+        /// <inheritdoc cref="ApexCharts.RadarPolygons" />
+        public RadarPolygons Polygons { get; set; }
 
         /// <summary>
         /// A custom size for the inner radar. The default size calculation will be overrided with this
@@ -3419,15 +3419,15 @@ namespace ApexCharts
     /// <summary>
     /// The style options to apply to the radar chart
     /// </summary>
-    public class PurplePolygons
+    public class RadarPolygons
     {
         /// <summary>
         /// The line color of the connector lines of the polygons. If you want to pass more than 1 color, you can pass an array instead of a String. connectorColors: '#e8e8e8' and connectorColors: ['#e8e8e8', '#f1f1f1'] both are valid.
         /// </summary>
         public Color ConnectorColors { get; set; }
 
-        /// <inheritdoc cref="ApexCharts.TentacledFill" />
-        public TentacledFill Fill { get; set; }
+        /// <inheritdoc cref="ApexCharts.RadarPolygonsFill" />
+        public RadarPolygonsFill Fill { get; set; }
 
         /// <summary>
         /// The line/border color of the spokes of the chart excluding the connector lines. If you want to pass more than 1 color, you can pass an array instead of a String. strokeColors: '#e8e8e8' and strokeColors: ['#e8e8e8', '#f1f1f1'] both are valid.
@@ -3443,7 +3443,7 @@ namespace ApexCharts
     /// <summary>
     /// Defines which colors to fill the radar chart with
     /// </summary>
-    public class TentacledFill
+    public class RadarPolygonsFill
     {
         /// <summary>
         /// The list of colors to apply to the radar chart
@@ -5200,8 +5200,8 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.AxisTitle" />
         public AxisTitle Title { get; set; }
 
-        /// <inheritdoc cref="ApexCharts.AxisTooltip" />
-        public AxisTooltip Tooltip { get; set; }
+        /// <inheritdoc cref="ApexCharts.YAxisTooltip" />
+        public YAxisTooltip Tooltip { get; set; }
     }
 
     /// <summary>
