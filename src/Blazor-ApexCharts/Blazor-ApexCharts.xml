@@ -529,7 +529,7 @@
         </member>
         <member name="P:ApexCharts.ApexChartOptions`1.Colors">
             <summary>
-            Colors for the chart's series. When all colors of the array are used, it starts from the beginning.
+            Colors for the chart's series. When all colors of the array are used, it starts from the beginning. Predefined colors are available in <see href="https://apexcharts.com/docs/options/theme">theme palettes</see>
             </summary>
             <remarks>
             You should only provide either hex or rgb/rgba format. Color names are not accepted at the moment.
@@ -673,6 +673,19 @@
         <member name="P:ApexCharts.PlotOptionsTreemap.ColorScale">
             <inheritdoc cref="T:ApexCharts.TreemapColorScale" />
         </member>
+        <member name="P:ApexCharts.PlotOptionsTreemap.DataLabels">
+            <inheritdoc cref="T:ApexCharts.TreemapDataLabels" />
+        </member>
+        <member name="T:ApexCharts.TreemapDataLabels">
+            <summary>
+            Defines how to style data labels within a treemap chart.
+            </summary>
+        </member>
+        <member name="P:ApexCharts.TreemapDataLabels.Format">
+            <summary>
+            You can either set the labels to scale based on the box size, or you can keep the same font-size and let the labels truncate if they exceed the area.
+            </summary>
+        </member>
         <member name="T:ApexCharts.TreemapColorScale">
             <summary>
             Defines how to color a given section of the treemap chart.
@@ -744,14 +757,6 @@
         <member name="P:ApexCharts.Annotations.Points">
             <inheritdoc cref="T:ApexCharts.AnnotationsPoint" />
         </member>
-        <member name="P:ApexCharts.Annotations.Position">
-            <summary>
-            Undefined
-            </summary>
-        </member>
-        <member name="P:ApexCharts.Annotations.Shapes">
-            <inheritdoc cref="T:ApexCharts.AnnotationsShape" />
-        </member>
         <member name="P:ApexCharts.Annotations.Texts">
             <inheritdoc cref="T:ApexCharts.AnnotationsText" />
         </member>
@@ -764,6 +769,11 @@
         <member name="T:ApexCharts.AnnotationsImage">
             <summary>
             Defines details for images to use on the data annotations
+            </summary>
+        </member>
+        <member name="P:ApexCharts.AnnotationsImage.AppendTo">
+            <summary>
+            A query selector to which the image element will be appended.
             </summary>
         </member>
         <member name="P:ApexCharts.AnnotationsImage.Height">
@@ -783,22 +793,17 @@
         </member>
         <member name="P:ApexCharts.AnnotationsImage.X">
             <summary>
-            Left position for the image relative to the element specified in appendTo property
+            Left position for the image relative to the element specified in <see cref="P:ApexCharts.AnnotationsImage.AppendTo"/> property
             </summary>
         </member>
         <member name="P:ApexCharts.AnnotationsImage.Y">
             <summary>
-            Top position for the image relative to the element specified in appendTo property
+            Top position for the image relative to the element specified in <see cref="P:ApexCharts.AnnotationsImage.AppendTo"/> property
             </summary>
         </member>
         <member name="T:ApexCharts.AnnotationsPoint">
             <summary>
             Defines details for individual data annotation points
-            </summary>
-        </member>
-        <member name="P:ApexCharts.AnnotationsPoint.Id">
-            <summary>
-            Undefined
             </summary>
         </member>
         <member name="P:ApexCharts.AnnotationsPoint.Image">
@@ -875,6 +880,11 @@
             Border width of the label
             </summary>
         </member>
+        <member name="P:ApexCharts.Label.BorderRadius">
+            <summary>
+            Border-radius of the label
+            </summary>
+        </member>
         <member name="P:ApexCharts.Label.OffsetX">
             <summary>
             Sets the left offset for annotation label
@@ -887,7 +897,7 @@
         </member>
         <member name="P:ApexCharts.Label.Orientation">
             <summary>
-            Undefined
+            The direction to display the label
             </summary>
         </member>
         <member name="P:ApexCharts.Label.Position">
@@ -1021,19 +1031,14 @@
             Stroke Size of the marker point.
             </summary>
         </member>
-        <member name="T:ApexCharts.AnnotationsShape">
-            <summary>
-            Undefined
-            </summary>
-        </member>
         <member name="T:ApexCharts.AnnotationsText">
             <summary>
             Defines how to style the individual data point annotations and their text
             </summary>
         </member>
-        <member name="P:ApexCharts.AnnotationsText.BackgroundColor">
+        <member name="P:ApexCharts.AnnotationsText.AppendTo">
             <summary>
-            Undefined
+            A query selector to which the text element will be appended.
             </summary>
         </member>
         <member name="P:ApexCharts.AnnotationsText.BorderColor">
@@ -1064,11 +1069,6 @@
         <member name="P:ApexCharts.AnnotationsText.FontWeight">
             <summary>
             Font-weight for the annotation label
-            </summary>
-        </member>
-        <member name="P:ApexCharts.AnnotationsText.ForeColor">
-            <summary>
-            Undefined
             </summary>
         </member>
         <member name="P:ApexCharts.AnnotationsText.PaddingBottom">
@@ -1103,12 +1103,12 @@
         </member>
         <member name="P:ApexCharts.AnnotationsText.X">
             <summary>
-            X (left) position for the text relative to the element specified in appendTo property
+            X (left) position for the text relative to the element specified in <see cref="P:ApexCharts.AnnotationsText.AppendTo"/> property
             </summary>
         </member>
         <member name="P:ApexCharts.AnnotationsText.Y">
             <summary>
-            Y (top) position for the text relative to the element specified in appendTo property
+            Y (top) position for the text relative to the element specified in <see cref="P:ApexCharts.AnnotationsText.AppendTo"/> property
             </summary>
         </member>
         <member name="T:ApexCharts.AnnotationsXAxis">
@@ -1116,19 +1116,9 @@
             Defines how to style the X-Axis for a data annotation point
             </summary>
         </member>
-        <member name="P:ApexCharts.AnnotationsXAxis.Id">
-            <summary>
-            Undefined
-            </summary>
-        </member>
         <member name="P:ApexCharts.AnnotationsXAxis.BorderColor">
             <summary>
             Color of the annotation line
-            </summary>
-        </member>
-        <member name="P:ApexCharts.AnnotationsXAxis.BorderWidth">
-            <summary>
-            Undefined
             </summary>
         </member>
         <member name="P:ApexCharts.AnnotationsXAxis.FillColor">
@@ -1174,11 +1164,6 @@
             Defines how to style the Y-Axis for a data annotation point
             </summary>
         </member>
-        <member name="P:ApexCharts.AnnotationsYAxis.Id">
-            <summary>
-            Undefined
-            </summary>
-        </member>
         <member name="P:ApexCharts.AnnotationsYAxis.BorderColor">
             <summary>
             Color of the annotation line
@@ -1215,6 +1200,11 @@
         <member name="P:ApexCharts.AnnotationsYAxis.StrokeDashArray">
             <summary>
             Creates dashes in borders of the SVG path. A higher number creates more space between dashes in the border.
+            </summary>
+        </member>
+        <member name="P:ApexCharts.AnnotationsYAxis.Width">
+            <summary>
+            Sets the width for annotation line
             </summary>
         </member>
         <member name="P:ApexCharts.AnnotationsYAxis.Y">
@@ -1255,7 +1245,7 @@
         </member>
         <member name="P:ApexCharts.Chart.DefaultLocale">
             <summary>
-            defaultLocale is the preselected language that the chart should render initially and the selected locale has to be present in the locales array. Read more in the localization guide.
+            defaultLocale is the preselected language that the chart should render initially and the selected locale has to be present in the locales array. Read more in the <see href="https://apexcharts.com/docs/localization">localization</see> guide.
             </summary>
         </member>
         <member name="P:ApexCharts.Chart.DropShadow">
@@ -1263,7 +1253,7 @@
         </member>
         <member name="P:ApexCharts.Chart.Events">
             <summary>
-            A collection of JavaScript functions to execute on specific interations with the chart. Available keys are:
+            A collection of JavaScript functions to execute on specific interations with the chart. Recommendation is to use events within <see cref="T:ApexCharts.ApexChart`1"/>. Available keys are:
             
             animationEnd,
             beforeMount,
@@ -1301,12 +1291,18 @@
         </member>
         <member name="P:ApexCharts.Chart.Group">
             <summary>
-            A chart group is created to perform interactive operations at the same time in all the charts. In case you want to create synchronized charts, you will need to provide this property.
+            A chart group is created to perform interactive operations at the same time in all the charts. In case you want to create <see href="https://apexcharts.com/docs/chart-types/synchronized-charts">synchronized charts</see>, you will need to provide this property.
             </summary>
         </member>
         <member name="P:ApexCharts.Chart.Id">
             <summary>
             A chart ID is a unique identifier that will be used in calling certain ApexCharts methods. You will also need chart.id to be set in case you want to use any of the following functionalities.
+            
+            <list type="bullet">
+            <item><see href="https://apexcharts.com/docs/options/chart/brush">brush chart</see></item>
+            <item><see href="https://apexcharts.com/docs/chart-types/synchronized-charts">synchronized chart</see></item>
+            <item>Calling <see href="https://apexcharts.com/docs/methods/#exec">exec</see> method of ApexCharts</item>
+            </list>
             </summary>
         </member>
         <member name="P:ApexCharts.Chart.Locales">
@@ -1332,6 +1328,11 @@
             Re-render the chart when the element size gets changed or the size of the parent element gets changed. Useful in conditions where the chart container resizes after page reload.
             </summary>
         </member>
+        <member name="P:ApexCharts.Chart.RedrawOnWindowResize">
+            <summary>
+            Re-render the chart when the window in which chart is rendered gets resized. Useful when rendering chart in iframes.
+            </summary>
+        </member>
         <member name="P:ApexCharts.Chart.Selection">
             <inheritdoc cref="T:ApexCharts.Selection" />
         </member>
@@ -1340,7 +1341,7 @@
         </member>
         <member name="P:ApexCharts.Chart.Stacked">
             <summary>
-            Enables stacked option for axis charts.
+            Enables stacked option for axis charts. <see href="https://apexcharts.com/javascript-chart-demos/column-charts/stacked">Example</see>
             </summary>
             <remarks>
             A stacked chart works only for same chart types and won't work in combo/mixed charts combinations. So, an area series combined with a column series will not work.
@@ -1525,7 +1526,7 @@
             If set to true, the Y-axis will automatically scale based on the visible min/max range.
             </summary>
             <remarks>
-            Note: One important configuration to set in a brush chart is the chart.selection option. The range which you set in chart.selection will act as brush in the brush chart
+            Note: One important configuration to set in a brush chart is the <see href="https://apexcharts.com/docs/options/chart/selection">chart.selection</see> option. The range which you set in <see cref="P:ApexCharts.Chart.Selection"/> will act as brush in the brush chart
             </remarks>
         </member>
         <member name="P:ApexCharts.Brush.Enabled">
@@ -1672,8 +1673,6 @@
             <remarks>
             Links:
             
-            <see href="">Blazor Example</see>,
-            <see href="">JavaScript Documentation</see>,
             <see href="https://apexcharts.com/docs/options/chart/selection">JavaScript Reference</see>
             </remarks>
         </member>
@@ -1781,7 +1780,7 @@
         </member>
         <member name="P:ApexCharts.ChartSparkline.Enabled">
             <summary>
-            Sparkline hides all the elements of the charts other than the primary paths. Helps to visualize data in small areas
+            Sparkline hides all the elements of the charts other than the primary paths. Helps to visualize data in small areas. <see href="https://apexcharts.com/javascript-chart-demos/sparklines/basic">Example</see>
             </summary>
         </member>
         <member name="T:ApexCharts.Toolbar">
@@ -1855,6 +1854,9 @@
             <summary>
             Show the rectangle selection icon in the toolbar. If you want to display a custom icon for selection, you can provide HTML string in this property.
             </summary>
+            <remarks>
+            Make sure to also enable <see cref="P:ApexCharts.Chart.Selection"/> when showing the selection tool.
+            </remarks>
         </member>
         <member name="P:ApexCharts.Tools.Zoom">
             <summary>
@@ -1891,6 +1893,11 @@
             Tooltip to display for the icon
             </summary>
         </member>
+        <member name="P:ApexCharts.ToolCustomIcon.Class">
+            <summary>
+            A CSS class to apply to the icon
+            </summary>
+        </member>
         <member name="T:ApexCharts.Zoom">
             <summary>
             Defines options to configure how zooming works on the chart
@@ -1914,7 +1921,7 @@
             To allow zooming in axis charts.
             </summary>
             <remarks>
-            Note: In a category x-axis chart, to enable zooming, you will also need to set xaxis.tickPlacement: 'on'.
+            Note: In a category x-axis chart, to enable zooming, you will also need to set <see cref="P:ApexCharts.XAxis.TickPlacement"/>: '<see cref="F:ApexCharts.TickPlacement.On"/>'. Read more on the <see href="https://apexcharts.com/docs/zooming-in-category-x-axis">Category Axis Zoom</see> tutorial.
             </remarks>
         </member>
         <member name="P:ApexCharts.Zoom.Type">
@@ -1922,7 +1929,7 @@
             Allow zooming either on both x-axis, y-axis or on both axis.
             </summary>
             <remarks>
-            Known Issue: In synchronized charts, xy or y will not update charts in sync, while x will work correctly.
+            Known Issue: In <see href="https://apexcharts.com/javascript-chart-demos/line-charts/syncing-charts">synchronized charts</see>, <see cref="F:ApexCharts.ZoomType.Xy"/> or <see cref="F:ApexCharts.ZoomType.Y"/> will not update charts in sync, while <see cref="F:ApexCharts.ZoomType.X"/> will work correctly.
             </remarks>
         </member>
         <member name="P:ApexCharts.Zoom.ZoomedArea">
@@ -1930,7 +1937,7 @@
         </member>
         <member name="T:ApexCharts.ZoomedArea">
             <summary>
-            Defines styling options to apply to the area of the chart that is zoomed into
+            Zoomed Area is the area which is drawn when a user drags the mouse from one point to another
             </summary>
         </member>
         <member name="P:ApexCharts.ZoomedArea.Fill">
@@ -2067,7 +2074,7 @@
         </member>
         <member name="P:ApexCharts.DataLabelsBackground.ForeColor">
             <summary>
-            Color of the label when background is enabled. This will override the colors above in style key.
+            Color of the label when background is enabled. This will override the <see cref="P:ApexCharts.DataLabelsStyle.Colors"/>.
             </summary>
         </member>
         <member name="P:ApexCharts.DataLabelsBackground.Opacity">
@@ -2178,7 +2185,7 @@
         </member>
         <member name="T:ApexCharts.FillGradient">
             <summary>
-            Defines the styling options to use when filling a chart with a gradient
+            Defines the styling options to use when filling a chart with a gradient. <see href="https://codepen.io/apexcharts/pen/GQmoXP">Example</see>
             </summary>
         </member>
         <member name="P:ApexCharts.FillGradient.GradientToColors">
@@ -2219,6 +2226,29 @@
         <member name="P:ApexCharts.FillGradient.Type">
             <summary>
             The type of gradient to generate
+            </summary>
+        </member>
+        <member name="P:ApexCharts.FillGradient.ColorStops">
+            <inheritdoc cref="T:ApexCharts.FillGradientStops"/>
+        </member>
+        <member name="T:ApexCharts.FillGradientStops">
+            <summary>
+            Override everything and define your own stops with unlimited color stops. <see href="https://codepen.io/apexcharts/pen/RvqdPb">Codepen Example</see>
+            </summary>
+        </member>
+        <member name="P:ApexCharts.FillGradientStops.Offset">
+            <summary>
+            The location within the chart to apply the gradient stop at
+            </summary>
+        </member>
+        <member name="P:ApexCharts.FillGradientStops.Color">
+            <summary>
+            The color to apply at the gradient stop
+            </summary>
+        </member>
+        <member name="P:ApexCharts.FillGradientStops.Opacity">
+            <summary>
+            The opacity to apply at the gradient stop. Accepts values from 0 to 1
             </summary>
         </member>
         <member name="T:ApexCharts.FillImage">
@@ -2358,16 +2388,6 @@
         <member name="T:ApexCharts.Lines">
             <summary>
             Defines options for grid lines
-            </summary>
-        </member>
-        <member name="P:ApexCharts.Lines.OffsetX">
-            <summary>
-            Undefined
-            </summary>
-        </member>
-        <member name="P:ApexCharts.Lines.OffsetY">
-            <summary>
-            Undefined
             </summary>
         </member>
         <member name="P:ApexCharts.Lines.Show">
@@ -2510,6 +2530,9 @@
             },
             </code>
             </summary>
+            <remarks>
+            Note: This feature is only available in shared tooltips (when you have <see cref="P:ApexCharts.Tooltip.Shared"/>: <see langword="true"/>).
+            </remarks>
         </member>
         <member name="P:ApexCharts.Legend.CustomLegendItems">
             <summary>
@@ -2543,7 +2566,7 @@
         </member>
         <member name="P:ApexCharts.LegendLabels.UseSeriesColors">
             <summary>
-            Whether to use primary colors or not.
+            Whether to use primary <see href="https://apexcharts.com/docs/colors">colors</see> or not.
             </summary>
         </member>
         <member name="T:ApexCharts.LegendMarkers">
@@ -2589,6 +2612,19 @@
         <member name="P:ApexCharts.LegendMarkers.Width">
             <summary>
             Width of the marker that appears before series name.
+            </summary>
+        </member>
+        <member name="P:ApexCharts.LegendMarkers.CustomHTML">
+            <summary>
+            Custom HTML element to put in place of marker.
+            
+            <code>
+            markers: {
+                customHTML: function() {
+                    return '&lt;span class="custom-marker"&gt;&lt;i class="fas fa-chart-pie"&gt;&lt;/i&gt;&lt;/span&gt;'
+                }
+            }
+            </code>
             </summary>
         </member>
         <member name="T:ApexCharts.LegendOnItemClick">
@@ -2700,6 +2736,9 @@
             <summary>
             Size of the marker point. In a multi-series chart, you can provide an array of numbers to display different size of markers on different series.
             </summary>
+            <remarks>
+            Set either <see cref="P:ApexCharts.Markers.Size"/> or <see cref="P:ApexCharts.Markers.Sizes"/>
+            </remarks>
         </member>
         <member name="P:ApexCharts.Markers.StrokeColors">
             <summary>
@@ -2944,7 +2983,7 @@
         </member>
         <member name="P:ApexCharts.PlotOptionsBar.BorderRadius">
             <summary>
-            Rounded corners around the bars/columns. Note: This option is available since v3.26.0
+            Rounded corners around the bars/columns.
             </summary>
         </member>
         <member name="P:ApexCharts.PlotOptionsBar.BorderRadiusApplication">
@@ -3158,6 +3197,11 @@
             <see href="https://apexcharts.com/docs/options/plotoptions/bubble">JavaScript Reference</see>
             </remarks>
         </member>
+        <member name="P:ApexCharts.PlotOptionsBubble.ZScaling">
+            <summary>
+            zScaling controls whether to draw the bubbles of different size (based on z value) or to draw same size bubbles (helpful in case your data-set contains values that extends to extreme ends)
+            </summary>
+        </member>
         <member name="P:ApexCharts.PlotOptionsBubble.MaxBubbleRadius">
             <summary>
             Maximum radius size of a bubble. If a bubble value is too large to cover the chart, this size will be used.
@@ -3338,6 +3382,9 @@
         </member>
         <member name="P:ApexCharts.PlotOptionsPie.DataLabels">
             <inheritdoc cref="T:ApexCharts.PieDataLabels" />
+            <remarks>
+            All additional formatting/styling settings for dataLabels has to be done in <see cref="P:ApexCharts.ApexChartOptions`1.DataLabels"/> configuration.
+            </remarks>
         </member>
         <member name="P:ApexCharts.PlotOptionsPie.Donut">
             <inheritdoc cref="T:ApexCharts.PlotOptionsDonut" />
@@ -3452,6 +3499,11 @@
             Show the name of the respective bar associated with it's value
             </summary>
         </member>
+        <member name="P:ApexCharts.DonutLabelName.Formatter">
+            <summary>
+            A custom formatter function to apply on the name text in dataLabel
+            </summary>
+        </member>
         <member name="T:ApexCharts.DonutLabelTotal">
             <summary>
             Defines how to style the total label for a donut slice
@@ -3532,6 +3584,11 @@
             Show the value label associated with the name label
             </summary>
         </member>
+        <member name="P:ApexCharts.DonutLabelValue.Formatter">
+            <summary>
+            A custom formatter function to apply on the value label in dataLabel
+            </summary>
+        </member>
         <member name="T:ApexCharts.PlotOptionsPolarArea">
             <summary>
             Defines options specific to <see cref="F:ApexCharts.ChartType.PolarArea"/>
@@ -3544,6 +3601,9 @@
         </member>
         <member name="P:ApexCharts.PlotOptionsPolarArea.Rings">
             <inheritdoc cref="T:ApexCharts.PolarAreaRings" />
+        </member>
+        <member name="P:ApexCharts.PlotOptionsPolarArea.Spokes">
+            <inheritdoc cref="T:ApexCharts.PolarAreaSpokes" />
         </member>
         <member name="T:ApexCharts.PolarAreaRings">
             <summary>
@@ -3558,6 +3618,21 @@
         <member name="P:ApexCharts.PolarAreaRings.StrokeWidth">
             <summary>
             Border width of the rings of polarArea chart.
+            </summary>
+        </member>
+        <member name="T:ApexCharts.PolarAreaSpokes">
+            <summary>
+            Defines how to style the spokes in the polar area chart
+            </summary>
+        </member>
+        <member name="P:ApexCharts.PolarAreaSpokes.ConnectorColors">
+            <summary>
+            The line/border color of the spokes of polarArea chart.
+            </summary>
+        </member>
+        <member name="P:ApexCharts.PolarAreaSpokes.StrokeWidth">
+            <summary>
+            Border width of the spokes of polarArea chart.
             </summary>
         </member>
         <member name="T:ApexCharts.PlotOptionsRadar">
@@ -3899,9 +3974,9 @@
             Angle from which the track should start.
             </summary>
         </member>
-        <member name="P:ApexCharts.Track.StrokeWidth">
+        <member name="P:ApexCharts.Track.Width">
             <summary>
-            Undefined
+            Width of the track
             </summary>
         </member>
         <member name="T:ApexCharts.Responsive">
@@ -3922,7 +3997,7 @@
         </member>
         <member name="P:ApexCharts.Responsive.Options">
             <summary>
-            The new configuration object that you would like to override on the existing default configuration object. All the options which you set normally can be set here
+            The new configuration object that you would like to override on the existing default configuration object. All the options which you set normally can be set here. <see href="https://codepen.io/apexcharts/pen/ajpqJp">Example</see>
             </summary>
         </member>
         <member name="T:ApexCharts.States">
@@ -4025,6 +4100,9 @@
             <summary>
             In line / area charts, whether to draw smooth lines or straight lines. You can also pass an array in stroke.curve, where each index corresponds to the series-index in multi-series charts.
             </summary>
+            <remarks>
+            Set either <see cref="P:ApexCharts.Stroke.Curve"/> or <see cref="P:ApexCharts.Stroke.Curves"/>
+            </remarks>
         </member>
         <member name="P:ApexCharts.Stroke.DashArray">
             <summary>
@@ -4246,7 +4324,7 @@
         </member>
         <member name="P:ApexCharts.Tooltip.Custom">
             <summary>
-            Draw a custom html tooltip instead of the default one based on the values provided in the function arguments. Example:
+            Draw a custom html tooltip instead of the default one based on the values provided in the function arguments. <see href="https://apexcharts.com/docs/datetime">Custom Tooltip Example</see>
             
             <code>
             tooltip: {
@@ -4258,6 +4336,9 @@
             }
             </code>
             </summary>
+            <remarks>
+            Note: In a multi-seris/combo chart, you can pass an array of functions to customize tooltip for different chart types. For instance, a combo chart with a candlestick and a line will have different tooltips.
+            </remarks>
         </member>
         <member name="P:ApexCharts.Tooltip.Enabled">
             <summary>
@@ -4370,11 +4451,6 @@
             Defines options to apply to tooltip markers
             </summary>
         </member>
-        <member name="P:ApexCharts.TooltipMarker.FillColors">
-            <summary>
-            Undefined
-            </summary>
-        </member>
         <member name="P:ApexCharts.TooltipMarker.Show">
             <summary>
             Whether to show the color coded marker shape in front of Series Name which helps to identify series in multiple datasets.
@@ -4412,7 +4488,7 @@
         </member>
         <member name="P:ApexCharts.TooltipX.Format">
             <summary>
-            The format of the x-axis value to show on the tooltip. To view how to format datetime Strings, view the Datetime Formatter guide.
+            The format of the x-axis value to show on the tooltip. To view how to format datetime Strings, view the <see href="https://apexcharts.com/docs/datetime">Datetime Formatter</see> guide.
             </summary>
         </member>
         <member name="P:ApexCharts.TooltipX.Show">
@@ -4439,6 +4515,9 @@
             <summary>
             Defines options to apply to the Y-axis value of a tooltip
             </summary>
+            <remarks>
+            In a multiple series, the tooltip.y property can accept array to target formatters of different series scales.
+            </remarks>
         </member>
         <member name="P:ApexCharts.TooltipY.Title">
             <inheritdoc cref="T:ApexCharts.TooltipYTitle" />
@@ -4495,6 +4574,11 @@
             Categories are labels which are displayed on the x-axis.
             </summary>
         </member>
+        <member name="P:ApexCharts.XAxis.OverwriteCategories">
+            <summary>
+            Allows you to overwrite all the labels of the x-axis with these labels. Accepts an array of string values.
+            </summary>
+        </member>
         <member name="P:ApexCharts.XAxis.Crosshairs">
             <inheritdoc cref="T:ApexCharts.AxisCrosshairs" />
         </member>
@@ -4541,23 +4625,21 @@
             Range takes the max value of x-axis, subtracts the provided range value and gets the min value based on that. So, technically it helps to keep the same range when min and max values gets updated dynamically
             </summary>
         </member>
-        <member name="P:ApexCharts.XAxis.Sorted">
-            <summary>
-            Undefined
-            </summary>
-        </member>
         <member name="P:ApexCharts.XAxis.TickAmount">
             <summary>
-            Number of Tick Intervals to show. Note: tickAmount doesn't have any effect when xaxis.type = datetime
+            Number of Tick Intervals to show. Note: tickAmount doesn't have any effect when <see cref="P:ApexCharts.XAxis.Type"/> = <see cref="F:ApexCharts.XAxisType.Datetime"/>
             </summary>
             <remarks>
-            f you have a numeric xaxis xaxis.type = 'numeric', you can specify tickAmount: 'dataPoints' which would make the number of ticks equal to the number of dataPoints in the chart.
+            If you have a numeric xaxis <see cref="P:ApexCharts.XAxis.Type"/> = <see cref="F:ApexCharts.XAxisType.Numeric"/>, you can specify tickAmount: 'dataPoints' which would make the number of ticks equal to the number of dataPoints in the chart.
             </remarks>
         </member>
         <member name="P:ApexCharts.XAxis.TickPlacement">
             <summary>
             Whether to draw the ticks in between the data-points or on the data-points.
             </summary>
+            <remarks>
+            Note: tickPlacement only works for <see cref="P:ApexCharts.XAxis.Type"/>: <see cref="F:ApexCharts.XAxisType.Category"/> charts and not for <see cref="F:ApexCharts.XAxisType.Datetime"/> charts.
+            </remarks>
         </member>
         <member name="P:ApexCharts.XAxis.Title">
             <inheritdoc cref="T:ApexCharts.AxisTitle" />
@@ -4664,6 +4746,11 @@
             Sets the border height of the axis line
             </summary>
         </member>
+        <member name="P:ApexCharts.AxisBorder.Width">
+            <summary>
+            Sets the width of the axis line
+            </summary>
+        </member>
         <member name="T:ApexCharts.AxisTicks">
             <summary>
             Defines styling to apply to the ticks of an axis
@@ -4735,9 +4822,17 @@
             <remarks>
             Options:
             
-            Any number,
-            tickWidth: takes the tick intervals on axis and creates a crosshair of that width,
-            barWidth: takes the barWidth and creates a crosshair of that width – only applicable to vertical bar charts
+            <list type="bullet">
+            <item>Any number</item>
+            <item>
+                <term>tickWidth</term>
+                <description>takes the tick intervals on axis and creates a crosshair of that width</description>
+            </item>
+            <item>
+                <term>barWidth</term>
+                <description>takes the barWidth and creates a crosshair of that width – only applicable to vertical bar charts</description>
+            </item>
+            </list>
             </remarks>
         </member>
         <member name="T:ApexCharts.CrosshairsDropShadow">
@@ -4748,11 +4843,6 @@
         <member name="P:ApexCharts.CrosshairsDropShadow.Blur">
             <summary>
             Set blur distance for shadow
-            </summary>
-        </member>
-        <member name="P:ApexCharts.CrosshairsDropShadow.Color">
-            <summary>
-            Undefined
             </summary>
         </member>
         <member name="P:ApexCharts.CrosshairsDropShadow.Enabled">
@@ -4860,6 +4950,9 @@
             <summary>
             Formats the datetime value based on the format specifier.
             </summary>
+            <remarks>
+            See the list of available <see href="https://apexcharts.com/docs/datetime">format specifiers</see>
+            </remarks>
         </member>
         <member name="P:ApexCharts.XAxisLabels.Formatter">
             <summary>
@@ -4937,16 +5030,6 @@
         <member name="P:ApexCharts.YAxisLabels.DatetimeFormatter">
             <inheritdoc cref="T:ApexCharts.DatetimeFormatter" />
         </member>
-        <member name="P:ApexCharts.YAxisLabels.DatetimeUTC">
-            <summary>
-            Undefined
-            </summary>
-        </member>
-        <member name="P:ApexCharts.YAxisLabels.Format">
-            <summary>
-            Undefined
-            </summary>
-        </member>
         <member name="P:ApexCharts.YAxisLabels.Formatter">
             <summary>
             Applies a custom function for the yaxis value.
@@ -4964,11 +5047,6 @@
             <remarks>
             Note: In horizantal bar charts, the second parameters also contains additional data like dataPointIndex &amp; seriesIndex.
             </remarks>
-        </member>
-        <member name="P:ApexCharts.YAxisLabels.HideOverlappingLabels">
-            <summary>
-            Undefined
-            </summary>
         </member>
         <member name="P:ApexCharts.YAxisLabels.MaxWidth">
             <summary>
@@ -4995,27 +5073,17 @@
             Rotate y-axis text label to a specific angle from it's center
             </summary>
         </member>
-        <member name="P:ApexCharts.YAxisLabels.RotateAlways">
-            <summary>
-            Undefined
-            </summary>
-        </member>
         <member name="P:ApexCharts.YAxisLabels.Show">
             <summary>
             Show labels on y-axis
             </summary>
         </member>
-        <member name="P:ApexCharts.YAxisLabels.ShowDuplicates">
-            <summary>
-            Undefined
-            </summary>
-        </member>
         <member name="P:ApexCharts.YAxisLabels.Style">
             <inheritdoc cref="T:ApexCharts.AxisLabelStyle" />
         </member>
-        <member name="P:ApexCharts.YAxisLabels.Trim">
+        <member name="P:ApexCharts.YAxisLabels.Align">
             <summary>
-            Undefined
+            Alignment of Y-axis label relative to chart area.
             </summary>
         </member>
         <member name="T:ApexCharts.DatetimeFormatter">
@@ -5031,11 +5099,6 @@
         <member name="P:ApexCharts.DatetimeFormatter.Hour">
             <summary>
             Format specifier for the hour of day.
-            </summary>
-        </member>
-        <member name="P:ApexCharts.DatetimeFormatter.Minute">
-            <summary>
-            Undefined
             </summary>
         </member>
         <member name="P:ApexCharts.DatetimeFormatter.Month">
@@ -5055,7 +5118,7 @@
         </member>
         <member name="P:ApexCharts.AxisLabelStyle.Colors">
             <summary>
-            Fore color for the axis label. Accepts an array for distributed charts or accepts a single color string.
+            Fore color for the axis label. Accepts an array for <see href="https://apexcharts.com/javascript-chart-demos/column-charts/distributed">distributed</see> charts or accepts a single color string.
             </summary>
         </member>
         <member name="P:ApexCharts.AxisLabelStyle.CssClass">
@@ -5078,9 +5141,12 @@
             Font-weight for the axis label
             </summary>
         </member>
+        <member name="T:ApexCharts.XAxisTooltip">
+            <inheritdoc/>
+        </member>
         <member name="T:ApexCharts.AxisTooltip">
             <summary>
-            Defines options to apply to axis tooltips
+            Defines options to apply to X-axis tooltips
             </summary>
         </member>
         <member name="P:ApexCharts.AxisTooltip.Enabled">
@@ -5093,8 +5159,38 @@
             Sets the top offset for axis tooltip
             </summary>
         </member>
+        <member name="P:ApexCharts.AxisTooltip.Formatter">
+            <summary>
+            A custom formatter function for the x-axis tooltip label. If undefined, the xaxis tooltip uses the default "X" value used in general tooltip. Example:
+            
+            <code>
+            xaxis: {
+                tooltip: {
+                    formatter: function(val, opts) {
+                        return val + "..."
+                    }
+                }
+            }
+            </code>
+            </summary>
+        </member>
         <member name="P:ApexCharts.AxisTooltip.Style">
             <inheritdoc cref="T:ApexCharts.AxisTooltipStyle" />
+        </member>
+        <member name="T:ApexCharts.YAxisTooltip">
+            <summary>
+            Defines options to apply to Y-axis tooltips
+            </summary>
+        </member>
+        <member name="P:ApexCharts.YAxisTooltip.Enabled">
+            <summary>
+            Show tooltip on y-axis
+            </summary>
+        </member>
+        <member name="P:ApexCharts.YAxisTooltip.OffsetX">
+            <summary>
+            Sets the top offset for y-axis tooltip
+            </summary>
         </member>
         <member name="T:ApexCharts.AxisTooltipStyle">
             <summary>
@@ -5152,6 +5248,11 @@
         <member name="P:ApexCharts.YAxis.Logarithmic">
             <summary>
             A non-linear scale when there is a large range of values.
+            </summary>
+        </member>
+        <member name="P:ApexCharts.YAxis.LogBase">
+            <summary>
+            Controls the logarithmic base. Default is 10
             </summary>
         </member>
         <member name="P:ApexCharts.YAxis.Max">
@@ -5334,9 +5435,39 @@
             A list of ways to generate lines
             </summary>
         </member>
+        <member name="F:ApexCharts.Curve.Smooth">
+            <summary>
+            Connects the points in a curve fashion. Also known as spline
+            </summary>
+        </member>
+        <member name="F:ApexCharts.Curve.Stepline">
+            <summary>
+            Points are connected by horizontal and vertical line segments, looking like steps of a staircase.
+            </summary>
+        </member>
+        <member name="F:ApexCharts.Curve.Straight">
+            <summary>
+            Connect the points in straight lines.
+            </summary>
+        </member>
         <member name="T:ApexCharts.LineCap">
             <summary>
             A list of shapes to use for starting and ending points
+            </summary>
+        </member>
+        <member name="F:ApexCharts.LineCap.Butt">
+            <summary>
+            Ends the stroke with a 90-degree angle
+            </summary>
+        </member>
+        <member name="F:ApexCharts.LineCap.Round">
+            <summary>
+            Ends the path-stroke with a radius that smooths out the start and end points
+            </summary>
+        </member>
+        <member name="F:ApexCharts.LineCap.Square">
+            <summary>
+            Similar to butt except that it extends the stroke beyond the length of the path
             </summary>
         </member>
         <member name="T:ApexCharts.Mode">
@@ -5551,6 +5682,11 @@
             Return data from JavaScript when a data point event occurs
             </summary>
         </member>
+        <member name="P:ApexCharts.JSDataPointSelection.SelectedDataPoints">
+            <summary>
+            List of selected DataPoints
+            </summary>
+        </member>
         <member name="P:ApexCharts.JSDataPointSelection.DataPointIndex">
             <summary>
             The index of the data point being selected
@@ -5656,6 +5792,11 @@
         </member>
         <member name="P:ApexCharts.ZoomedData`1.XAxis">
             <inheritdoc cref="T:ApexCharts.SelectionXAxis"/>
+        </member>
+        <member name="P:ApexCharts.ZoomedData`1.YAxis">
+            <summary>
+            Y Axis objects
+            </summary>
         </member>
         <member name="P:ApexCharts.ZoomedData`1.IsZoomed">
             <summary>
@@ -5829,6 +5970,9 @@
         <member name="P:ApexCharts.Series`1.Name">
             <inheritdoc cref="P:ApexCharts.IApexSeries`1.Name"/>
         </member>
+        <member name="P:ApexCharts.Series`1.Group">
+            <inheritdoc cref="P:ApexCharts.IApexSeries`1.Group"/>
+        </member>
         <member name="P:ApexCharts.Series`1.Type">
             <summary>
             The internal type of this series
@@ -5901,7 +6045,7 @@
         <member name="P:ApexCharts.ApexBaseSeries`1.Color">
             <inheritdoc cref="P:ApexCharts.IApexSeries`1.Color"/>
         </member>
-        <member name="P:ApexCharts.ApexBaseSeries`1.Group">
+        <member name="P:ApexCharts.ApexBaseSeries`1.PointColor">
             <summary>
             A function to provide a custom color for data points in the series
             </summary>
@@ -5910,6 +6054,9 @@
             
             <see href="https://apexcharts.com/docs/options/colors">JavaScript Reference</see>
             </remarks>
+        </member>
+        <member name="P:ApexCharts.ApexBaseSeries`1.Group">
+            <inheritdoc cref="P:ApexCharts.IApexSeries`1.Group"/>
         </member>
         <member name="M:ApexCharts.ApexBaseSeries`1.Toggle">
             <inheritdoc cref="M:ApexCharts.IApexSeries`1.Toggle"/>
@@ -6316,6 +6463,11 @@
             The color to assign to values in the data series
             </summary>
         </member>
+        <member name="P:ApexCharts.IApexSeries`1.Group">
+            <summary>
+            The name of the group
+            </summary>
+        </member>
         <member name="P:ApexCharts.IApexSeries`1.ShowDataLabels">
             <inheritdoc cref="P:ApexCharts.DataLabels.Enabled"/>
         </member>
@@ -6401,6 +6553,11 @@
         </member>
         <member name="P:ApexCharts.Series.JSZoomed.XAxis">
             <inheritdoc cref="T:ApexCharts.SelectionXAxis"/>
+        </member>
+        <member name="P:ApexCharts.Series.JSZoomed.YAxis">
+            <summary>
+            Y axis object
+            </summary>
         </member>
         <member name="T:ApexCharts.LegendClicked`1">
             <summary>

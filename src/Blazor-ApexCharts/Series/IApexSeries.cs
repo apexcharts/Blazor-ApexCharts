@@ -34,6 +34,10 @@ namespace ApexCharts
         /// The color to assign to values in the data series
         /// </summary>
         string Color { get; set; }
+
+        /// <summary>
+        /// The name of the group
+        /// </summary>
         string Group { get; set; }
 
         /// <inheritdoc cref="DataLabels.Enabled"/>

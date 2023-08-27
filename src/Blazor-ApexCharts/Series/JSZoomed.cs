@@ -10,6 +10,10 @@ namespace ApexCharts.Series
         /// <inheritdoc cref="SelectionXAxis"/>
         public SelectionXAxis XAxis { get; set; }
 
+
+        /// <summary>
+        /// Y axis object
+        /// </summary>
         public List<object> YAxis { get; set; }
     }
 }

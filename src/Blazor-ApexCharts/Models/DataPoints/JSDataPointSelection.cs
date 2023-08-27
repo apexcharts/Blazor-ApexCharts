@@ -7,6 +7,9 @@ namespace ApexCharts
     /// </summary>
     public class JSDataPointSelection
     {
+        /// <summary>
+        /// List of selected DataPoints
+        /// </summary>
         public List<List<int?>> SelectedDataPoints { get; set; }
 
         /// <summary>
@@ -119,6 +122,9 @@ namespace ApexCharts
         /// <inheritdoc cref="SelectionXAxis"/>
         public SelectionXAxis XAxis { get; set; }
 
+        /// <summary>
+        /// Y Axis objects
+        /// </summary>
         public List<object> YAxis { get; set; }
 
         /// <summary>

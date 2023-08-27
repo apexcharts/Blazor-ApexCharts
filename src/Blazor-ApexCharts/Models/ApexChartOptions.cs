@@ -694,8 +694,7 @@ namespace ApexCharts
 		/// </summary>
 		public string BorderColor { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-		[Obsolete("This property is no longer available")]
+#pragma warning disable CS1591 // Documentation not available but property is valid
 		public double? BorderWidth { get; set; }
 #pragma warning restore CS1591
 

@@ -14,15 +14,15 @@ namespace ApexCharts.Models
     /// <remarks>
     /// <see href="https://stackoverflow.com/questions/59059989/system-text-json-how-do-i-specify-a-custom-name-for-an-enum-value">Stackoverflow Discussion</see>
     /// </remarks>
-    public class CustomJsonStringEnumConverter : JsonConverterFactory
+    internal class CustomJsonStringEnumConverter : JsonConverterFactory
     {
         private readonly JsonNamingPolicy namingPolicy;
         private readonly bool allowIntegerValues;
         private readonly JsonStringEnumConverter baseConverter;
 
-        public CustomJsonStringEnumConverter() : this(null, true) { }
+        internal CustomJsonStringEnumConverter() : this(null, true) { }
 
-        public CustomJsonStringEnumConverter(JsonNamingPolicy namingPolicy = null, bool allowIntegerValues = true)
+        internal CustomJsonStringEnumConverter(JsonNamingPolicy namingPolicy = null, bool allowIntegerValues = true)
         {
             this.namingPolicy = namingPolicy;
             this.allowIntegerValues = allowIntegerValues;
@@ -53,11 +53,11 @@ namespace ApexCharts.Models
         }
     }
 
-    public class JsonNamingPolicyDecorator : JsonNamingPolicy
+    internal class JsonNamingPolicyDecorator : JsonNamingPolicy
     {
         readonly JsonNamingPolicy underlyingNamingPolicy;
 
-        public JsonNamingPolicyDecorator(JsonNamingPolicy underlyingNamingPolicy) => this.underlyingNamingPolicy = underlyingNamingPolicy;
+        internal JsonNamingPolicyDecorator(JsonNamingPolicy underlyingNamingPolicy) => this.underlyingNamingPolicy = underlyingNamingPolicy;
 
         /// <inheritdoc/>
         public override string ConvertName(string name) => underlyingNamingPolicy == null ? name : underlyingNamingPolicy.ConvertName(name);
