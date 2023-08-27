@@ -1121,6 +1121,11 @@
             Color of the annotation line
             </summary>
         </member>
+        <member name="P:ApexCharts.AnnotationsXAxis.BorderWidth">
+            <summary>
+            Sets the witdh of the line. Please note this property is missing in apexcharts.js docs.
+            </summary>
+        </member>
         <member name="P:ApexCharts.AnnotationsXAxis.FillColor">
             <summary>
             Fill Color of the region. Only applicable if <see cref="P:ApexCharts.AnnotationsXAxis.X2"/> is provided.
@@ -3658,42 +3663,42 @@
             </summary>
         </member>
         <member name="P:ApexCharts.PlotOptionsRadar.Polygons">
-            <inheritdoc cref="T:ApexCharts.PurplePolygons" />
+            <inheritdoc cref="T:ApexCharts.RadarPolygons" />
         </member>
         <member name="P:ApexCharts.PlotOptionsRadar.Size">
             <summary>
             A custom size for the inner radar. The default size calculation will be overrided with this
             </summary>
         </member>
-        <member name="T:ApexCharts.PurplePolygons">
+        <member name="T:ApexCharts.RadarPolygons">
             <summary>
             The style options to apply to the radar chart
             </summary>
         </member>
-        <member name="P:ApexCharts.PurplePolygons.ConnectorColors">
+        <member name="P:ApexCharts.RadarPolygons.ConnectorColors">
             <summary>
             The line color of the connector lines of the polygons. If you want to pass more than 1 color, you can pass an array instead of a String. connectorColors: '#e8e8e8' and connectorColors: ['#e8e8e8', '#f1f1f1'] both are valid.
             </summary>
         </member>
-        <member name="P:ApexCharts.PurplePolygons.Fill">
-            <inheritdoc cref="T:ApexCharts.TentacledFill" />
+        <member name="P:ApexCharts.RadarPolygons.Fill">
+            <inheritdoc cref="T:ApexCharts.RadarPolygonsFill" />
         </member>
-        <member name="P:ApexCharts.PurplePolygons.StrokeColors">
+        <member name="P:ApexCharts.RadarPolygons.StrokeColors">
             <summary>
             The line/border color of the spokes of the chart excluding the connector lines. If you want to pass more than 1 color, you can pass an array instead of a String. strokeColors: '#e8e8e8' and strokeColors: ['#e8e8e8', '#f1f1f1'] both are valid.
             </summary>
         </member>
-        <member name="P:ApexCharts.PurplePolygons.StrokeWidth">
+        <member name="P:ApexCharts.RadarPolygons.StrokeWidth">
             <summary>
             Border width of the spokes of radar chart.
             </summary>
         </member>
-        <member name="T:ApexCharts.TentacledFill">
+        <member name="T:ApexCharts.RadarPolygonsFill">
             <summary>
             Defines which colors to fill the radar chart with
             </summary>
         </member>
-        <member name="P:ApexCharts.TentacledFill.Colors">
+        <member name="P:ApexCharts.RadarPolygonsFill.Colors">
             <summary>
             The list of colors to apply to the radar chart
             </summary>
@@ -5310,7 +5315,7 @@
             <inheritdoc cref="T:ApexCharts.AxisTitle" />
         </member>
         <member name="P:ApexCharts.YAxis.Tooltip">
-            <inheritdoc cref="T:ApexCharts.AxisTooltip" />
+            <inheritdoc cref="T:ApexCharts.YAxisTooltip" />
         </member>
         <member name="T:ApexCharts.AxisTitle">
             <summary>
