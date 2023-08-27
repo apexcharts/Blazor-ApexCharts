@@ -1,22 +1,22 @@
 ﻿
-    <Row>
-        <RowCol Auto>
-            <label class="form-label">Width</label>
-            <input type="number" @bind=@width class="form-control" />
-        </RowCol>
-        <RowCol Auto>
-              <label class="form-label">Height</label>
-            <input type="number" @bind=@height class="form-control" />
-        </RowCol>
-    </Row>
+<Row>
+    <RowCol Auto>
+        <label class="form-label">Width</label>
+        <input type="number" @bind=@width class="form-control" />
+    </RowCol>
+    <RowCol Auto>
+        <label class="form-label">Height</label>
+        <input type="number" @bind=@height class="form-control" />
+    </RowCol>
+</Row>
 
-    <Row class="mt-2 mb-2">
-        <RowCol Auto>
-            <Button BackgroundColor="TablerColor.Primary" OnClick="UpdateSize">Update Size</Button>
-        </RowCol>
-    </Row>
+<Row class="mt-2 mb-2">
+    <RowCol Auto>
+        <Button BackgroundColor="TablerColor.Primary" OnClick="UpdateSize">Update Size</Button>
+    </RowCol>
+</Row>
 
-    <div style="overflow-x:scroll;overflow-y:hidden">
+<div style="overflow-x:scroll;overflow-y:hidden">
     <ApexChart TItem="Order"
                Title="Scatter Sample"
                Width="@width"
@@ -39,7 +39,7 @@
                          YAggregate="@(e => e.Sum(e => e.NetValue))"
                          OrderByDescending="e=>e.Y" />
     </ApexChart>
-    </div>
+</div>
 
 
 @code {
@@ -50,7 +50,6 @@
 
     private async Task UpdateSize()
     {
-        await Task.Yield();
         await chart.UpdateOptionsAsync(false, false, false);
     }
 

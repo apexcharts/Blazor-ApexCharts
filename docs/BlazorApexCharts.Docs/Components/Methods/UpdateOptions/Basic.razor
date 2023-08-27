@@ -58,14 +58,12 @@
     private async Task RenderChart()
     {
         ToogleColor();
-        await Task.Delay(10);
         await chart.RenderAsync();
     }
 
     private async Task UpdateOptions()
     {
         ToogleColor();
-        await Task.Delay(10);
         await chart.UpdateOptionsAsync(redrawPaths, animate, false);
     }
 }

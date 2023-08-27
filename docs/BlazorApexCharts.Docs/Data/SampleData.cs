@@ -2,21 +2,38 @@
 using Bogus;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlazorApexCharts.Docs
 {
     public static class SampleData
     {
+        private static readonly string[] Summaries = new[]
+{
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    };
+
+        public static Task<WeatherForecast[]> GetForecastAsync(DateTime startDate)
+        {
+            return Task.FromResult(Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            {
+                Date = startDate.AddDays(index),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            }).ToArray());
+        }
+
         public static List<BoxPlotSample> GetBoxPlotData()
         {
 
             var now = DateTimeOffset.Now;
             var result = new List<BoxPlotSample>();
 
-            result.Add(new BoxPlotSample { Name = "Eva", EventDate=now.AddDays(-10), Min = 40, Q1 = 52, Median = 56.59m, Q3 = 60, Max = 63.85m } );
+            result.Add(new BoxPlotSample { Name = "Eva", EventDate = now.AddDays(-10), Min = 40, Q1 = 52, Median = 56.59m, Q3 = 60, Max = 63.85m });
             result.Add(new BoxPlotSample { Name = "Jonas", EventDate = now.AddDays(-9), Min = 43.66m, Q1 = 44.99m, Median = 51.35m, Q3 = 52.95m, Max = 59.42m });
             result.Add(new BoxPlotSample { Name = "Bart", EventDate = now.AddDays(-8), Min = 52.76m, Q1 = 57.35m, Median = 59.15m, Q3 = 63.03m, Max = 67.98m });
-            result.Add(new BoxPlotSample { Name = "Cecilia", EventDate = now.AddDays(-7), Min = 48m, Q1 = 49m, Median = 52m, Q3 = 62m, Max =68m });
+            result.Add(new BoxPlotSample { Name = "Cecilia", EventDate = now.AddDays(-7), Min = 48m, Q1 = 49m, Median = 52m, Q3 = 62m, Max = 68m });
             result.Add(new BoxPlotSample { Name = "Ann", EventDate = now.AddDays(-6), Min = 38m, Q1 = 41m, Median = 45m, Q3 = 52m, Max = 55m });
             return result;
         }
@@ -65,7 +82,7 @@ namespace BlazorApexCharts.Docs
 
         }
 
-            public static List<Order> GetOrders()
+        public static List<Order> GetOrders()
         {
             var orders = new List<Order>();
             orders.Add(new Order { CustomerName = "Odio Corporation", Country = "Sweden", OrderDate = DateTimeOffset.Now.AddDays(-12), GrossValue = 34531, DiscountPercentage = 21, OrderType = OrderType.Contract });
@@ -115,7 +132,7 @@ namespace BlazorApexCharts.Docs
             result.Add(new Project { Name = "Design", StartDate = DateTime.Now.AddDays(-30), EndDate = DateTime.Now.AddDays(-10), Score = 20 });
             result.Add(new Project { Name = "Construct", StartDate = DateTime.Now.AddDays(-20), EndDate = DateTime.Now.AddDays(-5), Score = -12 });
             result.Add(new Project { Name = "Install", StartDate = DateTime.Now.AddDays(-14), EndDate = DateTime.Now.AddDays(0), Score = -4 });
-            result.Add(new Project { Name = "Train", StartDate = DateTime.Now.AddDays(-18), EndDate = DateTime.Now.AddDays(5),  Score = 26 });
+            result.Add(new Project { Name = "Train", StartDate = DateTime.Now.AddDays(-18), EndDate = DateTime.Now.AddDays(5), Score = 26 });
             return result;
 
         }
@@ -145,7 +162,7 @@ namespace BlazorApexCharts.Docs
             .RuleFor(o => o.Source, f => f.PickRandom<IncidentSource>())
              .RuleFor(o => o.LeadTime, f => f.Random.Number(1, 10))
             .RuleFor(o => o.WeekNumber, f => f.Random.Number(1, 20))
-            .RuleFor(o => o.PointColor, f=> f.Internet.Color());
+            .RuleFor(o => o.PointColor, f => f.Internet.Color());
 
             var test = fakeIncidents.Generate(300);
             return test;
