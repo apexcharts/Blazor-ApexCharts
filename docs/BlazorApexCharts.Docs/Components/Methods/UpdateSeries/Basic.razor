@@ -1,34 +1,59 @@
-﻿<DemoContainer>
+﻿
+<DemoContainer>
 
-     <Button class="mb-2" OnClick=UpdateChartSeries BackgroundColor="TablerColor.Primary">Update Series</Button>
+    <Button class="mb-2" OnClick=UpdateChartSeries BackgroundColor="TablerColor.Primary">Update Series</Button>
+
+    @if (forecasts != null)
+    {
+        <ApexChart TItem="WeatherForecast"
+                   Title="Temp C"
+                   XAxisType="XAxisType.Datetime"
+        @ref="chart">
+
+            <ApexPointSeries TItem="WeatherForecast"
+                             Items="forecasts"
+                             Name="Temp C"
+                             XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
+                             YAggregate="@(e => e.Sum(f => f.TemperatureC))"
+                             SeriesType="SeriesType.Bar"
+                             Color="#005ba3" />
+        </ApexChart>
+    }
 
 
-    <ApexChart TItem="Order"
-               Title="Order Gross Value"
-     @ref=chart>
-
-        <ApexPointSeries TItem="Order"
-                         Items="orders"
-                         Name="Gross Value"
-                         SeriesType="SeriesType.Pie"
-                         XValue="@(e => e.Country)"
-                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                         OrderByDescending="e=>e.X" />
-    </ApexChart>
 </DemoContainer>
 
 <div>
-@message
+    <Table Items="forecasts">
+        <Column Item="WeatherForecast" Property="e=> e.Date">
+            <Template>
+                @context.Date.ToString("D")
+            </Template>
+        </Column>
+        <Column Item="WeatherForecast" Property="e=> e.TemperatureC" />
+        <Column Item="WeatherForecast" Property="e=> e.Summary" />
+    </Table>
 </div>
 @code {
-    private List<Order> orders { get; set; } = SampleData.GetOrders();
-    private ApexChart<Order> chart;
+    private List<WeatherForecast> forecasts { get; set; }
+    private ApexChart<WeatherForecast> chart;
     private string message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        forecasts = (await SampleData.GetForecastAsync(DateTime.Today)).ToList();
+    }
+
     private async Task UpdateChartSeries()
     {
-        var order = orders.First();
-        message = order.Country;
-        order.GrossValue = order.GrossValue * (decimal)1.6; 
+        await LoadDataAsync();
         await chart.UpdateSeriesAsync(true);
     }
-    }
+}

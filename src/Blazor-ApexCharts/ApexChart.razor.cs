@@ -663,6 +663,7 @@ namespace ApexCharts
         /// </remarks>
         public virtual async Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null)
         {
+            await Task.Yield();
             PrepareChart();
             var json = Serialize(Options);
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateOptions", Options.Chart.Id, json, redrawPaths, animate, updateSyncedCharts, zoom);
@@ -680,6 +681,7 @@ namespace ApexCharts
         /// </remarks>
         public virtual async Task UpdateSeriesAsync(bool animate = true)
         {
+            await Task.Yield();
             SetSeries();
             UpdateDataForNoAxisCharts();
             var jsonSeries = Serialize(Options.Series);
@@ -768,6 +770,7 @@ namespace ApexCharts
 
         private async Task RenderChartAsync()
         {
+            await Task.Yield();
             forceRender = false;
             PrepareChart();
             var jsonOptions = Serialize(Options);

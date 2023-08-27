@@ -32,7 +32,6 @@
         var order = orders.First();
         message = order.Country;
         order.GrossValue = order.GrossValue * (decimal)1.6; 
-       // await chart.UpdateSeriesAsync(true);
         await chart.UpdateOptionsAsync(false, false, false);
     }
 
