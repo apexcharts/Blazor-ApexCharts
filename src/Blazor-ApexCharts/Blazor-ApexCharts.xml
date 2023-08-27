@@ -1121,6 +1121,11 @@
             Color of the annotation line
             </summary>
         </member>
+        <member name="P:ApexCharts.AnnotationsXAxis.BorderWidth">
+            <summary>
+            Sets the witdh of the line. Please note this property is missing in apexcharts.js docs.
+            </summary>
+        </member>
         <member name="P:ApexCharts.AnnotationsXAxis.FillColor">
             <summary>
             Fill Color of the region. Only applicable if <see cref="P:ApexCharts.AnnotationsXAxis.X2"/> is provided.
