@@ -82,18 +82,6 @@ namespace ApexCharts
         /// <summary>
         /// The shape to use for the goal marker
         /// </summary>
-        public StrokeLineCap? StrokeLineCap { get; set; }
+        public LineCap? StrokeLineCap { get; set; }
     }
-
-#pragma warning disable CS1591 // Enum values are self-explanatory
-    /// <summary>
-    /// A listing of shapes for goal markers
-    /// </summary>
-    public enum StrokeLineCap
-    {
-        Butt,
-        Round,
-        Square
-    }
-#pragma warning restore CS1591
 }
