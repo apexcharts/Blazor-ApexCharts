@@ -59,7 +59,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/xaxis-label-click">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#xAxisLabelClick">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<XAxisLabelClicked<TItem>> OnXAxisLabelClick { get; set; }
 
@@ -70,7 +70,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/marker-click">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#markerClick">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<SelectedData<TItem>> OnMarkerClick { get; set; }
 
@@ -81,7 +81,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/data-point-selection">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#dataPointSelection">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
 
@@ -92,7 +92,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/data-point-hover">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#dataPointMouseEnter">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointEnter { get; set; }
 
@@ -103,7 +103,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/data-point-hover">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#dataPointMouseLeave">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointLeave { get; set; }
 
@@ -114,7 +114,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/legend-click">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#legendClick">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<LegendClicked<TItem>> OnLegendClicked { get; set; }
 
@@ -125,7 +125,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/selection">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#selection">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<SelectionData<TItem>> OnSelection { get; set; }
 
@@ -136,7 +136,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/brush-scrolled">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#brushScrolled">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<SelectionData<TItem>> OnBrushScrolled { get; set; }
 
@@ -147,9 +147,109 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/zoomed">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#zoomed">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<ZoomedData<TItem>> OnZoomed { get; set; }
+
+        /// <summary>
+        /// Fires when the chart’s initial animation is finished.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#animationEnd">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback OnAnimationEnd { get; set; }
+
+        /// <summary>
+        /// Fires before the chart has been drawn on screen.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#beforeMount">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback OnBeforeMount { get; set; }
+
+        /// <summary>
+        /// Fires after the chart has been drawn on screen.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#mounted">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback OnMounted { get; set; }
+
+        /// <summary>
+        /// Fires when the chart has been dynamically updated either with <see cref="UpdateOptionsAsync(bool, bool, bool, ZoomOptions)"/> or <see cref="UpdateSeriesAsync(bool)"/> functions.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#updated">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback OnUpdated { get; set; }
+
+        /// <summary>
+        /// Fires when user moves mouse on any area of the chart.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#mousemove">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<SelectedData<TItem>> OnMouseMove { get; set; }
+
+        /// <summary>
+        /// Fires when user moves mouse outside chart area (exclusing axis).
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#mouseleave">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback OnMouseLeave { get; set; }
+
+        /// <summary>
+        /// Fires when user clicks on any area of the chart.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#click">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<SelectedData<TItem>> OnClick { get; set; }
+
+        /// <summary>
+        /// This function, if defined, runs just before zooming in/out of the chart allowing you to set a custom range for zooming in/out.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#beforeZoom">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public Func<SelectionXAxis, SelectionXAxis> OnBeforeZoom { get; set; }
+
+        /// <summary>
+        /// This function, if defined, runs just before the user hits the HOME button on the toolbar to reset the chart to it’s original state. The function allows you to set a custom axes range for the initial view of the chart.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#beforeResetZoom">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public Func<object, SelectionXAxis> OnBeforeResetZoom { get; set; }
+
+        /// <summary>
+        /// Fires when user scrolls using the pan tool. The 2nd argument includes information of the new xaxis generated after scrolling.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#scrolled">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<SelectionData<TItem>> OnScrolled { get; set; }
 
         /// <summary>
         /// Fires when <see cref="RenderAsync"/> completes
@@ -766,6 +866,16 @@ namespace ApexCharts
             Options.HasSelection = OnSelection.HasDelegate;
             Options.HasBrushScrolled = OnBrushScrolled.HasDelegate;
             Options.HasZoomed = OnZoomed.HasDelegate;
+            Options.HasAnimationEnd = OnAnimationEnd.HasDelegate;
+            Options.HasBeforeMount = OnBeforeMount.HasDelegate;
+            Options.HasMounted = OnMounted.HasDelegate;
+            Options.HasUpdated = OnUpdated.HasDelegate;
+            Options.HasMouseLeave = OnMouseLeave.HasDelegate;
+            Options.HasMouseMove = OnMouseMove.HasDelegate;
+            Options.HasClick = OnClick.HasDelegate;
+            Options.HasBeforeZoom = OnBeforeZoom != null;
+            Options.HasBeforeResetZoom = OnBeforeResetZoom != null;
+            Options.HasScrolled = OnScrolled.HasDelegate;
         }
 
         private async Task RenderChartAsync()
@@ -994,24 +1104,23 @@ namespace ApexCharts
         [JSInvokable("JSXAxisLabelClick")]
         public void JSXAxisLabelClick(JSXAxisLabelClick jsXAxisLabelClick)
         {
-            if (OnXAxisLabelClick.HasDelegate)
+            var data = new XAxisLabelClicked<TItem>
             {
-                var data = new XAxisLabelClicked<TItem>();
-                data.LabelIndex = jsXAxisLabelClick.LabelIndex;
-                data.Caption = jsXAxisLabelClick.Caption;
-                data.SeriesPoints = new List<SeriesDataPoint<TItem>>();
+                LabelIndex = jsXAxisLabelClick.LabelIndex,
+                Caption = jsXAxisLabelClick.Caption,
+                SeriesPoints = new List<SeriesDataPoint<TItem>>()
+            };
 
-                foreach (var series in Options.Series)
+            foreach (var series in Options.Series)
+            {
+                data.SeriesPoints.Add(new SeriesDataPoint<TItem>
                 {
-                    data.SeriesPoints.Add(new SeriesDataPoint<TItem>
-                    {
-                        Series = series,
-                        DataPoint = series.Data.ElementAt(jsXAxisLabelClick.LabelIndex)
-                    });
-                }
-
-                OnXAxisLabelClick.InvokeAsync(data);
+                    Series = series,
+                    DataPoint = series.Data.ElementAt(jsXAxisLabelClick.LabelIndex)
+                });
             }
+
+            OnXAxisLabelClick.InvokeAsync(data);
         }
 
         /// <summary>
@@ -1024,23 +1133,20 @@ namespace ApexCharts
         [JSInvokable("JSMarkerClick")]
         public void JSMarkerClick(JSDataPointSelection selectedDataPoints)
         {
-            if (OnMarkerClick.HasDelegate)
+            var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
+            var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+
+            var selection = new SelectedData<TItem>
             {
-                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+                Chart = this,
+                Series = series,
+                DataPoint = dataPoint,
+                IsSelected = selectedDataPoints.SelectedDataPoints?.Any(e => e != null && e.Any(e => e != null && e.HasValue)) ?? false,
+                DataPointIndex = selectedDataPoints.DataPointIndex,
+                SeriesIndex = selectedDataPoints.SeriesIndex
+            };
 
-                var selection = new SelectedData<TItem>
-                {
-                    Chart = this,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    IsSelected = selectedDataPoints.SelectedDataPoints?.Any(e => e != null && e.Any(e => e != null && e.HasValue)) ?? false,
-                    DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
-                };
-
-                OnMarkerClick.InvokeAsync(selection);
-            }
+            OnMarkerClick.InvokeAsync(selection);
         }
 
         /// <summary>
@@ -1053,23 +1159,20 @@ namespace ApexCharts
         [JSInvokable("JSDataPointSelected")]
         public void JSDataPointSelected(JSDataPointSelection selectedDataPoints)
         {
-            if (OnDataPointSelection.HasDelegate)
+            var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
+            var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+
+            var selection = new SelectedData<TItem>
             {
-                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+                Chart = this,
+                Series = series,
+                DataPoint = dataPoint,
+                IsSelected = selectedDataPoints.SelectedDataPoints.Any(e => e != null && e.Any(e => e != null && e.HasValue)),
+                DataPointIndex = selectedDataPoints.DataPointIndex,
+                SeriesIndex = selectedDataPoints.SeriesIndex
+            };
 
-                var selection = new SelectedData<TItem>
-                {
-                    Chart = this,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    IsSelected = selectedDataPoints.SelectedDataPoints.Any(e => e != null && e.Any(e => e != null && e.HasValue)),
-                    DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
-                };
-
-                OnDataPointSelection.InvokeAsync(selection);
-            }
+            OnDataPointSelection.InvokeAsync(selection);
         }
 
         /// <summary>
@@ -1082,27 +1185,24 @@ namespace ApexCharts
         [JSInvokable("JSDataPointEnter")]
         public void JSDataPointEnter(JSDataPointSelection selectedDataPoints)
         {
-            if (OnDataPointEnter.HasDelegate || ApexPointTooltip != null)
+            var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
+            var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+
+            var hoverData = new HoverData<TItem>
             {
-                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+                Chart = this,
+                Series = series,
+                DataPoint = dataPoint,
+                DataPointIndex = selectedDataPoints.DataPointIndex,
+                SeriesIndex = selectedDataPoints.SeriesIndex
+            };
 
-                var hoverData = new HoverData<TItem>
-                {
-                    Chart = this,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
-                };
+            OnDataPointEnter.InvokeAsync(hoverData);
 
-                OnDataPointEnter.InvokeAsync(hoverData);
-
-                if (ApexPointTooltip != null)
-                {
-                    tooltipData = hoverData;
-                    StateHasChanged();
-                }
+            if (ApexPointTooltip != null)
+            {
+                tooltipData = hoverData;
+                StateHasChanged();
             }
         }
 
@@ -1116,22 +1216,176 @@ namespace ApexCharts
         [JSInvokable("JSDataPointLeave")]
         public void JSDataPointLeave(JSDataPointSelection selectedDataPoints)
         {
-            if (OnDataPointLeave.HasDelegate)
+            var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
+            var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+
+            var hoverData = new HoverData<TItem>
             {
-                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+                Chart = this,
+                Series = series,
+                DataPoint = dataPoint,
+                DataPointIndex = selectedDataPoints.DataPointIndex,
+                SeriesIndex = selectedDataPoints.SeriesIndex
+            };
 
-                var hoverData = new HoverData<TItem>
-                {
-                    Chart = this,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
-                };
+            OnDataPointLeave.InvokeAsync(hoverData);
+        }
 
-                OnDataPointLeave.InvokeAsync(hoverData);
-            }
+        /// <summary>
+        /// Callback from JavaScript on animation end
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="OnAnimationEnd"/>
+        /// </remarks>
+        [JSInvokable("JSAnimationEnd")]
+        public void JSAnimationEnd()
+        {
+            OnAnimationEnd.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on before mount
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="OnBeforeMount"/>
+        /// </remarks>
+        [JSInvokable("JSBeforeMount")]
+        public void JSBeforeMount()
+        {
+            OnBeforeMount.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on mounted
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="OnMounted"/>
+        /// </remarks>
+        [JSInvokable("JSMounted")]
+        public void JSMounted()
+        {
+            OnMounted.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on updated
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="OnUpdated"/>
+        /// </remarks>
+        [JSInvokable("JSUpdated")]
+        public void JSUpdated()
+        {
+            OnUpdated.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on mouse move
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="OnMouseMove"/>
+        /// </remarks>
+        [JSInvokable("JSMouseMove")]
+        public void JSMouseMove(JSDataPointSelection selectedDataPoints)
+        {
+            var series = selectedDataPoints.SeriesIndex >= 0 ?
+                Options.Series.ElementAt(selectedDataPoints.SeriesIndex) :
+                null;
+
+            var dataPoint = selectedDataPoints.DataPointIndex >= 0 ?
+                series?.Data.ElementAt(selectedDataPoints.DataPointIndex) :
+                null;
+
+            OnMouseMove.InvokeAsync(new SelectedData<TItem>
+            {
+                Chart = this,
+                Series = series,
+                DataPoint = dataPoint,
+                DataPointIndex = selectedDataPoints.DataPointIndex,
+                SeriesIndex = selectedDataPoints.SeriesIndex
+            });
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on mouse leave
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="OnMouseLeave"/>
+        /// </remarks>
+        [JSInvokable("JSMouseLeave")]
+        public void JSMouseLeave()
+        {
+            OnMouseLeave.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on click
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="OnClick"/>
+        /// </remarks>
+        [JSInvokable("JSClick")]
+        public void JSClick(JSDataPointSelection selectedDataPoints)
+        {
+            var series = selectedDataPoints.SeriesIndex >= 0 ?
+                Options.Series.ElementAt(selectedDataPoints.SeriesIndex) :
+                null;
+
+            var dataPoint = selectedDataPoints.DataPointIndex >= 0 ?
+                series?.Data.ElementAt(selectedDataPoints.DataPointIndex) :
+                null;
+
+            OnClick.InvokeAsync(new SelectedData<TItem>
+            {
+                Chart = this,
+                Series = series,
+                DataPoint = dataPoint,
+                DataPointIndex = selectedDataPoints.DataPointIndex,
+                SeriesIndex = selectedDataPoints.SeriesIndex
+            });
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on before zoom
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="OnBeforeZoom"/>
+        /// </remarks>
+        [JSInvokable("JSBeforeZoom")]
+        public SelectionXAxis JSBeforeZoom(JSSelection jsSelection)
+        {
+            return OnBeforeZoom.Invoke(jsSelection.XAxis);
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on before reset zoom
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="OnBeforeResetZoom"/>
+        /// </remarks>
+        [JSInvokable("JSBeforeResetZoom")]
+        public SelectionXAxis JSBeforeResetZoom()
+        {
+            return OnBeforeResetZoom.Invoke(new object());
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on scrolled
+        /// </summary>
+        /// <param name="jsSelection">Details from JavaScript</param>
+        /// <remarks>
+        /// Will execute <see cref="OnScrolled"/>
+        /// </remarks>
+        [JSInvokable("JSScrolled")]
+        public void JSScrolled(JSSelection jsSelection)
+        {
+            var selectionData = new SelectionData<TItem>
+            {
+                Chart = this,
+                XAxis = jsSelection.XAxis
+            };
+
+            OnScrolled.InvokeAsync(selectionData);
         }
     }
 }

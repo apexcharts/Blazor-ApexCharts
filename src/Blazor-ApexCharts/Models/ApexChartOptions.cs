@@ -15,6 +15,20 @@ namespace ApexCharts
 #pragma warning disable CS1591 // Primarily for internal use
         public bool Debug { get; set; }
 
+        public bool HasAnimationEnd { get; internal set; }
+
+        public bool HasBeforeMount { get; internal set; }
+
+        public bool HasMounted { get; internal set; }
+
+        public bool HasUpdated { get; internal set; }
+
+        public bool HasMouseMove { get; internal set; }
+
+        public bool HasMouseLeave { get; internal set; }
+
+        public bool HasClick { get; internal set; }
+
         public bool HasDataPointSelection { get; internal set; }
 
         public bool HasDataPointEnter { get; internal set; }
@@ -29,7 +43,13 @@ namespace ApexCharts
 
         public bool HasSelection { get; internal set; }
 
+        public bool HasScrolled { get; internal set; }
+
         public bool HasBrushScrolled { get; internal set; }
+
+        public bool HasBeforeZoom { get; internal set; }
+
+        public bool HasBeforeResetZoom { get; internal set; }
 
         public bool HasZoomed { get; internal set; }
 #pragma warning restore CS1591
