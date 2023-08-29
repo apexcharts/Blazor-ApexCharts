@@ -220,7 +220,7 @@ namespace ApexCharts
         /// <summary>
         /// You can either set the labels to scale based on the box size, or you can keep the same font-size and let the labels truncate if they exceed the area.
         /// </summary>
-        public string Format { get; set; }
+        public Format Format { get; set; }
     }
 
     /// <summary>
@@ -454,12 +454,12 @@ namespace ApexCharts
         /// <summary>
         /// The direction to display the label
         /// </summary>
-		public string Orientation { get; set; }
+		public Orientation? Orientation { get; set; }
 
         /// <summary>
         /// Where to place the label
         /// </summary>
-        public string Position { get; set; }
+        public LabelPosition? Position { get; set; }
 
         /// <inheritdoc cref="ApexCharts.Style" />
         public Style Style { get; set; }
@@ -472,7 +472,7 @@ namespace ApexCharts
         /// <summary>
         /// The alignment of text relative to label's drawing position
         /// </summary>
-        public string TextAnchor { get; set; }
+        public TextAnchor? TextAnchor { get; set; }
     }
 
     /// <summary>
@@ -573,7 +573,7 @@ namespace ApexCharts
         /// <summary>
         /// Shape of the marker.
         /// </summary>
-        public string Shape { get; set; }
+        public ShapeEnum Shape { get; set; }
 
         /// <summary>
         /// Size of the marker.
@@ -686,7 +686,7 @@ namespace ApexCharts
         /// <summary>
         /// The alignment of text relative to label's drawing position. 
         /// </summary>
-        public string TextAnchor { get; set; }
+        public TextAnchor TextAnchor { get; set; } = TextAnchor.Start;
 
         /// <summary>
         /// X (left) position for the text relative to the element specified in <see cref="AppendTo"/> property
@@ -1308,7 +1308,7 @@ namespace ApexCharts
         /// <summary>
         /// Allow selection either on both x-axis, y-axis or on both axis.
         /// </summary>
-        public string Type { get; set; }
+        public AxisType Type { get; set; }
 
         /// <inheritdoc cref="ApexCharts.SelectionXaxis" />
         public SelectionXaxis Xaxis { get; set; }
@@ -1555,9 +1555,9 @@ namespace ApexCharts
         /// Allow zooming either on both x-axis, y-axis or on both axis.
         /// </summary>
         /// <remarks>
-        /// Known Issue: In <see href="https://apexcharts.com/javascript-chart-demos/line-charts/syncing-charts">synchronized charts</see>, <see cref="ZoomType.Xy"/> or <see cref="ZoomType.Y"/> will not update charts in sync, while <see cref="ZoomType.X"/> will work correctly.
+        /// Known Issue: In <see href="https://apexcharts.com/javascript-chart-demos/line-charts/syncing-charts">synchronized charts</see>, <see cref="AxisType.Xy"/> or <see cref="AxisType.Y"/> will not update charts in sync, while <see cref="AxisType.X"/> will work correctly.
         /// </remarks>
-        public ZoomType? Type { get; set; }
+        public AxisType? Type { get; set; }
 
         /// <inheritdoc cref="ApexCharts.ZoomedArea" />
         public ZoomedArea ZoomedArea { get; set; }
@@ -2879,7 +2879,7 @@ namespace ApexCharts
         /// <summary>
         /// Where to display the text
         /// </summary>
-        public string Position { get; set; }
+        public BarDataLabelPosition Position { get; set; }
 
         /// <inheritdoc cref="ApexCharts.BarTotalDataLabels" />
         public BarTotalDataLabels Total { get; set; }
@@ -4228,7 +4228,7 @@ namespace ApexCharts
         /// }
         /// </code>
         /// </summary>
-        public string Theme { get; set; }
+        public Mode? Theme { get; set; }
 
         /// <inheritdoc cref="ApexCharts.TooltipX" />
         public TooltipX X { get; set; }
@@ -4263,7 +4263,7 @@ namespace ApexCharts
         /// <summary>
         /// When having a fixed tooltip, select a predefined position.
         /// </summary>
-        public string Position { get; set; }
+        public TooltipPosition Position { get; set; } = TooltipPosition.TopRight;
     }
 
     /// <summary>
@@ -4468,7 +4468,7 @@ namespace ApexCharts
         /// <summary>
         /// Setting this option allows you to change the x-axis position
         /// </summary>
-        public string Position { get; set; }
+        public XAxisPosition Position { get; set; }
 
         /// <summary>
         /// Range takes the max value of x-axis, subtracts the provided range value and gets the min value based on that. So, technically it helps to keep the same range when min and max values gets updated dynamically
@@ -4625,7 +4625,7 @@ namespace ApexCharts
         /// <summary>
         /// The type of border to apply
         /// </summary>
-        public string BorderType { get; set; }
+        public BorderType BorderType { get; set; }
 
         /// <summary>
         /// Color of the ticks
@@ -4672,7 +4672,7 @@ namespace ApexCharts
         /// <summary>
         /// Where to place the crosshairs
         /// </summary>
-        public string Position { get; set; }
+        public GridPosition Position { get; set; }
 
         /// <summary>
         /// Show crosshairs on axis when user moves the mouse over chart area
@@ -4755,7 +4755,7 @@ namespace ApexCharts
         /// <summary>
         /// The type of fill to use in the crosshairs
         /// </summary>
-        public string Type { get; set; }
+        public FillTypeEnum Type { get; set; }
     }
 
     /// <summary>
@@ -5344,7 +5344,7 @@ namespace ApexCharts
     /// <summary>
     /// A list of options to enable zooming on charts
     /// </summary>
-    public enum ZoomType
+    public enum AxisType
     {
         X,
         Xy,
@@ -5392,6 +5392,45 @@ namespace ApexCharts
     };
 
     /// <summary>
+    /// A list of sides to place the labels for data point annotations
+    /// </summary>
+    public enum LabelPosition
+    {
+        Left,
+        Right
+    };
+
+    /// <summary>
+    /// A list of options to place labels for bar charts
+    /// </summary>
+    public enum BarDataLabelPosition
+    {
+        Top,
+        Center,
+        Bottom
+    };
+
+    /// <summary>
+    /// A list of options to place fixed tooltips
+    /// </summary>
+    public enum TooltipPosition
+    {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight
+    };
+
+    /// <summary>
+    /// A list of options to specify where to place the X-Axis
+    /// </summary>
+    public enum XAxisPosition
+    {
+        Bottom,
+        Top
+    };
+
+    /// <summary>
     /// A list of shapes to generate data point markers with
     /// </summary>
     public enum ShapeEnum
@@ -5419,6 +5458,15 @@ namespace ApexCharts
         Horizontal,
         Vertical
     };
+
+    /// <summary>
+    /// A list of options for formatting data labels
+    /// </summary>
+    public enum Format
+    {
+        Scale,
+        Truncate
+    };
 #pragma warning restore CS1591
 
 #pragma warning disable CS1591 // Documentation not available for obsolete properties
@@ -5430,7 +5478,6 @@ namespace ApexCharts
     };
 #pragma warning restore CS1591
 
-#pragma warning disable CS1591 // Enum values are self-explanatory
     /// <summary>
     /// A list of ways to generate lines
     /// </summary>
@@ -5473,6 +5520,7 @@ namespace ApexCharts
         Square
     };
 
+#pragma warning disable CS1591 // Enum values are self-explanatory
     /// <summary>
     /// A list of theme options to use
     /// </summary>
@@ -5495,6 +5543,24 @@ namespace ApexCharts
         Category,
         Datetime,
         Numeric
+    };
+
+    /// <summary>
+    /// A list of options for styling borders
+    /// </summary>
+    public enum BorderType
+    {
+        Solid,
+        Dotted
+    };
+
+    /// <summary>
+    /// A list of options for styling fills
+    /// </summary>
+    public enum FillTypeEnum
+    {
+        Solid,
+        Gradient
     };
 #pragma warning restore CS1591
 
