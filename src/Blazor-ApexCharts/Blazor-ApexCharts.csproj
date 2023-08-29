@@ -3,29 +3,46 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     
-    <Version>0.9.21-beta</Version>
+    <Version>0.9.22-beta</Version>
     <Authors>Joakim Dangården</Authors>
     <Company />
     <Description>A blazor wrapper for Apex Charts</Description>
-    <PackageTags>Blazor Charts ApexCharts</PackageTags>
+    <PackageId>Blazor-ApexCharts</PackageId>
+    <PackageTags>Blazor Charts ApexCharts Server WebAssembly</PackageTags>
     <RepositoryUrl>https://github.com/apexcharts/Blazor-ApexCharts</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://apexcharts.github.io/Blazor-ApexCharts/</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Copyright>Copyright 2022 (c) Joakim Dangården. All rights reserved.</Copyright>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReleaseNotes>
+		0.9.22-beta
+		Update apex-charts.min.js to v3.41.0, added funnel chart, added new options, removed histogram chart, improved documentation, bugfixes
+	</PackageReleaseNotes>
   </PropertyGroup>
 
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="[6.0.3,]" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="[6.0.3,]" />
   </ItemGroup>
-
 
   <ItemGroup>
     <Content Update="wwwroot\js\apex-charts.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
   <PropertyGroup>
     <DocumentationFile>$(ProjectDir)Blazor-ApexCharts.xml</DocumentationFile>
