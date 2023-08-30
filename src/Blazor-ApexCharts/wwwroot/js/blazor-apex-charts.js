@@ -49,7 +49,7 @@
 
     updateOptions(id, options, redrawPaths, animate, updateSyncedCharts, zoom) {
         var data = JSON.parse(options, (key, value) =>
-            (key === 'formatter' || key === 'dateFormatter' || key === 'custom') && value.length !== 0 ? eval("(" + value + ")") : value
+            (key === 'formatter' || key === 'dateFormatter' || key === 'custom') && value.length !== 0 ? eval?.("'use strict'; (" + value + ")") : value
         );
         var chart = this.findChart(id);
         if (chart !== undefined) {
@@ -194,7 +194,7 @@
         }
 
         var options = JSON.parse(options, (key, value) =>
-            (key === 'formatter' || key === 'tooltipHoverFormatter' || key === 'dateFormatter' || key === 'custom') && value.length !== 0 ? eval("(" + value + ")") : value
+            (key === 'formatter' || key === 'tooltipHoverFormatter' || key === 'dateFormatter' || key === 'custom') && value.length !== 0 ? eval?.("'use strict'; (" + value + ")") : value
         );
 
         if (options.debug == true) {
