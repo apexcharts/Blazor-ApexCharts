@@ -12,27 +12,10 @@ namespace ApexCharts
     /// <typeparam name="TItem">The data type to be used in the chart to create data points.</typeparam>
     public class ApexChartOptions<TItem> where TItem : class
     {
-#pragma warning disable CS1591 // Primarily for internal use
+        /// <summary>
+        /// Logs function calls and options to the browser console when true
+        /// </summary>
         public bool Debug { get; set; }
-
-        public bool HasDataPointSelection { get; internal set; }
-
-        public bool HasDataPointEnter { get; internal set; }
-
-        public bool HasDataPointLeave { get; internal set; }
-
-        public bool HasLegendClick { get; internal set; }
-
-        public bool HasMarkerClick { get; internal set; }
-
-        public bool HasXAxisLabelClick { get; internal set; }
-
-        public bool HasSelection { get; internal set; }
-
-        public bool HasBrushScrolled { get; internal set; }
-
-        public bool HasZoomed { get; internal set; }
-#pragma warning restore CS1591
 
         /// <inheritdoc cref="ApexCharts.Annotations" />
         public Annotations Annotations { get; set; }
@@ -5584,6 +5567,19 @@ namespace ApexCharts
         public Opacity(IEnumerable<double> list) : base(list)
         {
         }
+    }
+
+    internal record class JSEvents
+    {
+        public bool HasDataPointSelection { get; init; }
+        public bool HasDataPointEnter { get; init; }
+        public bool HasDataPointLeave { get; init; }
+        public bool HasLegendClick { get; init; }
+        public bool HasMarkerClick { get; init; }
+        public bool HasXAxisLabelClick { get; init; }
+        public bool HasSelection { get; init; }
+        public bool HasBrushScrolled { get; init; }
+        public bool HasZoomed { get; init; }
     }
 #pragma warning restore CS1591
 }

@@ -16,7 +16,6 @@ namespace ApexCharts
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
     public partial class ApexChart<TItem> : IDisposable where TItem : class
     {
-        [Inject] private IServiceProvider ServiceProvider { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
 
         /// <summary>
@@ -190,6 +189,7 @@ namespace ApexCharts
         private bool forceRender = true;
         private string chartId;
         private HoverData<TItem> tooltipData;
+        private JSEvents Events;
 
         /// <inheritdoc cref="Chart.Id"/>
         public string ChartId => chartId;
@@ -757,15 +757,18 @@ namespace ApexCharts
 
         private void SetEvents()
         {
-            Options.HasDataPointSelection = OnDataPointSelection.HasDelegate;
-            Options.HasDataPointEnter = OnDataPointEnter.HasDelegate || ApexPointTooltip != null;
-            Options.HasDataPointLeave = OnDataPointLeave.HasDelegate;
-            Options.HasLegendClick = OnLegendClicked.HasDelegate;
-            Options.HasMarkerClick = OnMarkerClick.HasDelegate;
-            Options.HasXAxisLabelClick = OnXAxisLabelClick.HasDelegate;
-            Options.HasSelection = OnSelection.HasDelegate;
-            Options.HasBrushScrolled = OnBrushScrolled.HasDelegate;
-            Options.HasZoomed = OnZoomed.HasDelegate;
+            Events = new JSEvents()
+            {
+                HasDataPointSelection = OnDataPointSelection.HasDelegate,
+                HasDataPointEnter = OnDataPointEnter.HasDelegate || ApexPointTooltip != null,
+                HasDataPointLeave = OnDataPointLeave.HasDelegate,
+                HasLegendClick = OnLegendClicked.HasDelegate,
+                HasMarkerClick = OnMarkerClick.HasDelegate,
+                HasXAxisLabelClick = OnXAxisLabelClick.HasDelegate,
+                HasSelection = OnSelection.HasDelegate,
+                HasBrushScrolled = OnBrushScrolled.HasDelegate,
+                HasZoomed = OnZoomed.HasDelegate
+            };
         }
 
         private async Task RenderChartAsync()
@@ -773,8 +776,8 @@ namespace ApexCharts
             await Task.Yield();
             forceRender = false;
             PrepareChart();
-            var jsonOptions = Serialize(Options);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
+
+            await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, Serialize(Options), Events);
             await OnRendered.InvokeAsync();
         }
 
