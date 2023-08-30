@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ApexCharts.Models
+namespace ApexCharts.Internal
 {
     /// <summary>
     /// Facilitates serialization of <see cref="Series{TItem}"/>
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SeriesConverter<T> : JsonConverter<List<Series<T>>> where T : class
+    internal class SeriesConverter<T> : JsonConverter<List<Series<T>>> where T : class
     {
         /// <inheritdoc/>
         /// <exception cref="NotImplementedException"></exception>

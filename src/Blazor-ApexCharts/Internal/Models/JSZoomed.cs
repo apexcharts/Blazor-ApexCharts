@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace ApexCharts.Series
+namespace ApexCharts.Internal
 {
     /// <summary>
     /// Return data from JavaScript when a zoom action is performed
     /// </summary>
-    public class JSZoomed
+    internal class JSZoomed
     {
         /// <inheritdoc cref="SelectionXAxis"/>
         public SelectionXAxis XAxis { get; set; }
-
 
         /// <summary>
         /// Y axis object

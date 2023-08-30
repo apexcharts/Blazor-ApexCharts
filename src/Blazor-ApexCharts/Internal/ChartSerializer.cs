@@ -1,19 +1,18 @@
-﻿using ApexCharts.Models;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BlazorApexCharts
+namespace ApexCharts.Internal
 {
     /// <summary>
     /// Contains methods to assist with serializing chart data
     /// </summary>
-    public class ChartSerializer
+    internal static class ChartSerializer
     {
-        private static ConcurrentDictionary<Type, JsonSerializerOptions> _serializerOptions = new();
+        private static readonly ConcurrentDictionary<Type, JsonSerializerOptions> _serializerOptions = new();
 
-        private JsonSerializerOptions GenerateOptions<TItem>() where TItem : class
+        private static JsonSerializerOptions GenerateOptions<TItem>() where TItem : class
         {
             var serializerOptions = new JsonSerializerOptions
             {
@@ -34,7 +33,7 @@ namespace BlazorApexCharts
         /// Returns the JSON serializer options for the provided data type
         /// </summary>
         /// <typeparam name="TItem">The data type to be serialized</typeparam>
-        public JsonSerializerOptions GetOptions<TItem>() where TItem : class
+        internal static JsonSerializerOptions GetOptions<TItem>() where TItem : class
         {
             var key = typeof(TItem);
 
