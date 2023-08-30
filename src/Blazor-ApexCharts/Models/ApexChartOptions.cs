@@ -252,9 +252,6 @@ namespace ApexCharts
         /// </summary>
         public string ForeColor { get; set; }
 
-        /// <summary>
-        /// Undefined
-        /// </summary>
         public string Name { get; set; }
     }
 
@@ -275,14 +272,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.AnnotationsPoint" />
         public List<AnnotationsPoint> Points { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public string Position { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public List<AnnotationsShape> Shapes { get; set; }
-#pragma warning restore CS1591
 
         /// <inheritdoc cref="ApexCharts.AnnotationsText" />
         public List<AnnotationsText> Texts { get; set; }
@@ -570,23 +559,6 @@ namespace ApexCharts
         /// </summary>
         public double? StrokeWidth { get; set; }
     }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-    [Obsolete("This property is no longer available")]
-    public class AnnotationsShape
-    {
-        public string BackgroundColor { get; set; }
-        public string BorderColor { get; set; }
-        public double? BorderRadius { get; set; }
-        public double? BorderWidth { get; set; }
-        public double? Height { get; set; }
-        public double? Opacity { get; set; }
-        public string Type { get; set; }
-        public object Width { get; set; }
-        public double? X { get; set; }
-        public double? Y { get; set; }
-    }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Defines how to style the individual data point annotations and their text
@@ -2761,14 +2733,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsBarDataLabels" />
         public PlotOptionsBarDataLabels DataLabels { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("Deprecated since 3.24.0")]
-        public Shape? EndingShape { get; set; }
-
-        [Obsolete("Deprecated since 3.24.0")]
-        public Shape? StartingShape { get; set; }
-#pragma warning restore CS1591
     }
 
 #pragma warning disable CS1591 // Enum values are self-explanatory
@@ -4888,14 +4852,6 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.DatetimeFormatter" />
         public DatetimeFormatter DatetimeFormatter { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public bool? DatetimeUTC { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public string Format { get; set; }
-#pragma warning restore CS1591
-
         /// <summary>
         /// Applies a custom function for the yaxis value.
         /// 
@@ -4913,11 +4869,6 @@ namespace ApexCharts
         /// Note: In horizantal bar charts, the second parameters also contains additional data like dataPointIndex &amp; seriesIndex.
         /// </remarks>
         public string Formatter { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public bool? HideOverlappingLabels { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Maximum width for the y-axis labels
@@ -4949,17 +4900,6 @@ namespace ApexCharts
         /// </summary>
         public bool? Show { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public bool? RotateAlways { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public bool? ShowDuplicates { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public bool? Trim { get; set; }
-#pragma warning restore CS1591
-
         /// <inheritdoc cref="ApexCharts.AxisLabelStyle" />
         public AxisLabelStyle Style { get; set; }
 
@@ -4987,6 +4927,9 @@ namespace ApexCharts
 #pragma warning disable CS1591 // Documentation not available for obsolete properties
         [Obsolete("This property is no longer available")]
         public string Minute { get; set; }
+        
+        [Obsolete("This property is no longer available")]
+        public string Second { get; set; }
 #pragma warning restore CS1591
 
         /// <summary>
@@ -5446,15 +5389,6 @@ namespace ApexCharts
     {
         Scale,
         Truncate
-    };
-#pragma warning restore CS1591
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-    [Obsolete("Deprecated since 3.24.0")]
-    public enum Shape
-    {
-        Flat,
-        Rounded
     };
 #pragma warning restore CS1591
 
