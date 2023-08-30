@@ -434,14 +434,6 @@ namespace ApexCharts
             return json;
         }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("Please use RenderAsync(), this method will be removed in future versions")]
-        public void SetRerenderChart()
-        {
-            forceRender = true;
-        }
-#pragma warning restore CS1591
-
         /// <summary>
         /// The render() method is responsible for drawing the chart on the page. It is the primary method that has to be called after configuring the options.
         /// </summary>

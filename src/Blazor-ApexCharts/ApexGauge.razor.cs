@@ -15,11 +15,6 @@ namespace ApexCharts
         /// <inheritdoc cref="GaugeValue.Percentage"/>
         [Parameter] public decimal Percentage { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is obsolete. Use Percentage instead.", false)]
-        [Parameter] public decimal Precentage { get => Percentage; set => Percentage = value; }
-#pragma warning restore CS1591
-
         /// <inheritdoc cref="GaugeValue.Label"/>
         [Parameter] public string Label { get; set; }
 
