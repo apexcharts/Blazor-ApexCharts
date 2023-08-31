@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ApexCharts.Models
+namespace ApexCharts.Internal
 {
     /// <summary>
     /// Facilitates serialization of enum values

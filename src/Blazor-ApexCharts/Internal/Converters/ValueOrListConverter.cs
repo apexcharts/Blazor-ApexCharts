@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ApexCharts.Models
+namespace ApexCharts.Internal
 {
     /// <summary>
     /// Facilitates serialization of <see cref="ValueOrList{T}"/>
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ValueOrListConverter<T> : JsonConverter<ValueOrList<T>>
+    internal class ValueOrListConverter<T> : JsonConverter<ValueOrList<T>>
     {
         /// <inheritdoc/>
         /// <exception cref="NotImplementedException"></exception>
@@ -42,4 +42,3 @@ namespace ApexCharts.Models
         }
     }
 }
-

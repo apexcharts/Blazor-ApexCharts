@@ -1,5 +1,4 @@
-﻿using ApexCharts.Series;
-using BlazorApexCharts;
+﻿using ApexCharts.Internal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
@@ -16,7 +15,6 @@ namespace ApexCharts
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
     public partial class ApexChart<TItem> : IDisposable where TItem : class
     {
-        [Inject] private IServiceProvider ServiceProvider { get; set; }
         [Inject] private IJSRuntime JSRuntime { get; set; }
 
         /// <summary>
@@ -176,20 +174,18 @@ namespace ApexCharts
         /// </remarks>
         [Parameter] public GroupPoints GroupPoints { get; set; }
 
-        private ChartSerializer chartSerializer = new();
-
         /// <summary>
         /// The collection of data series to display on the chart
         /// </summary>
         public List<IApexSeries<TItem>> Series => apexSeries;
 
-        private DotNetObjectReference<ApexChart<TItem>> ObjectReference;
         private ElementReference ChartContainer { get; set; }
         private List<IApexSeries<TItem>> apexSeries = new();
         private bool isReady;
         private bool forceRender = true;
         private string chartId;
         private HoverData<TItem> tooltipData;
+        private JSHandler<TItem> JSHandler;
 
         /// <inheritdoc cref="Chart.Id"/>
         public string ChartId => chartId;
@@ -200,7 +196,7 @@ namespace ApexCharts
             if (firstRender && isReady == false)
             {
                 isReady = true;
-                ObjectReference = DotNetObjectReference.Create(this);
+                JSHandler = new JSHandler<TItem>(this, ChartContainer, JSRuntime);
             }
 
             if (isReady && forceRender)
@@ -429,9 +425,7 @@ namespace ApexCharts
 
         private string Serialize(object data)
         {
-            var serializerOptions = chartSerializer.GetOptions<TItem>();
-            var json = JsonSerializer.Serialize(data, serializerOptions);
-            return json;
+            return JsonSerializer.Serialize(data, ChartSerializer.GetOptions<TItem>());
         }
 
 #pragma warning disable CS1591 // Documentation not available for obsolete properties
@@ -734,7 +728,6 @@ namespace ApexCharts
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
             SetDotNetFormatters();
-            SetEvents();
             SetCustomTooltip();
         }
 
@@ -755,26 +748,12 @@ namespace ApexCharts
             Options.Tooltip.Custom = customTooltip;
         }
 
-        private void SetEvents()
-        {
-            Options.HasDataPointSelection = OnDataPointSelection.HasDelegate;
-            Options.HasDataPointEnter = OnDataPointEnter.HasDelegate || ApexPointTooltip != null;
-            Options.HasDataPointLeave = OnDataPointLeave.HasDelegate;
-            Options.HasLegendClick = OnLegendClicked.HasDelegate;
-            Options.HasMarkerClick = OnMarkerClick.HasDelegate;
-            Options.HasXAxisLabelClick = OnXAxisLabelClick.HasDelegate;
-            Options.HasSelection = OnSelection.HasDelegate;
-            Options.HasBrushScrolled = OnBrushScrolled.HasDelegate;
-            Options.HasZoomed = OnZoomed.HasDelegate;
-        }
-
         private async Task RenderChartAsync()
         {
             await Task.Yield();
             forceRender = false;
             PrepareChart();
-            var jsonOptions = Serialize(Options);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, jsonOptions);
+            await JSHandler.RenderChartAsync();
             await OnRendered.InvokeAsync();
         }
 
@@ -869,269 +848,13 @@ namespace ApexCharts
                 InvokeAsync(async () => { await JSRuntime.InvokeVoidAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
             }
 
-            if (ObjectReference != null)
-            {
-                ObjectReference.Dispose();
-            }
+            JSHandler?.Dispose();
         }
 
-        /// <summary>
-        /// Callback from JavaScript to get a formatted Y-axis value
-        /// </summary>
-        /// <param name="value">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="FormatYAxisLabel"/>
-        /// </remarks>
-        [JSInvokable("JSGetFormattedYAxisValue")]
-        public string JSGetFormattedYAxisValue(object value)
+        internal void UpdateTooltipData(HoverData<TItem> tooltipData)
         {
-            if (value == null) { return ""; }
-            if (FormatYAxisLabel == null) { return value.ToString(); }
-
-            if (decimal.TryParse(value.ToString(), out var decimalValue))
-            {
-                return FormatYAxisLabel.Invoke(decimalValue);
-            }
-
-            return value.ToString();
-        }
-
-        /// <summary>
-        /// Callback from JavaScript on zoom
-        /// </summary>
-        /// <param name="jSZoomed">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="OnZoomed"/>
-        /// </remarks>
-        [JSInvokable("JSZoomed")]
-        public void JSZoomed(JSZoomed jSZoomed)
-        {
-            var data = new ZoomedData<TItem>
-            {
-                Chart = this,
-                YAxis = jSZoomed.YAxis,
-                XAxis = jSZoomed.XAxis
-            };
-
-            OnZoomed.InvokeAsync(data);
-        }
-
-        /// <summary>
-        /// Callback from JavaScript on selection updated
-        /// </summary>
-        /// <param name="jsSelection">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="OnBrushScrolled"/>
-        /// </remarks>
-        [JSInvokable("JSBrushScrolled")]
-        public void JSBrushScrolled(JSSelection jsSelection)
-        {
-            var selectionData = new SelectionData<TItem>
-            {
-                Chart = this,
-                YAxis = jsSelection.YAxis,
-                XAxis = jsSelection.XAxis
-            };
-
-            OnBrushScrolled.InvokeAsync(selectionData);
-        }
-
-        /// <summary>
-        /// Callback from JavaScript on selection updated
-        /// </summary>
-        /// <param name="jsSelection">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="OnSelection"/>
-        /// </remarks>
-        [JSInvokable("JSSelected")]
-        public void JSSelected(JSSelection jsSelection)
-        {
-            var selectionData = new SelectionData<TItem>
-            {
-                Chart = this,
-                YAxis = jsSelection.YAxis,
-                XAxis = jsSelection.XAxis
-            };
-
-            OnSelection.InvokeAsync(selectionData);
-        }
-
-        /// <summary>
-        /// Callback from JavaScript on a legend item clicked
-        /// </summary>
-        /// <param name="jsLegendClicked">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="OnLegendClicked"/>
-        /// </remarks>
-        [JSInvokable("JSLegendClicked")]
-        public void JSLegendClicked(JSLegendClicked jsLegendClicked)
-        {
-            var series = Options.Series.ElementAt(jsLegendClicked.SeriesIndex);
-            var legendClicked = new LegendClicked<TItem>
-            {
-                Series = series,
-                Collapsed = jsLegendClicked.Collapsed
-            };
-
-            //Invert if Toggle series is set to flase (default == true)
-            var toggleSeries = Options?.Legend?.OnItemClick?.ToggleDataSeries;
-
-            if (toggleSeries != false)
-            {
-                legendClicked.Collapsed = !legendClicked.Collapsed;
-            }
-
-            OnLegendClicked.InvokeAsync(legendClicked);
-        }
-
-        /// <summary>
-        /// Callback from JavaScript on an X-axis label clicked
-        /// </summary>
-        /// <param name="jsXAxisLabelClick">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="OnXAxisLabelClick"/>
-        /// </remarks>
-        [JSInvokable("JSXAxisLabelClick")]
-        public void JSXAxisLabelClick(JSXAxisLabelClick jsXAxisLabelClick)
-        {
-            if (OnXAxisLabelClick.HasDelegate)
-            {
-                var data = new XAxisLabelClicked<TItem>();
-                data.LabelIndex = jsXAxisLabelClick.LabelIndex;
-                data.Caption = jsXAxisLabelClick.Caption;
-                data.SeriesPoints = new List<SeriesDataPoint<TItem>>();
-
-                foreach (var series in Options.Series)
-                {
-                    data.SeriesPoints.Add(new SeriesDataPoint<TItem>
-                    {
-                        Series = series,
-                        DataPoint = series.Data.ElementAt(jsXAxisLabelClick.LabelIndex)
-                    });
-                }
-
-                OnXAxisLabelClick.InvokeAsync(data);
-            }
-        }
-
-        /// <summary>
-        /// Callback from JavaScript on marker clicked
-        /// </summary>
-        /// <param name="selectedDataPoints">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="OnMarkerClick"/>
-        /// </remarks>
-        [JSInvokable("JSMarkerClick")]
-        public void JSMarkerClick(JSDataPointSelection selectedDataPoints)
-        {
-            if (OnMarkerClick.HasDelegate)
-            {
-                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
-
-                var selection = new SelectedData<TItem>
-                {
-                    Chart = this,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    IsSelected = selectedDataPoints.SelectedDataPoints?.Any(e => e != null && e.Any(e => e != null && e.HasValue)) ?? false,
-                    DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
-                };
-
-                OnMarkerClick.InvokeAsync(selection);
-            }
-        }
-
-        /// <summary>
-        /// Callback from JavaScript on data point selected
-        /// </summary>
-        /// <param name="selectedDataPoints">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="OnDataPointSelection"/>
-        /// </remarks>
-        [JSInvokable("JSDataPointSelected")]
-        public void JSDataPointSelected(JSDataPointSelection selectedDataPoints)
-        {
-            if (OnDataPointSelection.HasDelegate)
-            {
-                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
-
-                var selection = new SelectedData<TItem>
-                {
-                    Chart = this,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    IsSelected = selectedDataPoints.SelectedDataPoints.Any(e => e != null && e.Any(e => e != null && e.HasValue)),
-                    DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
-                };
-
-                OnDataPointSelection.InvokeAsync(selection);
-            }
-        }
-
-        /// <summary>
-        /// Callback from JavaScript on data point enter
-        /// </summary>
-        /// <param name="selectedDataPoints">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="OnDataPointEnter"/>
-        /// </remarks>
-        [JSInvokable("JSDataPointEnter")]
-        public void JSDataPointEnter(JSDataPointSelection selectedDataPoints)
-        {
-            if (OnDataPointEnter.HasDelegate || ApexPointTooltip != null)
-            {
-                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
-
-                var hoverData = new HoverData<TItem>
-                {
-                    Chart = this,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
-                };
-
-                OnDataPointEnter.InvokeAsync(hoverData);
-
-                if (ApexPointTooltip != null)
-                {
-                    tooltipData = hoverData;
-                    StateHasChanged();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Callback from JavaScript on data point leave
-        /// </summary>
-        /// <param name="selectedDataPoints">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="OnDataPointLeave"/>
-        /// </remarks>
-        [JSInvokable("JSDataPointLeave")]
-        public void JSDataPointLeave(JSDataPointSelection selectedDataPoints)
-        {
-            if (OnDataPointLeave.HasDelegate)
-            {
-                var series = Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
-
-                var hoverData = new HoverData<TItem>
-                {
-                    Chart = this,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
-                };
-
-                OnDataPointLeave.InvokeAsync(hoverData);
-            }
+            this.tooltipData = tooltipData;
+            StateHasChanged();
         }
     }
 }
