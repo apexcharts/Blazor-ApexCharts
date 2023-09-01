@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
 namespace ApexCharts
 {
@@ -1754,7 +1753,7 @@ namespace ApexCharts
         /// <summary>
         /// Opacity of the fill attribute.
         /// </summary>
-        public List<double> Opacity { get; set; }
+        public Opacity Opacity { get; set; }
 
         /// <inheritdoc cref="ApexCharts.FillPattern"/>
         public FillPattern Pattern { get; set; }
@@ -1848,7 +1847,7 @@ namespace ApexCharts
         /// <summary>
         /// Src accepts an array of image paths which will correspond to each series.
         /// </summary>
-        public List<string> Src { get; set; }
+        public ImagePaths Src { get; set; }
 
         /// <summary>
         /// Width of each image for all the series
@@ -1874,7 +1873,7 @@ namespace ApexCharts
         /// <summary>
         /// The type of pattern to fill the chart with
         /// </summary>
-        public FillPatternStyle? Style { get; set; }
+        public FillPatternStyleSelections Style { get; set; }
 
         /// <summary>
         /// Pattern width which will be repeated at this interval
@@ -2176,7 +2175,7 @@ namespace ApexCharts
         /// <summary>
         /// Custom text colors for legend labels. Accepts an array of colors where each index corresponds to the series index
         /// </summary>
-        public Color Colors { get; set; } // NOTE: documentation states array, this might be best as List<string>
+        public Color Colors { get; set; }
 
         /// <summary>
         /// Whether to use primary <see href="https://apexcharts.com/docs/colors">colors</see> or not.
@@ -3315,7 +3314,7 @@ namespace ApexCharts
         /// <summary>
         /// Border width of the spokes of radar chart.
         /// </summary>
-        public double? StrokeWidth { get; set; }
+        public Size StrokeWidth { get; set; }
     }
 
     /// <summary>
@@ -3746,7 +3745,7 @@ namespace ApexCharts
         /// <summary>
         /// Creates dashes in borders of svg path. Higher number creates more space between dashes in the border.
         /// </summary>
-        public object DashArray { get; set; }
+        public Size DashArray { get; set; }
 
         /// <summary>
         /// For setting the starting and ending points of stroke
@@ -3984,7 +3983,7 @@ namespace ApexCharts
         /// <remarks>
         /// Note: In a multi-seris/combo chart, you can pass an array of functions to customize tooltip for different chart types. For instance, a combo chart with a candlestick and a line will have different tooltips.
         /// </remarks>
-        public string Custom { get; set; } // NOTE: this may require an update to JS to get ValueOrList since eval() may not work for multi-value
+        public CustomFunction Custom { get; set; }
 
         /// <summary>
         /// Show tooltip when user hovers over chart area.

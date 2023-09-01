@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ApexCharts
@@ -25,8 +26,8 @@ namespace ApexCharts
         {
             if (source == null)
                 return new Size();
-            else 
-                return new Size(source.Cast<double>());
+            else
+                return new Size(source.Select(Convert.ToDouble));
         }
 
         /// <summary>
