@@ -1124,8 +1124,9 @@ namespace ApexCharts
         /// </summary>
         public double? Blur { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// Give a color to the shadow. If array is provided, each series can have different shadow color
+        /// Give a color to the shadow.
         /// </summary>
         public Color Color { get; set; }
 
@@ -1750,6 +1751,7 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.FillImage"/>
         public FillImage Image { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Opacity"/>
         /// <summary>
         /// Opacity of the fill attribute.
         /// </summary>
@@ -1758,10 +1760,11 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.FillPattern"/>
         public FillPattern Pattern { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.FillTypeSelections"/>
         /// <summary>
         /// Whether to fill the paths with solid colors or gradient.
         /// </summary>
-        public FillSelections Type { get; set; }
+        public FillTypeSelections Type { get; set; }
     }
 
     /// <summary>
@@ -1779,11 +1782,13 @@ namespace ApexCharts
         /// </summary>
         public bool? InverseColors { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Opacity"/>
         /// <summary>
-        /// Start color's opacity. If you want different opacity for different series, you can pass an array of numbers. For eg., opacityFrom: [0.2, 0.8]
+        /// Start color's opacity.
         /// </summary>
         public Opacity OpacityFrom { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Opacity"/>
         /// <summary>
         /// End color's opacity
         /// </summary>
@@ -1844,8 +1849,9 @@ namespace ApexCharts
         /// </summary>
         public double? Height { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.ImagePaths"/>
         /// <summary>
-        /// Src accepts an array of image paths which will correspond to each series.
+        /// The URL for each image to fill the chart series with
         /// </summary>
         public ImagePaths Src { get; set; }
 
@@ -1870,6 +1876,7 @@ namespace ApexCharts
         /// </summary>
         public double? StrokeWidth { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.FillPatternStyleSelections"/>
         /// <summary>
         /// The type of pattern to fill the chart with
         /// </summary>
@@ -2172,8 +2179,9 @@ namespace ApexCharts
     /// </summary>
     public class LegendLabels
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// Custom text colors for legend labels. Accepts an array of colors where each index corresponds to the series index
+        /// Custom text colors for legend labels.
         /// </summary>
         public Color Colors { get; set; }
 
@@ -2274,6 +2282,7 @@ namespace ApexCharts
     /// </remarks>
     public class Markers
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
         /// Sets the fill color(s) of the marker point.
         /// </summary>
@@ -2304,6 +2313,7 @@ namespace ApexCharts
         /// </summary>
         public List<MarkersDiscrete> Discrete { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Opacity"/>
         /// <summary>
         /// Opacity of the marker fill color.
         /// </summary>
@@ -2337,26 +2347,31 @@ namespace ApexCharts
         /// </summary>
         public bool? ShowNullDataPoints { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
-        /// Size of the marker point. In a multi-series chart, you can provide an array of numbers to display different size of markers on different series.
+        /// Size of the marker point.
         /// </summary>
         public Size Size { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// Stroke Color of the marker. Accepts a single color or an array of colors in a multi-series chart.
+        /// Stroke Color of the marker.
         /// </summary>
         public Color StrokeColors { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
         /// Dashes in the border around marker. Higher number creates more space between dashes in the border.
         /// </summary>
         public Size StrokeDashArray { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Opacity"/>
         /// <summary>
         /// Opacity of the border around marker.
         /// </summary>
         public Opacity StrokeOpacity { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
         /// Stroke Size of the marker.
         /// </summary>
@@ -3251,6 +3266,7 @@ namespace ApexCharts
     /// </summary>
     public class PolarAreaSpokes
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
         /// The line/border color of the spokes of polarArea chart.
         /// </summary>
@@ -3298,19 +3314,22 @@ namespace ApexCharts
     /// </summary>
     public class RadarPolygons
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// The line color of the connector lines of the polygons. If you want to pass more than 1 color, you can pass an array instead of a String. connectorColors: '#e8e8e8' and connectorColors: ['#e8e8e8', '#f1f1f1'] both are valid.
+        /// The line color of the connector lines of the polygons.
         /// </summary>
         public Color ConnectorColors { get; set; }
 
         /// <inheritdoc cref="ApexCharts.RadarPolygonsFill" />
         public RadarPolygonsFill Fill { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// The line/border color of the spokes of the chart excluding the connector lines. If you want to pass more than 1 color, you can pass an array instead of a String. strokeColors: '#e8e8e8' and strokeColors: ['#e8e8e8', '#f1f1f1'] both are valid.
+        /// The line/border color of the spokes of the chart excluding the connector lines.
         /// </summary>
         public Color StrokeColors { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
         /// Border width of the spokes of radar chart.
         /// </summary>
@@ -3577,8 +3596,9 @@ namespace ApexCharts
     /// </summary>
     public class Track
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// Color of the track. If you want different color for each track, you can pass an array of colors.
+        /// Color of the track.
         /// </summary>
         public Color Background { get; set; }
 
@@ -3737,11 +3757,13 @@ namespace ApexCharts
         /// </summary>
         public List<string> Colors { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.CurveSelections"/>
         /// <summary>
-        /// In line / area charts, whether to draw smooth lines or straight lines. You can also pass an array in stroke.curve, where each index corresponds to the series-index in multi-series charts.
+        /// In line / area charts, whether to draw smooth lines or straight lines.
         /// </summary>
         public CurveSelections Curve { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
         /// Creates dashes in borders of svg path. Higher number creates more space between dashes in the border.
         /// </summary>
@@ -3757,6 +3779,7 @@ namespace ApexCharts
         /// </summary>
         public bool Show { get; set; } = true;
 
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
         /// Sets the width of border for svg path
         /// </summary>
@@ -3967,22 +3990,10 @@ namespace ApexCharts
     /// </remarks>
     public class Tooltip
     {
+        /// <inheritdoc cref="ApexCharts.CustomFunction"/>
         /// <summary>
-        /// Draw a custom html tooltip instead of the default one based on the values provided in the function arguments. <see href="https://apexcharts.com/docs/datetime">Custom Tooltip Example</see>
-        /// 
-        /// <code>
-        /// tooltip: {
-        ///     custom: function({series, seriesIndex, dataPointIndex, w}) {
-        ///         return '&lt;div class="arrow_box"&gt;' +
-        ///             '&lt;span&gt;' + series[seriesIndex][dataPointIndex] + '&lt;/span&gt;' +
-        ///             '&lt;/div&gt;'
-        ///     }
-        /// }
-        /// </code>
+        /// Draw a custom html tooltip instead of the default one based on the values provided in the function arguments.
         /// </summary>
-        /// <remarks>
-        /// Note: In a multi-seris/combo chart, you can pass an array of functions to customize tooltip for different chart types. For instance, a combo chart with a candlestick and a line will have different tooltips.
-        /// </remarks>
         public CustomFunction Custom { get; set; }
 
         /// <summary>
@@ -4354,6 +4365,7 @@ namespace ApexCharts
     /// </summary>
     public class XAxisGroupStyle
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
         /// Fore color for the x-axis groups label.
         /// </summary>
@@ -4827,8 +4839,9 @@ namespace ApexCharts
     /// </summary>
     public class AxisLabelStyle
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// Fore color for the axis label. Accepts an array for <see href="https://apexcharts.com/javascript-chart-demos/column-charts/distributed">distributed</see> charts or accepts a single color string.
+        /// Fore color for the axis label.
         /// </summary>
         public Color Colors { get; set; }
 
