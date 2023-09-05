@@ -1,9 +1,9 @@
-﻿namespace ApexCharts.Series
+﻿namespace ApexCharts.Internal
 {
     /// <summary>
     /// Return data from JavaScript when a legend item is clicked
     /// </summary>
-    public class JSLegendClicked
+    internal class JSLegendClicked
     {
         /// <summary>
         /// The index of the data series associated with the legend item that was clicked

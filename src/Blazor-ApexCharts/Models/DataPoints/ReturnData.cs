@@ -3,43 +3,6 @@
 namespace ApexCharts
 {
     /// <summary>
-    /// Return data from JavaScript when a data point event occurs
-    /// </summary>
-    public class JSDataPointSelection
-    {
-        /// <summary>
-        /// List of selected DataPoints
-        /// </summary>
-        public List<List<int?>> SelectedDataPoints { get; set; }
-
-        /// <summary>
-        /// The index of the data point being selected
-        /// </summary>
-        public int DataPointIndex { get; set; }
-
-        /// <summary>
-        /// The index of the data series being selected
-        /// </summary>
-        public int SeriesIndex { get; set; }
-    }
-
-    /// <summary>
-    /// Return data from JavaScript when an X-axis label is clicked
-    /// </summary>
-    public class JSXAxisLabelClick
-    {
-        /// <summary>
-        /// The index of the X-axis label that was clicked
-        /// </summary>
-        public int LabelIndex { get; set; }
-
-        /// <summary>
-        /// The display text of the X-axis label that was clicked
-        /// </summary>
-        public string Caption { get; set; }
-    }
-
-    /// <summary>
     /// Return data sent when <see cref="ApexChart{TItem}.OnMarkerClick"/> or <see cref="ApexChart{TItem}.OnDataPointSelection"/> are invoked
     /// </summary>
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>

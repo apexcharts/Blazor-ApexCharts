@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ApexCharts.Models
+namespace ApexCharts.Internal
 {
     /// <summary>
     /// Facilitates serialization of <see cref="ValueOrList{T}"/>
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ValueOrListConverter<T> : JsonConverter<ValueOrList<T>>
+    internal class ValueOrListConverter<T> : JsonConverter<ValueOrList<T>>
     {
         /// <inheritdoc/>
         /// <exception cref="NotImplementedException"></exception>
@@ -24,22 +24,12 @@ namespace ApexCharts.Models
         /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, ValueOrList<T> value, JsonSerializerOptions options)
         {
-            if (value == null)
-            {
+            if (value == null || value.Count == 0)
                 JsonSerializer.Serialize(writer, null, options);
-            }
+            else if (value.Count == 1)
+                JsonSerializer.Serialize(writer, value[0], options);
             else
-            {
-                if (value.IsList)
-                {
-                    JsonSerializer.Serialize(writer, value.GetList, typeof(IEnumerable<T>), options);
-                }
-                else
-                {
-                    JsonSerializer.Serialize(writer, value.GetValue, typeof(T), options);
-                }
-            }
+                JsonSerializer.Serialize<List<T>>(writer, value, options);
         }
     }
 }
-
