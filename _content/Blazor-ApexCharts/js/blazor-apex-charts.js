@@ -48,9 +48,7 @@
     },
 
     updateOptions(id, options, redrawPaths, animate, updateSyncedCharts, zoom) {
-        var data = JSON.parse(options, (key, value) =>
-            (key === 'formatter' || key === 'dateFormatter' || key === 'custom') && value.length !== 0 ? eval?.("'use strict'; (" + value + ")") : value
-        );
+        var options = this.parseOptions(options);
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "updateOptions", options);
@@ -193,9 +191,7 @@
             console.log(options);
         }
 
-        var options = JSON.parse(options, (key, value) =>
-            (key === 'formatter' || key === 'tooltipHoverFormatter' || key === 'dateFormatter' || key === 'custom') && value.length !== 0 ? eval?.("'use strict'; (" + value + ")") : value
-        );
+        var options = this.parseOptions(options);
 
         if (options.debug == true) {
             console.log(options);
@@ -296,5 +292,19 @@
         if (options.debug == true) {
             console.log('Chart ' + options.chart.id + ' rendered');
         }
+    },
+
+    parseOptions(options) {
+        return JSON.parse(options, (key, value) => {
+            if ((key === 'formatter' || key === 'dateFormatter' || key === 'custom') && value.length !== 0) {
+                if (Array.isArray(value))
+                    return value.map(item => eval?.("'use strict'; (" + item + ")"));
+                else
+                    return eval?.("'use strict'; (" + value + ")");
+            }
+            else {
+                return value;
+            }
+        });
     }
 }
