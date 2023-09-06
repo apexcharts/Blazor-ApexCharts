@@ -40,6 +40,9 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.Fill" />
         public Fill Fill { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.ForecastDataPoints" />
+        public ForecastDataPoints ForecastDataPoints { get; set; }
+
         /// <inheritdoc cref="ApexCharts.Grid" />
         public Grid Grid { get; set; }
 
@@ -70,9 +73,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.Series{TItem}" />
         public List<Series<TItem>> Series { get; set; }
-
-        /// <inheritdoc cref="ApexCharts.ForecastDataPoints" />
-        public ForecastDataPoints ForecastDataPoints { get; set; }
 
         /// <inheritdoc cref="ApexCharts.States" />
         public States States { get; set; }
@@ -305,10 +305,7 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsPoint
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public string Id { get; set; }
-#pragma warning restore CS1591
 
         /// <inheritdoc cref="ApexCharts.AnnotationsPointImage" />
         public AnnotationsPointImage Image { get; set; }
@@ -551,10 +548,7 @@ namespace ApexCharts
         /// </summary>
         public string AppendTo { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public string BackgroundColor { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Border Color for the label
@@ -586,10 +580,7 @@ namespace ApexCharts
         /// </summary>
         public object FontWeight { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public string ForeColor { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Bottom padding for the label
@@ -637,10 +628,7 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsXAxis
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public string Id { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Color of the annotation line
@@ -696,19 +684,13 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsYAxis
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public string Id { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Color of the annotation line
         /// </summary>
         public string BorderColor { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public double? BorderWidth { get; set; }
 
         /// <summary>
@@ -1084,6 +1066,8 @@ namespace ApexCharts
         /// Chart ID of the target chart to sync the brush chart and the target chart. If you have an array of multiple chart IDs, use targets property instead.
         /// </summary>
         public string Target { get; set; }
+
+        public List<string> Targets { get; set; }
     }
 
     /// <summary>
@@ -1216,6 +1200,12 @@ namespace ApexCharts
         /// Tooltip title text which appears when you hover over zoom out icon
         /// </summary>
         public string ZoomOut { get; set; }
+
+        public string ExportToSVG { get; set; }
+
+        public string ExportToPNG { get; set; }
+
+        public string ExportToCSV { get; set; }
     }
 
     /// <summary>
@@ -1953,13 +1943,9 @@ namespace ApexCharts
     /// </summary>
     public class Lines
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public double? OffsetX { get; set; }
 
-        [Obsolete("This property is no longer available")]
         public double? OffsetY { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Whether to show / hide y-axis lines
@@ -1988,13 +1974,9 @@ namespace ApexCharts
     /// </remarks>
     public class Legend
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public LegendContainerMargin ContainerMargin { get; set; }
 
-        [Obsolete("This property is no longer available")]
         public string TextAnchor { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// The floating option will take out the legend from the chart area and make it float above the chart.
@@ -2121,14 +2103,11 @@ namespace ApexCharts
         public List<string> CustomLegendItems { get; set; }
     }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-    [Obsolete("This property is no longer available")]
     public class LegendContainerMargin
     {
         public double? Left { get; set; }
         public double? Top { get; set; }
     }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Defines the margin to apply to legend items
@@ -2348,6 +2327,10 @@ namespace ApexCharts
         /// Stroke Size of the marker.
         /// </summary>
         public Size StrokeWidth { get; set; }
+
+        public Size Width { get; set; }
+
+        public Size Height { get; set; }
     }
 
     /// <summary>
@@ -2473,8 +2456,8 @@ namespace ApexCharts
     /// </remarks>
     public class PlotOptions
     {
-        /// <inheritdoc cref="ApexCharts.PlotOptionsBoxPlot" />
-        public PlotOptionsBoxPlot BoxPlot { get; set; }
+        /// <inheritdoc cref="ApexCharts.PlotOptionsArea" />
+        public PlotOptionsArea Area { get; set; }
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsBar" />
         public PlotOptionsBar Bar { get; set; }
@@ -2484,6 +2467,9 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsCandlestick" />
         public PlotOptionsCandlestick Candlestick { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.PlotOptionsBoxPlot" />
+        public PlotOptionsBoxPlot BoxPlot { get; set; }
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsHeatmap" />
         public PlotOptionsHeatmap Heatmap { get; set; }
@@ -2502,9 +2488,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsTreemap" />
         public PlotOptionsTreemap Treemap { get; set; }
-
-        /// <inheritdoc cref="ApexCharts.PlotOptionsArea" />
-        public PlotOptionsArea Area { get; set; }
     }
 
     /// <summary>
@@ -3594,10 +3577,8 @@ namespace ApexCharts
         /// </summary>
         public double? StartAngle { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
         [Obsolete("This property is obsolete. Use Width instead.", false)]
         public string StrokeWidth { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Width of the track
@@ -3626,16 +3607,6 @@ namespace ApexCharts
         /// </summary>
         public object Options { get; set; }
     }
-
-#pragma warning disable CS1591 // Documentation not available for current version of ApexCharts.js
-    public class PurpleDatum
-    {
-        public string FillColor { get; set; }
-        public string StrokeColor { get; set; }
-        public object X { get; set; }
-        public object Y { get; set; }
-    }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Class to define styles that are applied on various interaction states with the chart.
@@ -3748,6 +3719,8 @@ namespace ApexCharts
         /// Sets the width of border for svg path
         /// </summary>
         public Size Width { get; set; }
+
+        public Fill Fill { get; set; }
     }
 
     /// <summary>
@@ -4030,6 +4003,8 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.TooltipZ" />
         public TooltipZ Z { get; set; }
+
+        public string CssClass { get; set; }
     }
 
     /// <summary>
@@ -4074,10 +4049,7 @@ namespace ApexCharts
     /// </summary>
     public class TooltipMarker
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public List<string> FillColors { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Whether to show the color coded marker shape in front of Series Name which helps to identify series in multiple datasets.
@@ -4260,10 +4232,7 @@ namespace ApexCharts
         /// </summary>
         public double? Range { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public bool? Sorted { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Number of Tick Intervals to show. Note: tickAmount doesn't have any effect when <see cref="Type"/> = <see cref="XAxisType.Datetime"/>
@@ -4390,6 +4359,8 @@ namespace ApexCharts
         /// Sets the width of the axis line
         /// </summary>
         public double? Width { get; set; }
+
+        public double? StrokeWidth { get; set; }
     }
 
     /// <summary>
@@ -4488,10 +4459,7 @@ namespace ApexCharts
         /// </summary>
         public double? Blur { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public string Color { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Enable a dropshadow for crosshairs
@@ -4684,6 +4652,7 @@ namespace ApexCharts
     public class YAxisLabels
     {
         /// <inheritdoc cref="ApexCharts.DatetimeFormatter" />
+        [Obsolete("Property has been removed", false)]
         public DatetimeFormatter DatetimeFormatter { get; set; }
 
         /// <summary>
@@ -4741,6 +4710,8 @@ namespace ApexCharts
         /// Alignment of Y-axis label relative to chart area.
         /// </summary>
         public Align? Align { get; set; }
+
+        public double? Padding { get; set; }
     }
 
     /// <summary>
@@ -4758,13 +4729,9 @@ namespace ApexCharts
         /// </summary>
         public string Hour { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
         public string Minute { get; set; }
         
-        [Obsolete("This property is no longer available")]
         public string Second { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Format specifier for the month.
@@ -5043,15 +5010,6 @@ namespace ApexCharts
         /// </summary>
         public object FontWeight { get; set; }
     }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-    [Obsolete("Deprecated since 3.24.0")]
-    public enum Shape
-    {
-        Flat,
-        Rounded
-    };
-#pragma warning restore CS1591
 
 #pragma warning disable CS1591 // Enum values are self-explanatory
     /// <summary>
