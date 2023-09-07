@@ -233,6 +233,9 @@ namespace ApexCharts
         /// </summary>
         public string ForeColor { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Name { get; set; }
     }
 
@@ -305,6 +308,9 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsPoint
     {
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Id { get; set; }
 
         /// <inheritdoc cref="ApexCharts.AnnotationsPointImage" />
@@ -548,6 +554,9 @@ namespace ApexCharts
         /// </summary>
         public string AppendTo { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string BackgroundColor { get; set; }
 
         /// <summary>
@@ -580,6 +589,9 @@ namespace ApexCharts
         /// </summary>
         public object FontWeight { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string ForeColor { get; set; }
 
         /// <summary>
@@ -628,6 +640,9 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsXAxis
     {
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Id { get; set; }
 
         /// <summary>
@@ -684,6 +699,9 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsYAxis
     {
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Id { get; set; }
 
         /// <summary>
@@ -691,6 +709,9 @@ namespace ApexCharts
         /// </summary>
         public string BorderColor { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? BorderWidth { get; set; }
 
         /// <summary>
@@ -1063,10 +1084,13 @@ namespace ApexCharts
         public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// Chart ID of the target chart to sync the brush chart and the target chart. If you have an array of multiple chart IDs, use targets property instead.
+        /// Chart ID of the target chart to sync the brush chart and the target chart. If you have an array of multiple chart IDs, use <see cref="Targets"/> property instead.
         /// </summary>
         public string Target { get; set; }
 
+        /// <summary>
+        /// Chart IDs of the target charts to sync the brush chart and the target charts. If you have a single chart ID, use <see cref="Target"/> property instead.
+        /// </summary>
         public List<string> Targets { get; set; }
     }
 
@@ -1201,10 +1225,19 @@ namespace ApexCharts
         /// </summary>
         public string ZoomOut { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string ExportToSVG { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string ExportToPNG { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string ExportToCSV { get; set; }
     }
 
@@ -1943,8 +1976,14 @@ namespace ApexCharts
     /// </summary>
     public class Lines
     {
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? OffsetX { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? OffsetY { get; set; }
 
         /// <summary>
@@ -1974,8 +2013,14 @@ namespace ApexCharts
     /// </remarks>
     public class Legend
     {
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public LegendContainerMargin ContainerMargin { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string TextAnchor { get; set; }
 
         /// <summary>
@@ -2103,9 +2148,19 @@ namespace ApexCharts
         public List<string> CustomLegendItems { get; set; }
     }
 
+    /// <summary>
+    /// Undocumented, this class exists in the TypeScript definition
+    /// </summary>
     public class LegendContainerMargin
     {
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? Left { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? Top { get; set; }
     }
 
@@ -2328,8 +2383,14 @@ namespace ApexCharts
         /// </summary>
         public Size StrokeWidth { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public Size Width { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public Size Height { get; set; }
     }
 
@@ -3577,6 +3638,9 @@ namespace ApexCharts
         /// </summary>
         public double? StartAngle { get; set; }
 
+        /// <summary>
+        /// Please use <see cref="Width"/>
+        /// </summary>
         [Obsolete("This property is obsolete. Use Width instead.", false)]
         public string StrokeWidth { get; set; }
 
@@ -3720,6 +3784,9 @@ namespace ApexCharts
         /// </summary>
         public Size Width { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public Fill Fill { get; set; }
     }
 
@@ -4004,6 +4071,9 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.TooltipZ" />
         public TooltipZ Z { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string CssClass { get; set; }
     }
 
@@ -4049,6 +4119,9 @@ namespace ApexCharts
     /// </summary>
     public class TooltipMarker
     {
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public List<string> FillColors { get; set; }
 
         /// <summary>
@@ -4232,6 +4305,9 @@ namespace ApexCharts
         /// </summary>
         public double? Range { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public bool? Sorted { get; set; }
 
         /// <summary>
@@ -4360,6 +4436,9 @@ namespace ApexCharts
         /// </summary>
         public double? Width { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? StrokeWidth { get; set; }
     }
 
@@ -4459,6 +4538,9 @@ namespace ApexCharts
         /// </summary>
         public double? Blur { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Color { get; set; }
 
         /// <summary>
@@ -4711,6 +4793,9 @@ namespace ApexCharts
         /// </summary>
         public Align? Align { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? Padding { get; set; }
     }
 
@@ -4729,8 +4814,14 @@ namespace ApexCharts
         /// </summary>
         public string Hour { get; set; }
 
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Minute { get; set; }
-        
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Second { get; set; }
 
         /// <summary>
