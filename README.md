@@ -1,16 +1,22 @@
 ![.NET Core](https://github.com/joadan/Blazor-ApexCharts/workflows/.NET%20Core/badge.svg?branch=master)
 
----
 
-**v1.0 Released to production!**
-
-Credits to [@thirstyape](https://github.com/thirstyape) for pushing it over the edge! 
-
----
 
 # Blazor-ApexCharts
 A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
 ## [Demo](https://apexcharts.github.io/Blazor-ApexCharts)
+
+---
+
+## v1.0 Released to production!
+
+Credits to [@thirstyape](https://github.com/thirstyape) for pushing it over the edge!
+
+We have cleaned up the options class in order to align with the js version as much as possible.
+It should only be minor changes but if you have any problems just let us know.
+
+---
+
 
 ## Installation
 ### Nuget
