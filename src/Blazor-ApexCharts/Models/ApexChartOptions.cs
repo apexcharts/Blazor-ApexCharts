@@ -40,6 +40,9 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.Fill" />
         public Fill Fill { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.ForecastDataPoints" />
+        public ForecastDataPoints ForecastDataPoints { get; set; }
+
         /// <inheritdoc cref="ApexCharts.Grid" />
         public Grid Grid { get; set; }
 
@@ -70,9 +73,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.Series{TItem}" />
         public List<Series<TItem>> Series { get; set; }
-
-        /// <inheritdoc cref="ApexCharts.ForecastDataPoints" />
-        public ForecastDataPoints ForecastDataPoints { get; set; }
 
         /// <inheritdoc cref="ApexCharts.States" />
         public States States { get; set; }
@@ -234,7 +234,7 @@ namespace ApexCharts
         public string ForeColor { get; set; }
 
         /// <summary>
-        /// Undefined
+        /// Undocumented, this property exists in the TypeScript definition
         /// </summary>
         public string Name { get; set; }
     }
@@ -256,14 +256,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.AnnotationsPoint" />
         public List<AnnotationsPoint> Points { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public string Position { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public List<AnnotationsShape> Shapes { get; set; }
-#pragma warning restore CS1591
 
         /// <inheritdoc cref="ApexCharts.AnnotationsText" />
         public List<AnnotationsText> Texts { get; set; }
@@ -316,10 +308,10 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsPoint
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Id { get; set; }
-#pragma warning restore CS1591
 
         /// <inheritdoc cref="ApexCharts.AnnotationsPointImage" />
         public AnnotationsPointImage Image { get; set; }
@@ -552,23 +544,6 @@ namespace ApexCharts
         public double? StrokeWidth { get; set; }
     }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-    [Obsolete("This property is no longer available")]
-    public class AnnotationsShape
-    {
-        public string BackgroundColor { get; set; }
-        public string BorderColor { get; set; }
-        public double? BorderRadius { get; set; }
-        public double? BorderWidth { get; set; }
-        public double? Height { get; set; }
-        public double? Opacity { get; set; }
-        public string Type { get; set; }
-        public object Width { get; set; }
-        public double? X { get; set; }
-        public double? Y { get; set; }
-    }
-#pragma warning restore CS1591
-
     /// <summary>
     /// Defines how to style the individual data point annotations and their text
     /// </summary>
@@ -579,10 +554,10 @@ namespace ApexCharts
         /// </summary>
         public string AppendTo { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string BackgroundColor { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Border Color for the label
@@ -614,10 +589,10 @@ namespace ApexCharts
         /// </summary>
         public object FontWeight { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string ForeColor { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Bottom padding for the label
@@ -665,10 +640,10 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsXAxis
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Id { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Color of the annotation line
@@ -724,10 +699,10 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsYAxis
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Id { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Color of the annotation line
@@ -735,7 +710,7 @@ namespace ApexCharts
         public string BorderColor { get; set; }
 
         /// <summary>
-        /// 
+        /// Undocumented, this property exists in the TypeScript definition
         /// </summary>
         public double? BorderWidth { get; set; }
 
@@ -1109,9 +1084,14 @@ namespace ApexCharts
         public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// Chart ID of the target chart to sync the brush chart and the target chart. If you have an array of multiple chart IDs, use targets property instead.
+        /// Chart ID of the target chart to sync the brush chart and the target chart. If you have an array of multiple chart IDs, use <see cref="Targets"/> property instead.
         /// </summary>
         public string Target { get; set; }
+
+        /// <summary>
+        /// Chart IDs of the target charts to sync the brush chart and the target charts. If you have a single chart ID, use <see cref="Target"/> property instead.
+        /// </summary>
+        public List<string> Targets { get; set; }
     }
 
     /// <summary>
@@ -1244,6 +1224,21 @@ namespace ApexCharts
         /// Tooltip title text which appears when you hover over zoom out icon
         /// </summary>
         public string ZoomOut { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public string ExportToSVG { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public string ExportToPNG { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public string ExportToCSV { get; set; }
     }
 
     /// <summary>
@@ -1981,13 +1976,15 @@ namespace ApexCharts
     /// </summary>
     public class Lines
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? OffsetX { get; set; }
 
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? OffsetY { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Whether to show / hide y-axis lines
@@ -2016,13 +2013,15 @@ namespace ApexCharts
     /// </remarks>
     public class Legend
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public LegendContainerMargin ContainerMargin { get; set; }
 
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string TextAnchor { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// The floating option will take out the legend from the chart area and make it float above the chart.
@@ -2149,14 +2148,21 @@ namespace ApexCharts
         public List<string> CustomLegendItems { get; set; }
     }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-    [Obsolete("This property is no longer available")]
+    /// <summary>
+    /// Undocumented, this class exists in the TypeScript definition
+    /// </summary>
     public class LegendContainerMargin
     {
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? Left { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? Top { get; set; }
     }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Defines the margin to apply to legend items
@@ -2376,6 +2382,16 @@ namespace ApexCharts
         /// Stroke Size of the marker.
         /// </summary>
         public Size StrokeWidth { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public Size Width { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public Size Height { get; set; }
     }
 
     /// <summary>
@@ -2501,8 +2517,8 @@ namespace ApexCharts
     /// </remarks>
     public class PlotOptions
     {
-        /// <inheritdoc cref="ApexCharts.PlotOptionsBoxPlot" />
-        public PlotOptionsBoxPlot BoxPlot { get; set; }
+        /// <inheritdoc cref="ApexCharts.PlotOptionsArea" />
+        public PlotOptionsArea Area { get; set; }
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsBar" />
         public PlotOptionsBar Bar { get; set; }
@@ -2512,6 +2528,9 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsCandlestick" />
         public PlotOptionsCandlestick Candlestick { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.PlotOptionsBoxPlot" />
+        public PlotOptionsBoxPlot BoxPlot { get; set; }
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsHeatmap" />
         public PlotOptionsHeatmap Heatmap { get; set; }
@@ -2530,9 +2549,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsTreemap" />
         public PlotOptionsTreemap Treemap { get; set; }
-
-        /// <inheritdoc cref="ApexCharts.PlotOptionsArea" />
-        public PlotOptionsArea Area { get; set; }
     }
 
     /// <summary>
@@ -2672,14 +2688,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsBarDataLabels" />
         public PlotOptionsBarDataLabels DataLabels { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("Deprecated since 3.24.0")]
-        public Shape? EndingShape { get; set; }
-
-        [Obsolete("Deprecated since 3.24.0")]
-        public Shape? StartingShape { get; set; }
-#pragma warning restore CS1591
     }
 
     /// <summary>
@@ -3630,10 +3638,11 @@ namespace ApexCharts
         /// </summary>
         public double? StartAngle { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
+        /// <summary>
+        /// Please use <see cref="Width"/>
+        /// </summary>
         [Obsolete("This property is obsolete. Use Width instead.", false)]
         public string StrokeWidth { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Width of the track
@@ -3662,16 +3671,6 @@ namespace ApexCharts
         /// </summary>
         public object Options { get; set; }
     }
-
-#pragma warning disable CS1591 // Documentation not available for current version of ApexCharts.js
-    public class PurpleDatum
-    {
-        public string FillColor { get; set; }
-        public string StrokeColor { get; set; }
-        public object X { get; set; }
-        public object Y { get; set; }
-    }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Class to define styles that are applied on various interaction states with the chart.
@@ -3784,6 +3783,11 @@ namespace ApexCharts
         /// Sets the width of border for svg path
         /// </summary>
         public Size Width { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public Fill Fill { get; set; }
     }
 
     /// <summary>
@@ -4066,6 +4070,11 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.TooltipZ" />
         public TooltipZ Z { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public string CssClass { get; set; }
     }
 
     /// <summary>
@@ -4110,10 +4119,10 @@ namespace ApexCharts
     /// </summary>
     public class TooltipMarker
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public List<string> FillColors { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Whether to show the color coded marker shape in front of Series Name which helps to identify series in multiple datasets.
@@ -4296,10 +4305,10 @@ namespace ApexCharts
         /// </summary>
         public double? Range { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public bool? Sorted { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Number of Tick Intervals to show. Note: tickAmount doesn't have any effect when <see cref="Type"/> = <see cref="XAxisType.Datetime"/>
@@ -4426,6 +4435,11 @@ namespace ApexCharts
         /// Sets the width of the axis line
         /// </summary>
         public double? Width { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public double? StrokeWidth { get; set; }
     }
 
     /// <summary>
@@ -4524,10 +4538,10 @@ namespace ApexCharts
         /// </summary>
         public double? Blur { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Color { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Enable a dropshadow for crosshairs
@@ -4720,15 +4734,8 @@ namespace ApexCharts
     public class YAxisLabels
     {
         /// <inheritdoc cref="ApexCharts.DatetimeFormatter" />
+        [Obsolete("Property has been removed", false)]
         public DatetimeFormatter DatetimeFormatter { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public bool? DatetimeUTC { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public string Format { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Applies a custom function for the yaxis value.
@@ -4747,11 +4754,6 @@ namespace ApexCharts
         /// Note: In horizantal bar charts, the second parameters also contains additional data like dataPointIndex &amp; seriesIndex.
         /// </remarks>
         public string Formatter { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public bool? HideOverlappingLabels { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Maximum width for the y-axis labels
@@ -4783,17 +4785,6 @@ namespace ApexCharts
         /// </summary>
         public bool? Show { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public bool? RotateAlways { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public bool? ShowDuplicates { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public bool? Trim { get; set; }
-#pragma warning restore CS1591
-
         /// <inheritdoc cref="ApexCharts.AxisLabelStyle" />
         public AxisLabelStyle Style { get; set; }
 
@@ -4801,6 +4792,11 @@ namespace ApexCharts
         /// Alignment of Y-axis label relative to chart area.
         /// </summary>
         public Align? Align { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public double? Padding { get; set; }
     }
 
     /// <summary>
@@ -4818,10 +4814,15 @@ namespace ApexCharts
         /// </summary>
         public string Hour { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Minute { get; set; }
-#pragma warning restore CS1591
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public string Second { get; set; }
 
         /// <summary>
         /// Format specifier for the month.
@@ -5100,15 +5101,6 @@ namespace ApexCharts
         /// </summary>
         public object FontWeight { get; set; }
     }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-    [Obsolete("Deprecated since 3.24.0")]
-    public enum Shape
-    {
-        Flat,
-        Rounded
-    };
-#pragma warning restore CS1591
 
 #pragma warning disable CS1591 // Enum values are self-explanatory
     /// <summary>
