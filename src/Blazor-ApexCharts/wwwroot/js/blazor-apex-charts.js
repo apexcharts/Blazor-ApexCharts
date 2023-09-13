@@ -52,7 +52,7 @@
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "updateOptions", options);
-            chart.updateOptions(data, redrawPaths, animate, updateSyncedCharts);
+            chart.updateOptions(options, redrawPaths, animate, updateSyncedCharts);
 
             if (zoom !== null) {
                 chart.zoomX(zoom.start, zoom.end);
