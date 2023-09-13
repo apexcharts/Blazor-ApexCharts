@@ -11,7 +11,7 @@
     "BlazorApexCharts.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "bar-charts",
+      "launchUrl": "features/axis",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
