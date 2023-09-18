@@ -1,9 +1,9 @@
-﻿namespace ApexCharts.Series
+﻿namespace ApexCharts.Internal
 {
     /// <summary>
     /// Return data from JavaScript when a selection is made
     /// </summary>
-    public class JSSelection
+    internal class JSSelection
     {
         /// <inheritdoc cref="SelectionXAxis"/>
         public SelectionXAxis XAxis { get; set; }

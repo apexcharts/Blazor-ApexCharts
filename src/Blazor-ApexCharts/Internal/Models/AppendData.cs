@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ApexCharts
+namespace ApexCharts.Internal
 {
     internal class AppendData<TItem>
     {

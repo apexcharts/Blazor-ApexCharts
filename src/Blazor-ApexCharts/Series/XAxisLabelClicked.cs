@@ -8,10 +8,14 @@ namespace ApexCharts
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
     public class XAxisLabelClicked<TItem> where TItem : class
     {
-        /// <inheritdoc cref="JSXAxisLabelClick.LabelIndex"/>
+        /// <summary>
+        /// The index of the X-axis label that was clicked
+        /// </summary>
         public int LabelIndex { get; set; }
 
-        /// <inheritdoc cref="JSXAxisLabelClick.Caption"/>
+        /// <summary>
+        /// The display text of the X-axis label that was clicked
+        /// </summary>
         public string Caption { get; set; }
 
         /// <summary>

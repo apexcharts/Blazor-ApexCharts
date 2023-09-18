@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
 namespace ApexCharts
 {
@@ -12,47 +10,10 @@ namespace ApexCharts
     /// <typeparam name="TItem">The data type to be used in the chart to create data points.</typeparam>
     public class ApexChartOptions<TItem> where TItem : class
     {
-#pragma warning disable CS1591 // Primarily for internal use
+        /// <summary>
+        /// Logs function calls and options to the browser console when true
+        /// </summary>
         public bool Debug { get; set; }
-
-        public bool HasAnimationEnd { get; internal set; }
-
-        public bool HasBeforeMount { get; internal set; }
-
-        public bool HasMounted { get; internal set; }
-
-        public bool HasUpdated { get; internal set; }
-
-        public bool HasMouseMove { get; internal set; }
-
-        public bool HasMouseLeave { get; internal set; }
-
-        public bool HasClick { get; internal set; }
-
-        public bool HasDataPointSelection { get; internal set; }
-
-        public bool HasDataPointEnter { get; internal set; }
-
-        public bool HasDataPointLeave { get; internal set; }
-
-        public bool HasLegendClick { get; internal set; }
-
-        public bool HasMarkerClick { get; internal set; }
-
-        public bool HasXAxisLabelClick { get; internal set; }
-
-        public bool HasSelection { get; internal set; }
-
-        public bool HasScrolled { get; internal set; }
-
-        public bool HasBrushScrolled { get; internal set; }
-
-        public bool HasBeforeZoom { get; internal set; }
-
-        public bool HasBeforeResetZoom { get; internal set; }
-
-        public bool HasZoomed { get; internal set; }
-#pragma warning restore CS1591
 
         /// <inheritdoc cref="ApexCharts.Annotations" />
         public Annotations Annotations { get; set; }
@@ -78,6 +39,9 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.Fill" />
         public Fill Fill { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ForecastDataPoints" />
+        public ForecastDataPoints ForecastDataPoints { get; set; }
 
         /// <inheritdoc cref="ApexCharts.Grid" />
         public Grid Grid { get; set; }
@@ -109,9 +73,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.Series{TItem}" />
         public List<Series<TItem>> Series { get; set; }
-
-        /// <inheritdoc cref="ApexCharts.ForecastDataPoints" />
-        public ForecastDataPoints ForecastDataPoints { get; set; }
 
         /// <inheritdoc cref="ApexCharts.States" />
         public States States { get; set; }
@@ -273,7 +234,7 @@ namespace ApexCharts
         public string ForeColor { get; set; }
 
         /// <summary>
-        /// Undefined
+        /// Undocumented, this property exists in the TypeScript definition
         /// </summary>
         public string Name { get; set; }
     }
@@ -295,14 +256,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.AnnotationsPoint" />
         public List<AnnotationsPoint> Points { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public string Position { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public List<AnnotationsShape> Shapes { get; set; }
-#pragma warning restore CS1591
 
         /// <inheritdoc cref="ApexCharts.AnnotationsText" />
         public List<AnnotationsText> Texts { get; set; }
@@ -355,10 +308,10 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsPoint
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Id { get; set; }
-#pragma warning restore CS1591
 
         /// <inheritdoc cref="ApexCharts.AnnotationsPointImage" />
         public AnnotationsPointImage Image { get; set; }
@@ -591,23 +544,6 @@ namespace ApexCharts
         public double? StrokeWidth { get; set; }
     }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-    [Obsolete("This property is no longer available")]
-    public class AnnotationsShape
-    {
-        public string BackgroundColor { get; set; }
-        public string BorderColor { get; set; }
-        public double? BorderRadius { get; set; }
-        public double? BorderWidth { get; set; }
-        public double? Height { get; set; }
-        public double? Opacity { get; set; }
-        public string Type { get; set; }
-        public object Width { get; set; }
-        public double? X { get; set; }
-        public double? Y { get; set; }
-    }
-#pragma warning restore CS1591
-
     /// <summary>
     /// Defines how to style the individual data point annotations and their text
     /// </summary>
@@ -618,10 +554,10 @@ namespace ApexCharts
         /// </summary>
         public string AppendTo { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string BackgroundColor { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Border Color for the label
@@ -653,10 +589,10 @@ namespace ApexCharts
         /// </summary>
         public object FontWeight { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string ForeColor { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Bottom padding for the label
@@ -704,10 +640,10 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsXAxis
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Id { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Color of the annotation line
@@ -763,10 +699,10 @@ namespace ApexCharts
     /// </summary>
     public class AnnotationsYAxis
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Id { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Color of the annotation line
@@ -774,7 +710,7 @@ namespace ApexCharts
         public string BorderColor { get; set; }
 
         /// <summary>
-        /// 
+        /// Undocumented, this property exists in the TypeScript definition
         /// </summary>
         public double? BorderWidth { get; set; }
 
@@ -1148,9 +1084,14 @@ namespace ApexCharts
         public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// Chart ID of the target chart to sync the brush chart and the target chart. If you have an array of multiple chart IDs, use targets property instead.
+        /// Chart ID of the target chart to sync the brush chart and the target chart. If you have an array of multiple chart IDs, use <see cref="Targets"/> property instead.
         /// </summary>
         public string Target { get; set; }
+
+        /// <summary>
+        /// Chart IDs of the target charts to sync the brush chart and the target charts. If you have a single chart ID, use <see cref="Target"/> property instead.
+        /// </summary>
+        public List<string> Targets { get; set; }
     }
 
     /// <summary>
@@ -1163,10 +1104,11 @@ namespace ApexCharts
         /// </summary>
         public double? Blur { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// Give a color to the shadow. If array is provided, each series can have different shadow color
+        /// Give a color to the shadow.
         /// </summary>
-        public string Color { get; set; }
+        public Color Color { get; set; }
 
         /// <summary>
         /// Enable a dropshadow for paths of the SVG
@@ -1282,6 +1224,21 @@ namespace ApexCharts
         /// Tooltip title text which appears when you hover over zoom out icon
         /// </summary>
         public string ZoomOut { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public string ExportToSVG { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public string ExportToPNG { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public string ExportToCSV { get; set; }
     }
 
     /// <summary>
@@ -1789,52 +1746,21 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.FillImage"/>
         public FillImage Image { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Opacity"/>
         /// <summary>
         /// Opacity of the fill attribute.
         /// </summary>
-        public List<double> Opacity { get; set; }
+        public Opacity Opacity { get; set; }
 
         /// <inheritdoc cref="ApexCharts.FillPattern"/>
         public FillPattern Pattern { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.FillTypeSelections"/>
         /// <summary>
         /// Whether to fill the paths with solid colors or gradient.
         /// </summary>
-        public List<FillType> Type { get; set; }
+        public FillTypeSelections Type { get; set; }
     }
-
-#pragma warning disable CS1591 // Enum values are self-explanatory
-    /// <summary>
-    /// A list of fill options for charts
-    /// </summary>
-    public enum FillType
-    {
-        Solid,
-        Gradient,
-        Pattern,
-        Image
-    }
-
-    /// <summary>
-    /// A list of gradient options for chart fills
-    /// </summary>
-    public enum GradientShade
-    {
-        Light,
-        Dark
-    }
-
-    /// <summary>
-    /// A list of gradient types for chart fills
-    /// </summary>
-    public enum GradientType
-    {
-        Horizontal,
-        Vertical,
-        Diagonal1,
-        Diagonal2
-    }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Defines the styling options to use when filling a chart with a gradient. <see href="https://codepen.io/apexcharts/pen/GQmoXP">Example</see>
@@ -1851,15 +1777,17 @@ namespace ApexCharts
         /// </summary>
         public bool? InverseColors { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Opacity"/>
         /// <summary>
-        /// Start color's opacity. If you want different opacity for different series, you can pass an array of numbers. For eg., opacityFrom: [0.2, 0.8]
+        /// Start color's opacity.
         /// </summary>
-        public double? OpacityFrom { get; set; }
+        public Opacity OpacityFrom { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Opacity"/>
         /// <summary>
         /// End color's opacity
         /// </summary>
-        public double? OpacityTo { get; set; }
+        public Opacity OpacityTo { get; set; }
 
         /// <summary>
         /// The option to use for shading the gradient
@@ -1916,10 +1844,11 @@ namespace ApexCharts
         /// </summary>
         public double? Height { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.ImagePaths"/>
         /// <summary>
-        /// Src accepts an array of image paths which will correspond to each series.
+        /// The URL for each image to fill the chart series with
         /// </summary>
-        public List<string> Src { get; set; }
+        public ImagePaths Src { get; set; }
 
         /// <summary>
         /// Width of each image for all the series
@@ -1942,30 +1871,17 @@ namespace ApexCharts
         /// </summary>
         public double? StrokeWidth { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.FillPatternStyleSelections"/>
         /// <summary>
         /// The type of pattern to fill the chart with
         /// </summary>
-        public FillPatternStyle? Style { get; set; }
+        public FillPatternStyleSelections Style { get; set; }
 
         /// <summary>
         /// Pattern width which will be repeated at this interval
         /// </summary>
         public double? Width { get; set; }
     }
-
-#pragma warning disable CS1591 // Enum values are self-explanatory
-    /// <summary>
-    /// A list of fill options for pattern-based fills
-    /// </summary>
-    public enum FillPatternStyle
-    {
-        VerticalLines,
-        HorizontalLines,
-        SlantedLines,
-        Squares,
-        Circles
-    }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Grid is the plot area excluding legends, title, subtitle, x-axis, and y-axis. Grid's coordinates are used extensively in calculations in the chart in determining where to plot the actual chart elements.
@@ -2060,13 +1976,15 @@ namespace ApexCharts
     /// </summary>
     public class Lines
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? OffsetX { get; set; }
 
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? OffsetY { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Whether to show / hide y-axis lines
@@ -2095,13 +2013,15 @@ namespace ApexCharts
     /// </remarks>
     public class Legend
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public LegendContainerMargin ContainerMargin { get; set; }
 
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string TextAnchor { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// The floating option will take out the legend from the chart area and make it float above the chart.
@@ -2228,14 +2148,21 @@ namespace ApexCharts
         public List<string> CustomLegendItems { get; set; }
     }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-    [Obsolete("This property is no longer available")]
+    /// <summary>
+    /// Undocumented, this class exists in the TypeScript definition
+    /// </summary>
     public class LegendContainerMargin
     {
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? Left { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public double? Top { get; set; }
     }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Defines the margin to apply to legend items
@@ -2258,8 +2185,9 @@ namespace ApexCharts
     /// </summary>
     public class LegendLabels
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// Custom text colors for legend labels. Accepts an array of colors where each index corresponds to the series index
+        /// Custom text colors for legend labels.
         /// </summary>
         public Color Colors { get; set; }
 
@@ -2360,10 +2288,11 @@ namespace ApexCharts
     /// </remarks>
     public class Markers
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
         /// Sets the fill color(s) of the marker point.
         /// </summary>
-        public List<string> Colors { get; set; }
+        public Color Colors { get; set; }
 
         /// <summary>
         /// Allows you to target individual data-points and style particular marker differently. Example:
@@ -2390,6 +2319,7 @@ namespace ApexCharts
         /// </summary>
         public List<MarkersDiscrete> Discrete { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Opacity"/>
         /// <summary>
         /// Opacity of the marker fill color.
         /// </summary>
@@ -2423,57 +2353,45 @@ namespace ApexCharts
         /// </summary>
         public bool? ShowNullDataPoints { get; set; }
 
-        /// <inheritdoc cref="JsonSize"/>
-        /// <remarks>
-        /// For single-series charts
-        /// </remarks>
-        [JsonIgnore]
-        public double? Size { get; set; }
-
-        /// <inheritdoc cref="JsonSize"/>
-        /// <remarks>
-        /// For multi-series charts
-        /// </remarks>
-        [JsonIgnore]
-        public List<double> Sizes { get; set; }
-
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
-        /// Size of the marker point. In a multi-series chart, you can provide an array of numbers to display different size of markers on different series.
+        /// Size of the marker point.
         /// </summary>
-        /// <remarks>
-        /// Set either <see cref="Size"/> or <see cref="Sizes"/>
-        /// </remarks>
-        [JsonPropertyName("size")]
-        public object JsonSize
-        {
-            get
-            {
-                if (Sizes is not null)
-                    return Sizes;
+        public Size Size { get; set; }
 
-                return Size;
-            }
-        }
-
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// Stroke Color of the marker. Accepts a single color or an array of colors in a multi-series chart.
+        /// Stroke Color of the marker.
         /// </summary>
         public Color StrokeColors { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
         /// Dashes in the border around marker. Higher number creates more space between dashes in the border.
         /// </summary>
-        public Opacity StrokeDashArray { get; set; }
+        public Size StrokeDashArray { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Opacity"/>
         /// <summary>
         /// Opacity of the border around marker.
         /// </summary>
         public Opacity StrokeOpacity { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
         /// Stroke Size of the marker.
         /// </summary>
-        public Opacity StrokeWidth { get; set; }
+        public Size StrokeWidth { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public Size Width { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public Size Height { get; set; }
     }
 
     /// <summary>
@@ -2599,8 +2517,8 @@ namespace ApexCharts
     /// </remarks>
     public class PlotOptions
     {
-        /// <inheritdoc cref="ApexCharts.PlotOptionsBoxPlot" />
-        public PlotOptionsBoxPlot BoxPlot { get; set; }
+        /// <inheritdoc cref="ApexCharts.PlotOptionsArea" />
+        public PlotOptionsArea Area { get; set; }
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsBar" />
         public PlotOptionsBar Bar { get; set; }
@@ -2610,6 +2528,9 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsCandlestick" />
         public PlotOptionsCandlestick Candlestick { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.PlotOptionsBoxPlot" />
+        public PlotOptionsBoxPlot BoxPlot { get; set; }
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsHeatmap" />
         public PlotOptionsHeatmap Heatmap { get; set; }
@@ -2628,9 +2549,6 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsTreemap" />
         public PlotOptionsTreemap Treemap { get; set; }
-
-        /// <inheritdoc cref="ApexCharts.PlotOptionsArea" />
-        public PlotOptionsArea Area { get; set; }
     }
 
     /// <summary>
@@ -2650,17 +2568,6 @@ namespace ApexCharts
         /// </summary>
         public AreaFillTo? FillTo { get; set; }
     }
-
-#pragma warning disable CS1591 // Enum values are self-explanatory
-    /// <summary>
-    /// A list of fill options
-    /// </summary>
-    public enum AreaFillTo
-    {
-        End,
-        Origin
-    }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Defines options specific to <see cref="ChartType.BoxPlot"/>
@@ -2781,35 +2688,7 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsBarDataLabels" />
         public PlotOptionsBarDataLabels DataLabels { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("Deprecated since 3.24.0")]
-        public Shape? EndingShape { get; set; }
-
-        [Obsolete("Deprecated since 3.24.0")]
-        public Shape? StartingShape { get; set; }
-#pragma warning restore CS1591
     }
-
-#pragma warning disable CS1591 // Enum values are self-explanatory
-    /// <summary>
-    /// A list of border radius options
-    /// </summary>
-    public enum BorderRadiusApplication
-    {
-        Around,
-        End
-    }
-
-    /// <summary>
-    /// A list of border radius options
-    /// </summary>
-    public enum BorderRadiusWhenStacked
-    {
-        All,
-        Last
-    }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Defines how to color the bar chart
@@ -3395,6 +3274,7 @@ namespace ApexCharts
     /// </summary>
     public class PolarAreaSpokes
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
         /// The line/border color of the spokes of polarArea chart.
         /// </summary>
@@ -3442,23 +3322,26 @@ namespace ApexCharts
     /// </summary>
     public class RadarPolygons
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// The line color of the connector lines of the polygons. If you want to pass more than 1 color, you can pass an array instead of a String. connectorColors: '#e8e8e8' and connectorColors: ['#e8e8e8', '#f1f1f1'] both are valid.
+        /// The line color of the connector lines of the polygons.
         /// </summary>
         public Color ConnectorColors { get; set; }
 
         /// <inheritdoc cref="ApexCharts.RadarPolygonsFill" />
         public RadarPolygonsFill Fill { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// The line/border color of the spokes of the chart excluding the connector lines. If you want to pass more than 1 color, you can pass an array instead of a String. strokeColors: '#e8e8e8' and strokeColors: ['#e8e8e8', '#f1f1f1'] both are valid.
+        /// The line/border color of the spokes of the chart excluding the connector lines.
         /// </summary>
         public Color StrokeColors { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
         /// Border width of the spokes of radar chart.
         /// </summary>
-        public double? StrokeWidth { get; set; }
+        public Size StrokeWidth { get; set; }
     }
 
     /// <summary>
@@ -3721,10 +3604,11 @@ namespace ApexCharts
     /// </summary>
     public class Track
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// Color of the track. If you want different color for each track, you can pass an array of colors.
+        /// Color of the track.
         /// </summary>
-        public string Background { get; set; }
+        public Color Background { get; set; }
 
         /// <inheritdoc cref="ApexCharts.DropShadow" />
         public DropShadow DropShadow { get; set; }
@@ -3754,10 +3638,11 @@ namespace ApexCharts
         /// </summary>
         public double? StartAngle { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
+        /// <summary>
+        /// Please use <see cref="Width"/>
+        /// </summary>
         [Obsolete("This property is obsolete. Use Width instead.", false)]
         public string StrokeWidth { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Width of the track
@@ -3786,16 +3671,6 @@ namespace ApexCharts
         /// </summary>
         public object Options { get; set; }
     }
-
-#pragma warning disable CS1591 // Documentation not available for current version of ApexCharts.js
-    public class PurpleDatum
-    {
-        public string FillColor { get; set; }
-        public string StrokeColor { get; set; }
-        public object X { get; set; }
-        public object Y { get; set; }
-    }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Class to define styles that are applied on various interaction states with the chart.
@@ -3866,18 +3741,6 @@ namespace ApexCharts
         public double? Value { get; set; }
     }
 
-#pragma warning disable CS1591 // Enum values are self-explanatory
-    /// <summary>
-    /// A list of shading options to apply to various data point states
-    /// </summary>
-    public enum StatesFilterType
-    {
-        none,
-        lighten,
-        darken
-    }
-#pragma warning restore CS1591
-
     /// <summary>
     /// Class to define how lines on charts should be generated.
     /// </summary>
@@ -3893,42 +3756,17 @@ namespace ApexCharts
         /// </summary>
         public List<string> Colors { get; set; }
 
-        /// <inheritdoc cref="JsonCurve"/>
-        /// <remarks>
-        /// For single-series charts
-        /// </remarks>
-        [JsonIgnore]
-        public Curve? Curve { get; set; }
-
-        /// <inheritdoc cref="JsonCurve"/>
-        /// <remarks>
-        /// For multi-series charts
-        /// </remarks>
-        [JsonIgnore]
-        public List<Curve> Curves { get; set; }
-
+        /// <inheritdoc cref="ApexCharts.CurveSelections"/>
         /// <summary>
-        /// In line / area charts, whether to draw smooth lines or straight lines. You can also pass an array in stroke.curve, where each index corresponds to the series-index in multi-series charts.
+        /// In line / area charts, whether to draw smooth lines or straight lines.
         /// </summary>
-        /// <remarks>
-        /// Set either <see cref="Curve"/> or <see cref="Curves"/>
-        /// </remarks>
-        [JsonPropertyName("curve")]
-        public object JsonCurve
-        {
-            get
-            {
-                if (Curves is not null)
-                    return Curves;
+        public CurveSelections Curve { get; set; }
 
-                return Curve;
-            }
-        }
-
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
         /// Creates dashes in borders of svg path. Higher number creates more space between dashes in the border.
         /// </summary>
-        public object DashArray { get; set; }
+        public Size DashArray { get; set; }
 
         /// <summary>
         /// For setting the starting and ending points of stroke
@@ -3940,10 +3778,16 @@ namespace ApexCharts
         /// </summary>
         public bool Show { get; set; } = true;
 
+        /// <inheritdoc cref="ApexCharts.Size"/>
         /// <summary>
         /// Sets the width of border for svg path
         /// </summary>
-        public object Width { get; set; }
+        public Size Width { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public Fill Fill { get; set; }
     }
 
     /// <summary>
@@ -4150,23 +3994,11 @@ namespace ApexCharts
     /// </remarks>
     public class Tooltip
     {
+        /// <inheritdoc cref="ApexCharts.CustomFunction"/>
         /// <summary>
-        /// Draw a custom html tooltip instead of the default one based on the values provided in the function arguments. <see href="https://apexcharts.com/docs/datetime">Custom Tooltip Example</see>
-        /// 
-        /// <code>
-        /// tooltip: {
-        ///     custom: function({series, seriesIndex, dataPointIndex, w}) {
-        ///         return '&lt;div class="arrow_box"&gt;' +
-        ///             '&lt;span&gt;' + series[seriesIndex][dataPointIndex] + '&lt;/span&gt;' +
-        ///             '&lt;/div&gt;'
-        ///     }
-        /// }
-        /// </code>
+        /// Draw a custom html tooltip instead of the default one based on the values provided in the function arguments.
         /// </summary>
-        /// <remarks>
-        /// Note: In a multi-seris/combo chart, you can pass an array of functions to customize tooltip for different chart types. For instance, a combo chart with a candlestick and a line will have different tooltips.
-        /// </remarks>
-        public string Custom { get; set; }
+        public CustomFunction Custom { get; set; }
 
         /// <summary>
         /// Show tooltip when user hovers over chart area.
@@ -4238,6 +4070,11 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.TooltipZ" />
         public TooltipZ Z { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public string CssClass { get; set; }
     }
 
     /// <summary>
@@ -4282,10 +4119,10 @@ namespace ApexCharts
     /// </summary>
     public class TooltipMarker
     {
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public List<string> FillColors { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Whether to show the color coded marker shape in front of Series Name which helps to identify series in multiple datasets.
@@ -4340,13 +4177,6 @@ namespace ApexCharts
         /// </summary>
         public string Formatter { get; set; }
     }
-
-#pragma warning disable CS1591 // Documentation not available for current version of ApexCharts.js
-    public class PurpleY
-    {
-        public Dictionary<string, object> Title { get; set; }
-    }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Defines options on how to format the title of a tooltip
@@ -4475,10 +4305,10 @@ namespace ApexCharts
         /// </summary>
         public double? Range { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public bool? Sorted { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Number of Tick Intervals to show. Note: tickAmount doesn't have any effect when <see cref="Type"/> = <see cref="XAxisType.Datetime"/>
@@ -4544,10 +4374,11 @@ namespace ApexCharts
     /// </summary>
     public class XAxisGroupStyle
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
         /// Fore color for the x-axis groups label.
         /// </summary>
-        public List<string> Colors { get; set; }
+        public Color Colors { get; set; }
 
         /// <summary>
         /// Font size for the x-axis group label
@@ -4569,17 +4400,6 @@ namespace ApexCharts
         /// </summary>
         public string CssClass { get; set; }
     }
-
-#pragma warning disable CS1591 // Enum values are self-explanatory
-    /// <summary>
-    /// A list of placement options for ticks
-    /// </summary>
-    public enum TickPlacement
-    {
-        On,
-        Beteween
-    }
-#pragma warning restore CS1591
 
     /// <summary>
     /// Defines styling to apply to the border of an axis
@@ -4615,6 +4435,11 @@ namespace ApexCharts
         /// Sets the width of the axis line
         /// </summary>
         public double? Width { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public double? StrokeWidth { get; set; }
     }
 
     /// <summary>
@@ -4713,10 +4538,10 @@ namespace ApexCharts
         /// </summary>
         public double? Blur { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Color { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Enable a dropshadow for crosshairs
@@ -4755,7 +4580,10 @@ namespace ApexCharts
         /// <summary>
         /// The type of fill to use in the crosshairs
         /// </summary>
-        public FillTypeEnum Type { get; set; }
+        /// <remarks>
+        /// Must use either <see cref="FillType.Solid"/> or <see cref="FillType.Gradient"/>
+        /// </remarks>
+        public FillType Type { get; set; }
     }
 
     /// <summary>
@@ -4906,15 +4734,8 @@ namespace ApexCharts
     public class YAxisLabels
     {
         /// <inheritdoc cref="ApexCharts.DatetimeFormatter" />
+        [Obsolete("Property has been removed", false)]
         public DatetimeFormatter DatetimeFormatter { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public bool? DatetimeUTC { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public string Format { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Applies a custom function for the yaxis value.
@@ -4933,11 +4754,6 @@ namespace ApexCharts
         /// Note: In horizantal bar charts, the second parameters also contains additional data like dataPointIndex &amp; seriesIndex.
         /// </remarks>
         public string Formatter { get; set; }
-
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public bool? HideOverlappingLabels { get; set; }
-#pragma warning restore CS1591
 
         /// <summary>
         /// Maximum width for the y-axis labels
@@ -4969,17 +4785,6 @@ namespace ApexCharts
         /// </summary>
         public bool? Show { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
-        public bool? RotateAlways { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public bool? ShowDuplicates { get; set; }
-
-        [Obsolete("This property is no longer available")]
-        public bool? Trim { get; set; }
-#pragma warning restore CS1591
-
         /// <inheritdoc cref="ApexCharts.AxisLabelStyle" />
         public AxisLabelStyle Style { get; set; }
 
@@ -4987,6 +4792,11 @@ namespace ApexCharts
         /// Alignment of Y-axis label relative to chart area.
         /// </summary>
         public Align? Align { get; set; }
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public double? Padding { get; set; }
     }
 
     /// <summary>
@@ -5004,10 +4814,15 @@ namespace ApexCharts
         /// </summary>
         public string Hour { get; set; }
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-        [Obsolete("This property is no longer available")]
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
         public string Minute { get; set; }
-#pragma warning restore CS1591
+
+        /// <summary>
+        /// Undocumented, this property exists in the TypeScript definition
+        /// </summary>
+        public string Second { get; set; }
 
         /// <summary>
         /// Format specifier for the month.
@@ -5025,8 +4840,9 @@ namespace ApexCharts
     /// </summary>
     public class AxisLabelStyle
     {
+        /// <inheritdoc cref="ApexCharts.Color"/>
         /// <summary>
-        /// Fore color for the axis label. Accepts an array for <see href="https://apexcharts.com/javascript-chart-demos/column-charts/distributed">distributed</see> charts or accepts a single color string.
+        /// Fore color for the axis label.
         /// </summary>
         public Color Colors { get; set; }
 
@@ -5467,15 +5283,123 @@ namespace ApexCharts
         Scale,
         Truncate
     };
-#pragma warning restore CS1591
 
-#pragma warning disable CS1591 // Documentation not available for obsolete properties
-    [Obsolete("Deprecated since 3.24.0")]
-    public enum Shape
+    /// <summary>
+    /// A list of theme options to use
+    /// </summary>
+    public enum Mode
     {
-        Flat,
-        Rounded
+        Dark,
+        Light
     };
+
+    /// <summary>
+    /// A list of data types available for X-axis values
+    /// </summary>
+    public enum XAxisType
+    {
+        Category,
+        Datetime,
+        Numeric
+    };
+
+    /// <summary>
+    /// A list of options for styling borders
+    /// </summary>
+    public enum BorderType
+    {
+        Solid,
+        Dotted
+    };
+
+    /// <summary>
+    /// A list of fill options for charts
+    /// </summary>
+    public enum FillType
+    {
+        Solid,
+        Gradient,
+        Pattern,
+        Image
+    }
+
+    /// <summary>
+    /// A list of gradient options for chart fills
+    /// </summary>
+    public enum GradientShade
+    {
+        Light,
+        Dark
+    }
+
+    /// <summary>
+    /// A list of gradient types for chart fills
+    /// </summary>
+    public enum GradientType
+    {
+        Horizontal,
+        Vertical,
+        Diagonal1,
+        Diagonal2
+    }
+
+    /// <summary>
+    /// A list of fill options for pattern-based fills
+    /// </summary>
+    public enum FillPatternStyle
+    {
+        VerticalLines,
+        HorizontalLines,
+        SlantedLines,
+        Squares,
+        Circles
+    }
+
+    /// <summary>
+    /// A list of fill options
+    /// </summary>
+    public enum AreaFillTo
+    {
+        End,
+        Origin
+    }
+
+    /// <summary>
+    /// A list of border radius options
+    /// </summary>
+    public enum BorderRadiusApplication
+    {
+        Around,
+        End
+    }
+
+    /// <summary>
+    /// A list of border radius options
+    /// </summary>
+    public enum BorderRadiusWhenStacked
+    {
+        All,
+        Last
+    }
+
+    /// <summary>
+    /// A list of shading options to apply to various data point states
+    /// </summary>
+    public enum StatesFilterType
+    {
+        none,
+        lighten,
+        darken
+    }
+
+    /// <summary>
+    /// A list of placement options for ticks
+    /// </summary>
+    public enum TickPlacement
+    {
+        On,
+        Beteween
+    }
 #pragma warning restore CS1591
 
     /// <summary>
@@ -5519,91 +5443,4 @@ namespace ApexCharts
         /// </summary>
         Square
     };
-
-#pragma warning disable CS1591 // Enum values are self-explanatory
-    /// <summary>
-    /// A list of theme options to use
-    /// </summary>
-    public enum Mode
-    {
-        Dark,
-        Light
-    };
-
-    public enum TickAmountEnum
-    {
-        DataPoints
-    };
-
-    /// <summary>
-    /// A list of data types available for X-axis values
-    /// </summary>
-    public enum XAxisType
-    {
-        Category,
-        Datetime,
-        Numeric
-    };
-
-    /// <summary>
-    /// A list of options for styling borders
-    /// </summary>
-    public enum BorderType
-    {
-        Solid,
-        Dotted
-    };
-
-    /// <summary>
-    /// A list of options for styling fills
-    /// </summary>
-    public enum FillTypeEnum
-    {
-        Solid,
-        Gradient
-    };
-#pragma warning restore CS1591
-
-#pragma warning disable CS1591 // Primarily for internal use
-    public class ValueOrList<T>
-    {
-        private readonly T _str;
-        private readonly List<T> _list;
-        public bool IsList { get; private set; }
-
-        public T GetValue => _str;
-        public IEnumerable<T> GetList => _list;
-
-        public ValueOrList(T value)
-        {
-            _str = value;
-        }
-
-        public ValueOrList(IEnumerable<T> list)
-        {
-            IsList = true;
-            _list = list.ToList();
-        }
-    }
-
-    public class Color : ValueOrList<string>
-    {
-        public Color(string value) : base(value)
-        {
-        }
-        public Color(IEnumerable<string> list) : base(list)
-        {
-        }
-    }
-
-    public class Opacity : ValueOrList<double>
-    {
-        public Opacity(double value) : base(value)
-        {
-        }
-        public Opacity(IEnumerable<double> list) : base(list)
-        {
-        }
-    }
-#pragma warning restore CS1591
 }

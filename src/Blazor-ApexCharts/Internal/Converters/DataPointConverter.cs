@@ -2,13 +2,13 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ApexCharts.Models
+namespace ApexCharts.Internal
 {
     /// <summary>
     /// Facilitates serialization of <see cref="IDataPoint{TItem}"/>
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class DataPointConverter<T> : JsonConverter<IDataPoint<T>>
+    internal class DataPointConverter<T> : JsonConverter<IDataPoint<T>>
     {
         /// <inheritdoc/>
         /// <exception cref="NotImplementedException"></exception>
@@ -32,4 +32,3 @@ namespace ApexCharts.Models
         }
     }
 }
-
