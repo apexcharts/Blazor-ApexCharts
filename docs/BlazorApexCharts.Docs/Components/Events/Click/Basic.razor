@@ -1,0 +1,47 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               OnClick=OnClick
+               @ref=chart>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.X" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@if (selectedData != null && selectedData.DataPoint != null)
+{
+    <Alert BackgroundColor="TablerColor.Primary">
+        <h3>You clicked  @selectedData.DataPoint.X  @selectedData.DataPoint.Items.Sum(e=> e.NetValue) (@selectedData.DataPoint.Items.Sum(e=> e.GrossValue))  </h3>
+    </Alert>
+}
+else if (selectedData != null)
+{
+    <Alert BackgroundColor="TablerColor.Primary">
+        <h3>You clicked the chart but not a data point</h3>
+    </Alert>
+}
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private SelectedData<Order> selectedData;
+    private ApexChart<Order> chart;
+
+    private void OnClick(SelectedData<Order> data)
+    {
+        selectedData = data;
+    }
+}

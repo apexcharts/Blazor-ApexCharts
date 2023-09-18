@@ -352,6 +352,9 @@
 
         if (events.hasBeforeZoom === true) {
             options.chart.events.beforeZoom = function (chartContext, config) {
+                if (config.yaxis !== undefined || Array.isArray(config.yaxis))
+                    config.yaxis = undefined;
+
                 var data = dotNetObject.invokeMethod('JSBeforeZoom', config);
 
                 return {
@@ -378,7 +381,7 @@
 
         if (events.hasScrolled === true) {
             options.chart.events.scrolled = function (chartContext, config) {
-                dotNetObject.invokeMethodAsync('JSScrolled');
+                dotNetObject.invokeMethodAsync('JSScrolled', config);
             };
         };
 
