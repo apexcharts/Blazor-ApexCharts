@@ -3,7 +3,22 @@
 <DocExamples Title="Before Reset Zoom">
 
     <Description>
-        Click the home icon on the chart to reset the zoom
+       
+        <Alert BackgroundColor=TablerColor.Danger>
+            <div class="d-flex">
+                <div class="me-2">
+                    <Icon TextColor=TablerColor.Danger IconType=@Icons.Alert_triangle Size=40 />
+                </div>
+                <div>
+                    <h4 class="alert-title">Only supported in Blazor WebAssembly!</h4>
+                    <div class="text-muted">Event 'OnBeforeResetZoom' is only supported in web assembly</div>
+                </div>
+            </div>
+        </Alert>
+
+        <h3>Click the home icon on the chart to reset the zoom</h3>
+
+
     </Description>
  
     <ChildContent>

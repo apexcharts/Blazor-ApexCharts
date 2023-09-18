@@ -37,8 +37,7 @@
 @code {
     private List<WeatherForecast> forecasts { get; set; }
     private ApexChart<WeatherForecast> chart;
-    private string message;
-
+    
     protected override async Task OnInitializedAsync()
     {
         await LoadDataAsync();

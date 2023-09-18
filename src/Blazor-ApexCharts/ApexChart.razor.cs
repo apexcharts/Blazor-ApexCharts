@@ -813,6 +813,7 @@ namespace ApexCharts
 
         private void PrepareChart()
         {
+            CheckChart();
             SetSeries();
             SetSeriesColors();
             SetSeriesStroke();
@@ -822,6 +823,23 @@ namespace ApexCharts
             SetDotNetFormatters();
             SetCustomTooltip();
         }
+
+        private void CheckChart()
+        {
+            var jsInProcess = JSRuntime is IJSInProcessRuntime;
+            if (OnBeforeZoom != null && !jsInProcess)
+            {
+                throw new NotSupportedException("Event 'OnBeforeZoom' is not suported in blazor server");
+            }
+
+            if (OnBeforeResetZoom != null && !jsInProcess)
+            {
+                throw new NotSupportedException("Event 'OnBeforeResetZoom' is not suported in blazor server");
+            }
+
+
+        }
+
 
         private void SetCustomTooltip()
         {
