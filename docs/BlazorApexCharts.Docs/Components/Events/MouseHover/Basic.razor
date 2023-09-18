@@ -1,0 +1,73 @@
+﻿<Row>
+    <RowCol Md=12 Lg=6>
+        <ApexChart TItem="Order"
+                   Title="Order Net Value"
+                   OnMouseMove="OnMouseEnter"
+                   OnMouseLeave=OnMouseLeave>
+
+            <ApexPointSeries TItem="Order"
+                             Items="Orders"
+                             Name="Net Value"
+                             SeriesType="SeriesType.Line"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.NetValue))"
+                             OrderByDescending="e=>e.X" />
+
+            <ApexPointSeries TItem="Order"
+                             Items="Orders"
+                             Name="Gross Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                             OrderByDescending="e=>e.X" />
+        </ApexChart>
+    </RowCol>
+    <RowCol Md=12 Lg=6>
+        @if (mouseData != null && mouseData.DataPoint != null)
+        {
+            <Row>
+                <RowCol Auto>
+                    <div class=p-3>
+                        <h1>@mouseData.DataPoint.X</h1>
+                        <div>Name: @mouseData.Series.Name</div>
+                        <div>Value: @(((DataPoint<Order>)mouseData.DataPoint).Y?.ToString("N0"))</div>
+                    </div>
+                </RowCol>
+            </Row>
+        }
+        else if (mouseData != null)
+        {
+            <Row>
+                <RowCol Auto>
+                    <div class=p-3>
+                        <h1>No data point hovered</h1>
+                    </div>
+                </RowCol>
+            </Row>
+        }
+        else {
+            <Row>
+                <RowCol Auto>
+                 <div class=p-3>
+                     <h1>Not hovering over chart</h1>
+                 </div>
+             </RowCol>
+         </Row>
+        }
+    </RowCol>
+</Row>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private SelectedData<Order> mouseData;
+
+    public void OnMouseEnter(SelectedData<Order> hoverData)
+    {
+        this.mouseData = hoverData;
+    }
+
+    public void OnMouseLeave()
+    {
+        this.mouseData = null;
+    }
+}

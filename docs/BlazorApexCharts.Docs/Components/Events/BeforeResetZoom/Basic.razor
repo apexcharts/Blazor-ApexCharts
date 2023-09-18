@@ -1,0 +1,43 @@
+﻿<ApexChart TItem="TimeSeries"
+           Title="Value"
+           Height="150"
+           XAxisType="XAxisType.Datetime"
+           OnBeforeResetZoom="BeforeResetZoom">
+
+    <ApexPointSeries TItem="TimeSeries"
+                     Items="timeSeries"
+                     Name="Value"
+                     SeriesType="SeriesType.Line"
+                     XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
+                     YValue="@( e=> e.Value)"
+                     Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
+</ApexChart>
+
+@if (IsReset)
+{
+    <h3 class="mt-2">Zoom Reset</h3>
+    <Row>
+        <RowCol Auto>
+            Zoom has been reset @ResetCount times
+        </RowCol>
+    </Row>
+}
+
+@code {
+    private List<TimeSeries> timeSeries = new TimeSeriesGenerator(100).TimeSeries;
+    private int ResetCount;
+    private bool IsReset;
+
+    private SelectionXAxis BeforeResetZoom(object zoomedData)
+    {
+        ResetCount++;
+        IsReset = true;
+        StateHasChanged();
+
+        return new SelectionXAxis()
+        {
+            Max = timeSeries.Max(e => e.Date).AddDays(7).ToUnixTimeMilliseconds(),
+            Min = timeSeries.Min(e => e.Date).AddDays(-7).ToUnixTimeMilliseconds()
+        };
+    }
+}

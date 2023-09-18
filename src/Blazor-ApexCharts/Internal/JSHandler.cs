@@ -48,7 +48,17 @@ namespace ApexCharts.Internal
                 HasXAxisLabelClick = ChartReference.OnXAxisLabelClick.HasDelegate,
                 HasSelection = ChartReference.OnSelection.HasDelegate,
                 HasBrushScrolled = ChartReference.OnBrushScrolled.HasDelegate,
-                HasZoomed = ChartReference.OnZoomed.HasDelegate
+                HasZoomed = ChartReference.OnZoomed.HasDelegate,
+                HasAnimationEnd = ChartReference.OnAnimationEnd.HasDelegate,
+                HasBeforeMount = ChartReference.OnBeforeMount.HasDelegate,
+                HasMounted = ChartReference.OnMounted.HasDelegate,
+                HasUpdated = ChartReference.OnUpdated.HasDelegate,
+                HasMouseLeave = ChartReference.OnMouseLeave.HasDelegate,
+                HasMouseMove = ChartReference.OnMouseMove.HasDelegate,
+                HasClick = ChartReference.OnClick.HasDelegate,
+                HasBeforeZoom = ChartReference.OnBeforeZoom != null,
+                HasBeforeResetZoom = ChartReference.OnBeforeResetZoom != null,
+                HasScrolled = ChartReference.OnScrolled.HasDelegate
             });
         }
 
@@ -313,6 +323,163 @@ namespace ApexCharts.Internal
 
                 ChartReference.OnDataPointLeave.InvokeAsync(hoverData);
             }
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on animation end
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnAnimationEnd"/>
+        /// </remarks>
+        [JSInvokable]
+        public void JSAnimationEnd()
+        {
+            ChartReference.OnAnimationEnd.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on before mount
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnBeforeMount"/>
+        /// </remarks>
+        [JSInvokable]
+        public void JSBeforeMount()
+        {
+            ChartReference.OnBeforeMount.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on mounted
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnMounted"/>
+        /// </remarks>
+        [JSInvokable]
+        public void JSMounted()
+        {
+            ChartReference.OnMounted.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on updated
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnUpdated"/>
+        /// </remarks>
+        [JSInvokable]
+        public void JSUpdated()
+        {
+            ChartReference.OnUpdated.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on mouse move
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnMouseMove"/>
+        /// </remarks>
+        [JSInvokable]
+        public void JSMouseMove(JSDataPointSelection selectedDataPoints)
+        {
+            var series = selectedDataPoints.SeriesIndex >= 0 ?
+                ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex) :
+                null;
+
+            var dataPoint = selectedDataPoints.DataPointIndex >= 0 ?
+                series?.Data.ElementAt(selectedDataPoints.DataPointIndex) :
+                null;
+
+            ChartReference.OnMouseMove.InvokeAsync(new SelectedData<TItem>
+            {
+                Chart = ChartReference,
+                Series = series,
+                DataPoint = dataPoint,
+                DataPointIndex = selectedDataPoints.DataPointIndex,
+                SeriesIndex = selectedDataPoints.SeriesIndex
+            });
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on mouse leave
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnMouseLeave"/>
+        /// </remarks>
+        [JSInvokable]
+        public void JSMouseLeave()
+        {
+            ChartReference.OnMouseLeave.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on click
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnClick"/>
+        /// </remarks>
+        [JSInvokable]
+        public void JSClick(JSDataPointSelection selectedDataPoints)
+        {
+            var series = selectedDataPoints.SeriesIndex >= 0 ?
+                ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex) :
+                null;
+
+            var dataPoint = selectedDataPoints.DataPointIndex >= 0 ?
+                series?.Data.ElementAt(selectedDataPoints.DataPointIndex) :
+                null;
+
+            ChartReference.OnClick.InvokeAsync(new SelectedData<TItem>
+            {
+                Chart = ChartReference,
+                Series = series,
+                DataPoint = dataPoint,
+                DataPointIndex = selectedDataPoints.DataPointIndex,
+                SeriesIndex = selectedDataPoints.SeriesIndex
+            });
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on before zoom
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnBeforeZoom"/>
+        /// </remarks>
+        [JSInvokable]
+        public SelectionXAxis JSBeforeZoom(JSSelection jsSelection)
+        {
+            return ChartReference.OnBeforeZoom.Invoke(jsSelection.XAxis);
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on before reset zoom
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnBeforeResetZoom"/>
+        /// </remarks>
+        [JSInvokable]
+        public SelectionXAxis JSBeforeResetZoom()
+        {
+            return ChartReference.OnBeforeResetZoom.Invoke(new object());
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on scrolled
+        /// </summary>
+        /// <param name="jsSelection">Details from JavaScript</param>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnScrolled"/>
+        /// </remarks>
+        [JSInvokable]
+        public void JSScrolled(JSSelection jsSelection)
+        {
+            var selectionData = new SelectionData<TItem>
+            {
+                Chart = ChartReference,
+                XAxis = jsSelection.XAxis
+            };
+
+            ChartReference.OnScrolled.InvokeAsync(selectionData);
         }
     }
 }

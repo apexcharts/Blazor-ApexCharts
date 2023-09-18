@@ -57,7 +57,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/xaxis-label-click">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#xAxisLabelClick">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<XAxisLabelClicked<TItem>> OnXAxisLabelClick { get; set; }
 
@@ -68,7 +68,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/marker-click">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#markerClick">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<SelectedData<TItem>> OnMarkerClick { get; set; }
 
@@ -79,7 +79,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/data-point-selection">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#dataPointSelection">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<SelectedData<TItem>> OnDataPointSelection { get; set; }
 
@@ -90,7 +90,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/data-point-hover">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#dataPointMouseEnter">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointEnter { get; set; }
 
@@ -101,7 +101,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/data-point-hover">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#dataPointMouseLeave">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<HoverData<TItem>> OnDataPointLeave { get; set; }
 
@@ -112,7 +112,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/legend-click">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#legendClick">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<LegendClicked<TItem>> OnLegendClicked { get; set; }
 
@@ -123,7 +123,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/selection">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#selection">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<SelectionData<TItem>> OnSelection { get; set; }
 
@@ -134,7 +134,7 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/brush-scrolled">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#brushScrolled">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<SelectionData<TItem>> OnBrushScrolled { get; set; }
 
@@ -145,9 +145,109 @@ namespace ApexCharts
         /// Links:
         /// 
         /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/events/zoomed">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/options/chart/events">JavaScript Documentation</see>
+        /// <see href="https://apexcharts.com/docs/options/chart/events#zoomed">JavaScript Documentation</see>
         /// </remarks>
         [Parameter] public EventCallback<ZoomedData<TItem>> OnZoomed { get; set; }
+
+        /// <summary>
+        /// Fires when the chart’s initial animation is finished.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#animationEnd">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback OnAnimationEnd { get; set; }
+
+        /// <summary>
+        /// Fires before the chart has been drawn on screen.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#beforeMount">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback OnBeforeMount { get; set; }
+
+        /// <summary>
+        /// Fires after the chart has been drawn on screen.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#mounted">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback OnMounted { get; set; }
+
+        /// <summary>
+        /// Fires when the chart has been dynamically updated either with <see cref="UpdateOptionsAsync(bool, bool, bool, ZoomOptions)"/> or <see cref="UpdateSeriesAsync(bool)"/> functions.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#updated">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback OnUpdated { get; set; }
+
+        /// <summary>
+        /// Fires when user moves mouse on any area of the chart.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#mousemove">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<SelectedData<TItem>> OnMouseMove { get; set; }
+
+        /// <summary>
+        /// Fires when user moves mouse outside chart area (exclusing axis).
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#mouseleave">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback OnMouseLeave { get; set; }
+
+        /// <summary>
+        /// Fires when user clicks on any area of the chart.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#click">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<SelectedData<TItem>> OnClick { get; set; }
+
+        /// <summary>
+        /// This function, if defined, runs just before zooming in/out of the chart allowing you to set a custom range for zooming in/out.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#beforeZoom">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public Func<SelectionXAxis, SelectionXAxis> OnBeforeZoom { get; set; }
+
+        /// <summary>
+        /// This function, if defined, runs just before the user hits the HOME button on the toolbar to reset the chart to it’s original state. The function allows you to set a custom axes range for the initial view of the chart.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#beforeResetZoom">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public Func<object, SelectionXAxis> OnBeforeResetZoom { get; set; }
+
+        /// <summary>
+        /// Fires when user scrolls using the pan tool. The 2nd argument includes information of the new xaxis generated after scrolling.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.com/docs/options/chart/events#scrolled">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<SelectionData<TItem>> OnScrolled { get; set; }
 
         /// <summary>
         /// Fires when <see cref="RenderAsync"/> completes

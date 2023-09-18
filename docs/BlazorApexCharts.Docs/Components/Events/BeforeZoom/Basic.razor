@@ -1,0 +1,56 @@
+﻿<ApexChart TItem="TimeSeries"
+           Title="Value"
+           Height="150"
+           XAxisType="XAxisType.Datetime"
+           OnBeforeZoom="BeforeZoom">
+
+    <ApexPointSeries TItem="TimeSeries"
+                     Items="timeSeries"
+                     Name="Value"
+                     SeriesType="SeriesType.Line"
+                     XValue="@(e => e.Date.ToUnixTimeMilliseconds())"
+                     YValue="@( e=> e.Value)"
+                     Stroke="@(new SeriesStroke { Width = 2, Color="#1F15E5"})" />
+</ApexChart>
+
+@if (HasTriggered)
+{
+    <h3 class="mt-2">Zoom</h3>
+    <Row>
+        <RowCol Auto>
+            Adjusted min from @originalMin to @newMin
+        </RowCol>
+        <RowCol Auto>
+            Adjusted max from @originalMax to @newMax
+        </RowCol>
+    </Row>
+}
+
+@code {
+    private List<TimeSeries> timeSeries = new TimeSeriesGenerator(100).TimeSeries;
+    private bool HasTriggered;
+
+    private DateTimeOffset originalMin;
+    private DateTimeOffset newMin;
+    private DateTimeOffset originalMax;
+    private DateTimeOffset newMax;
+
+    private SelectionXAxis BeforeZoom(SelectionXAxis zoomedData)
+    {
+        var difference = zoomedData.Max - zoomedData.Min;
+
+        originalMax = DateTimeOffset.FromUnixTimeMilliseconds((long)zoomedData.Max);
+        newMax = DateTimeOffset.FromUnixTimeMilliseconds((long)(zoomedData.Max + (difference * 0.1M)));
+        originalMin = DateTimeOffset.FromUnixTimeMilliseconds((long)zoomedData.Min);
+        newMin = DateTimeOffset.FromUnixTimeMilliseconds((long)(zoomedData.Min - (difference * 0.1M)));
+
+        HasTriggered = true;
+        StateHasChanged();
+
+        return new SelectionXAxis()
+        {
+            Max = zoomedData.Max + (difference * 0.1M),
+            Min = zoomedData.Min - (difference * 0.1M)
+        };
+    }
+}
