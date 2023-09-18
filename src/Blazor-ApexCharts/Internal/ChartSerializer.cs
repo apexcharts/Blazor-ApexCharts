@@ -25,7 +25,10 @@ namespace ApexCharts.Internal
             serializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
             serializerOptions.Converters.Add(new ValueOrListConverter<string>());
             serializerOptions.Converters.Add(new ValueOrListConverter<double>());
-
+            serializerOptions.Converters.Add(new ValueOrListConverter<Curve>());
+            serializerOptions.Converters.Add(new ValueOrListConverter<FillPatternStyle>());
+            serializerOptions.Converters.Add(new ValueOrListConverter<FillType>());
+            
             return serializerOptions;
         }
 
