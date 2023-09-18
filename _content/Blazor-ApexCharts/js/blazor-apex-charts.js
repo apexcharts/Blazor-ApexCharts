@@ -205,7 +205,8 @@
                 var selection = {
                     dataPointIndex: config.dataPointIndex,
                     seriesIndex: config.seriesIndex
-                }
+                };
+
                 dotNetObject.invokeMethodAsync('JSDataPointLeave', selection);
             }
         };
@@ -215,11 +216,11 @@
                 var selection = {
                     dataPointIndex: config.dataPointIndex,
                     seriesIndex: config.seriesIndex
-                }
+                };
+
                 dotNetObject.invokeMethodAsync('JSDataPointEnter', selection);
             }
         };
-
 
         if (events.hasDataPointSelection === true) {
             options.chart.events.dataPointSelection = function (event, chartContext, config) {
@@ -227,7 +228,8 @@
                     dataPointIndex: config.dataPointIndex,
                     seriesIndex: config.seriesIndex,
                     selectedDataPoints: config.selectedDataPoints
-                }
+                };
+
                 dotNetObject.invokeMethodAsync('JSDataPointSelected', selection);
             }
         };
@@ -238,7 +240,8 @@
                     dataPointIndex: config.dataPointIndex,
                     seriesIndex: config.seriesIndex,
                     selectedDataPoints: config.selectedDataPoints
-                }
+                };
+
                 dotNetObject.invokeMethodAsync('JSMarkerClick', selection);
             }
         };
@@ -249,17 +252,17 @@
                     labelIndex: config.labelIndex,
                     caption: event.target.innerHTML
                 };
+
                 dotNetObject.invokeMethodAsync('JSXAxisLabelClick', data);
             }
         };
 
-       
         if (events.hasLegendClick === true) {
             options.chart.events.legendClick = function (chartContext, seriesIndex, config) {
                 var legendClick = {
                     seriesIndex: seriesIndex,
                     collapsed: config.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1
-                }
+                };
 
                 dotNetObject.invokeMethodAsync('JSLegendClicked', legendClick);
             }
@@ -280,6 +283,105 @@
         if (events.hasZoomed === true) {
             options.chart.events.zoomed = function (chartContext, config) {
                 dotNetObject.invokeMethodAsync('JSZoomed', config);
+            };
+        };
+
+        if (events.hasAnimationEnd === true) {
+            options.chart.events.animationEnd = function (chartContext, options) {
+                dotNetObject.invokeMethodAsync('JSAnimationEnd');
+            };
+        };
+
+        if (events.hasBeforeMount === true) {
+            options.chart.events.beforeMount = function (chartContext, config) {
+                dotNetObject.invokeMethodAsync('JSBeforeMount');
+            };
+        };
+
+        if (events.hasMounted === true) {
+            options.chart.events.mounted = function (chartContext, config) {
+                dotNetObject.invokeMethodAsync('JSMounted');
+            };
+        };
+
+        if (events.hasUpdated === true) {
+            options.chart.events.updated = function (chartContext, config) {
+                dotNetObject.invokeMethodAsync('JSUpdated');
+            };
+        };
+
+        if (events.hasMouseMove === true) {
+            options.chart.events.mouseMove = function (event, chartContext, config) {
+                var selection = {
+                    dataPointIndex: -1, // Documentation notes that these details are available in cartesian charts, this will prevent null reference in .NET callback
+                    seriesIndex: -1
+                };
+
+                if (config.dataPointIndex >= 0)
+                    selection.dataPointIndex = config.dataPointIndex;
+
+                if (config.seriesIndex >= 0)
+                    selection.seriesIndex = config.seriesIndex;
+
+                dotNetObject.invokeMethodAsync('JSMouseMove', selection);
+            };
+        };
+
+        if (events.hasMouseLeave === true) {
+            options.chart.events.mouseLeave = function (event, chartContext, config) {
+                dotNetObject.invokeMethodAsync('JSMouseLeave');
+            };
+        };
+
+        if (events.hasClick === true) {
+            options.chart.events.click = function (event, chartContext, config) {
+                var selection = {
+                    dataPointIndex: -1,
+                    seriesIndex: -1
+                };
+
+                if (config.dataPointIndex >= 0)
+                    selection.dataPointIndex = config.dataPointIndex;
+
+                if (config.seriesIndex >= 0)
+                    selection.seriesIndex = config.seriesIndex;
+
+                dotNetObject.invokeMethodAsync('JSClick', selection);
+            };
+        };
+
+        if (events.hasBeforeZoom === true) {
+            options.chart.events.beforeZoom = function (chartContext, config) {
+                if (config.yaxis !== undefined || Array.isArray(config.yaxis))
+                    config.yaxis = undefined;
+
+                var data = dotNetObject.invokeMethod('JSBeforeZoom', config);
+
+                return {
+                    xaxis: {
+                        min: data.min,
+                        max: data.max
+                    }
+                };
+            };
+        };
+
+        if (events.hasBeforeResetZoom === true) {
+            options.chart.events.beforeResetZoom = function (chartContext, opts) {
+                var data = dotNetObject.invokeMethod('JSBeforeResetZoom');
+
+                return {
+                    xaxis: {
+                        min: data.min,
+                        max: data.max
+                    }
+                };
+            };
+        };
+
+        if (events.hasScrolled === true) {
+            options.chart.events.scrolled = function (chartContext, config) {
+                dotNetObject.invokeMethodAsync('JSScrolled', config);
             };
         };
 

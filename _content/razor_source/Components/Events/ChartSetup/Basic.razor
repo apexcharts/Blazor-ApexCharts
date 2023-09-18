@@ -1,0 +1,83 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Data"
+               Options="Options"
+               OnAnimationEnd="OnAnimationEnd"
+               OnBeforeMount="OnBeforeMount"
+               OnMounted="OnMounted"
+               OnUpdated="OnUpdated"
+               @ref=Chart>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         SeriesType="@SeriesType.Area"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         SeriesType="@SeriesType.Area"
+                         Name="Net Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+<br />
+<br />
+
+<h1>Chart Setup Progress (@(Progress.Count / 4D * 100)%)</h1>
+<ul>
+    @foreach (var item in Progress)
+    {
+        <li>@item</li>
+    }
+</ul>
+
+@code {
+    private List<Order> Orders { get; set; }
+    private ApexChart<Order> Chart;
+    private List<string> Progress = new();
+
+    private ApexChartOptions<Order> Options { get; set; } = new()
+    {
+        NoData = new ApexCharts.NoData { Text = "No Data..." }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        await Task.Delay(3000); //Simulate Slow api 
+
+        Orders = SampleData.GetOrders();
+        StateHasChanged();
+        await Chart.UpdateSeriesAsync(true);
+    }
+
+    private void OnBeforeMount()
+    {
+        Progress.Add("Preparing to mount chart");
+    }
+
+    private void OnMounted()
+    {
+        Progress.Add("Chart has been mounted");
+    }
+
+    private void OnAnimationEnd()
+    {
+        Progress.Add("Animating chart complete");
+    }
+
+    private void OnUpdated()
+    {
+        Progress.Add("Chart data updated");
+    }
+}
