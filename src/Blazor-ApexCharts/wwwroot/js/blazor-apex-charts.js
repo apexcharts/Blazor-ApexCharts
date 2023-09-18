@@ -222,7 +222,6 @@
             }
         };
 
-
         if (events.hasDataPointSelection === true) {
             options.chart.events.dataPointSelection = function (event, chartContext, config) {
                 var selection = {

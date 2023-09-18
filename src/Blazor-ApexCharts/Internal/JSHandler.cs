@@ -392,7 +392,7 @@ namespace ApexCharts.Internal
 
             ChartReference.OnMouseMove.InvokeAsync(new SelectedData<TItem>
             {
-                Chart = this,
+                Chart = ChartReference,
                 Series = series,
                 DataPoint = dataPoint,
                 DataPointIndex = selectedDataPoints.DataPointIndex,
@@ -431,7 +431,7 @@ namespace ApexCharts.Internal
 
             ChartReference.OnClick.InvokeAsync(new SelectedData<TItem>
             {
-                Chart = this,
+                Chart = ChartReference,
                 Series = series,
                 DataPoint = dataPoint,
                 DataPointIndex = selectedDataPoints.DataPointIndex,
@@ -475,7 +475,7 @@ namespace ApexCharts.Internal
         {
             var selectionData = new SelectionData<TItem>
             {
-                Chart = this,
+                Chart = ChartReference,
                 XAxis = jsSelection.XAxis
             };
 
