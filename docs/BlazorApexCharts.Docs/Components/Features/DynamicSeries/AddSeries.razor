@@ -1,0 +1,73 @@
+﻿<DemoContainer>
+
+    <Button class="m-3" OnClick="AddNewSeries" BackgroundColor="TablerColor.Primary">Add Series</Button>
+
+    <Button class="m-3" OnClick="RemoveSeries" Disabled="@(series.Count <= 1)" BackgroundColor="TablerColor.Danger">Remove Series</Button>
+
+    <ApexChart @ref="chart" TItem="Order"
+               Title="Order Net Value" XAxisType="XAxisType.Datetime">
+
+        @foreach (var serie in series)
+        {
+            <ApexPointSeries TItem="Order"
+                             Items="serie.Orders"
+                             Name="@serie.Name"
+                             XValue="@(e => e.OrderDate)"
+                             YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                             OrderByDescending="e=>e.Y"
+                             SeriesType="SeriesType.Bar" />
+        }
+
+
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<MySeries> series = new();
+    private ApexChart<Order> chart;
+    protected override void OnInitialized()
+    {
+
+        series.Add(new MySeries
+            {
+                Name = "Customer",
+                Orders = SampleData.GetRandomOrders()
+            });
+
+        base.OnInitialized();
+    }
+
+    private async Task RemoveSeries()
+    {
+        series.RemoveAt(series.Count-1);
+        await chart?.UpdateSeriesAsync(true);
+    }
+
+
+    private async Task AddNewSeries()
+    {
+        series.Add(new MySeries
+            {
+                Name = "Customer_" + (series.Count() + 1),
+                Orders = SampleData.GetRandomOrders()
+            });
+
+           await chart?.UpdateSeriesAsync(true);
+
+    }
+
+
+
+
+    class MySeries
+    {
+
+        public string Name { get; set; }
+        public List<Order>
+    Orders
+        { get; set; }
+    }
+}
+
+

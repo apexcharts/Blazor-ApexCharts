@@ -58,7 +58,7 @@ namespace BlazorApexCharts.Docs
 
             for (int i = 0; i < rnd.Next(5, 20); i++)
             {
-                orders.Add(new Order { CustomerName = "Odio Corporation", Country = "Sweden", OrderDate = DateTimeOffset.Now.AddDays(-12), GrossValue = rnd.Next(2000, 50000), DiscountPercentage = rnd.Next(10, 50), OrderType = (OrderType)rnd.Next(0, 4) });
+                orders.Add(new Order { CustomerName = "Odio Corporation", Country = "Sweden", OrderDate = DateTimeOffset.Now.AddDays(-1 * i), GrossValue = rnd.Next(2000, 50000), DiscountPercentage = rnd.Next(10, 50), OrderType = (OrderType)rnd.Next(0, 4) });
             }
 
             return orders;
