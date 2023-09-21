@@ -1,0 +1,38 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order  Value"
+               Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y"
+                         PointColor="GetPointColor" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+
+
+    private string GetPointColor(Order order)
+    {
+        if (order.Country == "Brazil")
+        {
+            return "#ff3c47";
+        }
+
+        return "#003c47";
+    }
+}
