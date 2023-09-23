@@ -813,24 +813,16 @@ namespace ApexCharts
 
         private void SetCustomIcons()
         {
-       
+            var customIcons = Options?.Chart?.Toolbar?.Tools?.CustomIcons?.Where(e => e.OnClick != null);
+            if (customIcons == null) { return; }
 
-            var customIcons = Options?.Chart?.Toolbar?.Tools?.CustomIcons;
-
-            if (customIcons != null)
+            foreach (var customIcon in customIcons)
             {
-                foreach (var customIcon in customIcons.Where(e => e.OnClick != null))
-                {
-                    var script = @"function (chart, options, e) {
+                var script = @"function (chart, options, e) {
                                 options.config.dotNetObject.invokeMethodAsync('JSCustomIconClick', '" + customIcon.Id.ToString("N") + @"');
                                 }";
-                    customIcon.Click = script;
-
-                }
-
+                customIcon.Click = script;
             }
-
-
         }
 
         private void PrepareChart()
