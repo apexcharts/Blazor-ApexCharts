@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace ApexCharts
 {
@@ -1469,6 +1470,12 @@ namespace ApexCharts
     public class ToolCustomIcon
     {
         /// <summary>
+        /// Unique Id for the Custom Icon 
+        /// </summary>
+        [JsonIgnore]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        /// <summary>
         /// URL for the icon to display
         /// </summary>
         public string Icon { get; set; }
@@ -1481,12 +1488,24 @@ namespace ApexCharts
         /// <summary>
         /// Tooltip to display for the icon
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = "";
 
         /// <summary>
         /// A CSS class to apply to the icon
         /// </summary>
         public string Class { get; set; }
+
+        /// <summary>
+        /// Javascript function when the icon is clicked
+        /// if a OnClick callback is registered this will be overwritten.
+        /// </summary>
+        public string Click { get; set; }
+
+        /// <summary>
+        /// Callback when the icon is clicked
+        /// </summary>
+        [JsonIgnore]
+        public Action<ToolCustomIcon> OnClick { get; set; }
     }
 
     /// <summary>

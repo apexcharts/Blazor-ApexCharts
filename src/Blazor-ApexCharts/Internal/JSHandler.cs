@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -336,6 +337,23 @@ namespace ApexCharts.Internal
         {
             ChartReference.OnAnimationEnd.InvokeAsync();
         }
+
+        /// <summary>
+        /// Callback from JavaScript on custom icon click
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ToolCustomIcon.OnClick"/>
+        /// </remarks>
+        [JSInvokable]
+        public void JSCustomIconClick(string id)
+        {
+            if(Guid.TryParse(id, out var iconId))
+            {
+                var icon = ChartReference.Options?.Chart?.Toolbar?.Tools?.CustomIcons.FirstOrDefault(e => e.Id == iconId);
+                icon?.OnClick.Invoke(icon);
+            }
+        }
+
 
         /// <summary>
         /// Callback from JavaScript on before mount
