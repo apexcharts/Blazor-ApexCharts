@@ -811,6 +811,28 @@ namespace ApexCharts
             await JSRuntime.InvokeVoidAsync("blazor_apexchart.hideSeries", Options.Chart.Id, seriesName);
         }
 
+        private void SetCustomIcons()
+        {
+       
+
+            var customIcons = Options?.Chart?.Toolbar?.Tools?.CustomIcons;
+
+            if (customIcons != null)
+            {
+                foreach (var customIcon in customIcons.Where(e => e.OnClick != null))
+                {
+                    var script = @"function (chart, options, e) {
+                                options.config.dotNetObject.invokeMethodAsync('JSCustomIconClick', '" + customIcon.Id.ToString("N") + @"');
+                                }";
+                    customIcon.Click = script;
+
+                }
+
+            }
+
+
+        }
+
         private void PrepareChart()
         {
             CheckChart();
@@ -818,6 +840,7 @@ namespace ApexCharts
             SetSeriesColors();
             SetSeriesStroke();
             SetDataLabels();
+            SetCustomIcons();
             FixLineDataSelection();
             UpdateDataForNoAxisCharts();
             SetDotNetFormatters();
