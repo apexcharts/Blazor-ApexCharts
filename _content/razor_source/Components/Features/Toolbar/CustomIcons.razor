@@ -1,0 +1,91 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value" Options="options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+
+    @if(selectedIcon != null)
+    {
+        <h3>You clicked custom icon: @((MarkupString)selectedIcon.Icon)</h3>
+      
+
+    }
+
+
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    private ToolCustomIcon selectedIcon;
+
+    protected override void OnInitialized()
+    {
+        var firstIcon = @"<svg class='icon icon-tabler icon-tabler-asterisk' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'>
+   <path stroke='none' d='M0 0h24v24H0z' fill='none'></path>
+   <path d='M12 12l8 -4.5'></path>
+   <path d='M12 12v9'></path>
+   <path d='M12 12l-8 -4.5'></path>
+   <path d='M12 12l8 4.5'></path>
+   <path d='M12 3v9'></path>
+   <path d='M12 12l-8 4.5'></path>
+</svg>";
+
+        var secondIcon = @"<svg class='icon icon-tabler icon-tabler-mood-happy' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'>
+   <path stroke='none' d='M0 0h24v24H0z' fill='none'></path>
+   <path d='M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0'></path>
+   <path d='M9 9l.01 0'></path>
+   <path d='M15 9l.01 0'></path>
+   <path d='M8 13a4 4 0 1 0 8 0h-8'></path>
+</svg>";
+
+        options.Chart = new Chart
+            {
+                Toolbar = new ApexCharts.Toolbar
+                {
+                    Tools = new Tools
+                    {
+                        CustomIcons = new List<ToolCustomIcon> {
+                            new ToolCustomIcon {
+                                Icon = firstIcon,
+                                Index = 5,
+                                Title="first icon",
+                                OnClick = IconClicked
+                            },
+                            new ToolCustomIcon {
+                                Icon = secondIcon,
+                                Index = 6,
+                                Title="second icon",
+                                OnClick = IconClicked
+                            }
+                        }
+                    }
+                }
+            };
+
+
+        base.OnInitialized();
+    }
+
+    private void IconClicked(ToolCustomIcon icon)
+    {
+        selectedIcon = icon;
+        StateHasChanged();
+    }
+}

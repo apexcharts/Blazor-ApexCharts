@@ -398,7 +398,7 @@
 
     parseOptions(options) {
         return JSON.parse(options, (key, value) => {
-            if ((key === 'formatter' || key === 'dateFormatter' || key === 'custom') && value.length !== 0) {
+            if ((key === 'formatter' || key === 'dateFormatter' || key === 'custom' || key === 'click') && value.length !== 0) {
                 if (Array.isArray(value))
                     return value.map(item => eval?.("'use strict'; (" + item + ")"));
                 else
