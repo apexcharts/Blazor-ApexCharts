@@ -1410,7 +1410,8 @@ namespace ApexCharts
         public List<ToolCustomIcon> CustomIcons { get; set; }
 
         /// <summary>
-        /// Show the download menu / hamburger icon in the toolbar. If you want to display a custom icon instead of hamburger icon, you can provide HTML string in this property.
+        /// Show the download menu / hamburger icon in the toolbar. 
+        /// If you want to display a custom icon, you can provide HTML string in this property.
         /// 
         /// <code>
         /// download: true 
@@ -1420,40 +1421,46 @@ namespace ApexCharts
         /// ApexCharts has built-in support to allow exporting the chart to popular image formats like PNG or SVG and also allows exporting the chart data to a CSV file.
         /// By default, all XY charts have the toolbar enabled in them which has a hamburger icon at the top right corner. Clicking the hamburger icon opens a menu which has following options to download.
         /// </summary>
-        public bool Download { get; set; } = true;
+        public object Download { get; set; } = true;
 
         /// <summary>
-        /// Show the panning icon in the toolbar.
+        /// Show the panning icon in the toolbar. 
+        /// If you want to display a custom icon for Pan, you can provide HTML string in this property.
         /// </summary>
-        public bool Pan { get; set; } = true;
+        public object Pan { get; set; } = true;
 
         /// <summary>
-        /// Reset the chart data to it's initial state after zommin/zoomout/panning. If you want to display a custom icon for reset, you can provide HTML string in this property.
+        /// Reset the chart data to it's initial state after zommin/zoomout/panning. 
+        /// If you want to display a custom icon for reset, you can provide HTML string in this property.
         /// </summary>
-        public bool Reset { get; set; } = true;
+        public object Reset { get; set; } = true;
 
         /// <summary>
-        /// Show the rectangle selection icon in the toolbar. If you want to display a custom icon for selection, you can provide HTML string in this property.
+        /// Show the rectangle selection icon in the toolbar. 
+        /// If you want to display a custom icon for selection, you can provide HTML string in this property.
         /// </summary>
         /// <remarks>
         /// Make sure to also enable <see cref="Chart.Selection"/> when showing the selection tool.
         /// </remarks>
-        public bool Selection { get; set; } = true;
+        public object Selection { get; set; } = true;
 
         /// <summary>
-        /// Show the zoom icon which is used for zooming by dragging selection on the chart area. If you want to display a custom icon for zoom, you can provide HTML string in this property.
+        /// Show the zoom icon which is used for zooming by dragging selection on the chart area. 
+        /// If you want to display a custom icon for zoom, you can provide HTML string in this property.
         /// </summary>
-        public bool Zoom { get; set; } = true;
+        public object Zoom { get; set; } = true;
 
         /// <summary>
-        /// Show the zoom-in icon which zooms in 50% from the visible chart area. If you want to display a custom icon for zoom-in, you can provide HTML string in this property.
+        /// Show the zoom-in icon which zooms in 50% from the visible chart area. 
+        /// If you want to display a custom icon for zoom-in, you can provide HTML string in this property.
         /// </summary>
-        public bool Zoomin { get; set; } = true;
+        public object Zoomin { get; set; } = true;
 
         /// <summary>
-        /// Show the zoom-out icon which zooms out 50% from the visible chart area. If you want to display a custom icon for zoom-out, you can provide HTML string in this property.
+        /// Show the zoom-out icon which zooms out 50% from the visible chart area. 
+        /// If you want to display a custom icon for zoom-out, you can provide HTML string in this property.
         /// </summary>
-        public bool Zoomout { get; set; } = true;
+        public object Zoomout { get; set; } = true;
     }
 
     /// <summary>
