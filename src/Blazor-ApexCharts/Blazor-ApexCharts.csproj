@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    
-    <Version>0.9.22-beta</Version>
+        
     <Authors>Joakim Dangården</Authors>
     <Company />
     <Description>A blazor wrapper for Apex Charts</Description>
@@ -16,10 +15,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Copyright>Copyright 2022 (c) Joakim Dangården. All rights reserved.</Copyright>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageReleaseNotes>
-		0.9.22-beta
-		Update apex-charts.min.js to v3.41.0, added funnel chart, added new options, removed histogram chart, improved documentation, bugfixes
-	</PackageReleaseNotes>
+    <PackageIcon>apexchart_logo.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
