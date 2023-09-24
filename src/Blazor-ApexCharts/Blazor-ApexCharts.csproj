@@ -40,6 +40,12 @@
 		</None>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="apexchart_logo.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
   <PropertyGroup>
     <DocumentationFile>$(ProjectDir)Blazor-ApexCharts.xml</DocumentationFile>
   </PropertyGroup>
