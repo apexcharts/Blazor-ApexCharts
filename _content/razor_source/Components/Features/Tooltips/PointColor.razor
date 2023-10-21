@@ -1,0 +1,40 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value">
+               
+        <ApexPointTooltip>
+            <div class="p-1">
+                <h3>@context.DataPoint.X </h3>
+                    <Row class="mb-2">
+                        <RowCol Auto>
+                            <Badge style="@($"background-color:{context.DataPoint.FillColor}")">Gross Value</Badge>
+                        </RowCol>
+                        <RowCol Auto>
+                            <span class="strong">
+                                @context.DataPoint.Items.Sum(e=> e.GrossValue).ToString("n0")
+                            </span>
+                        </RowCol>
+                    </Row>
+            </div>
+        </ApexPointTooltip>
+
+        <ChildContent>
+            <ApexPointSeries TItem="Order"
+                             Items="Orders"
+                             Name="Gross Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                             OrderByDescending="e=>e.Y"
+                             PointColor="@(e=> e.Country != "Brazil" ? "#FF0000" : "#008000")" />
+
+        
+        </ChildContent>
+    </ApexChart>
+
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+      
+    }
