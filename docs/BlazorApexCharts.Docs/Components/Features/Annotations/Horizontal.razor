@@ -1,6 +1,6 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
-               Title="Scatter Sample"
+               Title="Horizontal"
                Options=options>
 
         <ApexPointSeries TItem="Order"
@@ -27,7 +27,8 @@
 
     protected override void OnInitialized()
     {
-       
+        options.PlotOptions = new PlotOptions { Bar = new PlotOptionsBar { Horizontal = true } };
+
         options.Annotations = new Annotations
             {
                 Xaxis = new List<AnnotationsXAxis> { new AnnotationsXAxis
@@ -37,8 +38,6 @@
                                 Style = new Style{ Background="red" }
                            },
                            X = 40,
-                    //       BorderWidth = 3,
-                           
                            StrokeDashArray = 2,
                            BorderColor = "red"
                         }
@@ -51,7 +50,6 @@
                                 Style = new Style { Background = "blue", Color="white"}
                             },
                             Y = 70000,
-                           // BorderWidth = 3,
                             BorderColor = "blue",
                             StrokeDashArray = 0
                         }
@@ -59,4 +57,4 @@
 
             };
     }
-    }
+}
