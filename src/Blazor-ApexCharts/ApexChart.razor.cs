@@ -970,7 +970,14 @@ namespace ApexCharts
 
             if (Options.Chart?.Id != null && isReady)
             {
-                InvokeAsync(async () => { await JSRuntime.InvokeVoidAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
+                try
+                {
+                    InvokeAsync(async () => { await JSRuntime.InvokeVoidAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
+                }
+                catch (JSDisconnectedException)
+                {
+                }
+                
             }
 
             JSHandler?.Dispose();
