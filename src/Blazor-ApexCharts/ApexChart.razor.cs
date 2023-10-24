@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace ApexCharts
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
     public partial class ApexChart<TItem> : IDisposable where TItem : class
     {
-        [Inject] private IJSRuntime JSRuntime { get; set; }
+        [Inject] private IJSRuntime jsRuntime { get; set; }
 
         /// <summary>
         /// Used to contain the data within the chart
@@ -296,7 +297,7 @@ namespace ApexCharts
             if (firstRender && isReady == false)
             {
                 isReady = true;
-                JSHandler = new JSHandler<TItem>(this, ChartContainer, JSRuntime);
+                JSHandler = new JSHandler<TItem>(this, ChartContainer, jsRuntime);
             }
 
             if (isReady && forceRender)
@@ -350,6 +351,23 @@ namespace ApexCharts
             {
                 if (Options.Title == null) { Options.Title = new Title(); }
                 Options.Title.Text = Title;
+            }
+        }
+
+        private async ValueTask<TValue> InvokeJsAsync<TValue>(string identifier, params object[] args)
+        {
+            return await jsRuntime.InvokeAsync<TValue>(identifier, args);
+        }
+
+        private async ValueTask InvokeVoidJsAsync(string identifier, params object[] args)
+        {
+            if (jsRuntime is IJSInProcessRuntime jsInProcessRuntime)
+            {
+                jsInProcessRuntime.InvokeVoid(identifier, args);
+            }
+            else
+            {
+                await jsRuntime.InvokeVoidAsync(identifier, args);
             }
         }
 
@@ -556,7 +574,7 @@ namespace ApexCharts
         public virtual async Task AddPointAnnotationAsync(AnnotationsPoint annotationsPoint, bool pushToMemory)
         {
             var json = Serialize(annotationsPoint);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addPointAnnotation", Options.Chart.Id, json, pushToMemory);
+            await InvokeVoidJsAsync("blazor_apexchart.addPointAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
         /// <summary>
@@ -585,7 +603,7 @@ namespace ApexCharts
                     Data = dataPoints.Where(e => e.Y != null).Select(e => e.Y)
                 };
 
-                await JSRuntime.InvokeVoidAsync("blazor_apexchart.appendData", Options.Chart.Id, Serialize(appendData));
+                await InvokeVoidJsAsync("blazor_apexchart.appendData", Options.Chart.Id, Serialize(appendData));
                 return;
             }
 
@@ -605,7 +623,7 @@ namespace ApexCharts
             }
 
             var json = Serialize(seriesList);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.appendData", Options.Chart.Id, json);
+            await InvokeVoidJsAsync("blazor_apexchart.appendData", Options.Chart.Id, json);
         }
 
         /// <summary>
@@ -621,7 +639,7 @@ namespace ApexCharts
         public virtual async Task ZoomXAsync(ZoomOptions zoomOptions)
         {
             if (zoomOptions == null) { throw new ArgumentNullException(nameof(zoomOptions)); }
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.zoomX", Options.Chart.Id, zoomOptions.Start, zoomOptions.End);
+            await InvokeVoidJsAsync("blazor_apexchart.zoomX", Options.Chart.Id, zoomOptions.Start, zoomOptions.End);
         }
 
         /// <summary>
@@ -637,7 +655,7 @@ namespace ApexCharts
         /// </remarks>
         public virtual async Task ZoomXAsync(decimal start, decimal end)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.zoomX", Options.Chart.Id, start, end);
+            await InvokeVoidJsAsync("blazor_apexchart.zoomX", Options.Chart.Id, start, end);
         }
 
         /// <summary>
@@ -652,7 +670,7 @@ namespace ApexCharts
         /// </remarks>
         public virtual async Task ResetSeriesAsync(bool shouldUpdateChart, bool shouldResetZoom)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.resetSeries", Options.Chart.Id, shouldUpdateChart, shouldResetZoom);
+            await InvokeVoidJsAsync("blazor_apexchart.resetSeries", Options.Chart.Id, shouldUpdateChart, shouldResetZoom);
         }
 
         /// <summary>
@@ -668,7 +686,7 @@ namespace ApexCharts
         public virtual async Task<string> GetDataUriAsync(DataUriOptions dataUriOptions)
         {
             var json = Serialize(dataUriOptions);
-            var result = await JSRuntime.InvokeAsync<DataUriResult>("blazor_apexchart.dataUri", Options.Chart.Id, json);
+            var result = await InvokeJsAsync<DataUriResult>("blazor_apexchart.dataUri", Options.Chart.Id, json);
             return result.ImgURI;
         }
 
@@ -686,7 +704,7 @@ namespace ApexCharts
         public virtual async Task AddXAxisAnnotationAsync(AnnotationsXAxis annotationsXAxis, bool pushToMemory)
         {
             var json = Serialize(annotationsXAxis);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addXaxisAnnotation", Options.Chart.Id, json, pushToMemory);
+            await InvokeVoidJsAsync("blazor_apexchart.addXaxisAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
         /// <summary>
@@ -703,7 +721,7 @@ namespace ApexCharts
         public virtual async Task AddYAxisAnnotationAsync(AnnotationsYAxis annotationsYAxis, bool pushToMemory)
         {
             var json = Serialize(annotationsYAxis);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.addYaxisAnnotation", Options.Chart.Id, json, pushToMemory);
+            await InvokeVoidJsAsync("blazor_apexchart.addYaxisAnnotation", Options.Chart.Id, json, pushToMemory);
         }
 
         /// <summary>
@@ -717,7 +735,7 @@ namespace ApexCharts
         /// </remarks>
         public virtual async Task ClearAnnotationsAsync()
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.clearAnnotations", Options.Chart.Id);
+            await InvokeVoidJsAsync("blazor_apexchart.clearAnnotations", Options.Chart.Id);
         }
 
         /// <summary>
@@ -731,7 +749,7 @@ namespace ApexCharts
         /// </remarks>
         public virtual async Task RemoveAnnotationAsync(string id)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.removeAnnotation", Options.Chart.Id, id);
+            await InvokeVoidJsAsync("blazor_apexchart.removeAnnotation", Options.Chart.Id, id);
         }
 
         /// <summary>
@@ -752,7 +770,7 @@ namespace ApexCharts
             await Task.Yield();
             PrepareChart();
             var json = Serialize(Options);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateOptions", Options.Chart.Id, json, redrawPaths, animate, updateSyncedCharts, zoom);
+            await InvokeVoidJsAsync("blazor_apexchart.updateOptions", Options.Chart.Id, json, redrawPaths, animate, updateSyncedCharts, zoom);
         }
 
         /// <summary>
@@ -771,7 +789,7 @@ namespace ApexCharts
             SetSeries();
             UpdateDataForNoAxisCharts();
             var jsonSeries = Serialize(Options.Series);
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
+            await InvokeVoidJsAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
         }
 
         /// <summary>
@@ -787,28 +805,28 @@ namespace ApexCharts
         /// </remarks>
         public virtual async Task ToggleDataPointSelectionAsync(int seriesIndex, int? dataPointIndex)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleDataPointSelection", Options.Chart.Id, seriesIndex, dataPointIndex);
+            await InvokeVoidJsAsync("blazor_apexchart.toggleDataPointSelection", Options.Chart.Id, seriesIndex, dataPointIndex);
         }
 
         /// <inheritdoc cref="IApexSeries{TItem}.Toggle"/>
         /// <param name="seriesName">The series name which you want to toggle visibility for.</param>
         public virtual async Task ToggleSeriesAsync(string seriesName)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.toggleSeries", Options.Chart.Id, seriesName);
+            await InvokeVoidJsAsync("blazor_apexchart.toggleSeries", Options.Chart.Id, seriesName);
         }
 
         /// <inheritdoc cref="IApexSeries{TItem}.Show"/>
         /// <param name="seriesName">The series name which you want to show.</param>
         public virtual async Task ShowSeriesAsync(string seriesName)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.showSeries", Options.Chart.Id, seriesName);
+            await InvokeVoidJsAsync("blazor_apexchart.showSeries", Options.Chart.Id, seriesName);
         }
 
         /// <inheritdoc cref="IApexSeries{TItem}.Hide"/>
         /// <param name="seriesName">The series name which you want to hide.</param>
         public virtual async Task HideSeriesAsync(string seriesName)
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.hideSeries", Options.Chart.Id, seriesName);
+            await InvokeVoidJsAsync("blazor_apexchart.hideSeries", Options.Chart.Id, seriesName);
         }
 
         private void SetCustomIcons()
@@ -841,7 +859,7 @@ namespace ApexCharts
 
         private void CheckChart()
         {
-            var jsInProcess = JSRuntime is IJSInProcessRuntime;
+            var jsInProcess = jsRuntime is IJSInProcessRuntime;
             if (OnBeforeZoom != null && !jsInProcess)
             {
                 throw new NotSupportedException("Event 'OnBeforeZoom' is not suported in blazor server");
@@ -972,14 +990,12 @@ namespace ApexCharts
             {
                 try
                 {
-                    InvokeAsync(async () => { await JSRuntime.InvokeVoidAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
+                    InvokeAsync(async () => { await InvokeVoidJsAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
                 }
                 catch (JSDisconnectedException)
                 {
                 }
-                
             }
-
             JSHandler?.Dispose();
         }
 
