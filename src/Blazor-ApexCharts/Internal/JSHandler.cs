@@ -16,16 +16,17 @@ namespace ApexCharts.Internal
     internal sealed class JSHandler<TItem> : IDisposable where TItem : class
     {
         private readonly ApexChart<TItem> ChartReference;
-        private readonly IJSRuntime JSRuntime;
+        private readonly IJSRuntime JSRuntime2;
         private readonly DotNetObjectReference<JSHandler<TItem>> ObjectReference;
         private readonly ElementReference ChartContainer;
+        private IJSObjectReference blazor_apexchart;
 
-        internal JSHandler(ApexChart<TItem> chartReference, ElementReference chartContainer, IJSRuntime jSRuntime)
+        internal JSHandler(ApexChart<TItem> chartReference, ElementReference chartContainer, IJSObjectReference blazor_apexchart)
         {
             ObjectReference = DotNetObjectReference.Create(this);
             ChartContainer = chartContainer;
             ChartReference = chartReference;
-            JSRuntime = jSRuntime;
+            this.blazor_apexchart = blazor_apexchart;
         }
 
         /// <inheritdoc/>
@@ -39,7 +40,7 @@ namespace ApexCharts.Internal
         /// </summary>
         public async Task RenderChartAsync()
         {
-            await JSRuntime.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, JsonSerializer.Serialize(ChartReference.Options, ChartSerializer.GetOptions<TItem>()), new JSEvents()
+            await blazor_apexchart.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, JsonSerializer.Serialize(ChartReference.Options, ChartSerializer.GetOptions<TItem>()), new JSEvents()
             {
                 HasDataPointSelection = ChartReference.OnDataPointSelection.HasDelegate,
                 HasDataPointEnter = ChartReference.OnDataPointEnter.HasDelegate || ChartReference.ApexPointTooltip != null,
