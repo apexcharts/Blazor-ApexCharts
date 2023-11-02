@@ -15,7 +15,7 @@ namespace BlazorApexCharts.Docs.Components.ChartGallery
         {
             return PointType switch
             {
-                SeriesType.Pie or SeriesType.Donut or SeriesType.Treemap or SeriesType.RadialBar or SeriesType.PolarArea => false,
+                SeriesType.Pie or SeriesType.Donut or SeriesType.Treemap or SeriesType.RadialBar or SeriesType.RangeArea or SeriesType.PolarArea => false,
                 _ => true,
             };
         }
