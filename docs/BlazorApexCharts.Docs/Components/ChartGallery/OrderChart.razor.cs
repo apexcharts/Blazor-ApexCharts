@@ -26,13 +26,16 @@ namespace BlazorApexCharts.Docs.Components.ChartGallery
 
             orders =  SampleData.GetOrders();
 
-            options.Chart = new Chart
-            {
-                Sparkline = new ChartSparkline
+         
+                options.Chart = new Chart
                 {
-                    Enabled = true
-                }
-            };
+                    Sparkline = new ChartSparkline
+                    {
+                        Enabled = true
+                    }
+                };
+           
+         
 
         }
     }
