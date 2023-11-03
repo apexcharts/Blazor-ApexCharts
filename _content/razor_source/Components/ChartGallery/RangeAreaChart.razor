@@ -1,0 +1,24 @@
+﻿@using BlazorApexCharts.Docs.Data;
+    <ApexChart TItem="MeteoSample"
+        Title="RangeArea"
+        Options="options">
+
+        <ApexRangeAreaSeries TItem="MeteoSample"
+                             Items="temperatures"
+                             Name="Temperatures"
+                             XValue="@(e => e.Month)"
+                             Top="@(e => e.HighestTemperature)"
+                             Bottom="@(e => e.LowestTemperature)"
+                             />
+    </ApexChart>
+
+@code {
+    private List<MeteoSample> temperatures { get; set; } = SampleData.GetMeteoSample();
+    private ApexChartOptions<MeteoSample> options = new();
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<MeteoSample>();
+        options.Chart = new Chart { Sparkline = new ChartSparkline { Enabled = true } };
+    }
+}
