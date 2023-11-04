@@ -287,6 +287,7 @@ namespace ApexCharts
         private string chartId;
         private HoverData<TItem> tooltipData;
         private JSHandler<TItem> JSHandler;
+        private IJSObjectReference blazor_apexchart;
 
         /// <inheritdoc cref="Chart.Id"/>
         public string ChartId => chartId;
@@ -296,8 +297,14 @@ namespace ApexCharts
         {
             if (firstRender && isReady == false)
             {
+                // load Module ftom ES6 script
+                IJSObjectReference module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/Blazor-ApexCharts/js/blazor-apex-charts.js");
+                // load the  blazor_apexchart parent, currently window! to be compatyble with JS interop calls e.g blazor_apexchart.dataUri                                                                                                    
+                blazor_apexchart = await module.InvokeAsync<IJSObjectReference>("getappexCahrts");
+
+
                 isReady = true;
-                JSHandler = new JSHandler<TItem>(this, ChartContainer, jsRuntime);
+                JSHandler = new JSHandler<TItem>(this, ChartContainer, blazor_apexchart);
             }
 
             if (isReady && forceRender)
@@ -356,18 +363,18 @@ namespace ApexCharts
 
         private async ValueTask<TValue> InvokeJsAsync<TValue>(string identifier, params object[] args)
         {
-            return await jsRuntime.InvokeAsync<TValue>(identifier, args);
+            return await blazor_apexchart.InvokeAsync<TValue>(identifier, args);
         }
 
         private async ValueTask InvokeVoidJsAsync(string identifier, params object[] args)
         {
-            if (jsRuntime is IJSInProcessRuntime jsInProcessRuntime)
+            if (blazor_apexchart is IJSInProcessObjectReference  jsInProcessRuntime)
             {
                 jsInProcessRuntime.InvokeVoid(identifier, args);
             }
             else
             {
-                await jsRuntime.InvokeVoidAsync(identifier, args);
+                await blazor_apexchart.InvokeVoidAsync(identifier, args);
             }
         }
 
@@ -859,7 +866,7 @@ namespace ApexCharts
 
         private void CheckChart()
         {
-            var jsInProcess = jsRuntime is IJSInProcessRuntime;
+            var jsInProcess = blazor_apexchart is IJSInProcessRuntime;
             if (OnBeforeZoom != null && !jsInProcess)
             {
                 throw new NotSupportedException("Event 'OnBeforeZoom' is not suported in blazor server");
