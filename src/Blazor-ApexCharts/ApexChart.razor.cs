@@ -300,7 +300,7 @@ namespace ApexCharts
                 // load Module ftom ES6 script
                 IJSObjectReference module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/Blazor-ApexCharts/js/blazor-apex-charts.js");
                 // load the  blazor_apexchart parent, currently window! to be compatyble with JS interop calls e.g blazor_apexchart.dataUri                                                                                                    
-                blazor_apexchart = await module.InvokeAsync<IJSObjectReference>("getappexCahrts");
+                blazor_apexchart = await module.InvokeAsync<IJSObjectReference>("get_apexcharts");
 
 
                 isReady = true;
@@ -866,7 +866,7 @@ namespace ApexCharts
 
         private void CheckChart()
         {
-            var jsInProcess = blazor_apexchart is IJSInProcessRuntime;
+            var jsInProcess = jsRuntime is IJSInProcessRuntime;
             if (OnBeforeZoom != null && !jsInProcess)
             {
                 throw new NotSupportedException("Event 'OnBeforeZoom' is not suported in blazor server");

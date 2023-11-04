@@ -1,7 +1,7 @@
 ﻿import ApexCharts from './apexcharts.esm.js'
 
 // export function for Blazor to point to the window.blazor_apexchart. To be compatible with the most JS Interop calls the window will be return.
-export function getappexCahrts() {
+export function get_apexcharts() {
     return window;
 }
 
