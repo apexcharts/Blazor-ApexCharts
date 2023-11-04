@@ -1,0 +1,48 @@
+﻿<DemoContainer>
+    <ApexChart TItem="MyData"
+               Title="Sample Data">
+
+        <ApexPointSeries TItem="MyData"
+                         Items="Data"
+                         Name="Net Profit"
+                         SeriesType="SeriesType.Bar"
+                         XValue="e => e.Category"
+                         YValue="e=> e.NetProfit" />
+
+        <ApexPointSeries TItem="MyData"
+                         Items="Data"
+                         Name="Revenue"
+                         SeriesType="SeriesType.Bar"
+                         XValue="e => e.Category"
+                         YValue="e=> e.Revenue" />
+
+        <ApexPointSeries TItem="MyData"
+                         Items="Data"
+                         Name="Free Cash Flow"
+                         SeriesType="SeriesType.Bar"
+                         XValue="e => e.Category"
+                         YValue="e=> e.FreeCashFlow" />
+    </ApexChart>
+</DemoContainer>
+@code {
+    private List<MyData> Data { get; set; } = new();
+    protected override void OnInitialized()
+    {
+        Data.Add(new MyData { Category = "Jan", NetProfit = 12, Revenue = 33, FreeCashFlow = 23 });
+        Data.Add(new MyData { Category = "Feb", NetProfit = 43, Revenue = 42, FreeCashFlow = 32 });
+        Data.Add(new MyData { Category = "Mar", NetProfit = 112, Revenue = 23, FreeCashFlow = 135 });
+        Data.Add(new MyData { Category = "Apr", NetProfit = 12, Revenue = 22, FreeCashFlow = 32 });
+        Data.Add(new MyData { Category = "May", NetProfit = 77, Revenue = 76, FreeCashFlow = 45 });
+        Data.Add(new MyData { Category = "Jun", NetProfit = 123, Revenue = 176, FreeCashFlow = 124 });
+        Data.Add(new MyData { Category = "Jul", NetProfit = 39, Revenue = 15, FreeCashFlow = 124 });
+    }
+   
+    public class MyData
+    {
+        public string Category { get; set; }
+        public int NetProfit { get; set; }
+        public int Revenue { get; set; }
+        public int FreeCashFlow { get; set; }
+    }
+}
+
