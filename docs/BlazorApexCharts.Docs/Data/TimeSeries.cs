@@ -36,7 +36,7 @@ namespace BlazorApexCharts.Docs
         public TimeSeries GenerateNewPoint(DateTimeOffset newDate)
         {
             var rnd = new Random();
-            var value = rnd.Next(1, 100);
+            var value = rnd.Next(10, 90);
             return new TimeSeries { Date = newDate, Value = value, Quantity = rnd.Next(1, 20) };
         }
 
