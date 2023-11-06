@@ -13,7 +13,7 @@
                          SeriesType="SeriesType.Line"
                          XValue="@(e => e.Date)"
                          YValue="@(e => e.Value)"
-                         OrderByDescending="e=>e.X" />
+                         OrderBy="e=>e.X" />
     </ApexChart>
 </DemoContainer>
 
@@ -23,9 +23,13 @@
     private TimeSeriesGenerator generator = new TimeSeriesGenerator(20);
     private bool timerInitialized;
     private Timer timer;
+    private DateTimeOffset maxDate;
+    private int counter;
 
     protected override void OnInitialized()
     {
+
+
         options = new ApexChartOptions<TimeSeries>();
 
         options.Xaxis = new XAxis
@@ -73,8 +77,24 @@
 
     private async Task UpdateChartSeries()
     {
-        generator.Update();
-        await chart.UpdateSeriesAsync();
+
+        if (counter > 100) //Reset the chart
+        {
+            await chart.UpdateSeriesAsync(true);
+            counter = 0;
+            maxDate = DateTimeOffset.MinValue;
+            return;
+        }
+
+        if (maxDate == DateTimeOffset.MinValue)
+        {
+            maxDate = generator.TimeSeries.Max(e => e.Date);
+        }
+
+        maxDate = maxDate.AddDays(1);
+        await chart.AppendDataAsync(new List<TimeSeries> { generator.GenerateNewPoint(maxDate) });
+        counter++;
+
     }
 
     public void Dispose()
