@@ -16,7 +16,6 @@ namespace ApexCharts.Internal
     internal sealed class JSHandler<TItem> : IDisposable where TItem : class
     {
         private readonly ApexChart<TItem> ChartReference;
-        private readonly IJSRuntime JSRuntime2;
         private readonly DotNetObjectReference<JSHandler<TItem>> ObjectReference;
         private readonly ElementReference ChartContainer;
         private IJSObjectReference blazor_apexchart;
@@ -34,7 +33,7 @@ namespace ApexCharts.Internal
         {
             ObjectReference.Dispose();
         }
-        
+
         /// <summary>
         /// Invokes the JS renderChart method
         /// </summary>
@@ -348,7 +347,7 @@ namespace ApexCharts.Internal
         [JSInvokable]
         public void JSCustomIconClick(string id)
         {
-            if(Guid.TryParse(id, out var iconId))
+            if (Guid.TryParse(id, out var iconId))
             {
                 var icon = ChartReference.Options?.Chart?.Toolbar?.Tools?.CustomIcons.FirstOrDefault(e => e.Id == iconId);
                 icon?.OnClick.Invoke(icon);

@@ -2,6 +2,7 @@
 
 // export function for Blazor to point to the window.blazor_apexchart. To be compatible with the most JS Interop calls the window will be return.
 export function get_apexcharts() {
+    window.ApexCharts = ApexCharts
     return window;
 }
 

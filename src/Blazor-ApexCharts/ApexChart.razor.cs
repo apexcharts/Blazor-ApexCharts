@@ -368,7 +368,7 @@ namespace ApexCharts
 
         private async ValueTask InvokeVoidJsAsync(string identifier, params object[] args)
         {
-            if (blazor_apexchart is IJSInProcessObjectReference  jsInProcessRuntime)
+            if (blazor_apexchart is IJSInProcessObjectReference jsInProcessRuntime)
             {
                 jsInProcessRuntime.InvokeVoid(identifier, args);
             }
@@ -876,8 +876,6 @@ namespace ApexCharts
             {
                 throw new NotSupportedException("Event 'OnBeforeResetZoom' is not suported in blazor server");
             }
-
-
         }
 
 
@@ -900,6 +898,11 @@ namespace ApexCharts
 
         private async Task RenderChartAsync()
         {
+            if (!apexSeries.Any())
+            {
+                return;
+            }
+
             await Task.Yield();
             forceRender = false;
             PrepareChart();
@@ -916,7 +919,7 @@ namespace ApexCharts
 
                 var yAxis = Options.Yaxis.First();
 
-                if (yAxis.Labels == null) { yAxis.Labels = new YAxisLabels(); }
+                yAxis.Labels ??= new YAxisLabels();
 
                 yAxis.Labels.Formatter = @"function (value, index, w) {
                                           return window.blazor_apexchart.getYAxisLabel(value, index, w);
@@ -928,8 +931,6 @@ namespace ApexCharts
         {
             Options.Series = new List<Series<TItem>>();
             var isMixed = apexSeries.Select(e => e.GetChartType()).Distinct().Count() > 1;
-
-            if (apexSeries == null || !apexSeries.Any()) { throw new Exception($"Chart {chartId} must have at least one series"); };
 
             foreach (var apxSeries in apexSeries)
             {
@@ -998,6 +999,7 @@ namespace ApexCharts
                 try
                 {
                     InvokeAsync(async () => { await InvokeVoidJsAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
+                    InvokeAsync(async () => { await blazor_apexchart.DisposeAsync(); });
                 }
                 catch (JSDisconnectedException)
                 {

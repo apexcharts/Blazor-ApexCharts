@@ -11,7 +11,7 @@
     "BlazorApexCharts.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "features/tooltip",
+      "launchUrl": "features/syncronized",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
