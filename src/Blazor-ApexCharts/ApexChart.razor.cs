@@ -298,7 +298,7 @@ namespace ApexCharts
             if (firstRender && isReady == false)
             {
                 // load Module ftom ES6 script
-                IJSObjectReference module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/Blazor-ApexCharts/js/blazor-apex-charts.js");
+                IJSObjectReference module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js");
                 // load the  blazor_apexchart parent, currently window! to be compatyble with JS interop calls e.g blazor_apexchart.dataUri                                                                                                    
                 blazor_apexchart = await module.InvokeAsync<IJSObjectReference>("get_apexcharts");
 
