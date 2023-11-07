@@ -7,7 +7,7 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "Blazor-ApexCharts.dll": "sha256-B4DCi7x0BHQL8AwKhGs4CLXe7jfxb94D9Vbaas7r6Sc=",
+      "Blazor-ApexCharts.dll": "sha256-4sruXll4ydD4mo8dzmWBiCv4nbwVhuUo70lenPU0VMU=",
       "BlazorApexCharts.Docs.dll": "sha256-zINaCd05bXP09ouBjYRu2iZCPC2kTqzeBfR7O++OEA8=",
       "BlazorApexCharts.Docs.Wasm.dll": "sha256-AutOjhtquy1EOPFxXM3+qg0LnFxMPe0KV69LyPK0IWE=",
       "Bogus.dll": "sha256-IgFEwQyP1GQSj7cjhmsEcYuEABesDe9Y3oby2kbVnnc=",
