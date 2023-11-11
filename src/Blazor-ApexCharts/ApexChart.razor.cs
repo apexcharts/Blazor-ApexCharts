@@ -363,19 +363,27 @@ namespace ApexCharts
 
         private async ValueTask<TValue> InvokeJsAsync<TValue>(string identifier, params object[] args)
         {
-            return await blazor_apexchart.InvokeAsync<TValue>(identifier, args);
+            try
+            {
+                return await blazor_apexchart.InvokeAsync<TValue>(identifier, args);
+            }
+            catch (ObjectDisposedException) { return default; }
         }
 
         private async ValueTask InvokeVoidJsAsync(string identifier, params object[] args)
         {
-            if (blazor_apexchart is IJSInProcessObjectReference jsInProcessRuntime)
+            try
             {
-                jsInProcessRuntime.InvokeVoid(identifier, args);
+                if (blazor_apexchart is IJSInProcessObjectReference jsInProcessRuntime)
+                {
+                    jsInProcessRuntime.InvokeVoid(identifier, args);
+                }
+                else
+                {
+                    await blazor_apexchart.InvokeVoidAsync(identifier, args);
+                }
             }
-            else
-            {
-                await blazor_apexchart.InvokeVoidAsync(identifier, args);
-            }
+            catch (ObjectDisposedException) { }
         }
 
         internal void AddSeries(IApexSeries<TItem> series)
@@ -1001,9 +1009,10 @@ namespace ApexCharts
                     InvokeAsync(async () => { await InvokeVoidJsAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
                     InvokeAsync(async () => { await blazor_apexchart.DisposeAsync(); });
                 }
-                catch (JSDisconnectedException)
-                {
-                }
+                catch (JSDisconnectedException) { }
+                catch (ObjectDisposedException) { }
+
+
             }
             JSHandler?.Dispose();
         }
