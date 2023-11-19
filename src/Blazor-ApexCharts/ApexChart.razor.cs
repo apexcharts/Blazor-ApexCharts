@@ -304,7 +304,7 @@ namespace ApexCharts
 
 
                 isReady = true;
-                JSHandler = new JSHandler<TItem>(this, ChartContainer, blazor_apexchart);
+                JSHandler = new JSHandler<TItem>(this);
             }
 
             if (isReady && forceRender)
@@ -914,7 +914,30 @@ namespace ApexCharts
             await Task.Yield();
             forceRender = false;
             PrepareChart();
-            await JSHandler.RenderChartAsync();
+         
+            await InvokeVoidJsAsync("blazor_apexchart.renderChart", JSHandler.ObjectReference, ChartContainer, JsonSerializer.Serialize(Options, ChartSerializer.GetOptions<TItem>()), new JSEvents()
+            {
+                HasDataPointSelection = OnDataPointSelection.HasDelegate,
+                HasDataPointEnter = OnDataPointEnter.HasDelegate || ApexPointTooltip != null,
+                HasDataPointLeave = OnDataPointLeave.HasDelegate,
+                HasLegendClick = OnLegendClicked.HasDelegate,
+                HasMarkerClick = OnMarkerClick.HasDelegate,
+                HasXAxisLabelClick = OnXAxisLabelClick.HasDelegate,
+                HasSelection = OnSelection.HasDelegate,
+                HasBrushScrolled = OnBrushScrolled.HasDelegate,
+                HasZoomed = OnZoomed.HasDelegate,
+                HasAnimationEnd = OnAnimationEnd.HasDelegate,
+                HasBeforeMount = OnBeforeMount.HasDelegate,
+                HasMounted = OnMounted.HasDelegate,
+                HasUpdated = OnUpdated.HasDelegate,
+                HasMouseLeave = OnMouseLeave.HasDelegate,
+                HasMouseMove = OnMouseMove.HasDelegate,
+                HasClick = OnClick.HasDelegate,
+                HasBeforeZoom = OnBeforeZoom != null,
+                HasBeforeResetZoom = OnBeforeResetZoom != null,
+                HasScrolled = OnScrolled.HasDelegate
+            });
+
             await OnRendered.InvokeAsync();
         }
 
