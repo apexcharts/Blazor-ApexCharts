@@ -16,51 +16,18 @@ namespace ApexCharts.Internal
     internal sealed class JSHandler<TItem> : IDisposable where TItem : class
     {
         private readonly ApexChart<TItem> ChartReference;
-        private readonly DotNetObjectReference<JSHandler<TItem>> ObjectReference;
-        private readonly ElementReference ChartContainer;
-        private IJSObjectReference blazor_apexchart;
+        internal readonly DotNetObjectReference<JSHandler<TItem>> ObjectReference;
 
-        internal JSHandler(ApexChart<TItem> chartReference, ElementReference chartContainer, IJSObjectReference blazor_apexchart)
+        internal JSHandler(ApexChart<TItem> chartReference)
         {
             ObjectReference = DotNetObjectReference.Create(this);
-            ChartContainer = chartContainer;
             ChartReference = chartReference;
-            this.blazor_apexchart = blazor_apexchart;
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
             ObjectReference.Dispose();
-        }
-
-        /// <summary>
-        /// Invokes the JS renderChart method
-        /// </summary>
-        public async Task RenderChartAsync()
-        {
-            await blazor_apexchart.InvokeVoidAsync("blazor_apexchart.renderChart", ObjectReference, ChartContainer, JsonSerializer.Serialize(ChartReference.Options, ChartSerializer.GetOptions<TItem>()), new JSEvents()
-            {
-                HasDataPointSelection = ChartReference.OnDataPointSelection.HasDelegate,
-                HasDataPointEnter = ChartReference.OnDataPointEnter.HasDelegate || ChartReference.ApexPointTooltip != null,
-                HasDataPointLeave = ChartReference.OnDataPointLeave.HasDelegate,
-                HasLegendClick = ChartReference.OnLegendClicked.HasDelegate,
-                HasMarkerClick = ChartReference.OnMarkerClick.HasDelegate,
-                HasXAxisLabelClick = ChartReference.OnXAxisLabelClick.HasDelegate,
-                HasSelection = ChartReference.OnSelection.HasDelegate,
-                HasBrushScrolled = ChartReference.OnBrushScrolled.HasDelegate,
-                HasZoomed = ChartReference.OnZoomed.HasDelegate,
-                HasAnimationEnd = ChartReference.OnAnimationEnd.HasDelegate,
-                HasBeforeMount = ChartReference.OnBeforeMount.HasDelegate,
-                HasMounted = ChartReference.OnMounted.HasDelegate,
-                HasUpdated = ChartReference.OnUpdated.HasDelegate,
-                HasMouseLeave = ChartReference.OnMouseLeave.HasDelegate,
-                HasMouseMove = ChartReference.OnMouseMove.HasDelegate,
-                HasClick = ChartReference.OnClick.HasDelegate,
-                HasBeforeZoom = ChartReference.OnBeforeZoom != null,
-                HasBeforeResetZoom = ChartReference.OnBeforeResetZoom != null,
-                HasScrolled = ChartReference.OnScrolled.HasDelegate
-            });
         }
 
         /// <summary>
