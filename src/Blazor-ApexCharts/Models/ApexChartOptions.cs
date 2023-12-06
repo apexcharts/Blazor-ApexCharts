@@ -774,6 +774,11 @@ namespace ApexCharts
     /// </remarks>
     public class Chart
     {
+        /// <summary>
+        /// Indicates if only bar series should be stacked. Valid in mixed charts
+        /// </summary>
+        public bool? StackOnlyBar { get; set; }
+
         /// <inheritdoc cref="ApexCharts.Animations" />
         public Animations Animations { get; set; }
 
@@ -4020,6 +4025,9 @@ namespace ApexCharts
     /// </remarks>
     public class Tooltip
     {
+     
+        public bool? HideEmptyShared { get; set; } 
+
         /// <inheritdoc cref="ApexCharts.CustomFunction"/>
         /// <summary>
         /// Draw a custom html tooltip instead of the default one based on the values provided in the function arguments.
