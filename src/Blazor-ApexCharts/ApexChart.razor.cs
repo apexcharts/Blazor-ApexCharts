@@ -363,6 +363,8 @@ namespace ApexCharts
 
         private async ValueTask<TValue> InvokeJsAsync<TValue>(string identifier, params object[] args)
         {
+            if(blazor_apexchart == null) { return default; }
+
             try
             {
                 return await blazor_apexchart.InvokeAsync<TValue>(identifier, args);
@@ -372,6 +374,8 @@ namespace ApexCharts
 
         private async ValueTask InvokeVoidJsAsync(string identifier, params object[] args)
         {
+            if (blazor_apexchart == null) { return; }
+
             try
             {
                 if (blazor_apexchart is IJSInProcessObjectReference jsInProcessRuntime)
@@ -1025,7 +1029,7 @@ namespace ApexCharts
         {
             GC.SuppressFinalize(this);
 
-            if (Options.Chart?.Id != null && isReady)
+            if (Options.Chart?.Id != null && isReady && blazor_apexchart != null)
             {
                 try
                 {
