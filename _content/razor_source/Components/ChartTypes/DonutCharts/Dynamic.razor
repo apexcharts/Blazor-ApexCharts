@@ -1,0 +1,61 @@
+﻿<DemoContainer>
+    <Button class="mb-2" OnClick=UpdateChartSeries BackgroundColor="TablerColor.Primary">Update Series</Button>
+
+    @if (forecasts != null)
+    {
+        <ApexChart TItem="WeatherForecast"
+                   Title="Temp C"
+        @ref="chart">
+
+            <ApexPointSeries TItem="WeatherForecast"
+                             Items="forecasts"
+                             Name="Temp C"
+                             XValue="@(e => e.Summary)"
+                             YValue="@(e => e.TemperatureC)"
+                             SeriesType="SeriesType.Donut" />
+        </ApexChart>
+    }
+</DemoContainer>
+
+<div>
+    <Table Items="forecasts">
+        <Column Item="WeatherForecast" Property="e=> e.Summary" />
+        <Column Item="WeatherForecast" Property="e=> e.TemperatureC" />
+    </Table>
+</div>
+
+@code {
+    private List<WeatherForecast> forecasts { get; set; }
+    private ApexChart<WeatherForecast> chart;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync(2); // get small sample first
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadDataAsync(int? limit)
+    {
+        var tempForecast = await SampleData.GetForecastAsync(DateTime.Today);
+
+        var groupedData = tempForecast.GroupBy(x => x.Summary)
+                          .Select(x => new WeatherForecast()
+                              {
+                                  Date = x.First().Date,
+                                  Summary = x.First().Summary,
+                                  TemperatureC = x.Sum(y => Math.Abs(y.TemperatureC)) // easier to compare with positive values
+                              })
+                          .ToList();
+
+        forecasts = limit.HasValue
+            ? groupedData.Take(limit.Value).ToList()
+            : groupedData.ToList();
+    }
+
+    private async Task UpdateChartSeries()
+    {
+        await LoadDataAsync(null); // get full sample on update
+               await chart.UpdateOptionsAsync(true, true, false);
+    }
+}
