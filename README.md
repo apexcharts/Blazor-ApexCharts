@@ -1,4 +1,5 @@
 
+
 ![.NET Core](https://github.com/joadan/Blazor-ApexCharts/workflows/.NET%20Core/badge.svg?branch=master)
 
 
@@ -36,6 +37,12 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 ```csharp
 @using ApexCharts;
 ```
+
+### .Net 8
+If you are on .NET 8 you need to set the rendermode to Interactive.
+
+*Interactive Server, Interactive WebAssembly or Interactive Auto*
+
 
 ### Your first chart
 ```csharp
