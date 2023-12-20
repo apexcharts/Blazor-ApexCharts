@@ -4025,8 +4025,9 @@ namespace ApexCharts
     /// </remarks>
     public class Tooltip
     {
-     
-        public bool? HideEmptyShared { get; set; } 
+        public bool? HideEmptySeries { get; set; }
+
+        public bool? HideEmptyShared { get; set; }
 
         /// <inheritdoc cref="ApexCharts.CustomFunction"/>
         /// <summary>
