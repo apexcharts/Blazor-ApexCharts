@@ -7,9 +7,9 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "Blazor-ApexCharts.dll": "sha256-wxEQRCOZiKd8+pnMvwsCIOAF2BZ6A01cZjfwq8z6B\/w=",
-      "BlazorApexCharts.Docs.dll": "sha256-QBfRoEgNNWBmPOezRTpLDIWa2frFnXVzTHhdgFM3Ds8=",
-      "BlazorApexCharts.Docs.Wasm.dll": "sha256-MhftgmERbdeZmv61RLugpQCSX1Tenu1WRmzEtW1ETmo=",
+      "Blazor-ApexCharts.dll": "sha256-tljz0GhSFPsWTHx60AZSthlZqWf2ffqmLoWFmXR5OVA=",
+      "BlazorApexCharts.Docs.dll": "sha256-+x3py+amj0xpQ9GwBFxzLdWMzM39lizF28VCVLdSu40=",
+      "BlazorApexCharts.Docs.Wasm.dll": "sha256-9ZHCWCLRtHHVXL7BP\/MoirA+NtyoV2ERLybMM2thhHA=",
       "Bogus.dll": "sha256-IgFEwQyP1GQSj7cjhmsEcYuEABesDe9Y3oby2kbVnnc=",
       "ColorCode.Core.dll": "sha256-aIfJCjDE9QfwEHpKt97+\/fHH0ahMOa\/TdeVTcU3lBsY=",
       "ColorCode.HTML.dll": "sha256-HKP0W0ZaaitLH4eoIUYTqVMArDi2WugRXgZOSjrj9\/k=",
@@ -48,7 +48,7 @@
       "System.Net.Http.dll": "sha256-xqDBwIY72hTRULngAnRio7xF3RaOdXszZAR1AqGb6jw=",
       "System.Net.Primitives.dll": "sha256-TFaLdFzD3+RK2HJgImc9rvy+mfXg00Jqz9S8eS38g5s=",
       "System.ObjectModel.dll": "sha256-LBdRuGI7bTKDbnJFDXRwT7QWSJMpnXLHbaNzCacAyp8=",
-      "System.Private.CoreLib.dll": "sha256-Dbfx94zJtKSUBOuyToqcW6V0slyABe8i+UQ9uos3Hzw=",
+      "System.Private.CoreLib.dll": "sha256-KkTQJr0+v9IM4GBAl5NPTVCTc1jIi8yujAdb8+h98AQ=",
       "System.Private.Runtime.InteropServices.JavaScript.dll": "sha256-FrB7gWzVgqMDtt58nfx2FwYUmKMcb8s4iGiJqWkfewQ=",
       "System.Private.Uri.dll": "sha256-MflebOE4RoVPxHVykjIsqS4JwHThO3Q4\/gqdv\/mC5Z0=",
       "System.Runtime.CompilerServices.Unsafe.dll": "sha256-rDKkeka3HTY4I6duLyxHDH1E6z640GscRf7ye77y6kU=",
