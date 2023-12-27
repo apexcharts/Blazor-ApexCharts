@@ -17,10 +17,14 @@ window.blazor_apexchart = {
 
         if (w !== undefined) {
             return w.config.dotNetObject.invokeMethod('JSGetFormattedYAxisValue', value);
-        };
+        }
 
-        if (index !== undefined) {
+        if (index !== undefined && index.w !== undefined && index.w.config !== undefined) {
             return index.w.config.dotNetObject.invokeMethod('JSGetFormattedYAxisValue', value);
+        }
+
+        if (index !== undefined && index.config !== undefined && index.config.dotNetObject !== undefined) {
+            return index.config.dotNetObject.invokeMethod('JSGetFormattedYAxisValue', value);
         }
 
         return value;
