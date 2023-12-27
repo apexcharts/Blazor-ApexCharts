@@ -23,7 +23,7 @@ As of version 2.0 javascript interop on WASM is running synchronously for better
 
 
 ## Installation
-### Nuget
+### NuGet
 [Blazor-ApexCharts](https://www.nuget.org/packages/Blazor-ApexCharts/)
 
 ```bash
@@ -34,18 +34,18 @@ dotnet add package Blazor-ApexCharts
 
 ### Imports
 Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
-```csharp
-@using ApexCharts;
+```razor
+@using ApexCharts
 ```
 
-### .Net 8
+### .NET 8
 If you are on .NET 8 you need to set the rendermode to Interactive.
 
 *Interactive Server, Interactive WebAssembly or Interactive Auto*
 
 
 ### Your first chart
-```csharp
+```razor
     <ApexChart TItem="MyData"
                Title="Sample Data">
 
@@ -84,7 +84,7 @@ If you are on .NET 8 you need to set the rendermode to Interactive.
 
 
 ### Chart Options
-Apex Chart options are available in the ApexChartOptions class that can be passed to the chart. More info in Apex documentation [ApexCharts Docs](https://apexcharts.com/docs/options/).
+Apex Chart options are available in the `ApexChartOptions` class that can be passed to the chart. More info in Apex documentation [ApexCharts Docs](https://apexcharts.com/docs/options/).
 
 ## Acknowledgments
 Credits to [@thirstyape](https://github.com/thirstyape) for making production release possible.
