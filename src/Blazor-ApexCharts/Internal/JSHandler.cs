@@ -38,12 +38,12 @@ namespace ApexCharts.Internal
         /// Will execute <see cref="ApexChart{TItem}.FormatYAxisLabel"/>
         /// </remarks>
         [JSInvokable]
-        public string JSGetFormattedYAxisValue(object value)
+        public string JSGetFormattedYAxisValue(JsonElement value)
         {
-            if (value == null) { return ""; }
+            if (value.ValueKind == JsonValueKind.Null) { return ""; }
             if (ChartReference.FormatYAxisLabel == null) { return value.ToString(); }
 
-            if (decimal.TryParse(value.ToString(), out var decimalValue))
+            if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var decimalValue))
             {
                 return ChartReference.FormatYAxisLabel.Invoke(decimalValue);
             }
