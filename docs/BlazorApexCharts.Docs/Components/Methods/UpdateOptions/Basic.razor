@@ -38,6 +38,8 @@
     private bool animate = false;
     private string currentColor = "#FF0000";
 
+   
+
     private string GetTitle()
     {
         return "Time: " + DateTimeOffset.Now.ToString("T");
@@ -58,12 +60,23 @@
     private async Task RenderChart()
     {
         ToogleColor();
+        UpdateData();
         await chart.RenderAsync();
+    }
+
+    private void UpdateData()
+    {
+        Random rand = new Random();
+        foreach (var order in orders)
+        {
+            order.GrossValue = Math.Round(order.GrossValue * ((decimal)rand.NextDouble() + 1), 0);
+        }
     }
 
     private async Task UpdateOptions()
     {
         ToogleColor();
+        UpdateData();
         await chart.UpdateOptionsAsync(redrawPaths, animate, false);
     }
 }
