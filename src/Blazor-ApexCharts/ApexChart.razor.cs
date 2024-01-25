@@ -363,13 +363,16 @@ namespace ApexCharts
 
         private async ValueTask<TValue> InvokeJsAsync<TValue>(string identifier, params object[] args)
         {
-            if(blazor_apexchart == null) { return default; }
+            if (blazor_apexchart == null) { return default; }
 
             try
             {
                 return await blazor_apexchart.InvokeAsync<TValue>(identifier, args);
             }
-            catch (ObjectDisposedException) { return default; }
+            catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+            {
+                return default;
+            }
         }
 
         private async ValueTask InvokeVoidJsAsync(string identifier, params object[] args)
@@ -387,7 +390,8 @@ namespace ApexCharts
                     await blazor_apexchart.InvokeVoidAsync(identifier, args);
                 }
             }
-            catch (ObjectDisposedException) { }
+            catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+            {}
         }
 
         internal void AddSeries(IApexSeries<TItem> series)
@@ -918,7 +922,7 @@ namespace ApexCharts
             await Task.Yield();
             forceRender = false;
             PrepareChart();
-         
+
             await InvokeVoidJsAsync("blazor_apexchart.renderChart", JSHandler.ObjectReference, ChartContainer, JsonSerializer.Serialize(Options, ChartSerializer.GetOptions<TItem>()), new JSEvents()
             {
                 HasDataPointSelection = OnDataPointSelection.HasDelegate,
@@ -1036,8 +1040,8 @@ namespace ApexCharts
                     InvokeAsync(async () => { await InvokeVoidJsAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
                     InvokeAsync(async () => { await blazor_apexchart.DisposeAsync(); });
                 }
-                catch (JSDisconnectedException) { }
-                catch (ObjectDisposedException) { }
+                catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+                {}
 
 
             }
