@@ -153,6 +153,12 @@ namespace ApexCharts
         public double? ShadeIntensity { get; set; }
 
         /// <summary>
+        /// Border radius for the treemap symbol
+        /// </summary>
+        public double? BorderRadius { get; set; }
+        
+
+        /// <summary>
         /// When turned on, each series in a treemap will have it's own lowest and highest range and colors will be shaded for each series. Default value is false.
         /// </summary>
         public bool? Distributed { get; set; }
