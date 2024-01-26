@@ -17,9 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="34.0.2" />
-    <PackageReference Include="ColorCode.HTML" Version="2.0.13" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.3" />
+    <PackageReference Include="Bogus" Version="35.4.0" />
+    <PackageReference Include="ColorCode.HTML" Version="2.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.26" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="TabBlazor" Version="0.7.2-alpha" />
   </ItemGroup>
