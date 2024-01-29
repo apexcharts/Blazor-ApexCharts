@@ -256,6 +256,68 @@ namespace ApexCharts
         [Parameter] public EventCallback OnRendered { get; set; }
 
         /// <summary>
+        /// Fires when user click an annotation label.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        ///
+        /// <see href="https://apexcharts.com/docs/options/annotations/">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<AnnotationEvent<TItem>> OnAnnotationLabelClick { get; set; }
+
+        /// <summary>
+        /// Fires when user mouse enters an annotation label.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        ///
+        /// <see href="https://apexcharts.com/docs/options/annotations/">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<AnnotationEvent<TItem>> OnAnnotationLabelMouseEnter { get; set; }
+
+        /// <summary>
+        /// Fires when user mouse leaves an annotation label.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        ///
+        /// <see href="https://apexcharts.com/docs/options/annotations/">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<AnnotationEvent<TItem>> OnAnnotationLabelMouseLeave { get; set; }
+
+
+        /// <summary>
+        /// Fires when user click an annotation point.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        ///
+        /// <see href="https://apexcharts.com/docs/options/annotations/">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<AnnotationEvent<TItem>> OnAnnotationPointClick { get; set; }
+
+        /// <summary>
+        /// Fires when user mouse enters an annotation point.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        ///
+        /// <see href="https://apexcharts.com/docs/options/annotations/">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<AnnotationEvent<TItem>> OnAnnotationPointMouseEnter { get; set; }
+
+        /// <summary>
+        /// Fires when user mouse leaves an annotation point.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        ///
+        /// <see href="https://apexcharts.com/docs/options/annotations/">JavaScript Documentation</see>
+        /// </remarks>
+        [Parameter] public EventCallback<AnnotationEvent<TItem>> OnAnnotationPointMouseLeave { get; set; }
+
+
+        /// <summary>
         /// A custom function to execute for generating Y-axis labels. Only supported in Blazor WebAssembly!
         /// </summary>
         /// <remarks>
@@ -391,7 +453,7 @@ namespace ApexCharts
                 }
             }
             catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
-            {}
+            { }
         }
 
         internal void AddSeries(IApexSeries<TItem> series)
@@ -878,6 +940,10 @@ namespace ApexCharts
             UpdateDataForNoAxisCharts();
             SetDotNetFormatters();
             SetCustomTooltip();
+            SetAnnotationLabelEvents();
+            SetAnnotationPointEvents();
+
+
         }
 
         private void CheckChart()
@@ -891,6 +957,86 @@ namespace ApexCharts
             if (OnBeforeResetZoom != null && !jsInProcess)
             {
                 throw new NotSupportedException("Event 'OnBeforeResetZoom' is not suported in blazor server");
+            }
+        }
+
+        private void SetAnnotationPointEvents()
+        {
+            if (!OnAnnotationPointClick.HasDelegate && !OnAnnotationPointMouseEnter.HasDelegate && !OnAnnotationPointMouseLeave.HasDelegate)
+            {
+                return;
+            }
+
+            var annotations = Options?.Annotations?.Points;
+            if (annotations == null || !annotations.Any()) { return; }
+
+            foreach (var annotation in annotations)
+            {
+                SetAnnotationPointEvent(annotation);
+            }
+        }
+
+        private void SetAnnotationLabelEvents()
+        {
+            if (!OnAnnotationLabelClick.HasDelegate && !OnAnnotationLabelMouseEnter.HasDelegate && !OnAnnotationLabelMouseLeave.HasDelegate)
+            {
+                return;
+            }
+
+            var annotations = Options?.Annotations?.GetAllAnnotations();
+            if (annotations == null || !annotations.Any()) { return; }
+
+            foreach (var annotation in annotations)
+            {
+                SetAnnotationLabelEvent(annotation);
+            }
+        }
+
+        private void SetAnnotationPointEvent(AnnotationsPoint annotation)
+        {
+
+            if (string.IsNullOrWhiteSpace(annotation.Id))
+            {
+                annotation.Id = Guid.NewGuid().ToString();
+            }
+
+            if (OnAnnotationLabelClick.HasDelegate)
+            {
+                annotation.SetEventFunction(AnnotationEventType.Click);
+            }
+
+            if (OnAnnotationLabelMouseEnter.HasDelegate)
+            {
+                annotation.SetEventFunction(AnnotationEventType.MouseEnter);
+            }
+
+            if (OnAnnotationLabelMouseLeave.HasDelegate)
+            {
+                annotation.SetEventFunction(AnnotationEventType.MouseLeave);
+            }
+        }
+
+        private void SetAnnotationLabelEvent(IAnnotation annotation)
+        {
+
+            if (string.IsNullOrWhiteSpace(annotation.Id))
+            {
+                annotation.Id = Guid.NewGuid().ToString();
+            }
+
+            if (OnAnnotationLabelClick.HasDelegate)
+            {
+                annotation.Label.SetEventFunction(AnnotationEventType.Click);
+            }
+
+            if (OnAnnotationLabelMouseEnter.HasDelegate)
+            {
+                annotation.Label.SetEventFunction(AnnotationEventType.MouseEnter);
+            }
+
+            if (OnAnnotationLabelMouseLeave.HasDelegate)
+            {
+                annotation.Label.SetEventFunction(AnnotationEventType.MouseLeave);
             }
         }
 
@@ -1041,7 +1187,7 @@ namespace ApexCharts
                     InvokeAsync(async () => { await blazor_apexchart.DisposeAsync(); });
                 }
                 catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
-                {}
+                { }
 
 
             }

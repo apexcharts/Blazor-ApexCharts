@@ -145,4 +145,77 @@ namespace ApexCharts
         /// </summary>
         public decimal? Max { get; set; }
     }
+
+
+    /// <summary>
+    /// Return data sent when <see cref="ApexChart{TItem}.OnSelection"/> or <see cref="ApexChart{TItem}.OnBrushScrolled"/> are invoked
+    /// </summary>
+    /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
+    public class AnnotationEvent<TItem> where TItem : class
+    {
+        /// <summary>
+        /// A reference to the chart where data has been selected
+        /// </summary>
+        public ApexChart<TItem> Chart { get; set; }
+
+        /// <summary>
+        /// The Id of the annotation
+        /// </summary>
+        public string AnnotationId { get; set; }
+
+        /// <summary>
+        /// The event Target
+        /// </summary>
+        public AnnotationEventTarget Target { get; set; }
+
+        /// <summary>
+        /// The type of event
+        /// </summary>
+        public AnnotationEventType EventType { get; set; }
+
+        /// <summary>
+        /// Annotation where the event occurd
+        /// </summary>
+        public IAnnotation Annotation { get; set; }
+
+    }
+
+    /// <summary>
+    /// Indicates the Event type
+    /// </summary>
+    public enum AnnotationEventTarget
+    {
+        /// <summary>
+        /// Target Label
+        /// </summary>
+        Label,
+
+        /// <summary>
+        /// Target Point
+        /// </summary>
+        Point,
+
+
+    }
+
+    /// <summary>
+    /// Indicates the Event type
+    /// </summary>
+    public enum AnnotationEventType
+    {
+        /// <summary>
+        /// Click Event
+        /// </summary>
+        Click,
+        
+        /// <summary>
+        /// Mouse Leave
+        /// </summary>
+        MouseLeave,
+
+       /// <summary>
+       /// Mouse Enter
+       /// </summary>
+        MouseEnter,
+    }
 }
