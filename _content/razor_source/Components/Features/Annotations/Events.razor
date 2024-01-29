@@ -1,0 +1,92 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Scatter Sample"
+               Options=options
+               OnAnnotationLabelClick="AnnotationEvent"
+               OnAnnotationLabelMouseEnter="AnnotationEvent"
+               OnAnnotationLabelMouseLeave="AnnotationEvent"
+               OnAnnotationPointClick="AnnotationEvent"
+               OnAnnotationPointMouseEnter="AnnotationEvent"
+               OnAnnotationPointMouseLeave="AnnotationEvent"
+               Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="% Gross"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.GrossValue)"
+                         OrderByDescending="e=>e.X" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType="SeriesType.Bar"
+                         Name="% Net"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.NetValue)"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+
+    <h3 class="mt-3">@message</h3>
+
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
+    
+    private string message;
+
+    protected override void OnInitialized()
+    {
+
+        options.Annotations = new Annotations
+            {
+                Xaxis = new List<AnnotationsXAxis> { new AnnotationsXAxis
+                        {
+                           Label = new Label {
+                                Text = "X Annotation",
+                                Style = new Style{ Background="red" }
+                           },
+                           X = 40,
+                           StrokeDashArray = 2,
+                           BorderColor = "red"
+                        }
+                        },
+
+                Points = new List<AnnotationsPoint> { new AnnotationsPoint
+                        {
+                           Label = new Label {
+                                Text = "Point!!",
+                                Style = new Style{ Background="yellow" }
+                           },
+                         X = 20,
+                         Y = 50000
+                        }
+                        },
+
+                Yaxis = new List<AnnotationsYAxis> { new AnnotationsYAxis
+                        {
+                            Label = new Label
+                            {
+                                Text = "Y Annotation",
+                                Style = new Style { Background = "blue", Color="white"}
+                            },
+                            Y = 70000,
+                            BorderColor = "blue",
+                            StrokeDashArray = 0
+                        }
+                        }
+
+
+            };
+    }
+
+
+    private void AnnotationEvent(AnnotationEvent<Order> e)
+    {
+        message = $"{e.EventType} {e.Target}: '{e.Annotation?.Label?.Text}' [{e.AnnotationId}]";
+    }
+
+
+}
