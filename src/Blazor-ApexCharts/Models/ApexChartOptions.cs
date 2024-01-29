@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ApexCharts.Internal;
+using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -156,7 +158,7 @@ namespace ApexCharts
         /// Border radius for the treemap symbol
         /// </summary>
         public double? BorderRadius { get; set; }
-        
+
 
         /// <summary>
         /// When turned on, each series in a treemap will have it's own lowest and highest range and colors will be shaded for each series. Default value is false.
@@ -272,6 +274,31 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.AnnotationsYAxis" />
         public List<AnnotationsYAxis> Yaxis { get; set; }
+
+
+        internal List<IAnnotation> GetAllAnnotations()
+        {
+            var result = new List<IAnnotation>();
+
+            if (Points != null)
+            {
+                result.AddRange(Points);
+            }
+
+            if (Xaxis != null)
+            {
+                result.AddRange(Xaxis);
+            }
+
+            if (Yaxis != null)
+            {
+                result.AddRange(Yaxis);
+            }
+
+            return result;
+
+        }
+
     }
 
     /// <summary>
@@ -313,7 +340,7 @@ namespace ApexCharts
     /// <summary>
     /// Defines details for individual data annotation points
     /// </summary>
-    public class AnnotationsPoint
+    public class AnnotationsPoint : IAnnotation
     {
         /// <summary>
         /// Undocumented, this property exists in the TypeScript definition
@@ -348,6 +375,41 @@ namespace ApexCharts
         /// When there are multiple y-axis, setting this options will put the point annotation for that particular y-axis' y value
         /// </summary>
         public double? YAxisIndex { get; set; }
+
+        /// <summary>
+        /// Click function
+        /// </summary>
+        public string Click { get; internal set; }
+
+        /// <summary>
+        /// Mouse Enter function
+        /// </summary>
+        public string MouseEnter { get; internal set; }
+
+        /// <summary>
+        /// Mouse Leave function
+        /// </summary>
+        public string MouseLeave { get; internal set; }
+
+
+        internal void SetEventFunction(AnnotationEventType eventType)
+        {
+            var eventFunction = "function(annotation, e) {this.w.config.dotNetObject.invokeMethodAsync('JSAnnotationPointEvent',{id: annotation.id, eventType: '" + eventType.ToString() + "'});}";
+
+            switch (eventType)
+            {
+                case AnnotationEventType.Click:
+                    Click = eventFunction;
+                    return;
+
+                case AnnotationEventType.MouseLeave:
+                    MouseLeave = eventFunction;
+                    return;
+                case AnnotationEventType.MouseEnter:
+                    MouseEnter = eventFunction;
+                    return;
+            }
+        }
     }
 
     /// <summary>
@@ -433,7 +495,42 @@ namespace ApexCharts
         /// The alignment of text relative to label's drawing position
         /// </summary>
         public TextAnchor? TextAnchor { get; set; }
+
+        /// <summary>
+        /// Click function
+        /// </summary>
+        public string Click { get; internal set; }
+
+        /// <summary>
+        /// Mouse Enter function
+        /// </summary>
+        public string MouseEnter { get; internal set; }
+
+        /// <summary>
+        /// Mouse Leave function
+        /// </summary>
+        public string MouseLeave { get; internal set; }
+
+        internal void SetEventFunction(AnnotationEventType eventType)
+        {
+            var eventFunction = "function(annotation, e) {this.w.config.dotNetObject.invokeMethodAsync('JSAnnotationLabelEvent',{id: annotation.id, eventType: '" + eventType.ToString() + "'});}";
+
+            switch (eventType)
+            {
+                case AnnotationEventType.Click:
+                    Click = eventFunction;
+                    return;
+
+                case AnnotationEventType.MouseLeave:
+                    MouseLeave = eventFunction;
+                    return;
+                case AnnotationEventType.MouseEnter:
+                    MouseEnter = eventFunction;
+                    return;
+            }
+        }
     }
+
 
     /// <summary>
     /// Defines the styling options for the annotation label
@@ -645,7 +742,7 @@ namespace ApexCharts
     /// <summary>
     /// Defines how to style the X-Axis for a data annotation point
     /// </summary>
-    public class AnnotationsXAxis
+    public class AnnotationsXAxis : IAnnotation
     {
         /// <summary>
         /// Undocumented, this property exists in the TypeScript definition
@@ -704,7 +801,7 @@ namespace ApexCharts
     /// <summary>
     /// Defines how to style the Y-Axis for a data annotation point
     /// </summary>
-    public class AnnotationsYAxis
+    public class AnnotationsYAxis : IAnnotation
     {
         /// <summary>
         /// Undocumented, this property exists in the TypeScript definition

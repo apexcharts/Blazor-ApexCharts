@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -465,6 +466,73 @@ namespace ApexCharts.Internal
             };
 
             ChartReference.OnScrolled.InvokeAsync(selectionData);
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on Annotaion Label Event (Click, MouseLeave, MouseEnter)
+        /// </summary>
+        /// <param name="jsAnnotationEvent">Details from JavaScript</param>
+        [JSInvokable]
+        public void JSAnnotationLabelEvent(JSAnnotationEvent jsAnnotationEvent)
+        {
+            var eventData = new AnnotationEvent<TItem>
+            {
+                Chart = ChartReference,
+                AnnotationId = jsAnnotationEvent.Id,
+                Annotation = ChartReference?.Options.Annotations.GetAllAnnotations().FirstOrDefault(e => e.Id == jsAnnotationEvent.Id),
+                Target = AnnotationEventTarget.Label
+            };
+
+            switch (jsAnnotationEvent.EventType)
+            {
+                case "Click":
+                    eventData.EventType = AnnotationEventType.Click;
+                    ChartReference.OnAnnotationLabelClick.InvokeAsync(eventData);
+                    return;
+
+                case "MouseLeave":
+                    eventData.EventType = AnnotationEventType.MouseLeave;
+                    ChartReference.OnAnnotationLabelMouseLeave.InvokeAsync(eventData);
+                    return;
+                case "MouseEnter":
+                    eventData.EventType = AnnotationEventType.MouseEnter;
+                    ChartReference.OnAnnotationLabelMouseEnter.InvokeAsync(eventData);
+                    return;
+            }
+        }
+
+        /// <summary>
+        /// Callback from JavaScript on Annotaion Label Event (Click, MouseLeave, MouseEnter)
+        /// </summary>
+        /// <param name="jsAnnotationEvent">Details from JavaScript</param>
+        [JSInvokable]
+        public void JSAnnotationPointEvent(JSAnnotationEvent jsAnnotationEvent)
+        {
+            var eventData = new AnnotationEvent<TItem>
+            {
+                Chart = ChartReference,
+                AnnotationId = jsAnnotationEvent.Id,
+                Annotation = ChartReference?.Options.Annotations.GetAllAnnotations().FirstOrDefault(e => e.Id == jsAnnotationEvent.Id),
+                Target = AnnotationEventTarget.Point
+            };
+
+            switch (jsAnnotationEvent.EventType)
+            {
+                case "Click":
+                    eventData.EventType = AnnotationEventType.Click;
+                    ChartReference.OnAnnotationPointClick.InvokeAsync(eventData);
+                    return;
+
+                case "MouseLeave":
+                    eventData.EventType = AnnotationEventType.MouseLeave;
+                    ChartReference.OnAnnotationPointMouseLeave.InvokeAsync(eventData);
+                    return;
+                case "MouseEnter":
+                    eventData.EventType = AnnotationEventType.MouseEnter;
+                    ChartReference.OnAnnotationPointMouseEnter.InvokeAsync(eventData);
+                    return;
+            }
+
         }
     }
 }
