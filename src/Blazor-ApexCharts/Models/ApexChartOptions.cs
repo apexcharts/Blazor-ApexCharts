@@ -5558,7 +5558,12 @@ namespace ApexCharts
         /// <summary>
         /// Connect the points in straight lines.
         /// </summary>
-        Straight
+        Straight,
+
+        /// <summary>
+        /// Connects the points to create a monotone cubic spline
+        /// </summary>
+        MonotoneCubic
     };
 
     /// <summary>
