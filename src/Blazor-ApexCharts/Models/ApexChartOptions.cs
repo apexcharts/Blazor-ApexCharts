@@ -4424,6 +4424,13 @@ namespace ApexCharts
         public object Min { get; set; }
 
         /// <summary>
+        /// stepSize refers to the interval between consecutive values on an x-axis. 
+        /// It determines how the values on the axis are spaced or displayed. 
+        /// If the step size is set to 10, the axis might display values like 0, 10, 20, 30, and so on.
+        /// </summary>
+        public object StepSize { get; set; }
+
+        /// <summary>
         /// Sets the left offset for label
         /// </summary>
         public double? OffsetX { get; set; }
@@ -5137,6 +5144,13 @@ namespace ApexCharts
         /// You can also pass a function here which should return a number.The function accepts an argument which by default is the smallest value in the y-axis.function(min) { return min }
         /// </remarks>
         public object Min { get; set; }
+
+        /// <summary>
+        /// stepSize refers to the interval between consecutive values on an x-axis. 
+        /// It determines how the values on the axis are spaced or displayed. 
+        /// If the step size is set to 10, the axis might display values like 0, 10, 20, 30, and so on.
+        /// </summary>
+        public object StepSize { get; set; }
 
         /// <summary>
         /// When enabled, will draw the yaxis on the right side of the chart
