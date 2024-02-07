@@ -94,7 +94,7 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.Tooltip" />
         public Tooltip Tooltip { get; set; }
-
+                
         /// <inheritdoc cref="ApexCharts.XAxis" />
         public XAxis Xaxis { get; set; }
 
@@ -4128,9 +4128,21 @@ namespace ApexCharts
     /// </remarks>
     public class Tooltip
     {
+
+        /// <summary>
+        /// Undocumented
+        /// </summary>
         public bool? HideEmptySeries { get; set; }
 
+        /// <summary>
+        /// Undocumented
+        /// </summary>
         public bool? HideEmptyShared { get; set; }
+
+        /// <summary>
+        /// Internal flag to indicate if there is a custom tooltip setup
+        /// </summary>
+        public bool CustomTooltip { get; internal set; }
 
         /// <inheritdoc cref="ApexCharts.CustomFunction"/>
         /// <summary>

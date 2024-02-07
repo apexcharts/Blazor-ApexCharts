@@ -11,7 +11,7 @@
     "BlazorApexCharts.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "features/annotations",
+      "launchUrl": "features/tooltip",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
