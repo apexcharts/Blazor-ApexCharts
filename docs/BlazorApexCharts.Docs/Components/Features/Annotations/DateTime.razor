@@ -1,0 +1,52 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order" Title="Orders Value"
+               XAxisType="XAxisType.Datetime"
+               Options="options"
+               Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.OrderDate.FirstDayOfMonth().ToUnixTimeMilliseconds())"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderBy="e=>e.X" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.OrderDate.FirstDayOfMonth().ToUnixTimeMilliseconds())"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderBy="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChartOptions<Order> options = new ApexCharts.ApexChartOptions<Order>();
+    private List<Order> orders = SampleData.GetOrders();
+
+    protected override void OnInitialized()
+    {
+
+        options.Annotations = new Annotations
+            {
+
+                Xaxis = new List<AnnotationsXAxis> { new AnnotationsXAxis
+                        {
+                           Label = new Label {
+                                Text = "Annotation!",
+                                Style = new Style{ Background="red" }
+                           },
+                           X = orders.Min(e => e.OrderDate).AddDays(30).ToUnixTimeMilliseconds(),
+                           StrokeDashArray = 2,
+                           BorderColor = "red"
+                        }
+                        }
+
+             
+
+            };
+
+    }
+}
