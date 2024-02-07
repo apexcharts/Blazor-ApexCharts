@@ -1045,17 +1045,7 @@ namespace ApexCharts
         {
             if (ApexPointTooltip == null) { return; }
             if (Options.Tooltip == null) { Options.Tooltip = new Tooltip(); }
-
-            var customTooltip = @"function({series, seriesIndex, dataPointIndex, w}) {
-                                var sourceId = 'apex-tooltip-' + w.globals.chartID;
-                                var source = document.getElementById(sourceId);
-                                if (source) {
-                                return source.innerHTML;
-                                }
-                                return '...'
-                                }";
-
-            Options.Tooltip.Custom = customTooltip;
+            Options.Tooltip.CustomTooltip = true;
         }
 
         private async Task RenderChartAsync()

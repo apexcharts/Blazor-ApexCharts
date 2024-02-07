@@ -212,6 +212,17 @@ window.blazor_apexchart = {
         options.dotNetObject = dotNetObject;
         options.chart.events = {};
 
+        if (options.tooltip != undefined && options.tooltip.customTooltip == true) {
+            options.tooltip.custom = function ({ series, seriesIndex, dataPointIndex, w }) {
+                var sourceId = 'apex-tooltip-' + w.globals.chartID;
+                var source = document.getElementById(sourceId);
+                if (source) {
+                    return source.innerHTML;
+                }
+                return '...'
+            };
+        }
+
         if (events.hasDataPointLeave === true) {
             options.chart.events.dataPointMouseLeave = function (event, chartContext, config) {
                 var selection = {
