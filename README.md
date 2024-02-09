@@ -91,4 +91,3 @@ Credits to [@thirstyape](https://github.com/thirstyape) for making production re
 
 
 [![Stargazers repo roster for @apexcharts/Blazor-ApexCharts](https://reporoster.com/stars/dark/apexcharts/Blazor-ApexCharts)](https://github.com/apexcharts/Blazor-ApexCharts/stargazers)
-
