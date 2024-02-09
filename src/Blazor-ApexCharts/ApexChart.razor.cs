@@ -712,6 +712,45 @@ namespace ApexCharts
         }
 
         /// <summary>
+        /// This method allows you to append new data to the series arrays, referencing each series by name
+        /// </summary>
+        /// <param name="items">The dictinoary with the data array to append the existing series datasets, using the key as the series name.</param>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/append-data">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/methods/#appendData">JavaScript Documentation</see>
+        /// </remarks>
+        public virtual async Task AppendDataBySeriesNameAsync(Dictionary<string, IEnumerable<TItem>> items)
+        {
+            if (IsNoAxisChart)
+            {
+                throw new Exception($"{typeof(ApexChart<TItem>)}.{nameof(AppendDataBySeriesNameAsync)}: Operation not valid for no axis charts.");
+            }
+
+            var seriesList = new List<AppendData<TItem>>();
+
+            foreach (var apxSeries in Options.Series)
+            {
+                if(items.ContainsKey(apxSeries.Name))
+                {
+                    var data = apxSeries.ApexSeries.GenerateDataPoints(items[apxSeries.Name]);
+                    var updatedData = apxSeries.Data.ToList();
+                    updatedData.AddRange(data);
+                    apxSeries.Data = updatedData;
+
+                    seriesList.Add(new AppendData<TItem>
+                    {
+                        Data = data
+                    }); ;
+                }
+            }
+
+            var json = Serialize(seriesList);
+            await InvokeVoidJsAsync("blazor_apexchart.appendData", Options.Chart.Id, json);
+        }
+
+        /// <summary>
         /// Manually zoom into the chart with the start and end X values.
         /// </summary>
         /// <param name="zoomOptions">Undefined</param>
