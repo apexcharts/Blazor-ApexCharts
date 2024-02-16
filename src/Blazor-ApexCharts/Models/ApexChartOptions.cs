@@ -487,9 +487,9 @@ namespace ApexCharts
         public Style Style { get; set; }
 
         /// <summary>
-        /// Text for tha annotation label
+        /// Text for tha annotation label (single string or List<string> to put a multine label
         /// </summary>
-        public string Text { get; set; }
+        public object Text { get; set; }
 
         /// <summary>
         /// The alignment of text relative to label's drawing position
