@@ -26,7 +26,7 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore -p:TargetFramework=net6.0
     - name: Build
       run: dotnet build --configuration Release --no-restore
       working-directory: ./src/Blazor-ApexCharts
