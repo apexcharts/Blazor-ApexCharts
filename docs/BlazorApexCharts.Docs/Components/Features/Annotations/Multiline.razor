@@ -1,0 +1,61 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Multiline Samples"
+               Options=options Debug=true>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="% Gross"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.GrossValue)"
+                         OrderByDescending="e=>e.X" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType="SeriesType.Bar"
+                         Name="% Net"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.NetValue)"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
+
+    protected override void OnInitialized()
+    {
+
+        options.Annotations = new Annotations
+            {
+                Xaxis = new List<AnnotationsXAxis> { new AnnotationsXAxis
+                    {
+                        Label = new Label {
+                            Text = new List<string>{ "X Axis 1", "X Axis 2" },
+                            // to avoid the annotation text to overlap the line
+                            OffsetX = -10,
+                        },
+                        X = 40,
+                        StrokeDashArray = 2,
+                        BorderColor = "red"
+                    }
+                },
+                Yaxis = new List<AnnotationsYAxis> { new AnnotationsYAxis
+                    {
+                        Label = new Label
+                        {
+                            Text = new List<string>{ "Y Axis 1", "Y Axis 2" },
+                            // to avoid the annotation text to overlap the line
+                            OffsetY = -20,
+                        },
+                        Y = 70000,
+                        BorderColor = "blue",
+                        StrokeDashArray = 0
+                    }
+                }
+
+            };
+    }
+}
