@@ -13,12 +13,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET Core
+    - name: Setup .NET Core 6
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+    - name: Setup .NET Core 7
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.x
+    - name: Setup .NET Core 8
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 8.0.x
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore -p:TargetFramework=net6.0
     - name: Build
       run: dotnet build --configuration Release --no-restore
       working-directory: ./src/Blazor-ApexCharts
