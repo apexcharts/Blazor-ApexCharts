@@ -1,0 +1,82 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               Options="@options">
+
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y"
+                         ShowDataLabels />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y"
+                         ShowDataLabels />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Order>
+            {
+                Chart = new Chart
+                {
+                    Toolbar = new Toolbar
+                    {
+                        Show = false
+                    },
+                    DropShadow = new DropShadow
+                    {
+                        Enabled = true,
+                        Color = "",
+                        Top = 18,
+                        Left = 7,
+                        Blur = 10,
+                        Opacity = 0.2d
+                    }
+                },
+                DataLabels = new ApexCharts.DataLabels
+                {
+                    OffsetY = -6d
+                },
+                Grid = new Grid
+                {
+                    BorderColor = "#e7e7e7",
+                    Row = new GridRow
+                    {
+                        Colors = new List<string> { "#f3f3f3", "transparent" },
+                        Opacity = 0.5d
+                    }
+                },
+                Colors = new List<string> { "#77B6EA", "#545454" },
+                Markers = new Markers { Shape = ShapeEnum.Circle, Size = 5, FillOpacity = new Opacity(0.8d) },
+                Stroke = new Stroke { Curve = Curve.Smooth },
+                Legend = new Legend
+                {
+                    Position = LegendPosition.Top,
+                    HorizontalAlign = Align.Right,
+                    Floating = true,
+                    OffsetX = -5,
+                    OffsetY = -25
+                },
+                Xaxis = new XAxis
+                {
+                    TickPlacement = TickPlacement.Between
+                }
+            };
+    }
+}
+
