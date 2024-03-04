@@ -12,16 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [6.0.x, 7.0.x, 8.0.x]
+        dotnet-version: [6, 7, 8]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup dotnet ${{ matrix.dotnet-version }}
+    - name: Setup dotnet ${{ matrix.dotnet-version }}.0.x
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: ${{ matrix.dotnet-version }}
+        dotnet-version: ${{ matrix.dotnet-version }}.0.x
     - name: Install dependencies
       run: dotnet restore -p:TargetFramework=net${{ matrix.dotnet-version }}
     - name: Build
-      run: dotnet build --configuration Release --no-restore --framework net${{ matrix.dotnet-version }}
+      run: dotnet build --configuration Release --no-restore --framework net${{ matrix.dotnet-version }}.0
       working-directory: ./src/Blazor-ApexCharts
