@@ -1352,6 +1352,11 @@ namespace ApexCharts
         /// Tooltip title text which appears when you hover over download icon
         /// </summary>
         public string Download { get; set; }
+        
+        /// <summary>
+        /// Tooltip title text which appears when you hover over menu icon
+        /// </summary>
+        public string Menu { get; set; }
 
         /// <summary>
         /// Tooltip title text which appears when you hover over pan icon
