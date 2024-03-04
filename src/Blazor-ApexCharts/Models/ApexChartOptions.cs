@@ -5611,7 +5611,7 @@ namespace ApexCharts
     public enum TickPlacement
     {
         On,
-        Beteween
+        Between
     }
 #pragma warning restore CS1591
 
