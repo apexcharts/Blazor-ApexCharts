@@ -14,7 +14,7 @@ jobs:
         dotnet-version: 6.0.x
         
     - name: Publish with dotnet
-      run: dotnet publish -c Release -o public -p:GHPages=true
+      run: dotnet publish -c Release -o public -p:GHPages=true --framework net6.0
       working-directory: ./docs/BlazorApexCharts.Docs.Wasm
     - name: Deploy to Github Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
