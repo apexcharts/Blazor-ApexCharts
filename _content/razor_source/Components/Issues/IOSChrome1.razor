@@ -1,0 +1,26 @@
+﻿@page "/issues/chrome1"
+
+<h3>IOSChrome</h3>
+
+
+<Button OnClick="Click1">Click me 1</Button>
+
+<Button OnClick="Click2">Click me 2</Button>
+
+<div>@message</div>
+
+@code {
+    private string message = "";
+
+
+    private void Click1()
+    {
+        message = "Clicked 1 " + DateTime.Now.ToString("G");
+    }
+
+    private void Click2()
+    {
+        message = "Clicked 2 " + DateTime.Now.ToString("G");
+    }
+
+}

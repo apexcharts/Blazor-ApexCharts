@@ -1,0 +1,50 @@
+﻿@page "/issues/chrome2"
+
+<h3>IOSChrome</h3>
+<DemoContainer>
+
+    <Button OnClick="Click1">Click me 1</Button>
+
+    <Button OnClick="Click2">Click me 2</Button>
+
+    <div>@message</div>
+
+
+    <ApexChart TItem="Order"
+               Title="Order Net Value">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y"
+                         SeriesType="SeriesType.Bar" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y"
+                         SeriesType="SeriesType.Bar" />
+    </ApexChart>
+</DemoContainer>
+
+
+
+@code {
+    private string message = "";
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+
+    private void Click1()
+    {
+        message = "Clicked 1 " + DateTime.Now.ToString("G");
+    }
+
+    private void Click2()
+    {
+        message = "Clicked 2 " + DateTime.Now.ToString("G");
+    }
+
+}
