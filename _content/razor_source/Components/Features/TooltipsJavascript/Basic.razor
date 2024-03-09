@@ -1,0 +1,41 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               Options=options Debug>
+
+
+        <ChildContent>
+            <ApexPointSeries TItem="Order"
+                             Items="Orders"
+                             Name="Gross Value"
+                             SeriesType="SeriesType.Line"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                             OrderByDescending="e=>e.Y"
+                             Stroke="@(new SeriesStroke { Color = "#FF0000", Width=4})" />
+
+            <ApexPointSeries TItem="Order"
+                             Items="Orders"
+                             Name="Net Value"
+                             SeriesType="SeriesType.Line"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.NetValue))"
+                             OrderByDescending="e=>e.Y"
+                             Stroke="@(new SeriesStroke { Color = "#000080", Width=4})" />
+        </ChildContent>
+    </ApexChart>
+
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new ApexChartOptions<Order>();
+
+    protected override void OnInitialized()
+    {
+        options.Tooltip = new ApexCharts.Tooltip { Custom = @"function({series, seriesIndex, dataPointIndex, w}) { var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];  return '<div>' + data.x + ': ' +  data.y + '</div>' }" }
+        ;
+    }
+
+
+}
