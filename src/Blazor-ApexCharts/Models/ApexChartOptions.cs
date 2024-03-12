@@ -489,7 +489,7 @@ namespace ApexCharts
         /// <summary>
         /// Text for tha annotation label (single string or List of string) to put a multine label
         /// </summary>
-        public LabelText Text { get; set; }
+        public MultiLineText Text { get; set; }
 
         /// <summary>
         /// The alignment of text relative to label's drawing position
@@ -5234,7 +5234,7 @@ namespace ApexCharts
         /// <summary>
         /// Give the axis a title which will be displayed below the axis labels by default.
         /// </summary>
-        public string Text { get; set; }
+        public MultiLineText Text { get; set; }
     }
 
     /// <summary>
