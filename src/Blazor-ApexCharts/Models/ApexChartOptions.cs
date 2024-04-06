@@ -1,6 +1,4 @@
-﻿using ApexCharts.Internal;
-using Microsoft.AspNetCore.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -17,6 +15,10 @@ namespace ApexCharts
         /// Logs function calls and options to the browser console when true
         /// </summary>
         public bool Debug { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ApexChartsBlazorOptions" />
+        [JsonIgnore]
+        public ApexChartsBlazorOptions Blazor { get; set; }
 
         /// <inheritdoc cref="ApexCharts.Annotations" />
         public Annotations Annotations { get; set; }
