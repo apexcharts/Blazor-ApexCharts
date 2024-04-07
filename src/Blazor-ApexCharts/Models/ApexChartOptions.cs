@@ -96,7 +96,7 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.Tooltip" />
         public Tooltip Tooltip { get; set; }
-                
+
         /// <inheritdoc cref="ApexCharts.XAxis" />
         public XAxis Xaxis { get; set; }
 
@@ -533,7 +533,7 @@ namespace ApexCharts
         }
     }
 
-    
+
 
 
     /// <summary>
@@ -5181,7 +5181,7 @@ namespace ApexCharts
         /// <summary>
         /// In a multiple y-axis chart, you can target the scale of a y-axis to a particular series by referencing through the seriesName. The series item which have the same name property will be used to calculate the scale of the y-axis.
         /// </summary>
-        public string SeriesName { get; set; }
+        public SeriesName SeriesName { get; set; }
 
         /// <summary>
         /// Whether to display the y-axis or not.
@@ -5582,6 +5582,7 @@ namespace ApexCharts
 
         /// <summary>
         /// Points are connected by horizontal and vertical line segments, looking like steps of a staircase.
+        ///  Step is drawn after each data point
         /// </summary>
         Stepline,
 
@@ -5593,7 +5594,13 @@ namespace ApexCharts
         /// <summary>
         /// Connects the points to create a monotone cubic spline
         /// </summary>
-        MonotoneCubic
+        MonotoneCubic,
+
+        /// <summary>
+        /// Points are connected by horizontal and vertical line segments, looking like steps of a staircase.
+        ///  Step is drawn before each data point
+        /// </summary>
+        Linestep
     };
 
     /// <summary>
