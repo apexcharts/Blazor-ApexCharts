@@ -86,6 +86,8 @@ If you are on .NET 8 you need to set the rendermode to Interactive.
 ### Chart Options
 Apex Chart options are available in the `ApexChartOptions` class that can be passed to the chart. More info in Apex documentation [ApexCharts Docs](https://apexcharts.com/docs/options/).
 
+**The chart options cannot be shared.  Each chart instance must have its own ApexChartOptions instance**
+
 ## Acknowledgments
 Credits to [@thirstyape](https://github.com/thirstyape) for making production release possible.
 
