@@ -421,9 +421,12 @@ window.blazor_apexchart = {
 
     parseOptions(options) {
         return JSON.parse(options, (key, value) => {
-            if(typeof value === 'string' && value.startsWith('@eval:')) {
-                var functionBody = value.replace(/^@eval:/, "");
-                return eval?.("'use strict'; (" + functionBody + ")");
+            if (value && typeof value === 'object' && '@eval' in value) {
+                value = value['@eval'];
+                if (Array.isArray(value))
+                    return value.map(item => eval?.("'use strict'; (" + item + ")"));
+                else
+                    return eval?.("'use strict'; (" + value + ")");
             }
             else {
                 return value;

@@ -382,19 +382,19 @@ namespace ApexCharts
         /// <summary>
         /// Click function
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Click { get; internal set; }
 
         /// <summary>
         /// Mouse Enter function
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string MouseEnter { get; internal set; }
 
         /// <summary>
         /// Mouse Leave function
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string MouseLeave { get; internal set; }
 
 
@@ -505,19 +505,19 @@ namespace ApexCharts
         /// <summary>
         /// Click function
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Click { get; internal set; }
 
         /// <summary>
         /// Mouse Enter function
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string MouseEnter { get; internal set; }
 
         /// <summary>
         /// Mouse Leave function
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string MouseLeave { get; internal set; }
 
         internal void SetEventFunction(AnnotationEventType eventType)
@@ -1112,7 +1112,7 @@ namespace ApexCharts
         /// <summary>
         /// If timestamps are provided as X values, those timestamps can be formatted to convert them to date strings.
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string DateFormatter { get; set; }
     }
 
@@ -1619,7 +1619,7 @@ namespace ApexCharts
         /// Javascript function when the icon is clicked
         /// if a OnClick callback is registered this will be overwritten.
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Click { get; set; }
 
         /// <summary>
@@ -1777,7 +1777,7 @@ namespace ApexCharts
         /// 
         /// In the code above, seriesIndex is useful in multi-series chart, while dataPointIndex is the index of data-point in that series. w is an object consisting all globals and configuration which can be utilized the way mentioned in the above code.
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
     }
 
@@ -2272,7 +2272,7 @@ namespace ApexCharts
         /// },
         /// </code>
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
 
         /// <summary>
@@ -2289,7 +2289,7 @@ namespace ApexCharts
         /// <remarks>
         /// Note: This feature is only available in shared tooltips (when you have <see cref="Tooltip.Shared"/>: <see langword="true"/>).
         /// </remarks>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string TooltipHoverFormatter { get; set; }
 
         /// <summary>
@@ -2403,7 +2403,7 @@ namespace ApexCharts
         /// }
         /// </code>
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string CustomHTML { get; set; }
     }
 
@@ -2928,7 +2928,7 @@ namespace ApexCharts
         /// <summary>
         /// Applies a custom function for the total value. The function accepts 2 params where the 1st one is the value while the 2nd one is the config object.
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
 
         /// <summary>
@@ -3298,7 +3298,7 @@ namespace ApexCharts
         /// <summary>
         /// A custom formatter function to apply on the name text in dataLabel
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
     }
 
@@ -3345,7 +3345,7 @@ namespace ApexCharts
         /// <summary>
         /// A custom formatter function to apply on the total value. It accepts one parameter w which contains the chart's config and global objects. Defaults to a total of all series percentage divided by the length of series.
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
     }
 
@@ -3387,7 +3387,7 @@ namespace ApexCharts
         /// <summary>
         /// A custom formatter function to apply on the value label in dataLabel
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
     }
 
@@ -3651,7 +3651,7 @@ namespace ApexCharts
         /// <summary>
         /// A custom formatter function to apply on the total value. It accepts one parameter w which contains the chart's config and global objects. Defaults to a total of all series percentage divided by the length of series.
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
     }
 
@@ -3688,7 +3688,7 @@ namespace ApexCharts
         /// <summary>
         /// A custom formatter function to apply on the value label in dataLabel
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
 
         /// <summary>
@@ -4348,7 +4348,7 @@ namespace ApexCharts
         /// <summary>
         /// A custom formatter function which you can override and display according to your needs (a use case can be a date formatted using complex moment.js functions)
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
     }
 
@@ -4360,7 +4360,7 @@ namespace ApexCharts
         /// <summary>
         /// The series name which appears besides values can be formatted using this function. Default behaviour is (seriesName) => returns seriesName
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
     }
 
@@ -4388,7 +4388,7 @@ namespace ApexCharts
 		/// }
 		/// </code>
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
     }
 
@@ -4405,7 +4405,7 @@ namespace ApexCharts
         /// <summary>
         /// To format the z values of a Bubble series, you can use this function.
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
     }
 
@@ -4856,7 +4856,7 @@ namespace ApexCharts
 		/// }
 		/// </code>
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
 
         /// <summary>
@@ -4938,7 +4938,7 @@ namespace ApexCharts
         /// <remarks>
         /// Note: In horizantal bar charts, the second parameters also contains additional data like dataPointIndex &amp; seriesIndex.
         /// </remarks>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
 
         /// <summary>
@@ -5084,7 +5084,7 @@ namespace ApexCharts
         /// }
         /// </code>
         /// </summary>
-        [JsonConverter(typeof(FunctionDefinitionConverter))]
+        [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
 
         /// <inheritdoc cref="ApexCharts.AxisTooltipStyle" />

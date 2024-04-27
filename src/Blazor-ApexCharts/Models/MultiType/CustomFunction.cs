@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using ApexCharts.Internal;
 
 namespace ApexCharts
 {
@@ -29,6 +31,7 @@ namespace ApexCharts
     /// options.Tooltip.Custom = customFunctions;
     /// </code>
     /// </remarks>
+    [JsonConverter(typeof(FunctionValueOrListConverterConverter))]
     public class CustomFunction : ValueOrList<string>
     {
         /// <summary>
