@@ -4171,6 +4171,7 @@ namespace ApexCharts
         /// <summary>
         /// Draw a custom html tooltip instead of the default one based on the values provided in the function arguments.
         /// </summary>
+        [JsonConverter(typeof(FunctionValueOrListConverterConverter))]
         public CustomFunction Custom { get; set; }
 
         /// <summary>

@@ -14,14 +14,16 @@ namespace ApexCharts.Internal;
 /// }
 /// </code>
 /// </summary>
-internal class FunctionValueOrListConverterConverter : JsonConverter<ValueOrList<string>>
+internal class FunctionValueOrListConverterConverter : JsonConverter<CustomFunction>
 {
-    public override ValueOrList<string> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override bool CanConvert(Type typeToConvert) => typeToConvert == typeof(CustomFunction);
+
+    public override CustomFunction Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         throw new NotImplementedException();
     }
 
-    public override void Write(Utf8JsonWriter writer, ValueOrList<string> value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, CustomFunction value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
         writer.WritePropertyName("@eval");
