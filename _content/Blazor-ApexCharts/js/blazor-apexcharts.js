@@ -421,7 +421,8 @@ window.blazor_apexchart = {
 
     parseOptions(options) {
         return JSON.parse(options, (key, value) => {
-            if ((key === 'formatter' || key === 'dateFormatter' || key === 'custom' || key === 'click' || key === 'mouseEnter' || key === 'mouseLeave' || key === 'tooltipHoverFormatter') && value.length !== 0) {
+            if (value && typeof value === 'object' && '@eval' in value) {
+                value = value['@eval'];
                 if (Array.isArray(value))
                     return value.map(item => eval?.("'use strict'; (" + item + ")"));
                 else
