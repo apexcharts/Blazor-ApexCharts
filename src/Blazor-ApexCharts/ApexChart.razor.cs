@@ -359,8 +359,7 @@ namespace ApexCharts
         {
             if (firstRender && isReady == false)
             {
-
-                var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js";
+                var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=1";
                 if (!string.IsNullOrWhiteSpace(Options?.Blazor?.JavascriptPath)) { javascriptPath = Options.Blazor.JavascriptPath; }
                 
                 // load Module ftom ES6 script
