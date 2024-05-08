@@ -47,10 +47,10 @@
             {
                 Animations = new Animations
                 {
-                    Easing = Easing.Easeinout,
+                    Easing = Easing.Linear,
                     DynamicAnimation = new DynamicAnimation
                     {
-                        Speed = 50
+                        Speed = 950
                     }
                 },
                 Toolbar = new Toolbar
@@ -102,6 +102,4 @@
         timer?.Stop();
         timer = null;
     }
-
-
-    }
+}
