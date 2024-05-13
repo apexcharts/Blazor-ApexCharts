@@ -920,6 +920,37 @@ namespace ApexCharts
         }
 
         /// <summary>
+        /// This method allows you to append a new series to the existing ones.
+        /// </summary>
+        /// <param name="newSeries">The series object to append the existing one</param>
+        /// <param name="animate">Should the chart animate on re-rendering</param>
+        /// <param name="overwriteInitialSeries">Overwrite initial series</param>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/update-series">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/methods/#updateSeries">JavaScript Documentation</see>
+        /// </remarks>
+        public virtual async Task AppendSeriesAsync(IApexSeries<TItem> newSeries, bool animate = true, bool overwriteInitialSeries = true)
+        {
+            await Task.Yield();
+            UpdateDataForNoAxisCharts();
+
+            var series = new Series<TItem>
+            {
+                Data = newSeries.GenerateDataPoints(newSeries.Items),
+                Name = newSeries.Name,
+                Group = newSeries.Group,
+                ApexSeries = newSeries
+            };
+
+            Options.Series.Add(series);
+
+            var jsonSeries = Serialize(series);
+            await InvokeVoidJsAsync("blazor_apexchart.appendSeries", Options.Chart.Id, jsonSeries, animate, overwriteInitialSeries);
+        }
+
+        /// <summary>
         /// This method allows you to select/deselect a data-point of a particular series.
         /// </summary>
         /// <param name="seriesIndex">Index of the series array. If you are rendering a pie/donut/radialBar chart, this acts as dataPointIndex and is the only thing you have to provide as pie/donut/radialBar don't support multi-series chart.</param>

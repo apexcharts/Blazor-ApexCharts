@@ -122,6 +122,15 @@ window.blazor_apexchart = {
         return '';
     },
 
+    appendSeries(id, series, animate, overwriteInitialSeries) {
+        var data = JSON.parse(series);
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            this.LogMethodCall(chart, 'appendSeries', series);
+            chart.appendSeries(data, animate, overwriteInitialSeries);
+        }
+    },
+
     updateSeries(id, series, animate) {
         var data = JSON.parse(series);
         var chart = this.findChart(id);
