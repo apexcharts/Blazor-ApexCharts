@@ -53,6 +53,27 @@ namespace ApexCharts.Internal
         }
 
         /// <summary>
+        /// Callback from JavaScript to get a formatted X-axis value
+        /// </summary>
+        /// <param name="value">Details from JavaScript</param>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.FormatXAxisLabel"/>
+        /// </remarks>
+        [JSInvokable]
+        public string JSGetFormattedXAxisValue(JsonElement value)
+        {
+            if (value.ValueKind == JsonValueKind.Null) { return ""; }
+            if (ChartReference.FormatXAxisLabel == null) { return value.ToString(); }
+
+            if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var decimalValue))
+            {
+                return ChartReference.FormatXAxisLabel.Invoke(decimalValue);
+            }
+
+            return value.ToString();
+        }
+
+        /// <summary>
         /// Callback from JavaScript on zoom
         /// </summary>
         /// <param name="jSZoomed">Details from JavaScript</param>
