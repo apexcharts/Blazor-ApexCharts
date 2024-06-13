@@ -328,6 +328,16 @@ namespace ApexCharts
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
 
         /// <summary>
+        /// A custom function to execute for generating X-axis labels. Only supported in Blazor WebAssembly!
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/features/formatters">Blazor Example</see>
+        /// </remarks>
+        [Parameter] public Func<decimal, string> FormatXAxisLabel { get; set; }
+
+        /// <summary>
         /// Enables merging multiple data points into a single item in the chart
         /// </summary>
         /// <remarks>
@@ -1171,6 +1181,19 @@ namespace ApexCharts
 
                 yAxis.Labels.Formatter = @"function (value, index, w) {
                                           return window.blazor_apexchart.getYAxisLabel(value, index, w);
+                                         }";
+            }
+
+            if (FormatXAxisLabel != null)
+            {
+                if (Options.Xaxis == null) { Options.Xaxis = new XAxis(); }
+
+                var xAxis = Options.Xaxis;
+
+                xAxis.Labels ??= new XAxisLabels();
+
+                xAxis.Labels.Formatter = @"function (value, index, w) {
+                                          return window.blazor_apexchart.getXAxisLabel(value, index, w);
                                          }";
             }
         }

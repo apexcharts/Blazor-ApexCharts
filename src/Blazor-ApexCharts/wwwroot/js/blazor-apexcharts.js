@@ -8,6 +8,32 @@ export function get_apexcharts() {
 
 window.blazor_apexchart = {
 
+    getXAxisLabel(value, index, w) {
+
+        if (window.wasmBinaryFile === undefined && window.WebAssembly === undefined) {
+            console.warn("XAxis labels is only supported in Blazor WASM");
+            return value;
+        }
+
+        if (w !== undefined && w.w !== undefined) {
+            return w.w.config.dotNetObject.invokeMethod('JSGetFormattedXAxisValue', value);
+        }
+
+        if (w !== undefined && w.config !== undefined) {
+            return w.config.dotNetObject.invokeMethod('JSGetFormattedXAxisValue', value);
+        }
+
+        if (index !== undefined && index.w !== undefined && index.w.config !== undefined) {
+            return index.w.config.dotNetObject.invokeMethod('JSGetFormattedXAxisValue', value);
+        }
+
+        if (index !== undefined && index.config !== undefined && index.config.dotNetObject !== undefined) {
+            return index.config.dotNetObject.invokeMethod('JSGetFormattedXAxisValue', value);
+        }
+
+        return value;
+    },
+
     getYAxisLabel(value, index, w) {
 
         if (window.wasmBinaryFile === undefined && window.WebAssembly === undefined) {
@@ -419,7 +445,7 @@ window.blazor_apexchart = {
 
         //Always destroy chart if it exists
         this.destroyChart(options.chart.id);
-        
+
         var chart = new ApexCharts(container, options);
         chart.render();
 

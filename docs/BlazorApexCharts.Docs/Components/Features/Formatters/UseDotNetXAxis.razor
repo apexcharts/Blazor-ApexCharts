@@ -1,0 +1,50 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               FormatXAxisLabel="GetXAxisLabel"
+               Options="options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         SeriesType="SeriesType.Bar"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y"
+                         Color="#003399"/>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y"
+                         Color = "#e62e00"/>
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Order>
+        {
+            PlotOptions = new PlotOptions
+            {
+                Bar = new PlotOptionsBar
+                {
+                    Horizontal = true
+                }
+            }
+        };
+    }
+    
+    private string GetXAxisLabel(decimal value)
+    {
+        return "$" + value.ToString("N0");
+    }
+
+}
