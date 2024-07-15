@@ -369,9 +369,9 @@ namespace ApexCharts
         {
             if (firstRender && isReady == false)
             {
-                var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=1";
+                var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=3";
                 if (!string.IsNullOrWhiteSpace(Options?.Blazor?.JavascriptPath)) { javascriptPath = Options.Blazor.JavascriptPath; }
-                
+
                 // load Module ftom ES6 script
                 IJSObjectReference module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", javascriptPath);
                 // load the  blazor_apexchart parent, currently window! to be compatyble with JS interop calls e.g blazor_apexchart.dataUri                                                                                                    
@@ -745,7 +745,7 @@ namespace ApexCharts
 
             foreach (var apxSeries in Options.Series)
             {
-                if(items.ContainsKey(apxSeries.Name))
+                if (items.ContainsKey(apxSeries.Name))
                 {
                     var data = apxSeries.ApexSeries.GenerateDataPoints(items[apxSeries.Name]);
                     var updatedData = apxSeries.Data.ToList();
@@ -794,6 +794,17 @@ namespace ApexCharts
         {
             await InvokeVoidJsAsync("blazor_apexchart.zoomX", Options.Chart.Id, start, end);
         }
+
+        /// <summary>
+        /// Resets all toggled series and bring back the chart to its original state.
+        /// </summary>
+        /// <param name="shouldUpdateChart">After resetting the series, the chart data should update and return to it's original series.</param>
+        /// <param name="shouldResetZoom">If the user has zoomed in when this method is called, the zoom level should also reset.</param>
+        public virtual async Task SetLocaleAsync(string name)
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.setLocale", Options.Chart.Id, name);
+        }
+
 
         /// <summary>
         /// Resets all toggled series and bring back the chart to its original state.

@@ -137,6 +137,15 @@ window.blazor_apexchart = {
         }
     },
 
+    setLocale(id, name) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            this.LogMethodCall(chart, 'setLocale ' + name);
+            chart.setLocale(name);
+            chart.update();
+        }
+    },
+
     dataUri(id, options) {
         var opt = JSON.parse(options);
         var chart = this.findChart(id);
