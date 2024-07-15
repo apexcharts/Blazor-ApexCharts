@@ -15,5 +15,11 @@
         /// Specifies whether the series associated with the legend item is collapsed
         /// </summary>
         public bool Collapsed { get; set; }
+
+        /// <summary>
+        /// The clicked datapoint, Only valid for no axis charts
+        /// </summary>
+        public IDataPoint<TItem> DataPoint { get; set; }
+
     }
 }

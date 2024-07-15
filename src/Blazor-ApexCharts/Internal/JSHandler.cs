@@ -146,11 +146,23 @@ namespace ApexCharts.Internal
         [JSInvokable]
         public void JSLegendClicked(JSLegendClicked jsLegendClicked)
         {
-            var series = ChartReference.Options.Series.ElementAt(jsLegendClicked.SeriesIndex);
+            Series<TItem> series = null;
+            IDataPoint<TItem> point = null;
+            if (ChartReference.IsNoAxisChart)
+            {
+                series = ChartReference.Options.Series.First();
+                point = series.Data.ElementAt(jsLegendClicked.SeriesIndex);
+            }
+            else
+            {
+                series = ChartReference.Options.Series.ElementAt(jsLegendClicked.SeriesIndex);
+            }
+
             var legendClicked = new LegendClicked<TItem>
             {
                 Series = series,
-                Collapsed = jsLegendClicked.Collapsed
+                Collapsed = jsLegendClicked.Collapsed,
+                DataPoint = point,
             };
 
             //Invert if Toggle series is set to flase (default == true)
