@@ -1089,6 +1089,7 @@ namespace ApexCharts
     /// </summary>
     public class ExportCSV
     {
+       
         /// <summary>
         /// Name of the csv file. Defaults to auto generated chart ID
         /// </summary>
@@ -1110,10 +1111,23 @@ namespace ApexCharts
         public string HeaderValue { get; set; }
 
         /// <summary>
+        /// Obsolete! Please use Categoryformatter
+        /// </summary>
+        [Obsolete("Please use CategoryFormatter")]
+        public string DateFormatter { get => CategoryFormatter; set => CategoryFormatter = value; }
+
+        /// <summary>
         /// If timestamps are provided as X values, those timestamps can be formatted to convert them to date strings.
         /// </summary>
         [JsonConverter(typeof(FunctionStringConverter))]
-        public string DateFormatter { get; set; }
+        public string CategoryFormatter { get; set; }
+
+        /// <summary>
+        /// Formats the value for the export
+        /// </summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string ValueFormatter { get; set; }
+
     }
 
     /// <summary>
