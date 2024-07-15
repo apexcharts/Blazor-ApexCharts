@@ -2714,19 +2714,40 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsTreemap" />
         public PlotOptionsTreemap Treemap { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.PlotOptionsLine" />
+        public PlotOptionsLine Line { get; set; }
+        
     }
 
     /// <summary>
-    /// Defines options specific to <see cref="ChartType.Area"/>
+    /// Defines options specific to <see cref="ChartType.Line"/>
     /// </summary>
     /// <remarks>
     /// Links:
     /// 
-    /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/area-charts">Blazor Example</see>,
-    /// <see href="https://apexcharts.com/docs/chart-types/area-chart">JavaScript Documentation</see>,
-    /// <see href="https://apexcharts.com/docs/options/plotoptions/area">JavaScript Reference</see>
+    /// <see href="https://apexcharts.com/docs/options/plotoptions/line">JavaScript Reference</see>
     /// </remarks>
-    public class PlotOptionsArea
+    public class PlotOptionsLine
+    {
+        /// <summary>
+        /// Indicates if the line should be rendered as a Slope Chart
+        /// Default is false
+        /// </summary>
+        public bool? IsSlopeChart { get; set; }
+    }
+
+        /// <summary>
+        /// Defines options specific to <see cref="ChartType.Area"/>
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/area-charts">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/chart-types/area-chart">JavaScript Documentation</see>,
+        /// <see href="https://apexcharts.com/docs/options/plotoptions/area">JavaScript Reference</see>
+        /// </remarks>
+        public class PlotOptionsArea
     {
         /// <summary>
         /// When negative values are present in the area chart, this option fill the area either from 0 (origin) or from the end of the chart as illustrated below.
