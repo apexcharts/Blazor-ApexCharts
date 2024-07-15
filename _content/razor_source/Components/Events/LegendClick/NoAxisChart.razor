@@ -1,6 +1,6 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
-               Title="Order Gross Value" Options=options>
+               Title="Order Gross Value"  OnLegendClicked="LegendClicked">
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"
@@ -9,21 +9,31 @@
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
                          OrderByDescending="e=>e.Y"
-                         ShowDataLabels />
+                          />
     </ApexChart>
+
+    @if(currentLegend != null)
+    {
+        <Alert BackgroundColor="TablerColor.Primary">
+            <h3>You clicked @currentLegend.DataPoint.X</h3>
+           
+        </Alert>
+    }
+
 </DemoContainer>
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
-    private ApexChartOptions<Order> options { get; set; } = new();
+   
 
+    private LegendClicked<Order> currentLegend = null;
     protected override void OnInitialized()
     {
-        options.DataLabels = new DataLabels
-            {
-                Formatter = @"function(value, { seriesIndex, w }) {
-            return w.config.series[seriesIndex];}"
-            };
-
+        
     }
-   }
+
+    private void LegendClicked(LegendClicked<Order> data)
+    {
+        currentLegend = data;
+    }
+}
