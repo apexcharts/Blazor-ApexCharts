@@ -1,0 +1,83 @@
+﻿<DemoContainer>
+    <p>
+        Hoover the icons to see the locale
+    </p>
+  
+    <ItemSelect Label="Select Locale" SelectedValue="selectedLocale" SelectedValueChanged="SetLanguageAsync" TItem="string" TValue="string" Items="options.Chart.Locales.Select(e=> e.Name)">
+        <ListTemplate>
+            @context
+        </ListTemplate>
+    </ItemSelect>
+
+    <ApexChart @ref=chart TItem="Order"
+               Title="Order Net Value"
+               Options=options
+               Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         SeriesType="SeriesType.Line" />
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+    private ApexChart<Order> chart;
+    private string selectedLocale;
+    protected override void OnInitialized()
+    {
+
+        var englishLocale = new ChartLocale
+            {
+                Name = "en",
+                Options = new LocaleOptions() // if we don't set any options the default (english) will be used
+            };
+
+        var frenchLocale = new ChartLocale
+            {
+                Name = "fr",
+                Options = new LocaleOptions
+                {
+                    Days = new List<string> { "dimanche", "lundi", "mardi", "mercredi", "vendredi", "samedi" },
+                    Months = new List<string> { "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre" },
+                    ShortDays = new List<string> { "dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam." },
+                    ShortMonths = new List<string> { "janv.", "févr.", "mars", "avr.", "mai", "juin", "juill.", "août", "sept.", "oct.", "nov.", "déc." },
+                    Toolbar = new LocaleToolbar
+                    {
+                        Menu = "Menu",
+                        Pan = "Navigation",
+                        Reset = "Réinitialiser le zoom",
+                        Selection = "Sélection",
+                        SelectionZoom = "Sélection et zoom",
+                        ZoomIn = "Zoomer",
+                        ZoomOut = "Dézoomer",
+                        ExportToCSV = "Télécharger au format CSV",
+                        ExportToPNG = "Télécharger au format PNG",
+                        ExportToSVG = "Télécharger au format SVG"
+                    }
+                }
+            };
+
+        options.Chart = new Chart { Locales = new List<ChartLocale> { englishLocale, frenchLocale } };
+
+        selectedLocale = "fr";
+        options.Chart.DefaultLocale = selectedLocale;
+
+    }
+
+    private async Task SetLanguageAsync(string name)
+    {
+        selectedLocale = name;
+        await chart.SetLocaleAsync(name);
+
+        ////Use this in version <= v3.3.0
+        //options.Chart.DefaultLocale = name;
+        //await chart.RenderAsync();
+
+    }
+}

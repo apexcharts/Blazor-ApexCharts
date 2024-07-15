@@ -1,4 +1,4 @@
-﻿import ApexCharts from './apexcharts.esm.js'
+﻿import ApexCharts from './apexcharts.esm.js?ver=3.50.0'
 
 // export function for Blazor to point to the window.blazor_apexchart. To be compatible with the most JS Interop calls the window will be return.
 export function get_apexcharts() {
@@ -7,6 +7,32 @@ export function get_apexcharts() {
 }
 
 window.blazor_apexchart = {
+
+    getXAxisLabel(value, index, w) {
+
+        if (window.wasmBinaryFile === undefined && window.WebAssembly === undefined) {
+            console.warn("XAxis labels is only supported in Blazor WASM");
+            return value;
+        }
+
+        if (w !== undefined && w.w !== undefined) {
+            return w.w.config.dotNetObject.invokeMethod('JSGetFormattedXAxisValue', value);
+        }
+
+        if (w !== undefined && w.config !== undefined) {
+            return w.config.dotNetObject.invokeMethod('JSGetFormattedXAxisValue', value);
+        }
+
+        if (index !== undefined && index.w !== undefined && index.w.config !== undefined) {
+            return index.w.config.dotNetObject.invokeMethod('JSGetFormattedXAxisValue', value);
+        }
+
+        if (index !== undefined && index.config !== undefined && index.config.dotNetObject !== undefined) {
+            return index.config.dotNetObject.invokeMethod('JSGetFormattedXAxisValue', value);
+        }
+
+        return value;
+    },
 
     getYAxisLabel(value, index, w) {
 
@@ -111,6 +137,15 @@ window.blazor_apexchart = {
         }
     },
 
+    setLocale(id, name) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            this.LogMethodCall(chart, 'setLocale ' + name);
+            chart.setLocale(name);
+            chart.update();
+        }
+    },
+
     dataUri(id, options) {
         var opt = JSON.parse(options);
         var chart = this.findChart(id);
@@ -120,6 +155,15 @@ window.blazor_apexchart = {
         }
 
         return '';
+    },
+
+    appendSeries(id, series, animate, overwriteInitialSeries) {
+        var data = JSON.parse(series);
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            this.LogMethodCall(chart, 'appendSeries', series);
+            chart.appendSeries(data, animate, overwriteInitialSeries);
+        }
     },
 
     updateSeries(id, series, animate) {
@@ -410,7 +454,7 @@ window.blazor_apexchart = {
 
         //Always destroy chart if it exists
         this.destroyChart(options.chart.id);
-        
+
         var chart = new ApexCharts(container, options);
         chart.render();
 
@@ -421,7 +465,8 @@ window.blazor_apexchart = {
 
     parseOptions(options) {
         return JSON.parse(options, (key, value) => {
-            if ((key === 'formatter' || key === 'dateFormatter' || key === 'custom' || key === 'click' || key === 'mouseEnter' || key === 'mouseLeave') && value.length !== 0) {
+            if (value && typeof value === 'object' && '@eval' in value) {
+                value = value['@eval'];
                 if (Array.isArray(value))
                     return value.map(item => eval?.("'use strict'; (" + item + ")"));
                 else

@@ -1,0 +1,20 @@
+﻿<DemoContainer>
+    <ApexChart TItem="TimeSeries"
+               Title="Scatter with TimeSeries"
+               XAxisType="XAxisType.Datetime">
+
+        <ApexPointSeries TItem="TimeSeries"
+                         Items="timeSeries"
+                         SeriesType="SeriesType.Scatter"
+                         Name="Value"
+                         XValue="@(e => e.Date)"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<TimeSeries> timeSeries = new TimeSeriesGenerator(20).TimeSeries
+        .Concat(new TimeSeriesGenerator(20).TimeSeries)
+        .OrderBy(e => e.Date)
+        .ToList();
+}

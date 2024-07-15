@@ -328,6 +328,16 @@ namespace ApexCharts
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
 
         /// <summary>
+        /// A custom function to execute for generating X-axis labels. Only supported in Blazor WebAssembly!
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/features/formatters">Blazor Example</see>
+        /// </remarks>
+        [Parameter] public Func<decimal, string> FormatXAxisLabel { get; set; }
+
+        /// <summary>
         /// Enables merging multiple data points into a single item in the chart
         /// </summary>
         /// <remarks>
@@ -359,10 +369,9 @@ namespace ApexCharts
         {
             if (firstRender && isReady == false)
             {
-
-                var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js";
+                var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=3";
                 if (!string.IsNullOrWhiteSpace(Options?.Blazor?.JavascriptPath)) { javascriptPath = Options.Blazor.JavascriptPath; }
-                
+
                 // load Module ftom ES6 script
                 IJSObjectReference module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", javascriptPath);
                 // load the  blazor_apexchart parent, currently window! to be compatyble with JS interop calls e.g blazor_apexchart.dataUri                                                                                                    
@@ -736,7 +745,7 @@ namespace ApexCharts
 
             foreach (var apxSeries in Options.Series)
             {
-                if(items.ContainsKey(apxSeries.Name))
+                if (items.ContainsKey(apxSeries.Name))
                 {
                     var data = apxSeries.ApexSeries.GenerateDataPoints(items[apxSeries.Name]);
                     var updatedData = apxSeries.Data.ToList();
@@ -785,6 +794,17 @@ namespace ApexCharts
         {
             await InvokeVoidJsAsync("blazor_apexchart.zoomX", Options.Chart.Id, start, end);
         }
+
+        /// <summary>
+        /// Resets all toggled series and bring back the chart to its original state.
+        /// </summary>
+        /// <param name="shouldUpdateChart">After resetting the series, the chart data should update and return to it's original series.</param>
+        /// <param name="shouldResetZoom">If the user has zoomed in when this method is called, the zoom level should also reset.</param>
+        public virtual async Task SetLocaleAsync(string name)
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.setLocale", Options.Chart.Id, name);
+        }
+
 
         /// <summary>
         /// Resets all toggled series and bring back the chart to its original state.
@@ -918,6 +938,37 @@ namespace ApexCharts
             UpdateDataForNoAxisCharts();
             var jsonSeries = Serialize(Options.Series);
             await InvokeVoidJsAsync("blazor_apexchart.updateSeries", Options.Chart.Id, jsonSeries, animate);
+        }
+
+        /// <summary>
+        /// This method allows you to append a new series to the existing ones.
+        /// </summary>
+        /// <param name="newSeries">The series object to append the existing one</param>
+        /// <param name="animate">Should the chart animate on re-rendering</param>
+        /// <param name="overwriteInitialSeries">Overwrite initial series</param>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/update-series">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/methods/#updateSeries">JavaScript Documentation</see>
+        /// </remarks>
+        public virtual async Task AppendSeriesAsync(IApexSeries<TItem> newSeries, bool animate = true, bool overwriteInitialSeries = true)
+        {
+            await Task.Yield();
+            UpdateDataForNoAxisCharts();
+
+            var series = new Series<TItem>
+            {
+                Data = newSeries.GenerateDataPoints(newSeries.Items),
+                Name = newSeries.Name,
+                Group = newSeries.Group,
+                ApexSeries = newSeries
+            };
+
+            Options.Series.Add(series);
+
+            var jsonSeries = Serialize(series);
+            await InvokeVoidJsAsync("blazor_apexchart.appendSeries", Options.Chart.Id, jsonSeries, animate, overwriteInitialSeries);
         }
 
         /// <summary>
@@ -1141,6 +1192,19 @@ namespace ApexCharts
 
                 yAxis.Labels.Formatter = @"function (value, index, w) {
                                           return window.blazor_apexchart.getYAxisLabel(value, index, w);
+                                         }";
+            }
+
+            if (FormatXAxisLabel != null)
+            {
+                if (Options.Xaxis == null) { Options.Xaxis = new XAxis(); }
+
+                var xAxis = Options.Xaxis;
+
+                xAxis.Labels ??= new XAxisLabels();
+
+                xAxis.Labels.Formatter = @"function (value, index, w) {
+                                          return window.blazor_apexchart.getXAxisLabel(value, index, w);
                                          }";
             }
         }
