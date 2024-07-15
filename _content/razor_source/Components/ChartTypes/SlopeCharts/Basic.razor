@@ -1,0 +1,37 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               Options="options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new();
+    protected override void OnInitialized()
+    {
+        options.PlotOptions = new PlotOptions
+            {
+                Line = new PlotOptionsLine
+                {
+                    IsSlopeChart = true
+                }
+            };
+    }
+}
