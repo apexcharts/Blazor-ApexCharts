@@ -1089,6 +1089,7 @@ namespace ApexCharts
     /// </summary>
     public class ExportCSV
     {
+       
         /// <summary>
         /// Name of the csv file. Defaults to auto generated chart ID
         /// </summary>
@@ -1110,10 +1111,23 @@ namespace ApexCharts
         public string HeaderValue { get; set; }
 
         /// <summary>
+        /// Obsolete! Please use Categoryformatter
+        /// </summary>
+        [Obsolete("Please use CategoryFormatter")]
+        public string DateFormatter { get => CategoryFormatter; set => CategoryFormatter = value; }
+
+        /// <summary>
         /// If timestamps are provided as X values, those timestamps can be formatted to convert them to date strings.
         /// </summary>
         [JsonConverter(typeof(FunctionStringConverter))]
-        public string DateFormatter { get; set; }
+        public string CategoryFormatter { get; set; }
+
+        /// <summary>
+        /// Formats the value for the export
+        /// </summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string ValueFormatter { get; set; }
+
     }
 
     /// <summary>
@@ -2700,19 +2714,40 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsTreemap" />
         public PlotOptionsTreemap Treemap { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.PlotOptionsLine" />
+        public PlotOptionsLine Line { get; set; }
+        
     }
 
     /// <summary>
-    /// Defines options specific to <see cref="ChartType.Area"/>
+    /// Defines options specific to <see cref="ChartType.Line"/>
     /// </summary>
     /// <remarks>
     /// Links:
     /// 
-    /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/area-charts">Blazor Example</see>,
-    /// <see href="https://apexcharts.com/docs/chart-types/area-chart">JavaScript Documentation</see>,
-    /// <see href="https://apexcharts.com/docs/options/plotoptions/area">JavaScript Reference</see>
+    /// <see href="https://apexcharts.com/docs/options/plotoptions/line">JavaScript Reference</see>
     /// </remarks>
-    public class PlotOptionsArea
+    public class PlotOptionsLine
+    {
+        /// <summary>
+        /// Indicates if the line should be rendered as a Slope Chart
+        /// Default is false
+        /// </summary>
+        public bool? IsSlopeChart { get; set; }
+    }
+
+        /// <summary>
+        /// Defines options specific to <see cref="ChartType.Area"/>
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/area-charts">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/chart-types/area-chart">JavaScript Documentation</see>,
+        /// <see href="https://apexcharts.com/docs/options/plotoptions/area">JavaScript Reference</see>
+        /// </remarks>
+        public class PlotOptionsArea
     {
         /// <summary>
         /// When negative values are present in the area chart, this option fill the area either from 0 (origin) or from the end of the chart as illustrated below.

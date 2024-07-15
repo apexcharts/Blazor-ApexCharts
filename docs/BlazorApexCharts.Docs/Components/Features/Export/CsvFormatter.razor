@@ -36,8 +36,9 @@
                             Filename = "Test Date formatter",
                             HeaderCategory = "sep=|" + Environment.NewLine + "Date",
                             ColumnDelimiter = "|",
-                            DateFormatter = "function (value) {  return new Date(value).toLocaleString(); }"
-                            
+                            CategoryFormatter = "function (value) {  return 'Test: ' + new Date(value).toLocaleString(); }",
+                            ValueFormatter = "function (value) {  return ('$' + value); }"
+
                         }
                     }
                 }
