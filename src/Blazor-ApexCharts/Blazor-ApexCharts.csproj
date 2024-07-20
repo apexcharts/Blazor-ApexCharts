@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/apexcharts/Blazor-ApexCharts</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://apexcharts.github.io/Blazor-ApexCharts/</PackageProjectUrl>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Copyright>Copyright 2022 (c) Joakim Dangården. All rights reserved.</Copyright>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
