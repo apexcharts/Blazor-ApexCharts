@@ -1009,6 +1009,13 @@ namespace ApexCharts
             await InvokeVoidJsAsync("blazor_apexchart.hideSeries", Options.Chart.Id, seriesName);
         }
 
+        /// <inheritdoc cref="IApexSeries{TItem}.Highlight"/>
+        /// <param name="seriesName">The series name which you want to highlight.</param>
+        public virtual async Task HighlightSeriesAsync(string seriesName)
+        {
+           await InvokeVoidJsAsync("blazor_apexchart.highlightSeries", Options.Chart.Id, seriesName);
+        }
+
         private void SetCustomIcons()
         {
             var customIcons = Options?.Chart?.Toolbar?.Tools?.CustomIcons?.Where(e => e.OnClick != null);

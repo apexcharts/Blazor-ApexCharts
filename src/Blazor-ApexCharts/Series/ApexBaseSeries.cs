@@ -67,6 +67,12 @@ namespace ApexCharts
             await Chart?.HideSeriesAsync(Name);
         }
 
+        /// <inheritdoc cref="IApexSeries{TItem}.Highlight"/>
+        public async Task Highlight()
+        {
+            await Chart?.HighlightSeriesAsync(Name);
+        }
+
         /// <summary>
         /// Executes the <see cref="PointColor"/> function on the provided data point and returns the color value
         /// </summary>

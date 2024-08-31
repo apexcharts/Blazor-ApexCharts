@@ -242,6 +242,14 @@ window.blazor_apexchart = {
         }
     },
 
+    highlightSeries(id, seriesName) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            this.LogMethodCall(chart, 'highlightSeries', seriesName);
+            chart.highlightSeries(seriesName)
+        }
+    },
+
     renderChart(dotNetObject, container, options, events) {
         if (options.debug == true) {
             console.log(options);
