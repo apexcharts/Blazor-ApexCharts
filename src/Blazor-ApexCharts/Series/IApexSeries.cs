@@ -21,6 +21,11 @@ namespace ApexCharts
         string Name { get; set; }
 
         /// <summary>
+        /// Indicates if the series should be initially hidden
+        /// </summary>
+        bool? Hidden  { get; set; }
+
+        /// <summary>
         /// Expression to return the X-value for each data point in the series
         /// </summary>
         Func<TItem, object> XValue { get; set; }
@@ -91,5 +96,17 @@ namespace ApexCharts
         /// <see href="https://apexcharts.com/docs/methods/#hideSeries">JavaScript Documentation</see>
         /// </remarks>
         public Task Hide();
+
+        /// <summary>
+        /// This method allows you to highlight a series programmatically. 
+        /// The rest of the series becomes dim in order to give more visual emphasis to the highlighted series.
+        /// </summary>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/show-hide-series">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/methods/#highlightSeries">JavaScript Documentation</see>
+        /// </remarks>
+        public Task Highlight();
     }
 }

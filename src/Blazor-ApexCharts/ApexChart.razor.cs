@@ -369,7 +369,7 @@ namespace ApexCharts
         {
             if (firstRender && isReady == false)
             {
-                var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=3";
+                var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=4";
                 if (!string.IsNullOrWhiteSpace(Options?.Blazor?.JavascriptPath)) { javascriptPath = Options.Blazor.JavascriptPath; }
 
                 // load Module ftom ES6 script
@@ -962,6 +962,7 @@ namespace ApexCharts
                 Data = newSeries.GenerateDataPoints(newSeries.Items),
                 Name = newSeries.Name,
                 Group = newSeries.Group,
+                Hidden = newSeries.Hidden,
                 ApexSeries = newSeries
             };
 
@@ -1006,6 +1007,13 @@ namespace ApexCharts
         public virtual async Task HideSeriesAsync(string seriesName)
         {
             await InvokeVoidJsAsync("blazor_apexchart.hideSeries", Options.Chart.Id, seriesName);
+        }
+
+        /// <inheritdoc cref="IApexSeries{TItem}.Highlight"/>
+        /// <param name="seriesName">The series name which you want to highlight.</param>
+        public virtual async Task HighlightSeriesAsync(string seriesName)
+        {
+           await InvokeVoidJsAsync("blazor_apexchart.highlightSeries", Options.Chart.Id, seriesName);
         }
 
         private void SetCustomIcons()
@@ -1220,6 +1228,7 @@ namespace ApexCharts
                 {
                     Data = apxSeries.GenerateDataPoints(apxSeries.Items),
                     Name = apxSeries.Name,
+                    Hidden = apxSeries.Hidden,
                     Group = apxSeries.Group,
                     ApexSeries = apxSeries
                 };

@@ -1,0 +1,59 @@
+﻿<DemoContainer>
+    @if (chart != null)
+    {
+        @foreach (var series in chart.Series)
+        {
+            <Badge class="me-2" BackgroundColor=TablerColor.Primary OnClick="@(() => HighlightSeries(series))">@series.Name @series.Items.Count()</Badge>
+        }
+
+        <span>Click badge to highlight series</span>
+
+    }
+
+    <ApexChart @ref=chart TItem="Order"
+               Title="Order Net Value"
+               OnRendered=ChartRendered>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Calculated"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue-10000))"
+                         OrderByDescending="e=>e.Y" />
+
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Order> chart;
+    private List<Order> orders = SampleData.GetOrders();
+
+
+    private void ChartRendered()
+    {
+        StateHasChanged();
+    }
+
+    private async Task HighlightSeries(IApexSeries<Order> series)
+    {
+        await series.Highlight();
+    }
+}

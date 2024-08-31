@@ -18,6 +18,9 @@ namespace ApexCharts
         /// <inheritdoc cref="IApexSeries{TItem}.Name"/>
         [Parameter] public string Name { get; set; }
 
+        /// <inheritdoc cref="IApexSeries{TItem}.Hidden"/>
+        [Parameter] public bool? Hidden { get; set; }
+
         /// <inheritdoc cref="IApexSeries{TItem}.XValue"/>
         [Parameter] public Func<TItem, object> XValue { get; set; }
 
@@ -43,11 +46,11 @@ namespace ApexCharts
         /// </remarks>
         [Parameter] public Func<TItem, string> PointColor { get; set; }
 
-		/// <inheritdoc cref="IApexSeries{TItem}.Group"/>
-		[Parameter] public string Group { get; set; }
+        /// <inheritdoc cref="IApexSeries{TItem}.Group"/>
+        [Parameter] public string Group { get; set; }
 
-		/// <inheritdoc cref="IApexSeries{TItem}.Toggle"/>
-		public async Task Toggle()
+        /// <inheritdoc cref="IApexSeries{TItem}.Toggle"/>
+        public async Task Toggle()
         {
             await Chart?.ToggleSeriesAsync(Name);
         }
@@ -62,6 +65,12 @@ namespace ApexCharts
         public async Task Hide()
         {
             await Chart?.HideSeriesAsync(Name);
+        }
+
+        /// <inheritdoc cref="IApexSeries{TItem}.Highlight"/>
+        public async Task Highlight()
+        {
+            await Chart?.HighlightSeriesAsync(Name);
         }
 
         /// <summary>
