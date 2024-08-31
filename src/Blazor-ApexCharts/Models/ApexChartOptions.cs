@@ -5219,7 +5219,7 @@ namespace ApexCharts
         /// The lowest number to be set for the y-axis. The graph drawing beyond this number will be clipped off.
         /// </summary>
         /// <remarks>
-        /// You can also pass a function here which should return a number.The function accepts an argument which by default is the smallest value in the y-axis.function(min) { return min }
+        /// You can also pass a javascript function here which should return a number.The function accepts an argument which by default is the smallest value in the y-axis.function(min) { return min }
         /// </remarks>
         public object Min { get; set; }
 
