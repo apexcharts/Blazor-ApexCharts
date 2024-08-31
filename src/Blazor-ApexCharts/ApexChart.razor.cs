@@ -962,6 +962,7 @@ namespace ApexCharts
                 Data = newSeries.GenerateDataPoints(newSeries.Items),
                 Name = newSeries.Name,
                 Group = newSeries.Group,
+                Hidden = newSeries.Hidden,
                 ApexSeries = newSeries
             };
 
@@ -1220,6 +1221,7 @@ namespace ApexCharts
                 {
                     Data = apxSeries.GenerateDataPoints(apxSeries.Items),
                     Name = apxSeries.Name,
+                    Hidden = apxSeries.Hidden,
                     Group = apxSeries.Group,
                     ApexSeries = apxSeries
                 };

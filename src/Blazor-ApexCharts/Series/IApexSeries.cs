@@ -21,6 +21,11 @@ namespace ApexCharts
         string Name { get; set; }
 
         /// <summary>
+        /// Indicates if the series should be initially hidden
+        /// </summary>
+        bool? Hidden  { get; set; }
+
+        /// <summary>
         /// Expression to return the X-value for each data point in the series
         /// </summary>
         Func<TItem, object> XValue { get; set; }
