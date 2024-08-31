@@ -1,4 +1,4 @@
-﻿import ApexCharts from './apexcharts.esm.js?ver=3.50.0'
+﻿import ApexCharts from './apexcharts.esm.js?ver=3.53.0'
 
 // export function for Blazor to point to the window.blazor_apexchart. To be compatible with the most JS Interop calls the window will be return.
 export function get_apexcharts() {
@@ -239,6 +239,14 @@ window.blazor_apexchart = {
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'hideSeries', seriesName);
             chart.hideSeries(seriesName)
+        }
+    },
+
+    highlightSeries(id, seriesName) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            this.LogMethodCall(chart, 'highlightSeries', seriesName);
+            chart.highlightSeries(seriesName)
         }
     },
 
