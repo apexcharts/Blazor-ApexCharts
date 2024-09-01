@@ -1,0 +1,41 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value"
+               Options=options Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         SeriesType="SeriesType.Bar" />
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+
+        //options.Legend = new Legend { Show = true };
+        options.Responsive = new List<Responsive<Order>> {
+            new Responsive<Order> {
+
+                Breakpoint=700, Options = new ApexChartOptions<Order> {
+                    Chart = null, 
+                    Title = new Title { Text = "Page is less then 700px"}
+                    }
+            },
+            //   new Responsive<Order> {
+
+            //     Breakpoint=9000, Options = new ApexChartOptions<Order> {
+            //         Chart = null,
+            //         Legend = null
+            //         }
+            // }
+        };
+    }
+}

@@ -11,7 +11,7 @@
     "BlazorApexCharts.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "methods/show-hide-series",
+      "launchUrl": "features/responsive",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
