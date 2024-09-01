@@ -15,7 +15,7 @@ namespace ApexCharts
         /// <summary>
         /// Logs function calls and options to the browser console when true
         /// </summary>
-        public bool Debug { get; set; }
+        public bool? Debug { get; set; }
 
         /// <inheritdoc cref="ApexCharts.ApexChartsBlazorOptions" />
         [JsonIgnore]
@@ -74,8 +74,8 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.PlotOptions" />
         public PlotOptions PlotOptions { get; set; }
 
-        /// <inheritdoc cref="ApexCharts.Responsive" />
-        public List<Responsive> Responsive { get; set; }
+        /// <inheritdoc cref="ApexCharts.Responsive{TItem} />
+        public List<Responsive<TItem>> Responsive { get; set; }
 
         /// <inheritdoc cref="ApexCharts.Series{TItem}" />
         public List<Series<TItem>> Series { get; set; }
@@ -3851,7 +3851,7 @@ namespace ApexCharts
     /// <see href="https://apexcharts.com/docs/responsive">JavaScript Documentation</see>,
     /// <see href="https://apexcharts.com/docs/options/responsive">JavaScript Reference</see>
     /// </remarks>
-    public class Responsive
+    public class Responsive<TItem> where TItem : class
     {
         /// <summary>
         /// The breakpoint is the max screen width at which the original config object will be overrided by the responsive config object
@@ -3861,7 +3861,7 @@ namespace ApexCharts
         /// <summary>
         /// The new configuration object that you would like to override on the existing default configuration object. All the options which you set normally can be set here. <see href="https://codepen.io/apexcharts/pen/ajpqJp">Example</see>
         /// </summary>
-        public object Options { get; set; }
+        public ApexChartOptions<TItem> Options { get; set; }
     }
 
     /// <summary>

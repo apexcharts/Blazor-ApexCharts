@@ -542,7 +542,7 @@ namespace ApexCharts
 
         private void SetDataLabels()
         {
-            if (Options?.Series == null || !Options.Series.Any()) { return; }
+            if (Options?.Series == null || !Options.Series.Any(e=> e.ApexSeries.ShowDataLabels)) { return; }
 
             if (Options.DataLabels == null) { Options.DataLabels = new DataLabels(); }
 

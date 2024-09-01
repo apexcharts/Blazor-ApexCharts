@@ -251,10 +251,6 @@ window.blazor_apexchart = {
     },
 
     renderChart(dotNetObject, container, options, events) {
-        if (options.debug == true) {
-            console.log(options);
-        }
-
         var options = this.parseOptions(options);
 
         if (options.debug == true) {
