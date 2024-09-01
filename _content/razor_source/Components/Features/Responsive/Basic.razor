@@ -25,17 +25,18 @@
             new Responsive<Order> {
 
                 Breakpoint=700, Options = new ApexChartOptions<Order> {
-                    Chart = null, 
+                    Chart = null,
                     Title = new Title { Text = "Page is less then 700px"}
                     }
             },
-            //   new Responsive<Order> {
+              new Responsive<Order> {
 
-            //     Breakpoint=9000, Options = new ApexChartOptions<Order> {
-            //         Chart = null,
-            //         Legend = null
-            //         }
-            // }
+                Breakpoint=9001, Options = new ApexChartOptions<Order> {
+                    Chart = null,
+                    Title = new Title { Text = "Order Net Value"}
+                    }
+                    
+            }
         };
     }
 }
