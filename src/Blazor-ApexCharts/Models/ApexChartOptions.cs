@@ -3861,7 +3861,7 @@ namespace ApexCharts
         /// <summary>
         /// The new configuration object that you would like to override on the existing default configuration object. All the options which you set normally can be set here. <see href="https://codepen.io/apexcharts/pen/ajpqJp">Example</see>
         /// </summary>
-        public ApexChartOptions<TItem> Options { get; set; }
+        public ApexChartOptions<TItem> Options { get; set; } 
     }
 
     /// <summary>

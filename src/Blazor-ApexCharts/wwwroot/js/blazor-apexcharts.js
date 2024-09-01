@@ -33,7 +33,7 @@ window.blazor_apexchart = {
         }
         return null;
     },
-  
+
     getXAxisLabel(value, index, w) {
 
         if (window.wasmBinaryFile === undefined && window.WebAssembly === undefined) {
@@ -45,7 +45,7 @@ window.blazor_apexchart = {
         if (dotNetRef != null) {
             return dotNetRef.invokeMethod('JSGetFormattedXAxisValue', value);
         }
-                
+
         return value;
     },
 
@@ -271,7 +271,6 @@ window.blazor_apexchart = {
             console.log(options);
         }
 
-        //options.dotNetObject = dotNetObject;
         options.chart.events = {};
 
         if (options.tooltip != undefined && options.tooltip.customTooltip == true) {
@@ -472,11 +471,8 @@ window.blazor_apexchart = {
 
         //Always destroy chart if it exists
         this.destroyChart(options.chart.id);
-
-
         this.dotNetRefs.set(options.chart.id, dotNetObject)
 
-        console.log(this.dotNetRefs)
         var chart = new ApexCharts(container, options);
         chart.render();
 

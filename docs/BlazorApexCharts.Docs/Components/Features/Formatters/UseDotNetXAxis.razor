@@ -2,6 +2,7 @@
     <ApexChart TItem="Order"
                Title="Order Net Value"
                FormatXAxisLabel="GetXAxisLabel"
+               FormatYAxisLabel="GetYAxisLabel"
                Options="options">
 
         <ApexPointSeries TItem="Order"
@@ -41,10 +42,15 @@
             }
         };
     }
-    
+
     private string GetXAxisLabel(decimal value)
     {
         return "$" + value.ToString("N0");
+    }
+
+    private string GetYAxisLabel(decimal value)
+    {
+        return "__" + value;
     }
 
 }
