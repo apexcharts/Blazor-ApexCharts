@@ -1,0 +1,77 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Scatter Sample"
+               Options=options
+               OnAnnotationPointClick="AnnotationEvent"
+               OnAnnotationPointMouseEnter="AnnotationEvent"
+               OnAnnotationPointMouseLeave="AnnotationEvent"
+           
+               Debug>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="% Gross"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.GrossValue)"
+                         OrderByDescending="e=>e.X" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType="SeriesType.Bar"
+                         Name="% Net"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.NetValue)"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+
+    <h3 class="mt-3">@message</h3>
+
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
+    
+    private string message;
+
+    protected override void OnInitialized()
+    {
+
+        options.Annotations = new Annotations
+            {
+             
+
+                Points = new List<AnnotationsPoint> { new AnnotationsPoint
+                        {
+                           Label = new Label {
+                                Text = "Point 1",
+                                Style = new Style{ Background="yellow" }
+                           },
+                         X = 20,
+                         Y = 50000
+                        },
+                        new AnnotationsPoint
+                        {
+                           Label = new Label {
+                                Text = "Point 2",
+                                Style = new Style{ Background="red" }
+                           },
+                         X = 40,
+                         Y = 60000
+                        }
+                        }
+
+               
+
+            };
+    }
+
+
+    private void AnnotationEvent(AnnotationEvent<Order> e)
+    {
+        message = $"{e.EventType} {e.Target}: '{e.Annotation?.Label?.Text}' [{e.AnnotationId}]";
+    }
+
+
+}
