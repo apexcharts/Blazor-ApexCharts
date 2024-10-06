@@ -522,7 +522,7 @@ namespace ApexCharts
 
         internal void SetEventFunction(AnnotationEventType eventType)
         {
-            var eventFunction = "function(annotation, e) {this.w.config.dotNetObject.invokeMethodAsync('JSAnnotationLabelEvent',{id: annotation.id, eventType: '" + eventType.ToString() + "'});}";
+            var eventFunction = "function(annotation, e) {window.blazor_apexchart.getDotNetObjectReference(undefined, this.w).invokeMethodAsync('JSAnnotationLabelEvent',{id: annotation.id, eventType: '" + eventType.ToString() + "'});}";
 
             switch (eventType)
             {
