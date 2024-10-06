@@ -81,7 +81,7 @@
 
     private void AnnotationEvent(AnnotationEvent<Order> e)
     {
-        message = $"{e.EventType} {e.Target}: '{e.Annotation?.Label?.Text}' [{e.AnnotationId}]";
+        message = $"{e.EventType} {e.Target}: '{e.Annotation?.Label?.Text?.FirstOrDefault()}' [{e.AnnotationId}]";
     }
 
 
