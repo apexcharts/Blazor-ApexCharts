@@ -1102,17 +1102,17 @@ namespace ApexCharts
                 annotation.Id = Guid.NewGuid().ToString();
             }
 
-            if (OnAnnotationLabelClick.HasDelegate)
+            if (OnAnnotationPointClick.HasDelegate)
             {
                 annotation.SetEventFunction(AnnotationEventType.Click);
             }
 
-            if (OnAnnotationLabelMouseEnter.HasDelegate)
+            if (OnAnnotationPointMouseEnter.HasDelegate)
             {
                 annotation.SetEventFunction(AnnotationEventType.MouseEnter);
             }
 
-            if (OnAnnotationLabelMouseLeave.HasDelegate)
+            if (OnAnnotationPointMouseLeave.HasDelegate)
             {
                 annotation.SetEventFunction(AnnotationEventType.MouseLeave);
             }
