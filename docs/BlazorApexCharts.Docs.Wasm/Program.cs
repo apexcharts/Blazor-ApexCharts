@@ -25,6 +25,8 @@ namespace BlazorApexCharts.Docs.Wasm
             //builder.Services.AddSingleton(serviceProvider => (IJSInProcessRuntime)serviceProvider.GetRequiredService<IJSRuntime>());
             builder.Services.AddSingleton(serviceProvider => (IJSUnmarshalledRuntime)serviceProvider.GetRequiredService<IJSRuntime>());
 
+            var dummy = new TabBlazor.TablerOptions();
+
             await builder.Build().RunAsync();
         }
     }
