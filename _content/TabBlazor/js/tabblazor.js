@@ -1,6 +1,26 @@
 ﻿window.tabBlazor = {
+
+    setTheme: function (theme) {
+
+        document.querySelector("body").setAttribute("data-bs-theme", theme);
+
+    },
+
     getUserAgent: function () {
         return navigator.userAgent;
+    },
+
+    saveAsBinary: function (filename, contentType, content) {
+        // Create the URL
+        const file = new File([content], filename, { type: contentType });
+        const exportUrl = URL.createObjectURL(file);
+        const a = document.createElement("a");
+        document.body.appendChild(a);
+        a.href = exportUrl;
+        a.download = filename;
+        a.target = "_self";
+        a.click();
+        URL.revokeObjectURL(exportUrl);
     },
 
     saveAsFile: function (filename, href) {
@@ -144,7 +164,7 @@
         element[property] = value;
         return "";
     },
-     
+
     clickOutsideHandler: {
         removeEvent: (elementId) => {
             if (elementId === undefined || window.clickHandlers === undefined) return;
@@ -163,11 +183,11 @@
             var currentTime = (new Date()).getTime();
 
             var handler = (e) => {
-
+              
                 var nowTime = (new Date()).getTime();
                 var diff = Math.abs((nowTime - currentTime) / 1000);
 
-                if (diff < 1)
+                if (diff < 0.5)
                     return;
 
                 currentTime = nowTime;
@@ -186,5 +206,4 @@
             window.addEventListener("click", handler);
         }
     }
-
 }

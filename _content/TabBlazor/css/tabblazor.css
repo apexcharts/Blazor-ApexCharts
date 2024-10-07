@@ -1,17 +1,28 @@
-﻿.tabicon {
+﻿.nav-bordered .nav-item {
+  margin-left: 1rem !important;
+}
+
+.progress-lg {
+  height: 0.8rem;
+}
+
+.tabicon {
   border: none;
   background: none;
   outline: none;
   transition: transform 0.15s linear;
 }
+
 .tabicon:focus {
   outline: none;
   box-shadow: 0 0 0 0.25rem #b9cce2;
   border-radius: 2px;
 }
+
 .tabicon:hover {
   transform: scale(1.15);
 }
+
 .tabicon::-moz-focus-inner {
   border: 0;
 }
@@ -26,6 +37,10 @@
 .clickable-text {
   cursor: pointer;
   text-decoration: underline;
+}
+
+.clickable-header {
+  cursor: pointer;
 }
 
 .badge.badge-default {
@@ -57,14 +72,6 @@
   background-color: lightgray;
 }
 
-.nav-item {
-  z-index: 1029;
-}
-
-.dropdown-menu {
-  z-index: 1030;
-}
-
 .tree, .tree ul {
   margin: 0;
   padding: 0;
@@ -81,6 +88,10 @@
   border-width: thin;
 }
 
+.tree-node-no-drop {
+  opacity: 0.5;
+}
+
 .tree-node-aligned {
   width: 100%;
 }
@@ -89,6 +100,7 @@
   width: unset;
   height: unset;
 }
+
 .switch-icon svg {
   width: unset;
   height: unset;
@@ -147,6 +159,7 @@ Dimmer
   text-align: left !important;
   font-weight: bold;
 }
+
 .grouped-table tr td {
   padding-left: 0.5rem;
 }
@@ -155,10 +168,12 @@ Dimmer
   transition: opacity 0.3s ease-in;
   opacity: 1;
 }
+
 .tabler-table tr:focus-within {
   --tblr-table-accent-bg: var(--tblr-table-active-bg);
   color: var(--tblr-table-active-color);
 }
+
 .tabler-table .row-action {
   display: flex;
   flex-direction: row;
@@ -166,6 +181,7 @@ Dimmer
   text-align: right;
   opacity: 0;
 }
+
 .tabler-table .row-action button {
   background-color: unset;
   border: none;
@@ -174,9 +190,85 @@ Dimmer
   padding-left: 0;
   padding-right: 0;
 }
+
 .tabler-table .row-action-edit {
   text-align: right;
 }
+
 .tabler-table .sorting {
   opacity: 0.3;
+}
+
+.flag {
+  border: var(--tblr-border-size) var(--tblr-border-style) var(--tblr-border-color);
+  border-radius: var(--tblr-border-radius);
+}
+
+.flag-xs {
+  width: 1.5rem;
+  height: 1.125rem;
+}
+
+.flag-sm {
+  width: 2rem;
+  height: 1.5rem;
+}
+
+.flag-md {
+  width: 4rem;
+  height: 3rem;
+}
+
+.flag-lg {
+  width: 5.5rem;
+  height: 4.125rem;
+}
+
+.flag-xl {
+  width: 7rem;
+  height: 5.25rem;
+}
+
+.flag-2xl {
+  width: 11rem;
+  height: 8.25rem;
+}
+
+.apexcharts-tooltip {
+  color: var(--tblr-light) !important;
+  background: var(--tblr-bg-surface-dark) !important;
+  font-size: 0.765625rem !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border-width: 0px !important;
+  border-radius: var(--tblr-border-radius) !important;
+}
+
+.apexcharts-tooltip-title {
+  background: 0 0 !important;
+  border: 0 !important;
+  margin: 0 !important;
+  font-weight: var(--tblr-font-weight-bold);
+  padding: 0.25rem 0.5rem !important;
+}
+
+.apexcharts-tooltip-y-group {
+  padding: 2px 0 !important;
+}
+
+.apexcharts-tooltip-series-group {
+  padding: 0.25rem !important;
+}
+
+.apexcharts-tooltip-marker {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.switch-icon-flip .switch-icon-a {
+  opacity: 0;
+}
+
+.switch-icon-flip.active .switch-icon-b {
+  opacity: 0;
 }
