@@ -1,0 +1,34 @@
+﻿@page "/chartservice"
+
+<h3>Chart Service</h3>
+
+@chartService.Charts.Count;
+<Button OnClick="TestChart">Test</Button>
+
+<ApexChart TItem="Order"
+           Title="Order Net Value" Height="200">
+
+    <ApexPointSeries TItem="Order"
+                     Items="SampleData.GetOrders()"
+                     Name="Gross Value"
+                     XValue="@(e => e.Country)"
+                     YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                     OrderByDescending="e=>e.Y"
+                     SeriesType="SeriesType.Bar" />
+
+   
+</ApexChart>
+
+<ApexChart TItem="Order"
+           Title="Order Net Value" Height="200">
+
+    <ApexPointSeries TItem="Order"
+                     Items="SampleData.GetOrders()"
+                     Name="Gross Value"
+                     XValue="@(e => e.Country)"
+                     YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                     OrderByDescending="e=>e.Y"
+                     SeriesType="SeriesType.Bar" />
+
+
+</ApexChart>

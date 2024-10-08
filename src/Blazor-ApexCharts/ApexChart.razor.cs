@@ -1,5 +1,6 @@
 ﻿using ApexCharts.Internal;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -10,13 +11,19 @@ using System.Threading.Tasks;
 
 namespace ApexCharts
 {
+    public interface IApexChart 
+    {
+        string ChartId { get; } 
+    }
+
     /// <summary>
     /// Main component to create an Apex chart in Blazor
     /// </summary>
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
-    public partial class ApexChart<TItem> : IDisposable where TItem : class
+    public partial class ApexChart<TItem> : IApexChart, IDisposable where TItem : class
     {
         [Inject] private IJSRuntime jsRuntime { get; set; }
+        [Inject] private IServiceProvider serviceProvider { get; set; }
 
         /// <summary>
         /// Used to contain the data within the chart
@@ -360,9 +367,36 @@ namespace ApexCharts
         private HoverData<TItem> tooltipData;
         private JSHandler<TItem> JSHandler;
         private IJSObjectReference blazor_apexchart;
+        private ApexChartService chartService;
 
         /// <inheritdoc cref="Chart.Id"/>
         public string ChartId => chartId;
+
+        /// <inheritdoc/>
+        protected override void OnInitialized()
+        {
+            if (Options == null) { Options = new ApexChartOptions<TItem>(); }
+            if (Options.Chart == null) { Options.Chart = new Chart(); }
+
+            if (string.IsNullOrEmpty(chartId))
+            {
+                if (Options.Chart.Id != null)
+                {
+                    chartId = Options.Chart.Id;
+                }
+                else
+                {
+                    chartId = Guid.NewGuid().ToString("N");
+                }
+            }
+
+            Options.Chart.Id = chartId;
+            Options.Debug = Debug;
+
+            chartService = serviceProvider.GetService<ApexChartService>();
+       
+            chartService?.RegisterChart(this);
+        }
 
         /// <inheritdoc/>
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -391,23 +425,23 @@ namespace ApexCharts
         /// <inheritdoc/>
         protected override void OnParametersSet()
         {
-            if (Options == null) { Options = new ApexChartOptions<TItem>(); }
-            if (Options.Chart == null) { Options.Chart = new Chart(); }
+            //if (Options == null) { Options = new ApexChartOptions<TItem>(); }
+            //if (Options.Chart == null) { Options.Chart = new Chart(); }
 
-            if (string.IsNullOrEmpty(chartId))
-            {
-                if (Options.Chart.Id != null)
-                {
-                    chartId = Options.Chart.Id;
-                }
-                else
-                {
-                    chartId = Guid.NewGuid().ToString("N");
-                }
-            }
+            //if (string.IsNullOrEmpty(chartId))
+            //{
+            //    if (Options.Chart.Id != null)
+            //    {
+            //        chartId = Options.Chart.Id;
+            //    }
+            //    else
+            //    {
+            //        chartId = Guid.NewGuid().ToString("N");
+            //    }
+            //}
 
-            Options.Chart.Id = chartId;
-            Options.Debug = Debug;
+            //Options.Chart.Id = chartId;
+            //Options.Debug = Debug;
 
             if (Width != null)
             {
@@ -1285,6 +1319,8 @@ namespace ApexCharts
         {
             GC.SuppressFinalize(this);
 
+            chartService?.UnRegisterChart(this);
+
             if (Options.Chart?.Id != null && isReady && blazor_apexchart != null)
             {
                 try
@@ -1294,7 +1330,6 @@ namespace ApexCharts
                 }
                 catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
                 { }
-
 
             }
             JSHandler?.Dispose();
