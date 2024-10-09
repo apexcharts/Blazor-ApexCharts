@@ -19,13 +19,25 @@ public class ApexChartService
     }
 
     private Dictionary<string, IApexChart> charts = new();
+    private IJSObjectReference jSObjectReference;
     private readonly IJSRuntime jSRuntime;
 
     public List<IApexChart> Charts => charts.Values.ToList();
 
-    public async Task<IJSObjectReference> LoadJavascriptModuleAsync(string path = null)
+    public async Task LoadJavascriptModuleAsync(string path = null)
     {
-        return await JSLoader.LoadAsync(jSRuntime, path);
+        jSObjectReference = await JSLoader.LoadAsync(jSRuntime, path);
+    }
+
+    public async Task SetGlobalOptionsAsync(IApexChartBaseOptions options)
+    {
+        if (jSObjectReference == null)
+        {
+            await LoadJavascriptModuleAsync();
+        }
+
+        var json = ChartSerializer.SerializeOptions(options);
+        await jSObjectReference.InvokeVoidAsync("blazor_apexchart.setGlobalOptions", json);
     }
 
     internal void RegisterChart(IApexChart apexChart)

@@ -11,10 +11,22 @@ namespace BlazorApexCharts.Docs.Components.ChartService
 
         private bool showCharts;
 
+
+        private async Task SetGlobalOptions()
+        {
+            var globalOptions = new ApexChartOptions<string>
+            {
+                Title = new Title { Text = "Global title"}
+            };
+
+            await chartService.SetGlobalOptionsAsync(globalOptions);
+            
+        }
+
         private async Task LoadJavascript()
         {
             await chartService.LoadJavascriptModuleAsync();
-            showCharts = false;
+          
         }
 
         private async Task TestChart()
@@ -24,18 +36,18 @@ namespace BlazorApexCharts.Docs.Components.ChartService
             {
                 var t = chart.ChartId;
 
-                if (chart.IOptions.Theme?.Mode == null)
+                if (chart.BaseOptions.Theme?.Mode == null)
                 {
-                    chart.IOptions.Theme = new Theme { Mode = Mode.Light };
+                    chart.BaseOptions.Theme = new Theme { Mode = Mode.Light };
                 }
 
-                if (chart.IOptions.Theme.Mode == Mode.Light)
+                if (chart.BaseOptions.Theme.Mode == Mode.Light)
                 {
-                    chart.IOptions.Theme.Mode = Mode.Dark;
+                    chart.BaseOptions.Theme.Mode = Mode.Dark;
                 }
                 else
                 {
-                    chart.IOptions.Theme.Mode = Mode.Light;
+                    chart.BaseOptions.Theme.Mode = Mode.Light;
                 }
                 await chart.UpdateOptionsAsync(true, true, true);
 

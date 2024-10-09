@@ -5,6 +5,7 @@
 @if (!showCharts)
 {
     <Button OnClick="LoadJavascript">Load Javascript</Button>
+    <Button OnClick="SetGlobalOptions">Set Global Options</Button>
     <Button OnClick="@(_=> showCharts =! showCharts)">Show charts</Button>
 }
 else
@@ -14,7 +15,7 @@ else
     <Button OnClick="TestChart">Toogle Theme</Button>
 
     <ApexChart TItem="Order"
-               Title="Order Net Value" Height="200">
+                Height="200">
 
         <ApexPointSeries TItem="Order"
                          Items="SampleData.GetOrders()"
@@ -28,7 +29,7 @@ else
     </ApexChart>
 
     <ApexChart TItem="Order"
-               Title="Order Net Value" Height="200">
+                Height="200">
 
         <ApexPointSeries TItem="Order"
                          Items="SampleData.GetOrders()"

@@ -2,7 +2,7 @@
 
 namespace ApexCharts
 {
-    public interface IApexChartOptions
+    public interface IApexChartBaseOptions
     {
         Annotations Annotations { get; set; }
         ApexChartsBlazorOptions Blazor { get; set; }

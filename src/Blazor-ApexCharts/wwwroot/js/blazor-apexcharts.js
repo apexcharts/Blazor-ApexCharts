@@ -8,7 +8,6 @@ export function get_apexcharts() {
 
 window.blazor_apexchart = {
 
-
     getDotNetObjectReference(index, w) {
         var chartId = null;
 
@@ -95,6 +94,10 @@ window.blazor_apexchart = {
                 console.log('------');
             }
         }
+    },
+
+    setGlobalOptions(options) {
+        Apex = this.parseOptions(options);
     },
 
     updateOptions(id, options, redrawPaths, animate, updateSyncedCharts, zoom) {

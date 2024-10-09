@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ namespace ApexCharts
     public interface IApexChart 
     {
         string ChartId { get; } 
-        IApexChartOptions IOptions { get;  }
+        IApexChartBaseOptions BaseOptions { get;  }
 
         Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null);
     }
@@ -29,7 +28,7 @@ namespace ApexCharts
         /// <summary>
         /// None generic version of the options object
         /// </summary>
-        public IApexChartOptions IOptions => Options;
+        public IApexChartBaseOptions BaseOptions => Options;
 
 
         [Inject] private IJSRuntime jsRuntime { get; set; }
@@ -414,8 +413,6 @@ namespace ApexCharts
             {
                 blazor_apexchart = await JSLoader.LoadAsync(jsRuntime, Options?.Blazor?.JavascriptPath);
 
-               
-
                 isReady = true;
                 JSHandler = new JSHandler<TItem>(this);
             }
@@ -429,24 +426,7 @@ namespace ApexCharts
         /// <inheritdoc/>
         protected override void OnParametersSet()
         {
-            //if (Options == null) { Options = new ApexChartOptions<TItem>(); }
-            //if (Options.Chart == null) { Options.Chart = new Chart(); }
-
-            //if (string.IsNullOrEmpty(chartId))
-            //{
-            //    if (Options.Chart.Id != null)
-            //    {
-            //        chartId = Options.Chart.Id;
-            //    }
-            //    else
-            //    {
-            //        chartId = Guid.NewGuid().ToString("N");
-            //    }
-            //}
-
-            //Options.Chart.Id = chartId;
-            //Options.Debug = Debug;
-
+           
             if (Width != null)
             {
                 Options.Chart.Width = Width;
