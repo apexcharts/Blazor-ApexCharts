@@ -6,11 +6,18 @@ using ApexCharts.Internal;
 
 namespace ApexCharts
 {
+
+    public interface ApexChartOptions
+    {
+
+    }
+
+
     /// <summary>
     /// Main class to configure options that are to be serialized and passed to the JavaScript.
     /// </summary>
     /// <typeparam name="TItem">The data type to be used in the chart to create data points.</typeparam>
-    public class ApexChartOptions<TItem> where TItem : class
+    public class ApexChartOptions<TItem> : IApexChartOptions where TItem : class
     {
         /// <summary>
         /// Logs function calls and options to the browser console when true
@@ -74,7 +81,7 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.PlotOptions" />
         public PlotOptions PlotOptions { get; set; }
 
-        /// <inheritdoc cref="ApexCharts.Responsive{TItem} />
+        /// <inheritdoc cref="ApexCharts.Responsive{TItem}" />
         public List<Responsive<TItem>> Responsive { get; set; }
 
         /// <inheritdoc cref="ApexCharts.Series{TItem}" />

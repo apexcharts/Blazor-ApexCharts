@@ -14,7 +14,11 @@ namespace ApexCharts
     public interface IApexChart 
     {
         string ChartId { get; } 
+        IApexChartOptions IOptions { get;  }
+
+        Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null);
     }
+
 
     /// <summary>
     /// Main component to create an Apex chart in Blazor
@@ -22,6 +26,12 @@ namespace ApexCharts
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
     public partial class ApexChart<TItem> : IApexChart, IDisposable where TItem : class
     {
+        /// <summary>
+        /// None generic version of the options object
+        /// </summary>
+        public IApexChartOptions IOptions => Options;
+
+
         [Inject] private IJSRuntime jsRuntime { get; set; }
         [Inject] private IServiceProvider serviceProvider { get; set; }
 
@@ -394,8 +404,7 @@ namespace ApexCharts
             Options.Debug = Debug;
 
             chartService = serviceProvider.GetService<ApexChartService>();
-       
-            chartService?.RegisterChart(this);
+                   chartService?.RegisterChart(this);
         }
 
         /// <inheritdoc/>
@@ -403,14 +412,9 @@ namespace ApexCharts
         {
             if (firstRender && isReady == false)
             {
-                var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=4";
-                if (!string.IsNullOrWhiteSpace(Options?.Blazor?.JavascriptPath)) { javascriptPath = Options.Blazor.JavascriptPath; }
+                blazor_apexchart = await JSLoader.LoadAsync(jsRuntime, Options?.Blazor?.JavascriptPath);
 
-                // load Module ftom ES6 script
-                IJSObjectReference module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", javascriptPath);
-                // load the  blazor_apexchart parent, currently window! to be compatyble with JS interop calls e.g blazor_apexchart.dataUri                                                                                                    
-                blazor_apexchart = await module.InvokeAsync<IJSObjectReference>("get_apexcharts");
-
+               
 
                 isReady = true;
                 JSHandler = new JSHandler<TItem>(this);
@@ -530,6 +534,7 @@ namespace ApexCharts
             }
         }
 
+       
         private void SetSeriesColors()
         {
             if (Options?.Series == null) { return; }
