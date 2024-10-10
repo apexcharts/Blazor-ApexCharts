@@ -10,12 +10,20 @@ using System.Threading.Tasks;
 
 namespace ApexCharts
 {
+
+    /// <inheritdoc cref="ApexCharts.ApexChartBaseOptions"/>
     public interface IApexChartBase
     {
+        /// <inheritdoc cref="Chart.Id"/>
         string ChartId { get; }
+
+        /// <inheritdoc cref="ApexChart{TItem}.BaseOptions"/>
         IApexChartBaseOptions BaseOptions { get; }
 
+        /// <inheritdoc cref="ApexChart{TItem}.RenderAsync"/>
         Task RenderAsync();
+
+        /// <inheritdoc cref="ApexChart{TItem}.UpdateOptionsAsync"/>
         Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null);
     }
 
@@ -377,7 +385,7 @@ namespace ApexCharts
         private HoverData<TItem> tooltipData;
         private JSHandler<TItem> JSHandler;
         private IJSObjectReference blazor_apexchart;
-        private ApexChartService chartService;
+        private IApexChartService chartService;
 
         /// <inheritdoc cref="Chart.Id"/>
         public string ChartId => chartId;
@@ -403,7 +411,7 @@ namespace ApexCharts
             Options.Chart.Id = chartId;
             Options.Debug = Debug;
 
-            chartService = serviceProvider.GetService<ApexChartService>();
+            chartService = serviceProvider.GetService<IApexChartService>();
             chartService?.RegisterChart(this);
         }
 
@@ -815,11 +823,11 @@ namespace ApexCharts
             await InvokeVoidJsAsync("blazor_apexchart.zoomX", Options.Chart.Id, start, end);
         }
 
-        /// <summary>
-        /// Resets all toggled series and bring back the chart to its original state.
-        /// </summary>
-        /// <param name="shouldUpdateChart">After resetting the series, the chart data should update and return to it's original series.</param>
-        /// <param name="shouldResetZoom">If the user has zoomed in when this method is called, the zoom level should also reset.</param>
+       /// <summary>
+       /// Set Locale
+       /// </summary>
+       /// <param name="name"></param>
+       /// <returns></returns>
         public virtual async Task SetLocaleAsync(string name)
         {
             await InvokeVoidJsAsync("blazor_apexchart.setLocale", Options.Chart.Id, name);

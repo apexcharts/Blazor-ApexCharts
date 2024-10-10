@@ -1,7 +1,7 @@
+using ApexCharts;
 using BlazorApexCharts.Docs.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -19,13 +19,12 @@ namespace BlazorApexCharts.Docs.Wasm
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddDocs();
 
-            builder.Services.AddHttpClient("GitHub", client => client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("TabBlazor", "1")));
+            builder.Services.AddHttpClient("GitHub", client => client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Blazor-ApexCharts", "1")));
             builder.Services.AddScoped<ICodeSnippetService, GitHubSnippetService>();
 
-            //builder.Services.AddSingleton(serviceProvider => (IJSInProcessRuntime)serviceProvider.GetRequiredService<IJSRuntime>());
-            builder.Services.AddSingleton(serviceProvider => (IJSUnmarshalledRuntime)serviceProvider.GetRequiredService<IJSRuntime>());
+            builder.Services.AddApexCharts();
 
-            var dummy = new TabBlazor.TablerOptions();
+          
 
             await builder.Build().RunAsync();
         }

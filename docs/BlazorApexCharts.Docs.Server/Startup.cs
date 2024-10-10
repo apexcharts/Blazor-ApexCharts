@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ApexCharts;
 
 namespace BlazorApexCharts.Docs.Server
 {
@@ -25,7 +26,7 @@ namespace BlazorApexCharts.Docs.Server
             services.AddDocs();
             services.AddScoped<ICodeSnippetService, LocalSnippetService>();
 
-            services.AddScoped<ApexCharts.ApexChartService>();
+            services.AddApexCharts();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

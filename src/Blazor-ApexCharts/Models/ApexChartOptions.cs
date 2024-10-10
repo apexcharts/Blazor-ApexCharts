@@ -6,12 +6,10 @@ using ApexCharts.Internal;
 
 namespace ApexCharts
 {
-
+    /// <inheritdoc cref="ApexCharts.IApexChartBaseOptions" />
     public class ApexChartBaseOptions : IApexChartBaseOptions
     {
-        /// <summary>
-        /// Logs function calls and options to the browser console when true
-        /// </summary>
+        /// <inheritdoc cref="ApexCharts.IApexChartBaseOptions.Debug" />
         public bool? Debug { get; set; }
 
         /// <inheritdoc cref="ApexCharts.ApexChartsBlazorOptions" />
@@ -3214,7 +3212,7 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PieDataLabels" />
         /// <remarks>
-        /// All additional formatting/styling settings for dataLabels has to be done in <see cref="ApexChartOptions{TItem}.DataLabels"/> configuration.
+        /// All additional formatting/styling settings for dataLabels has to be done in <see cref="ApexChartBaseOptions.DataLabels"/> configuration.
         /// </remarks>
         public PieDataLabels DataLabels { get; set; }
 

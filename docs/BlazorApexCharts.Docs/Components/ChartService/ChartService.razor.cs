@@ -7,7 +7,7 @@ namespace BlazorApexCharts.Docs.Components.ChartService
 {
     public partial class ChartService
     {
-        [Inject] private ApexChartService chartService { get; set; }
+        [Inject] private IApexChartService chartService { get; set; }
 
         private bool showCharts;
 
@@ -21,13 +21,12 @@ namespace BlazorApexCharts.Docs.Components.ChartService
 
         private async Task ResetGlobalOptions()
         {
-            await chartService.SetGlobalOptionsAsync(null);
+            await chartService.SetGlobalOptionsAsync(null, true);
         }
 
         private async Task SetGlobalOptions()
         {
-            
-
+       
             var globalOptions = new ApexChartOptions<string>
             {
                 Debug = true,
@@ -35,22 +34,19 @@ namespace BlazorApexCharts.Docs.Components.ChartService
                 Theme = new Theme { Mode = Mode.Dark}
             };
            
-            await chartService.SetGlobalOptionsAsync(globalOptions);
+            await chartService.SetGlobalOptionsAsync(globalOptions, true);
             
         }
 
         private async Task LoadJavascript()
         {
             await chartService.LoadJavascriptAsync();
-          
         }
 
         private async Task ToogleTheme()
         {
-
             foreach (var chart in chartService.Charts)
             {
-               
                 if (chart.BaseOptions.Theme?.Mode == null)
                 {
                     chart.BaseOptions.Theme = new Theme { Mode = Mode.Light };
@@ -66,11 +62,7 @@ namespace BlazorApexCharts.Docs.Components.ChartService
                     chart.BaseOptions.Theme.Mode = Mode.Light;
                 }
                 await chart.RenderAsync();
-
-
             }
         }
-
-
     }
 }
