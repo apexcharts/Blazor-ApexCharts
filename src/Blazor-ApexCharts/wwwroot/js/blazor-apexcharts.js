@@ -97,7 +97,18 @@ window.blazor_apexchart = {
     },
 
     setGlobalOptions(options) {
-        Apex = this.parseOptions(options);
+        var opt = this.parseOptions(options);
+      
+        if (opt.debug === true) {
+            console.log('------');
+            console.log('Method: setGlobalOptions');
+            console.log(opt);
+            console.log('------');
+        }
+
+        opt._chartInstances = Apex._chartInstances;
+
+        Apex = opt;
     },
 
     updateOptions(id, options, redrawPaths, animate, updateSyncedCharts, zoom) {

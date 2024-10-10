@@ -1,8 +1,10 @@
 ﻿using ApexCharts.Internal;
 using Microsoft.JSInterop;
+using Microsoft.JSInterop.Implementation;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,34 +20,43 @@ public class ApexChartService
         this.jSRuntime = jSRuntime;
     }
 
-    private Dictionary<string, IApexChart> charts = new();
-    private IJSObjectReference jSObjectReference;
+    private Dictionary<string, IApexChartBase> charts = new();
+    //private IJSObjectReference jSObjectReference;
     private readonly IJSRuntime jSRuntime;
+    private IApexChartBaseOptions globalOptions = new ApexChartBaseOptions();
 
-    public List<IApexChart> Charts => charts.Values.ToList();
+    public List<IApexChartBase> Charts => charts.Values.ToList();
+    public IApexChartBaseOptions GlobalOptions => globalOptions;
 
-    public async Task LoadJavascriptModuleAsync(string path = null)
+    public async Task LoadJavascriptAsync(string path = null)
     {
-        jSObjectReference = await JSLoader.LoadAsync(jSRuntime, path);
+         await JSLoader.LoadAsync(jSRuntime, path);
+    }
+
+    public async Task ReRenderChartsAsync()
+    {
+
+        var list = Charts.ToList().Select(e => e.RenderAsync());
+        await Task.WhenAll(list);
+
     }
 
     public async Task SetGlobalOptionsAsync(IApexChartBaseOptions options)
     {
-        if (jSObjectReference == null)
-        {
-            await LoadJavascriptModuleAsync();
-        }
+        options ??= new ApexChartBaseOptions();
 
+        globalOptions = options;
+        var jSObjectReference = await JSLoader.LoadAsync(jSRuntime, options?.Blazor?.JavascriptPath);
         var json = ChartSerializer.SerializeOptions(options);
         await jSObjectReference.InvokeVoidAsync("blazor_apexchart.setGlobalOptions", json);
     }
 
-    internal void RegisterChart(IApexChart apexChart)
+    internal void RegisterChart(IApexChartBase apexChart)
     {
         charts.Add(apexChart.ChartId, apexChart);
     }
 
-    internal void UnRegisterChart(IApexChart apexChart)
+    internal void UnRegisterChart(IApexChartBase apexChart)
     {
         charts.Remove(apexChart.ChartId);
     }

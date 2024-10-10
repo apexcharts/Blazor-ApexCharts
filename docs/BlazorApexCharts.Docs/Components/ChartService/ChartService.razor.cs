@@ -12,33 +12,49 @@ namespace BlazorApexCharts.Docs.Components.ChartService
         private bool showCharts;
 
 
+
+        private async Task ReRenderCharts()
+        {
+            await chartService.ReRenderChartsAsync();
+        }
+
+
+        private async Task ResetGlobalOptions()
+        {
+            await chartService.SetGlobalOptionsAsync(null);
+        }
+
         private async Task SetGlobalOptions()
         {
+            
+
             var globalOptions = new ApexChartOptions<string>
             {
-                Title = new Title { Text = "Global title"}
+                Debug = true,
+                Title = new Title { Text = "Global title" },
+                Theme = new Theme { Mode = Mode.Dark}
             };
-
+           
             await chartService.SetGlobalOptionsAsync(globalOptions);
             
         }
 
         private async Task LoadJavascript()
         {
-            await chartService.LoadJavascriptModuleAsync();
+            await chartService.LoadJavascriptAsync();
           
         }
 
-        private async Task TestChart()
+        private async Task ToogleTheme()
         {
 
             foreach (var chart in chartService.Charts)
             {
-                var t = chart.ChartId;
-
+               
                 if (chart.BaseOptions.Theme?.Mode == null)
                 {
                     chart.BaseOptions.Theme = new Theme { Mode = Mode.Light };
+                    chart.BaseOptions.Debug = true;
                 }
 
                 if (chart.BaseOptions.Theme.Mode == Mode.Light)
@@ -49,7 +65,7 @@ namespace BlazorApexCharts.Docs.Components.ChartService
                 {
                     chart.BaseOptions.Theme.Mode = Mode.Light;
                 }
-                await chart.UpdateOptionsAsync(true, true, true);
+                await chart.RenderAsync();
 
 
             }

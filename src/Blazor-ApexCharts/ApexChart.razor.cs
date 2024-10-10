@@ -10,11 +10,12 @@ using System.Threading.Tasks;
 
 namespace ApexCharts
 {
-    public interface IApexChart 
+    public interface IApexChartBase
     {
-        string ChartId { get; } 
-        IApexChartBaseOptions BaseOptions { get;  }
+        string ChartId { get; }
+        IApexChartBaseOptions BaseOptions { get; }
 
+        Task RenderAsync();
         Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null);
     }
 
@@ -23,7 +24,7 @@ namespace ApexCharts
     /// Main component to create an Apex chart in Blazor
     /// </summary>
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
-    public partial class ApexChart<TItem> : IApexChart, IDisposable where TItem : class
+    public partial class ApexChart<TItem> : IApexChartBase, IDisposable where TItem : class
     {
         /// <summary>
         /// None generic version of the options object
@@ -403,7 +404,7 @@ namespace ApexCharts
             Options.Debug = Debug;
 
             chartService = serviceProvider.GetService<ApexChartService>();
-                   chartService?.RegisterChart(this);
+            chartService?.RegisterChart(this);
         }
 
         /// <inheritdoc/>
@@ -426,7 +427,7 @@ namespace ApexCharts
         /// <inheritdoc/>
         protected override void OnParametersSet()
         {
-           
+
             if (Width != null)
             {
                 Options.Chart.Width = Width;
@@ -514,7 +515,7 @@ namespace ApexCharts
             }
         }
 
-       
+
         private void SetSeriesColors()
         {
             if (Options?.Series == null) { return; }
@@ -1032,7 +1033,7 @@ namespace ApexCharts
         /// <param name="seriesName">The series name which you want to highlight.</param>
         public virtual async Task HighlightSeriesAsync(string seriesName)
         {
-           await InvokeVoidJsAsync("blazor_apexchart.highlightSeries", Options.Chart.Id, seriesName);
+            await InvokeVoidJsAsync("blazor_apexchart.highlightSeries", Options.Chart.Id, seriesName);
         }
 
         private void SetCustomIcons()

@@ -2,20 +2,28 @@
 
 <h3>Chart Service</h3>
 
+<Button OnClick="LoadJavascript">Load Javascript</Button>
+<Button OnClick="SetGlobalOptions">Set Global Options</Button>
+<Button OnClick="ResetGlobalOptions">Reset Global Options</Button>
+
+
+
+
 @if (!showCharts)
 {
-    <Button OnClick="LoadJavascript">Load Javascript</Button>
-    <Button OnClick="SetGlobalOptions">Set Global Options</Button>
+   
     <Button OnClick="@(_=> showCharts =! showCharts)">Show charts</Button>
 }
 else
 {
 
 
-    <Button OnClick="TestChart">Toogle Theme</Button>
+    <Button OnClick="ToogleTheme">Toogle Theme</Button>
+    <Button OnClick="ReRenderCharts">ReRender charts</Button>
 
     <ApexChart TItem="Order"
-                Height="200">
+                Height="200"
+                Debug>
 
         <ApexPointSeries TItem="Order"
                          Items="SampleData.GetOrders()"
@@ -29,7 +37,8 @@ else
     </ApexChart>
 
     <ApexChart TItem="Order"
-                Height="200">
+                Height="200"
+                Debug>
 
         <ApexPointSeries TItem="Order"
                          Items="SampleData.GetOrders()"
@@ -37,7 +46,7 @@ else
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
                          OrderByDescending="e=>e.Y"
-                         SeriesType="SeriesType.Bar" />
+                         SeriesType="SeriesType.Line" />
 
 
     </ApexChart>
