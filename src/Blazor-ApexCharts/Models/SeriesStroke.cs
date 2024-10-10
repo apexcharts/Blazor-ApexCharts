@@ -1,7 +1,7 @@
 ﻿namespace ApexCharts
 {
     /// <summary>
-    /// Class to define the <see cref="ApexChartOptions{TItem}.Stroke"/> values for a single series
+    /// Class to define the <see cref="ApexChartBaseOptions.Stroke"/> values for a single series
     /// </summary>
     public class SeriesStroke
     {
