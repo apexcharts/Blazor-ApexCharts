@@ -26,16 +26,23 @@ namespace BlazorApexCharts.Docs.Components.ChartService
 
         private async Task SetGlobalOptions()
         {
-       
+
             var globalOptions = new ApexChartOptions<string>
             {
                 Debug = true,
                 Title = new Title { Text = "Global title" },
-                Theme = new Theme { Mode = Mode.Dark}
+                Theme = new Theme { Mode = Mode.Dark }
             };
-           
+
             await chartService.SetGlobalOptionsAsync(globalOptions, true);
-            
+
+        }
+
+
+
+        private async Task TestLocalization()
+        {
+            await chartService.LoadLocaleFileAsync("fr");
         }
 
         private async Task LoadJavascript()

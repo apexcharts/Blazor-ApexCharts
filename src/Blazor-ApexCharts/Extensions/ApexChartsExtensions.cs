@@ -20,7 +20,15 @@ public static class ApexChartsExtensions
     /// <returns></returns>
     public static IServiceCollection AddApexCharts(this IServiceCollection services)
     {
-        return services.AddScoped<IApexChartService, ApexChartService>();
+         services.AddScoped<IApexChartService, ApexChartService>();
+
+        services.AddHttpClient<ApexChartService>(client =>
+        {
+          //  client.BaseAddress = new Uri("https://google.com/");
+        });
+
+        return services;
+
     }
 
 }

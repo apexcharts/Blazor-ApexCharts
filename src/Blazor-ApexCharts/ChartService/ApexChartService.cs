@@ -1,4 +1,5 @@
 ﻿using ApexCharts.Internal;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Implementation;
 using System;
@@ -6,8 +7,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace ApexCharts;
 
@@ -20,21 +24,28 @@ public class ApexChartService : IApexChartService
     /// Initialize a new instance of the <see cref="ApexChartService"/> class
     /// </summary>
     /// <param name="jSRuntime"></param>
-    public ApexChartService(IJSRuntime jSRuntime)
+    /// <param name="httpClient"></param>
+    /// <param name="navManager"></param>
+    public ApexChartService(IJSRuntime jSRuntime, HttpClient httpClient, NavigationManager navManager)
     {
+
+        httpClient.BaseAddress = new Uri(navManager.BaseUri);
+
         this.jSRuntime = jSRuntime;
+        this.httpClient = httpClient;
     }
 
     private Dictionary<string, IApexChartBase> charts = new();
     private readonly IJSRuntime jSRuntime;
     private IApexChartBaseOptions globalOptions = new ApexChartBaseOptions();
-
+    private HttpClient httpClient;
 
     ///  <inheritdoc/>
     public List<IApexChartBase> Charts => charts.Values.ToList();
 
     ///  <inheritdoc/>
     public IApexChartBaseOptions GlobalOptions => globalOptions;
+
 
 
     ///  <inheritdoc/>
@@ -60,13 +71,20 @@ public class ApexChartService : IApexChartService
 
         if (reRenderCharts)
         {
-
             await ReRenderChartsAsync();
-
         }
+    }
+
+    public async Task LoadLocaleFileAsync(string name)
+    {
+
+       // var result = await httpClient.GetStringAsync("_content/Blazor-ApexCharts/locales/fr.json");
+
+        var result = await httpClient.GetFromJsonAsync<ChartLocale>("_content/Blazor-ApexCharts/locales/fr.json", ChartSerializer.GetOptions());
 
 
     }
+
 
     /// <summary>
     /// Used to register an chart, Internal usage
