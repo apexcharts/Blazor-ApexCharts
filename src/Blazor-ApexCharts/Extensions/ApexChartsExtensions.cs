@@ -17,18 +17,31 @@ public static class ApexChartsExtensions
     /// Add Apexcharts service
     /// </summary>
     /// <param name="services"></param>
+    /// <param name="serviceOptions"></param>
     /// <returns></returns>
-    public static IServiceCollection AddApexCharts(this IServiceCollection services)
+    public static IServiceCollection AddApexCharts(this IServiceCollection services, Action<ApexChartsServiceOptions> serviceOptions = null)
     {
-         services.AddScoped<IApexChartService, ApexChartService>();
 
-        services.AddHttpClient<ApexChartService>(client =>
+        if (serviceOptions is null)
         {
-          //  client.BaseAddress = new Uri("https://google.com/");
-        });
+            serviceOptions = _ => { };
+        }
+
+        var options = new ApexChartsServiceOptions();
+        serviceOptions(options);
+
+        services.AddSingleton(options);
+        services.AddScoped<IApexChartService, ApexChartService>();
+
+        services.AddHttpClient<ApexChartService>();
 
         return services;
 
     }
 
+}
+
+public class ApexChartsServiceOptions
+{
+    public IApexChartBaseOptions GlobalOptions { get; set; }
 }

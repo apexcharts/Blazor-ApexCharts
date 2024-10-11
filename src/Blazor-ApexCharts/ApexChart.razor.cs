@@ -421,9 +421,10 @@ namespace ApexCharts
             if (firstRender && isReady == false)
             {
                 blazor_apexchart = await JSLoader.LoadAsync(jsRuntime, Options?.Blazor?.JavascriptPath);
-
                 isReady = true;
                 JSHandler = new JSHandler<TItem>(this);
+
+                await chartService?.GlobalOptionsInitializedAsync();
             }
 
             if (isReady && forceRender)
@@ -823,11 +824,11 @@ namespace ApexCharts
             await InvokeVoidJsAsync("blazor_apexchart.zoomX", Options.Chart.Id, start, end);
         }
 
-       /// <summary>
-       /// Set Locale
-       /// </summary>
-       /// <param name="name"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// Set Locale
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public virtual async Task SetLocaleAsync(string name)
         {
             await InvokeVoidJsAsync("blazor_apexchart.setLocale", Options.Chart.Id, name);

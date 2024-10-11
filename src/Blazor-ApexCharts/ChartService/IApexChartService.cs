@@ -40,10 +40,11 @@ namespace ApexCharts
         /// <returns></returns>
         Task SetGlobalOptionsAsync(IApexChartBaseOptions options, bool reRenderCharts = false);
 
+      
 
+       public Task LoadLocaleFileAsync(string name);
 
-        Task LoadLocaleFileAsync(string name);
-
+        internal Task GlobalOptionsInitializedAsync();
         internal void RegisterChart(IApexChartBase apexChart);
         internal void UnRegisterChart(IApexChartBase apexChart);
     }

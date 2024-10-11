@@ -107,7 +107,6 @@ window.blazor_apexchart = {
         }
 
         opt._chartInstances = Apex._chartInstances;
-
         Apex = opt;
     },
 

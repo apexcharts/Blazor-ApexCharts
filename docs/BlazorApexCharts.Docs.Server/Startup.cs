@@ -26,7 +26,14 @@ namespace BlazorApexCharts.Docs.Server
             services.AddDocs();
             services.AddScoped<ICodeSnippetService, LocalSnippetService>();
 
-            services.AddApexCharts();
+            services.AddApexCharts(e =>
+            {
+                e.GlobalOptions = new ApexChartBaseOptions
+                {
+                    Debug = true,
+                    Theme = new Theme { Palette = PaletteType.Palette6 }
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
