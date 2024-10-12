@@ -21,22 +21,14 @@ public static class ApexChartsExtensions
     /// <returns></returns>
     public static IServiceCollection AddApexCharts(this IServiceCollection services, Action<ApexChartsServiceOptions> serviceOptions = null)
     {
-
-        if (serviceOptions is null)
-        {
-            serviceOptions = _ => { };
-        }
+        serviceOptions ??= _ => { };
 
         var options = new ApexChartsServiceOptions();
         serviceOptions(options);
-
         services.AddSingleton(options);
         services.AddScoped<IApexChartService, ApexChartService>();
-
         services.AddHttpClient<ApexChartService>();
-
         return services;
-
     }
 
 }

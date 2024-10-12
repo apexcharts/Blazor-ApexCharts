@@ -1,19 +1,15 @@
 ﻿using ApexCharts.Internal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Microsoft.JSInterop.Implementation;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
+
 
 namespace ApexCharts;
 
@@ -31,15 +27,15 @@ public class ApexChartService : IApexChartService
     /// <param name="serviceOptions"></param>
     public ApexChartService(IJSRuntime jSRuntime, HttpClient httpClient, NavigationManager navManager, ApexChartsServiceOptions serviceOptions)
     {
-        httpClient.BaseAddress = new Uri(navManager.BaseUri);
         this.jSRuntime = jSRuntime;
         this.httpClient = httpClient;
+        this.navManager = navManager;
 
+        PopulateBuiltInLocales();
         globalOptions = serviceOptions.GlobalOptions;
 
         if (globalOptions != null)
         {
-
             globalOptionsInitialized = false;
         }
         else
@@ -49,20 +45,46 @@ public class ApexChartService : IApexChartService
     }
 
     private readonly ConcurrentDictionary<string, IApexChartBase> charts = new();
+    private readonly Dictionary<string, LocaleResource> locales = new();
     private readonly IJSRuntime jSRuntime;
     private IApexChartBaseOptions globalOptions;
     private HttpClient httpClient;
+    private readonly NavigationManager navManager;
     private bool globalOptionsInitialized = true;
 
-   
 
     ///  <inheritdoc/>
     public List<IApexChartBase> Charts => charts.Values.ToList();
 
     ///  <inheritdoc/>
+    public List<LocaleResource> LocaleResources => locales.Values.ToList();
+
+    ///  <inheritdoc/>
     public IApexChartBaseOptions GlobalOptions => globalOptions;
 
+    private void PopulateBuiltInLocales()
+    {
+        var basePath = navManager.BaseUri + "_content/Blazor-ApexCharts/locales/";
+        locales.Clear();
+        locales.Add("fr", new LocaleResource { Name = "fr", Language = "French", Path = basePath + "fr.json" });
+        locales.Add("sv", new LocaleResource { Name = "sv", Language = "Swedish", Path = basePath + "sv.json" });
+    }
 
+    ///  <inheritdoc/>
+    public async Task SetLocaleAsync(LocaleResource localeResource, bool reRenderCharts)
+    {
+        localeResource.Locale ??= await httpClient.GetFromJsonAsync<ChartLocale>(localeResource.Path, ChartSerializer.GetOptions());
+        await SetLocaleAsync(localeResource.Locale, reRenderCharts);
+    }
+
+    ///  <inheritdoc/>
+    public async Task SetLocaleAsync(ChartLocale locale, bool reRenderCharts)
+    {
+        globalOptions.Chart ??= new();
+        globalOptions.Chart.DefaultLocale = locale.Name;
+        globalOptions.Chart.Locales = new List<ChartLocale> { locale };
+        await SetGlobalOptionsAsync(globalOptions, reRenderCharts);
+    }
 
     ///  <inheritdoc/>
     public async Task LoadJavascriptAsync(string path = null)
@@ -76,9 +98,8 @@ public class ApexChartService : IApexChartService
         await Task.WhenAll(Charts.ToList().Select(e => e.RenderAsync()));
     }
     ///  <inheritdoc/>
-    public async Task SetGlobalOptionsAsync(IApexChartBaseOptions options, bool reRenderCharts = false)
+    public async Task SetGlobalOptionsAsync(IApexChartBaseOptions options, bool reRenderCharts)
     {
-       
         options ??= new ApexChartBaseOptions();
         globalOptions = options;
         var jSObjectReference = await JSLoader.LoadAsync(jSRuntime, options?.Blazor?.JavascriptPath);
@@ -125,7 +146,7 @@ public class ApexChartService : IApexChartService
     {
         if (!globalOptionsInitialized)
         {
-           await SetGlobalOptionsAsync(globalOptions);
+            await SetGlobalOptionsAsync(globalOptions, false);
         }
     }
 

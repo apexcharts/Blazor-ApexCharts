@@ -5,7 +5,7 @@
         
     <Authors>Joakim Dangården</Authors>
     <Company />
-    <Description>A blazor wrapper for Apex Charts</Description>
+    <Description>A blazor wrapper for ApexCharts.js</Description>
     <PackageId>Blazor-ApexCharts</PackageId>
     <PackageTags>Blazor Charts ApexCharts Server WebAssembly</PackageTags>
     <RepositoryUrl>https://github.com/apexcharts/Blazor-ApexCharts</RepositoryUrl>

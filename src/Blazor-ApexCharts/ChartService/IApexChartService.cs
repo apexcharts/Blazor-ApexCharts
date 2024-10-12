@@ -9,10 +9,15 @@ namespace ApexCharts
     public interface IApexChartService
     {
         /// <summary>
-        /// Charts hols the list of rendred charts
+        /// Charts holds the list of rendred charts
         /// </summary>
         List<IApexChartBase> Charts { get; }
-       
+
+        /// <summary>
+        /// List all the built in locale resources
+        /// </summary>
+        List<LocaleResource> LocaleResources { get; }   
+
         /// <summary>
         /// Current global options
         /// </summary>
@@ -38,11 +43,14 @@ namespace ApexCharts
         /// <param name="options"></param>
         /// <param name="reRenderCharts"></param>
         /// <returns></returns>
-        Task SetGlobalOptionsAsync(IApexChartBaseOptions options, bool reRenderCharts = false);
+        Task SetGlobalOptionsAsync(IApexChartBaseOptions options, bool reRenderCharts);
 
-      
+        
+        Task SetLocaleAsync(LocaleResource localeResource, bool reRenderCharts);
 
-       public Task LoadLocaleFileAsync(string name);
+        Task SetLocaleAsync(ChartLocale chartLocale, bool reRenderCharts);
+
+      public Task LoadLocaleFileAsync(string name);
 
         internal Task GlobalOptionsInitializedAsync();
         internal void RegisterChart(IApexChartBase apexChart);
