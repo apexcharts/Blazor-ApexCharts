@@ -50,7 +50,7 @@ namespace ApexCharts
 
         Task SetLocaleAsync(ChartLocale chartLocale, bool reRenderCharts);
 
-      public Task LoadLocaleFileAsync(string name);
+   
 
         internal Task GlobalOptionsInitializedAsync();
         internal void RegisterChart(IApexChartBase apexChart);

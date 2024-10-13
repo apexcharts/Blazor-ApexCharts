@@ -13,9 +13,16 @@ public class LocaleResource
 
     public string Language { get; set; }
 
-    public string Path { get; set; }
-
     public ChartLocale Locale { get; set; }
+
+
+    internal string GetFileName()
+    {
+
+        return $@"locales\{Name}.json"; 
+
+    }
+
 }
 
 

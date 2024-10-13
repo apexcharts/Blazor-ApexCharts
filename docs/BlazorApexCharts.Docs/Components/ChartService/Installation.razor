@@ -1,0 +1,30 @@
+﻿
+
+
+
+Add Chart Service
+<CodeFormatter Code="@codeMinimal" />
+
+<div class="mb-3" />
+
+Optional add global options
+<CodeFormatter Code="@codeGlobalOptions" />
+
+
+
+@code {
+
+    private string codeMinimal = @"services.AddApexCharts();";
+
+
+    private string codeGlobalOptions = @"services.AddApexCharts(e =>
+            {
+                e.GlobalOptions = new ApexChartBaseOptions
+                {
+                    Debug = true,
+                    Theme = new Theme { Palette = PaletteType.Palette6 }
+                };
+            });";
+
+
+}

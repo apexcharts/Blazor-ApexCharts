@@ -10,8 +10,14 @@ using System.Threading.Tasks;
 
 namespace BlazorApexCharts.Docs.Components { 
 
+    public interface ICodeSnippet
+    {
+        Guid Id { get; internal set; }
+        string Title { get; set; }
+    }
 
-    public partial class CodeSnippet : ComponentBase
+
+    public partial class CodeSnippet : ComponentBase, ICodeSnippet
     {
         [Inject] ICodeSnippetService CodeSnippetService { get; set; }
         [CascadingParameter] DocExamples DocExamples { get; set; }
@@ -23,7 +29,7 @@ namespace BlazorApexCharts.Docs.Components {
 
         protected string Code;
 
-        public Guid Id { get; internal set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         protected override async Task OnInitializedAsync()
         {
