@@ -1,6 +1,6 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
-               Title="Order Gross Value" Options=options Debug>
+               Title="Order Gross Value" Options=options>
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"
@@ -9,7 +9,7 @@
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
                          OrderByDescending="e=>e.Y"
-                         PointColor="e=> GetPointColor(e)" ShowDataLabels  />
+                         PointColor="e=> GetPointColor(e)" ShowDataLabels />
     </ApexChart>
 </DemoContainer>
 
@@ -42,5 +42,4 @@
 
 
     }
-
-    }
+}

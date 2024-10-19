@@ -9,8 +9,7 @@
 <DemoContainer>
 
     <ApexChart @ref=chart TItem="Order"
-               Title="@title"
-               Debug>
+               Title="@title">
 
         <ApexPointSeries TItem="Order"
                          Items="orders"
@@ -67,7 +66,7 @@
                 X = "Sweden",
                 StrokeDashArray = 10,
                 BorderWidth = 3,
-                
+
                 Label = new Label
                 {
                     Text = "X Axis Annotation"
@@ -96,5 +95,4 @@
     {
         await chart?.RenderAsync();
     }
-
-   }
+}

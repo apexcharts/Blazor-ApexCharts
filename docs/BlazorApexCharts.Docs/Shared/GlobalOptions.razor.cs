@@ -27,6 +27,12 @@ public partial class GlobalOptions
         await ChartService.SetLocaleAsync(selectedLocale, true);
     }
 
+    private async Task SetDebugAsync(bool debug)
+    {
+        globalOptions.Debug = debug;
+        await UpdateOptionsAsync();
+    }
+
     private async Task UpdateOptionsAsync()
     {
         await ChartService.SetGlobalOptionsAsync(globalOptions, true);

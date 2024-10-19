@@ -3,13 +3,13 @@
     <p>This is an example of using the ApexchartService to set global chart options</p>
 </Alert>
 
-
+<Checkbox Label="Debug" Switch Value="globalOptions.Debug??false" ValueChanged="SetDebugAsync" />
 
 <ItemSelect class="mt-3" Label="Theme Mode" TItem="Mode?" TValue="Mode?"
             Items="EnumHelper.GetNullableList<Mode>()" @bind-SelectedValue="globalOptions.Theme.Mode" Changed=UpdateOptionsAsync />
 
 
-<ItemSelect class="mt-3" Label="Palette" TItem="PaletteType?" TValue="PaletteType?"
+<ItemSelect class="mt-3" Label="Theme Palette" TItem="PaletteType?" TValue="PaletteType?"
             Items="EnumHelper.GetNullableList<PaletteType>()" @bind-SelectedValue="globalOptions.Theme.Palette" Changed=UpdateOptionsAsync />
 
 

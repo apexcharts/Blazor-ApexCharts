@@ -8,22 +8,21 @@
     else
     {
         <ApexChart TItem="Project"
-               Title="Projects"
-               Options=options
-               XAxisType="XAxisType.Datetime"
-        OnSelection="OnSelection" Debug
-        >
+                   Title="Projects"
+                   Options=options
+                   XAxisType="XAxisType.Datetime"
+                   OnSelection="OnSelection">
             <ApexRangeSeries TItem="Project"
-                         Items="projects"
-                         XValue="@(e => e.Name)"
-                         YMinValue="@(e =>e.StartDate.ToUnixTimeMilliseconds())"
-                         YMaxValue="@(e =>e.EndDate.ToUnixTimeMilliseconds())" />
+                             Items="projects"
+                             XValue="@(e => e.Name)"
+                             YMinValue="@(e =>e.StartDate.ToUnixTimeMilliseconds())"
+                             YMaxValue="@(e =>e.EndDate.ToUnixTimeMilliseconds())" />
 
-                               
+
         </ApexChart>
     }
 
-    @if(currentSelection != null)
+    @if (currentSelection != null)
     {
         <h3>@currentSelection.XAxis.Min - @currentSelection.XAxis.Max </h3>
     }
@@ -54,7 +53,7 @@
                         Format = "dd MMM yyyy HH:mm"
                     }
                 },
-               
+
                 Chart = new()
                 {
                     Toolbar = new Toolbar
@@ -74,7 +73,7 @@
                     Selection = new ApexCharts.Selection
                     {
                         Enabled = true,
-                      
+
                     }
                     //Brush = new ApexCharts.Brush { Enabled = true }
                 }
@@ -84,7 +83,7 @@
 
             };
 
-      
+
 
     }
 

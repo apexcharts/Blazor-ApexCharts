@@ -1,12 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿
+<p>
+Resolve the service 
+</p>
 
-namespace ApexCharts
-{
-    /// <summary>
-    /// Service responsible for charts global options
-    /// </summary>
-    public interface IApexChartService
+<CodeFormatter Code="@codeMinimal" />
+<div class="mt-3" />
+
+
+
+
+<CodeFormatter Code="@codeInterface" />
+
+
+
+
+@code {
+    [Inject] public IApexChartService ApexChartService { get; set; }
+    private string codeMinimal = @"[Inject] public IApexChartService ApexChartService { get; set; };";
+
+    private string codeInterface = @"public interface IApexChartService
     {
         /// <summary>
         /// Charts holds the list of rendred charts
@@ -26,7 +38,7 @@ namespace ApexCharts
         /// <summary>
         /// Manually load the required javascript modules
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name=""path""></param>
         /// <returns></returns>
         Task LoadJavascriptAsync(string path = null);
 
@@ -40,30 +52,32 @@ namespace ApexCharts
         /// <summary>
         /// Sets the global chart options
         /// </summary>
-        /// <param name="options"></param>
-        /// <param name="reRenderCharts"></param>
+        /// <param name=""options""></param>
+        /// <param name=""reRenderCharts""></param>
         /// <returns></returns>
         Task SetGlobalOptionsAsync(IApexChartBaseOptions options, bool reRenderCharts);
 
         /// <summary>
         /// Sets the current Locale
         /// </summary>
-        /// <param name="localeResource"></param>
-        /// <param name="reRenderCharts"></param>
+        /// <param name=""localeResource""></param>
+        /// <param name=""reRenderCharts""></param>
         /// <returns></returns>
         Task SetLocaleAsync(LocaleResource localeResource, bool reRenderCharts);
 
         /// <summary>
         /// Sets the current locale
         /// </summary>
-        /// <param name="chartLocale"></param>
-        /// <param name="reRenderCharts"></param>
+        /// <param name=""chartLocale""></param>
+        /// <param name=""reRenderCharts""></param>
         /// <returns></returns>
         Task SetLocaleAsync(ChartLocale chartLocale, bool reRenderCharts);
-          
-
-        internal Task GlobalOptionsInitializedAsync();
-        internal void RegisterChart(IApexChartBase apexChart);
-        internal void UnRegisterChart(IApexChartBase apexChart);
     }
+";
+
+    private void Test()
+    {
+       
+    }
+
 }

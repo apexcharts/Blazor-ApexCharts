@@ -68,7 +68,7 @@ namespace ApexCharts
         /// <summary>
         /// Specifies whether to enable debug mode
         /// </summary>
-        [Parameter] public bool Debug { get; set; }
+        [Parameter] public bool? Debug { get; set; }
 
         /// <inheritdoc cref="Chart.Width"/>
         [Parameter] public object Width { get; set; }
@@ -409,10 +409,11 @@ namespace ApexCharts
             }
 
             Options.Chart.Id = chartId;
-            Options.Debug = Debug;
 
             chartService = serviceProvider.GetService<IApexChartService>();
             chartService?.RegisterChart(this);
+
+         
         }
 
         /// <inheritdoc/>
@@ -436,6 +437,7 @@ namespace ApexCharts
         /// <inheritdoc/>
         protected override void OnParametersSet()
         {
+          
 
             if (Width != null)
             {
@@ -1061,6 +1063,15 @@ namespace ApexCharts
 
         private void PrepareChart()
         {
+
+            Options.Debug = Debug ?? chartService?.GlobalOptions?.Debug;
+
+            if (chartService?.GlobalOptions?.Blazor != null)
+            {
+                Options.Blazor ??= chartService?.GlobalOptions?.Blazor;
+                Options.Blazor.JavascriptPath ??= chartService.GlobalOptions.Blazor.JavascriptPath;
+            }
+
             CheckChart();
             SetSeries();
             SetSeriesColors();
