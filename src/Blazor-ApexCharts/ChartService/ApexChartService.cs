@@ -1,5 +1,6 @@
 ﻿using ApexCharts.Internal;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Concurrent;
@@ -140,13 +141,13 @@ public class ApexChartService : IApexChartService
     {
         await Task.WhenAll(Charts.ToList().Select(e => e.RenderAsync()));
     }
+
+
     ///  <inheritdoc/>
-    public async Task SetGlobalOptionsAsync(IApexChartBaseOptions options, bool reRenderCharts)
+    public async Task SetGlobalOptionsAsync(bool reRenderCharts)
     {
-        options ??= new ApexChartBaseOptions();
-        globalOptions = options;
-        var jSObjectReference = await JSLoader.LoadAsync(jSRuntime, options?.Blazor?.JavascriptPath);
-        var json = ChartSerializer.SerializeOptions(options);
+        var jSObjectReference = await JSLoader.LoadAsync(jSRuntime, globalOptions?.Blazor?.JavascriptPath);
+        var json = ChartSerializer.SerializeOptions(globalOptions);
         await jSObjectReference.InvokeVoidAsync("blazor_apexchart.setGlobalOptions", json);
 
         globalOptionsInitialized = true;
@@ -155,6 +156,14 @@ public class ApexChartService : IApexChartService
         {
             await ReRenderChartsAsync();
         }
+    }
+
+    ///  <inheritdoc/>
+    public async Task SetGlobalOptionsAsync(IApexChartBaseOptions options, bool reRenderCharts)
+    {
+        options ??= new ApexChartBaseOptions();
+        globalOptions = options;
+        await SetGlobalOptionsAsync(reRenderCharts);
     }
 
     private readonly SemaphoreSlim _semaphore = new(1, 1);

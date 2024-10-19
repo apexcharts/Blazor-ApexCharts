@@ -46,6 +46,13 @@ namespace ApexCharts
         Task SetGlobalOptionsAsync(IApexChartBaseOptions options, bool reRenderCharts);
 
         /// <summary>
+        /// Sets the current global options
+        /// </summary>
+        /// <param name="reRenderCharts"></param>
+        /// <returns></returns>
+        Task SetGlobalOptionsAsync(bool reRenderCharts);
+
+        /// <summary>
         /// Sets the current Locale
         /// </summary>
         /// <param name="localeResource"></param>

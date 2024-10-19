@@ -35,6 +35,6 @@ public partial class GlobalOptions
 
     private async Task UpdateOptionsAsync()
     {
-        await ChartService.SetGlobalOptionsAsync(globalOptions, true);
+        await ChartService.SetGlobalOptionsAsync(true);
     }
 }
