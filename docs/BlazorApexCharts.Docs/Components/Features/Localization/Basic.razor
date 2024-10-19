@@ -2,7 +2,7 @@
     <p>
         Hoover the icons to see the locale
     </p>
-  
+
     <ItemSelect Label="Select Locale" SelectedValue="selectedLocale" SelectedValueChanged="SetLanguageAsync" TItem="string" TValue="string" Items="options.Chart.Locales.Select(e=> e.Name)">
         <ListTemplate>
             @context
@@ -11,8 +11,7 @@
 
     <ApexChart @ref=chart TItem="Order"
                Title="Order Net Value"
-               Options=options
-               Debug>
+               Options=options>
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"

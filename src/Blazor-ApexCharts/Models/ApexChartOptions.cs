@@ -6,15 +6,10 @@ using ApexCharts.Internal;
 
 namespace ApexCharts
 {
-    /// <summary>
-    /// Main class to configure options that are to be serialized and passed to the JavaScript.
-    /// </summary>
-    /// <typeparam name="TItem">The data type to be used in the chart to create data points.</typeparam>
-    public class ApexChartOptions<TItem> where TItem : class
+    /// <inheritdoc cref="ApexCharts.IApexChartBaseOptions" />
+    public class ApexChartBaseOptions : IApexChartBaseOptions
     {
-        /// <summary>
-        /// Logs function calls and options to the browser console when true
-        /// </summary>
+        /// <inheritdoc cref="ApexCharts.IApexChartBaseOptions.Debug" />
         public bool? Debug { get; set; }
 
         /// <inheritdoc cref="ApexCharts.ApexChartsBlazorOptions" />
@@ -74,12 +69,6 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.PlotOptions" />
         public PlotOptions PlotOptions { get; set; }
 
-        /// <inheritdoc cref="ApexCharts.Responsive{TItem} />
-        public List<Responsive<TItem>> Responsive { get; set; }
-
-        /// <inheritdoc cref="ApexCharts.Series{TItem}" />
-        public List<Series<TItem>> Series { get; set; }
-
         /// <inheritdoc cref="ApexCharts.States" />
         public States States { get; set; }
 
@@ -103,6 +92,20 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.YAxis" />
         public List<YAxis> Yaxis { get; set; }
+    }
+
+
+    /// <summary>
+    /// Main class to configure options that are to be serialized and passed to the JavaScript.
+    /// </summary>
+    /// <typeparam name="TItem">The data type to be used in the chart to create data points.</typeparam>
+    public class ApexChartOptions<TItem> : ApexChartBaseOptions where TItem : class
+    {
+        /// <inheritdoc cref="ApexCharts.Responsive{TItem}" />
+        public List<Responsive<TItem>> Responsive { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.Series{TItem}" />
+        public List<Series<TItem>> Series { get; set; }
     }
 
     /// <summary>
@@ -3209,7 +3212,7 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PieDataLabels" />
         /// <remarks>
-        /// All additional formatting/styling settings for dataLabels has to be done in <see cref="ApexChartOptions{TItem}.DataLabels"/> configuration.
+        /// All additional formatting/styling settings for dataLabels has to be done in <see cref="ApexChartBaseOptions.DataLabels"/> configuration.
         /// </remarks>
         public PieDataLabels DataLabels { get; set; }
 

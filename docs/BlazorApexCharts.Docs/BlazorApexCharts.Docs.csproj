@@ -12,13 +12,19 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.4.1" />
     <PackageReference Include="ColorCode.HTML" Version="2.0.15" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
     <PackageReference Include="TabBlazor" Version="0.12.2-alpha" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Blazor-ApexCharts\Blazor-ApexCharts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Components\ChartService\Usage.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
 
 </Project>

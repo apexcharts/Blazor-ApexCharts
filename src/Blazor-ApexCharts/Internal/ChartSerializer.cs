@@ -11,8 +11,16 @@ namespace ApexCharts.Internal
     internal static class ChartSerializer
     {
         private static readonly ConcurrentDictionary<Type, JsonSerializerOptions> _serializerOptions = new();
+        private static JsonSerializerOptions _baseOptions;
 
         private static JsonSerializerOptions GenerateOptions<TItem>() where TItem : class
+        {
+            var options = GenerateBaseOptions();
+            AddGenericOptions<TItem>(options);
+            return options;
+        }
+
+        private static JsonSerializerOptions GenerateBaseOptions() 
         {
             var serializerOptions = new JsonSerializerOptions
             {
@@ -20,16 +28,22 @@ namespace ApexCharts.Internal
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             };
 
-            serializerOptions.Converters.Add(new DataPointConverter<TItem>());
-            serializerOptions.Converters.Add(new SeriesConverter<TItem>());
             serializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
             serializerOptions.Converters.Add(new ValueOrListConverter<string>());
             serializerOptions.Converters.Add(new ValueOrListConverter<double>());
             serializerOptions.Converters.Add(new ValueOrListConverter<Curve>());
             serializerOptions.Converters.Add(new ValueOrListConverter<FillPatternStyle>());
             serializerOptions.Converters.Add(new ValueOrListConverter<FillType>());
-            
+        
             return serializerOptions;
+
+        }
+
+        private static void AddGenericOptions<TItem>(JsonSerializerOptions serializerOptions) where TItem : class
+        {
+            serializerOptions.Converters.Add(new DataPointConverter<TItem>());
+            serializerOptions.Converters.Add(new SeriesConverter<TItem>());
+
         }
 
         /// <summary>
@@ -50,5 +64,16 @@ namespace ApexCharts.Internal
 
             return newOptions;
         }
+        internal static JsonSerializerOptions GetOptions() 
+        {
+            _baseOptions ??= GenerateBaseOptions();
+            return _baseOptions;
+        }
+
+        internal static string SerializeOptions(IApexChartBaseOptions options)
+        {
+            return JsonSerializer.Serialize(options, GetOptions());
+        }
+
     }
 }

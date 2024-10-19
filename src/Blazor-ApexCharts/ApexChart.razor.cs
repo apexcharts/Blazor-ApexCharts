@@ -1,22 +1,47 @@
 ﻿using ApexCharts.Internal;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ApexCharts
 {
+
+    /// <inheritdoc cref="ApexCharts.ApexChartBaseOptions"/>
+    public interface IApexChartBase
+    {
+        /// <inheritdoc cref="Chart.Id"/>
+        string ChartId { get; }
+
+        /// <inheritdoc cref="ApexChart{TItem}.BaseOptions"/>
+        IApexChartBaseOptions BaseOptions { get; }
+
+        /// <inheritdoc cref="ApexChart{TItem}.RenderAsync"/>
+        Task RenderAsync();
+
+        /// <inheritdoc cref="ApexChart{TItem}.UpdateOptionsAsync"/>
+        Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null);
+    }
+
+
     /// <summary>
     /// Main component to create an Apex chart in Blazor
     /// </summary>
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
-    public partial class ApexChart<TItem> : IDisposable where TItem : class
+    public partial class ApexChart<TItem> : IApexChartBase, IDisposable where TItem : class
     {
+        /// <summary>
+        /// None generic version of the options object
+        /// </summary>
+        public IApexChartBaseOptions BaseOptions => Options;
+
+
         [Inject] private IJSRuntime jsRuntime { get; set; }
+        [Inject] private IServiceProvider serviceProvider { get; set; }
 
         /// <summary>
         /// Used to contain the data within the chart
@@ -43,7 +68,7 @@ namespace ApexCharts
         /// <summary>
         /// Specifies whether to enable debug mode
         /// </summary>
-        [Parameter] public bool Debug { get; set; }
+        [Parameter] public bool? Debug { get; set; }
 
         /// <inheritdoc cref="Chart.Width"/>
         [Parameter] public object Width { get; set; }
@@ -360,36 +385,13 @@ namespace ApexCharts
         private HoverData<TItem> tooltipData;
         private JSHandler<TItem> JSHandler;
         private IJSObjectReference blazor_apexchart;
+        private IApexChartService chartService;
 
         /// <inheritdoc cref="Chart.Id"/>
         public string ChartId => chartId;
 
         /// <inheritdoc/>
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender && isReady == false)
-            {
-                var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=4";
-                if (!string.IsNullOrWhiteSpace(Options?.Blazor?.JavascriptPath)) { javascriptPath = Options.Blazor.JavascriptPath; }
-
-                // load Module ftom ES6 script
-                IJSObjectReference module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", javascriptPath);
-                // load the  blazor_apexchart parent, currently window! to be compatyble with JS interop calls e.g blazor_apexchart.dataUri                                                                                                    
-                blazor_apexchart = await module.InvokeAsync<IJSObjectReference>("get_apexcharts");
-
-
-                isReady = true;
-                JSHandler = new JSHandler<TItem>(this);
-            }
-
-            if (isReady && forceRender)
-            {
-                await RenderChartAsync();
-            }
-        }
-
-        /// <inheritdoc/>
-        protected override void OnParametersSet()
+        protected override void OnInitialized()
         {
             if (Options == null) { Options = new ApexChartOptions<TItem>(); }
             if (Options.Chart == null) { Options.Chart = new Chart(); }
@@ -407,7 +409,35 @@ namespace ApexCharts
             }
 
             Options.Chart.Id = chartId;
-            Options.Debug = Debug;
+
+            chartService = serviceProvider.GetService<IApexChartService>();
+            chartService?.RegisterChart(this);
+
+         
+        }
+
+        /// <inheritdoc/>
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender && isReady == false)
+            {
+                blazor_apexchart = await JSLoader.LoadAsync(jsRuntime, Options?.Blazor?.JavascriptPath);
+                isReady = true;
+                JSHandler = new JSHandler<TItem>(this);
+
+                await chartService?.GlobalOptionsInitializedAsync();
+            }
+
+            if (isReady && forceRender)
+            {
+                await RenderChartAsync();
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void OnParametersSet()
+        {
+          
 
             if (Width != null)
             {
@@ -495,6 +525,7 @@ namespace ApexCharts
                Options?.Chart?.Type == ChartType.RadialBar;
             }
         }
+
 
         private void SetSeriesColors()
         {
@@ -796,10 +827,10 @@ namespace ApexCharts
         }
 
         /// <summary>
-        /// Resets all toggled series and bring back the chart to its original state.
+        /// Set Locale
         /// </summary>
-        /// <param name="shouldUpdateChart">After resetting the series, the chart data should update and return to it's original series.</param>
-        /// <param name="shouldResetZoom">If the user has zoomed in when this method is called, the zoom level should also reset.</param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public virtual async Task SetLocaleAsync(string name)
         {
             await InvokeVoidJsAsync("blazor_apexchart.setLocale", Options.Chart.Id, name);
@@ -1013,7 +1044,7 @@ namespace ApexCharts
         /// <param name="seriesName">The series name which you want to highlight.</param>
         public virtual async Task HighlightSeriesAsync(string seriesName)
         {
-           await InvokeVoidJsAsync("blazor_apexchart.highlightSeries", Options.Chart.Id, seriesName);
+            await InvokeVoidJsAsync("blazor_apexchart.highlightSeries", Options.Chart.Id, seriesName);
         }
 
         private void SetCustomIcons()
@@ -1032,6 +1063,15 @@ namespace ApexCharts
 
         private void PrepareChart()
         {
+
+            Options.Debug = Debug ?? chartService?.GlobalOptions?.Debug;
+
+            if (chartService?.GlobalOptions?.Blazor != null)
+            {
+                Options.Blazor ??= chartService?.GlobalOptions?.Blazor;
+                Options.Blazor.JavascriptPath ??= chartService.GlobalOptions.Blazor.JavascriptPath;
+            }
+
             CheckChart();
             SetSeries();
             SetSeriesColors();
@@ -1285,6 +1325,8 @@ namespace ApexCharts
         {
             GC.SuppressFinalize(this);
 
+            chartService?.UnRegisterChart(this);
+
             if (Options.Chart?.Id != null && isReady && blazor_apexchart != null)
             {
                 try
@@ -1294,7 +1336,6 @@ namespace ApexCharts
                 }
                 catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
                 { }
-
 
             }
             JSHandler?.Dispose();

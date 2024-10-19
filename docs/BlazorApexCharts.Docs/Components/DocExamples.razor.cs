@@ -19,7 +19,7 @@ namespace BlazorApexCharts.Docs.Components
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public RenderFragment Description { get; set; }
 
-        public List<CodeSnippet> CodeSnippets = new();
+        public List<ICodeSnippet> CodeSnippets = new();
         private bool navigateToFragment = true;
 
 
@@ -67,18 +67,23 @@ namespace BlazorApexCharts.Docs.Components
 
         private bool IsWasm => RuntimeInformation.IsOSPlatform(OSPlatform.Create("BROWSER"));
 
-        private async Task NavigateTo(CodeSnippet codeSnippet)
+        private async Task NavigateTo(ICodeSnippet codeSnippet)
         {
+            var url = NavManager.Uri;
+
+            url = url + "#" + codeSnippet.Title;
+
+            NavManager.NavigateTo(url, false);
             await TablerService.ScrollToFragment(codeSnippet.Id.ToString());
         }
 
-        public void AddCodeSnippet(CodeSnippet codeSnippet)
+        public void AddCodeSnippet(ICodeSnippet codeSnippet)
         {
             CodeSnippets.Add(codeSnippet);
             StateHasChanged();
         }
 
-        public void RemoveCodeSnippet(CodeSnippet codeSnippet)
+        public void RemoveCodeSnippet(ICodeSnippet codeSnippet)
         {
             CodeSnippets.Remove(codeSnippet);
             StateHasChanged();

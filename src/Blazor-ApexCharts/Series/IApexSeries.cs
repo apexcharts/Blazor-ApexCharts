@@ -49,7 +49,7 @@ namespace ApexCharts
         bool ShowDataLabels { get; set; }
 
         /// <summary>
-        /// Used to generate the <see cref="ApexChartOptions{TItem}.Stroke"/> values for the series
+        /// Used to generate the <see cref="ApexChartBaseOptions.Stroke"/> values for the series
         /// </summary>
         SeriesStroke Stroke { get; set; }
 

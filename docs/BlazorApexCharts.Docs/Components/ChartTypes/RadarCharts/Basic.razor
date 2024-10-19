@@ -1,7 +1,6 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
-               Title="Order  Value"
-               Debug>
+               Title="Order  Value">
 
         <ApexPointSeries TItem="Order"
                          Items="orders"
@@ -9,9 +8,7 @@
                          SeriesType="SeriesType.Radar"
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                         OrderByDescending="e=>e.Y"
-                         
-                          />
+                         OrderByDescending="e=>e.Y" />
 
         <ApexPointSeries TItem="Order"
                          Items="orders"
@@ -19,14 +16,10 @@
                          SeriesType="SeriesType.Radar"
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.NetValue))"
-                         OrderByDescending="e=>e.Y"
-                          />
+                         OrderByDescending="e=>e.Y" />
     </ApexChart>
 </DemoContainer>
 
 @code {
     private List<Order> orders { get; set; } = SampleData.GetOrders();
-   
-
-
-    }
+}
