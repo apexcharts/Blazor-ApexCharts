@@ -1,4 +1,9 @@
-﻿pre.highlight,
+﻿
+svg {
+    height: inherit!important
+}
+
+pre.highlight,
 .highlight pre {
     max-height: 30rem;
     overflow: auto;
