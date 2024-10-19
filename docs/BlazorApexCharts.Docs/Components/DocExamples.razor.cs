@@ -69,6 +69,11 @@ namespace BlazorApexCharts.Docs.Components
 
         private async Task NavigateTo(ICodeSnippet codeSnippet)
         {
+            var url = NavManager.Uri;
+
+            url = url + "#" + codeSnippet.Title;
+
+            NavManager.NavigateTo(url, false);
             await TablerService.ScrollToFragment(codeSnippet.Id.ToString());
         }
 
