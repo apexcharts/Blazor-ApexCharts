@@ -2,17 +2,16 @@
     <ApexChart TItem="Activity"
                Title="Incident Severity"
                Options=options
-               Debug
                XAxisType="XAxisType.Datetime">
 
         @foreach (var personGroup in activities.GroupBy(e => e.Person))
         {
             <ApexRangeSeries TItem="Activity"
-                         Items="personGroup"
-                         XValue="@(e=> e.Name)"
-                         YMinValue="@(e=> e.Start.ToUnixTimeMilliseconds())"
-                         YMaxValue="@(e=> e.End.ToUnixTimeMilliseconds())"
-                         Name="@personGroup.Key" />
+                             Items="personGroup"
+                             XValue="@(e=> e.Name)"
+                             YMinValue="@(e=> e.Start.ToUnixTimeMilliseconds())"
+                             YMaxValue="@(e=> e.End.ToUnixTimeMilliseconds())"
+                             Name="@personGroup.Key" />
         }
 
 

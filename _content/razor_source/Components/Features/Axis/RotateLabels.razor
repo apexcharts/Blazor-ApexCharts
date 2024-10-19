@@ -1,9 +1,8 @@
 ﻿<DemoContainer>
 
-<ApexChart TItem="Order"
+    <ApexChart TItem="Order"
                Title="Order Gross Value"
-Options=options
-Debug>
+               Options=options>
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"
@@ -11,8 +10,7 @@ Debug>
                          SeriesType="SeriesType.Bar"
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                         OrderByDescending="e=>e.Y" 
-                         />
+                         OrderByDescending="e=>e.Y" />
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"
@@ -31,9 +29,7 @@ Debug>
 
     protected override void OnInitialized()
     {
-        options.Xaxis = new XAxis { Labels = new XAxisLabels {  Rotate = -45, RotateAlways = true } };
+        options.Xaxis = new XAxis { Labels = new XAxisLabels { Rotate = -45, RotateAlways = true } };
         options.Yaxis = new List<YAxis> { new YAxis { Labels = new YAxisLabels { Rotate = 45 } } };
     }
-
-   
-    }
+}

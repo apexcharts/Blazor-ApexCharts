@@ -15,8 +15,7 @@
     </Row>
 
     <ApexChart @ref=chart TItem="Order"
-               Title=@GetTitle()
-               Debug>
+               Title=@GetTitle()>
 
         <ApexPointSeries TItem="Order"
                          Items="orders"
@@ -38,7 +37,7 @@
     private bool animate = false;
     private string currentColor = "#FF0000";
 
-   
+
 
     private string GetTitle()
     {

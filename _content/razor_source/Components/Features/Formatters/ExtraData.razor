@@ -1,8 +1,7 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
                Title="Order Net Value"
-    Options="options"
-    Debug>
+               Options="options">
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"
@@ -10,10 +9,10 @@
                          SeriesType="SeriesType.Line"
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                         OrderByDescending="e=>e.Y" ShowDataLabels 
-                        DataPointMutator=SetCustomData/>
+                         OrderByDescending="e=>e.Y" ShowDataLabels
+                         DataPointMutator=SetCustomData />
 
-        
+
     </ApexChart>
 </DemoContainer>
 
@@ -58,7 +57,7 @@
                 {
                     Formatter = @"function(value, opts) {
                     if (value === undefined) {return '';}
-                    let extra =  opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].extra;                   
+                    let extra =  opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].extra;
                     return  opts.w.globals.categoryLabels[value-1] + ':' + value + ' [' + extra.label + ']'}"
                 }
             };
@@ -73,4 +72,4 @@
     {
         public string Label { get; set; }
     }
-    }
+}

@@ -1,10 +1,9 @@
 ﻿<DemoContainer>
-   
-    
 
-    <ApexChart  TItem="Order" Debug
-               Title="Order Net Value"
-               >
+
+
+    <ApexChart TItem="Order" 
+               Title="Order Net Value">
 
         <ApexPointSeries TItem="Order"
                          Items="orders"
@@ -28,6 +27,6 @@
 </DemoContainer>
 
 @code {
-      private List<Order> orders = SampleData.GetOrders();
+    private List<Order> orders = SampleData.GetOrders();
 
 }
