@@ -425,7 +425,11 @@ namespace ApexCharts
                 isReady = true;
                 JSHandler = new JSHandler<TItem>(this);
 
-                await chartService?.GlobalOptionsInitializedAsync();
+                if (chartService != null)
+                {
+                    await chartService.GlobalOptionsInitializedAsync();
+                }
+                
             }
 
             if (isReady && forceRender)
