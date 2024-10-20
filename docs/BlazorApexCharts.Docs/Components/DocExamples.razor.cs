@@ -71,7 +71,13 @@ namespace BlazorApexCharts.Docs.Components
         {
             var url = NavManager.Uri;
 
-            url = url + "#" + codeSnippet.Title;
+            var pos = url.IndexOf('#');
+            if (pos > 0)
+            {
+                url = url.Substring(0, pos); 
+            }
+
+            url = url + "#" + codeSnippet.Title.ToLower();
 
             NavManager.NavigateTo(url, false);
             await TablerService.ScrollToFragment(codeSnippet.Id.ToString());

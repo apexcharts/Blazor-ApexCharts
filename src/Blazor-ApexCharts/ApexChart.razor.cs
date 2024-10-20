@@ -1058,10 +1058,9 @@ namespace ApexCharts
 
             foreach (var customIcon in customIcons)
             {
-                var script = @"function (chart, options, e) {
-                                options.config.dotNetObject.invokeMethodAsync('JSCustomIconClick', '" + customIcon.Id.ToString("N") + @"');
+                customIcon.Click = @"function (chart, options, e) {
+                                window.blazor_apexchart.dotNetRefs.get(options.globals.chartID).invokeMethodAsync('JSCustomIconClick', '" + customIcon.Id.ToString("N") + @"');
                                 }";
-                customIcon.Click = script;
             }
         }
 
