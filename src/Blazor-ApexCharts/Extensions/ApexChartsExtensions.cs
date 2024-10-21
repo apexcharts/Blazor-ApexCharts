@@ -14,7 +14,7 @@ public static class ApexChartsExtensions
 {
 
     /// <summary>
-    /// Add Apexcharts service
+    /// Add Apexcharts service to the DI container
     /// </summary>
     /// <param name="services"></param>
     /// <param name="serviceOptions"></param>
@@ -33,7 +33,14 @@ public static class ApexChartsExtensions
 
 }
 
+/// <summary>
+/// Set Options for the ApexChartsService
+/// </summary>
 public class ApexChartsServiceOptions
 {
+    
+    /// <summary>
+    /// Set the global options
+    /// </summary>
     public IApexChartBaseOptions GlobalOptions { get; set; }
 }
