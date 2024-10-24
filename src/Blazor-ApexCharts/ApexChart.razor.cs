@@ -393,7 +393,7 @@ namespace ApexCharts
         /// <inheritdoc/>
         protected override void OnInitialized()
         {
-            if (Options == null) { Options = new ApexChartOptions<TItem>(); }
+            Options ??= new ApexChartOptions<TItem>();
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
             if (string.IsNullOrEmpty(chartId))
@@ -810,8 +810,12 @@ namespace ApexCharts
         /// </remarks>
         public virtual async Task ZoomXAsync(ZoomOptions zoomOptions)
         {
-            if (zoomOptions == null) { throw new ArgumentNullException(nameof(zoomOptions)); }
-            await InvokeVoidJsAsync("blazor_apexchart.zoomX", Options.Chart.Id, zoomOptions.Start, zoomOptions.End);
+            if (zoomOptions != null)
+            {
+                await InvokeVoidJsAsync("blazor_apexchart.zoomX", Options.Chart.Id, zoomOptions.Start, zoomOptions.End);
+            }
+            else
+            { throw new ArgumentNullException(nameof(zoomOptions)); }
         }
 
         /// <summary>
