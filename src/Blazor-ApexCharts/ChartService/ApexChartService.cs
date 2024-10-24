@@ -30,8 +30,7 @@ public class ApexChartService : IApexChartService
     {
         this.jSRuntime = jSRuntime;
         this.httpClient = httpClient;
-        this.navManager = navManager;
-
+       
         httpClient.BaseAddress = new Uri(navManager.BaseUri + "_content/Blazor-ApexCharts/");
         PopulateBuiltInLocales();
         globalOptions = serviceOptions.GlobalOptions;
@@ -51,7 +50,7 @@ public class ApexChartService : IApexChartService
     private readonly IJSRuntime jSRuntime;
     private IApexChartBaseOptions globalOptions;
     private HttpClient httpClient;
-    private readonly NavigationManager navManager;
+    
     private bool globalOptionsInitialized = true;
 
 
@@ -66,7 +65,6 @@ public class ApexChartService : IApexChartService
 
     private void PopulateBuiltInLocales()
     {
-        var basePath = navManager.BaseUri + "_content/Blazor-ApexCharts/locales/";
         locales.Clear();
         locales.Add("ar", new LocaleResource { Name = "ar", Language = "Arabic" });
         locales.Add("be-cyrl", new LocaleResource { Name = "be-cyrl", Language = "Belarusian (Cyrillic)" });
