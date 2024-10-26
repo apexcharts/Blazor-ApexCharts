@@ -128,10 +128,14 @@ public class ApexChartService : IApexChartService
         await SetGlobalOptionsAsync(globalOptions, reRenderCharts);
     }
 
+   
+
+
     ///  <inheritdoc/>
-    public async Task LoadJavascriptAsync(string path = null)
+    public async Task InitalizeChartAsync(string javascriptPath = null)
     {
-        await JSLoader.LoadAsync(jSRuntime, path);
+        await JSLoader.LoadAsync(jSRuntime, javascriptPath);
+        await GlobalOptionsInitializedAsync();
     }
 
     ///  <inheritdoc/>
