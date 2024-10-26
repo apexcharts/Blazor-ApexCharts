@@ -25,10 +25,11 @@ namespace ApexCharts
 
         /// <summary>
         /// Manually load the required javascript modules
+        /// and set not initialized global options
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="javascriptPath"></param>
         /// <returns></returns>
-        Task LoadJavascriptAsync(string path = null);
+        Task InitalizeChartAsync(string javascriptPath = null);
 
 
         /// <summary>
