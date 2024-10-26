@@ -13,9 +13,8 @@ Or, optional add global options
 
 @code {
 
+    [Inject] public IApexChartService ChartService { get; set; }
     private string codeMinimal = @"services.AddApexCharts();";
-
-
     private string codeGlobalOptions = @"services.AddApexCharts(e =>
             {
                 e.GlobalOptions = new ApexChartBaseOptions
@@ -25,5 +24,9 @@ Or, optional add global options
                 };
             });";
 
+    protected override async Task OnInitializedAsync()
+    {
+        await ChartService.InitalizeChartAsync();
+    }
 
 }
