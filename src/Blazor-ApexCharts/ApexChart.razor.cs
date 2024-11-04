@@ -459,11 +459,7 @@ namespace ApexCharts
                 Options.Xaxis.Type = XAxisType;
             }
 
-            if (string.IsNullOrEmpty(Title))
-            {
-                Options.Title = null;
-            }
-            else
+            if (Title != null)
             {
                 if (Options.Title == null) { Options.Title = new Title(); }
                 Options.Title.Text = Title;
