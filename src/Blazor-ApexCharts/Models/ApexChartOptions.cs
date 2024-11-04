@@ -1682,6 +1682,14 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.ZoomedArea" />
         public ZoomedArea ZoomedArea { get; set; }
+
+	/// <summary>
+        /// Allow use of the mouse wheel to perform zoom. Default is true.
+        /// </summary>
+        /// <remarks>
+        /// Not currently documented in the apexchart-js documentation.
+        /// </remarks>
+        public bool? AllowMouseWheelZoom { get; set; }
     }
 
     /// <summary>
