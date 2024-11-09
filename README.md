@@ -9,19 +9,6 @@ A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
 ## [Demo](https://apexcharts.github.io/Blazor-ApexCharts)
 
 
-## v2.0 Released to production!
-It's no longer necessary to manually include javascript files. 
-Please **REMOVE** any references to:  
-
-```html
-<script src="_content/Blazor-ApexCharts/js/apex-charts.min.js"></script>
-<script src="_content/Blazor-ApexCharts/js/blazor-apex-charts.js"></script>
-```
----
-
-As of version 2.0 javascript interop on WASM is running synchronously for better performance. 
-
-
 ## Installation
 ### NuGet
 [Blazor-ApexCharts](https://www.nuget.org/packages/Blazor-ApexCharts/)
@@ -30,7 +17,29 @@ As of version 2.0 javascript interop on WASM is running synchronously for better
 dotnet add package Blazor-ApexCharts
 ```
 
+### ChartService
+ApexChartService is an optional service that will manage global options, set locales, manage charts on the screen.
+Add the chart service to the DI container by using the extension AddApexCharts(). This will add a scoped IApexChartService to the container.
+
+```razor
+services.AddApexCharts();
+```
+or add it with global options
+
+```razor
+services.AddApexCharts(e =>
+            {
+                e.GlobalOptions = new ApexChartBaseOptions
+                {
+                    Debug = true,
+                    Theme = new Theme { Palette = PaletteType.Palette6 }
+                };
+            });
+```
+
+
 ## Usage
+
 
 ### Imports
 Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
