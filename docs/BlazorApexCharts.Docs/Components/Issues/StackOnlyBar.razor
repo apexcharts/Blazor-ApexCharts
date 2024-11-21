@@ -1,0 +1,117 @@
+﻿@page "/issues/539"
+
+@using ApexCharts
+@using System.Globalization
+
+<h3>StackOnlyBar Chart Example</h3>
+
+<ApexChart TItem="ChartData" Height="400" Options="chartOptions">
+    <!-- Stacked Bar Series 1 -->
+    <ApexPointSeries TItem="ChartData"
+                     Items="ChartDataList"
+                     SeriesType="@SeriesType.Bar"
+                     Name="Completed"
+                     Color="#28B463"
+                     XValue="@(item => item.MonthYear)"
+                     YValue="@(item => (decimal)item.Completed)" />
+
+    <!-- Stacked Bar Series 2 -->
+    <ApexPointSeries TItem="ChartData"
+                     Items="ChartDataList"
+                     SeriesType="@SeriesType.Bar"
+                     Name="Pending"
+                     Color="#F1C40F"
+                     XValue="@(item => item.MonthYear)"
+                     YValue="@(item => (decimal)item.Pending)" />
+
+    <!-- Line Series -->
+    <ApexPointSeries TItem="ChartData"
+                     Items="ChartDataList"
+                     SeriesType="@SeriesType.Line"
+                     Name="Target"
+                     Color="#FF5733"
+                     XValue="@(item => item.MonthYear)"
+                     YValue="@(item => (decimal)item.Target)"
+                     Stroke="@(new ApexCharts.SeriesStroke { Width = 3 })" />
+</ApexChart>
+
+@code {
+    // Data Model
+    public class ChartData
+    {
+        public string MonthYear { get; set; } = string.Empty;
+        public double Target { get; set; }
+        public double Completed { get; set; }
+        public double Pending { get; set; }
+    }
+
+    // Chart Options
+    private ApexChartOptions<ChartData> chartOptions;
+
+    // Sample Data
+    private List<ChartData> ChartDataList = new List<ChartData>
+    {
+        new ChartData { MonthYear = "Jan/24", Target = 5000, Completed = 3000, Pending = 2000 },
+        new ChartData { MonthYear = "Feb/24", Target = 7000, Completed = 4000, Pending = 3000 },
+        new ChartData { MonthYear = "Mar/24", Target = 6000, Completed = 4500, Pending = 1500 },
+        new ChartData { MonthYear = "Apr/24", Target = 8000, Completed = 5000, Pending = 3000 },
+        new ChartData { MonthYear = "May/24", Target = 7500, Completed = 6000, Pending = 1500 },
+        new ChartData { MonthYear = "Jun/24", Target = 9000, Completed = 7000, Pending = 2000 },
+        new ChartData { MonthYear = "Jul/24", Target = 8500, Completed = 6500, Pending = 2000 },
+        new ChartData { MonthYear = "Aug/24", Target = 9500, Completed = 8000, Pending = 1500 },
+        new ChartData { MonthYear = "Sep/24", Target = 10000, Completed = 8500, Pending = 1500 },
+        new ChartData { MonthYear = "Oct/24", Target = 11000, Completed = 9000, Pending = 2000 },
+        new ChartData { MonthYear = "Nov/24", Target = 10500, Completed = 9500, Pending = 1000 },
+        new ChartData { MonthYear = "Dec/24", Target = 12000, Completed = 10000, Pending = 2000 }
+    };
+
+    protected override void OnInitialized()
+    {
+        chartOptions = new ApexChartOptions<ChartData>
+            {
+                Chart = new()
+                {
+                    Toolbar = new ApexCharts.Toolbar
+                    {
+                        Tools = new Tools { Zoom = false, Zoomin = false, Zoomout = false, Pan = false, Reset = false, Download = false },
+                    },
+                    DropShadow = new ApexCharts.DropShadow
+                    {
+                        Enabled = true,
+                        Color = "#000",
+                        Top = 5,
+                        Left = 0,
+                        Blur = 3,
+                        Opacity = 0.1
+                    },
+                    StackOnlyBar = true,
+                    Stacked = true
+                },
+                Grid = new Grid
+                {
+                    BorderColor = "#e7e7e7",
+                    StrokeDashArray = 3
+                },
+                Tooltip = new ApexCharts.Tooltip
+                {
+                    X = new TooltipX
+                    {
+
+                    }
+                },
+                Stroke = new Stroke { Curve = Curve.Smooth },
+                Yaxis = new List<YAxis>()
+            {
+                new YAxis
+                {
+                    Labels = new YAxisLabels
+                    {
+                        Formatter = @"function (value) {
+                        return 'R$' + Number(value).toLocaleString();
+                        }"
+                    },
+                }
+            },
+            };
+    }
+}
