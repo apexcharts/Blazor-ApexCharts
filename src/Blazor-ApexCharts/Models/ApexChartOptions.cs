@@ -2746,6 +2746,30 @@ namespace ApexCharts
         /// Default is false
         /// </summary>
         public bool? IsSlopeChart { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.LineColors" />
+        public LineColors Colors { get; set; }
+
+    }
+
+    /// <summary>
+    /// Options for line colors
+    /// </summary>
+    public class LineColors
+    {
+        /// <summary>
+        /// Value that indicates the threshold for different colors
+        /// Default is 0
+        /// </summary>
+        public decimal? Threshold { get; set; }
+        /// <summary>
+        /// Color of the line above threshold
+        /// </summary>
+        public string ColorAboveThreshold { get; set; }
+        /// <summary>
+        /// Color of the line below threshold
+        /// </summary>
+        public string ColorBelowThreshold { get; set; }
     }
 
         /// <summary>

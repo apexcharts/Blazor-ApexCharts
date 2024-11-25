@@ -25,6 +25,9 @@
     <Content Update="Components\ChartService\Usage.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="Components\ChartTypes\LineCharts\ColorThreshold.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
 
 </Project>
