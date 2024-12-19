@@ -8,12 +8,12 @@
 
     @if (ApexPointTooltip != null)
     {
-        <div style="display:none" id="apex-tooltip-@ChartId">
+        <span  id="apex-tooltip-@ChartId">
             @if (tooltipData != null)
             {
                 @ApexPointTooltip(tooltipData)
             }
-        </div>
+        </span>
     }
 
 </CascadingValue>

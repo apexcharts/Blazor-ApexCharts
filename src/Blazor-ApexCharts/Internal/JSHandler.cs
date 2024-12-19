@@ -276,37 +276,50 @@ namespace ApexCharts.Internal
         [JSInvokable]
         public void JSDataPointEnter(JSDataPointSelection selectedDataPoints)
         {
-            if (ChartReference.OnDataPointEnter.HasDelegate || ChartReference.ApexPointTooltip != null)
+            if (ChartReference.OnDataPointEnter.HasDelegate)
             {
-                var series = ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
-
-                var hoverData = new HoverData<TItem>
-                {
-                    Chart = ChartReference,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
-                };
-
+         
+                var hoverData = GetHoverData(selectedDataPoints);
                 ChartReference.OnDataPointEnter.InvokeAsync(hoverData);
 
-                if (ChartReference.ApexPointTooltip != null)
-                {
-                    ChartReference.UpdateTooltipData(hoverData);
-                }
+               
             }
         }
 
-        /// <summary>
-        /// Callback from JavaScript on data point leave
-        /// </summary>
-        /// <param name="selectedDataPoints">Details from JavaScript</param>
-        /// <remarks>
-        /// Will execute <see cref="ApexChart{TItem}.OnDataPointLeave"/>
-        /// </remarks>
+        private HoverData<TItem> GetHoverData(JSDataPointSelection selectedDataPoints)
+        {
+            var series = ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
+            var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+
+            return  new HoverData<TItem>
+            {
+                Chart = ChartReference,
+                Series = series,
+                DataPoint = dataPoint,
+                DataPointIndex = selectedDataPoints.DataPointIndex,
+                SeriesIndex = selectedDataPoints.SeriesIndex
+            };
+        }
+
         [JSInvokable]
+        public void RazorTooltip(JSDataPointSelection selectedDataPoints)
+        {
+            if (ChartReference.ApexPointTooltip != null)
+            {
+                var hoverData = GetHoverData(selectedDataPoints);
+                ChartReference.UpdateTooltipData(hoverData);
+            }
+
+        }
+
+            /// <summary>
+            /// Callback from JavaScript on data point leave
+            /// </summary>
+            /// <param name="selectedDataPoints">Details from JavaScript</param>
+            /// <remarks>
+            /// Will execute <see cref="ApexChart{TItem}.OnDataPointLeave"/>
+            /// </remarks>
+            [JSInvokable]
         public void JSDataPointLeave(JSDataPointSelection selectedDataPoints)
         {
             if (ChartReference.OnDataPointLeave.HasDelegate)
