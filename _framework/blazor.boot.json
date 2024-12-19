@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "BlazorApexCharts.Docs.Wasm",
   "resources": {
-    "hash": "sha256-SR0BUjsclCtiTGkuPOKBOdIXdjY8t8sQVkbHVmpXiPc=",
+    "hash": "sha256-D0Nsix2SBJp1AVYJcKuQW080oQiHV6CZHjccX9kD7SA=",
     "jsModuleNative": {
       "dotnet.native.8.0.11.n1sf6xr5tz.js": "sha256-VdKq87/z5NIxZKmuM+fv38XF+RcEb/bg3jVBwQSfwP4="
     },
@@ -17,9 +17,9 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "Blazor-ApexCharts.wasm": "sha256-IXO0YUtHmtb8FkeUEifQaF8zgCwQizGsusZ4ZZqe+RM=",
-      "BlazorApexCharts.Docs.wasm": "sha256-ux06e5bpQB2o+YgXAzHGH/x9JoWPlPdILGmEq2Wv2jc=",
-      "BlazorApexCharts.Docs.Wasm.wasm": "sha256-wMOYasiV2J0es2qD30uHyTl1A76k/+TUsl1TrHChxlE=",
+      "Blazor-ApexCharts.wasm": "sha256-T8bm5uNeZXjOWruAhDbh7PpoyJOUCb4mTpasUOJMDxA=",
+      "BlazorApexCharts.Docs.wasm": "sha256-bNKAIlx6GQfa7kJiULlci7uyCbLJIawn9wNgVxQ2yrg=",
+      "BlazorApexCharts.Docs.Wasm.wasm": "sha256-s0+UgpVJji0rGM/eQAupWEGsr+1KinWNPmSDA6Lb+40=",
       "Bogus.wasm": "sha256-f+eHEnC6EJOpjXzE11hmrwCT61N+kMiE6vm/AjRrX3E=",
       "ColorCode.Core.wasm": "sha256-MU1CG0WM9yn7fhjNqezPvT3DIqEUOz9cPFedLWKX2YQ=",
       "ColorCode.HTML.wasm": "sha256-gfdkROdz/vh5Y8eCvHzcmc6mAAKWKXQGcuQcbr0hRPQ=",
@@ -35,7 +35,7 @@
       "Microsoft.Extensions.DependencyInjection.wasm": "sha256-T/+qPF0RWC8dfbLNFgoTfla+JM2H3eY5L17aqODwzFc=",
       "Microsoft.Extensions.Diagnostics.Abstractions.wasm": "sha256-pjdN7y8cb63V0lMjb1oSUexmb+arIwZIOlQmVunNwNk=",
       "Microsoft.Extensions.Diagnostics.wasm": "sha256-bXPj85y2t5GX3grb+76vO/o+ROWrmzqXZNAquvwX264=",
-      "Microsoft.Extensions.Http.wasm": "sha256-FyrjoPt54X4p+tLHWaXBSnbNCIUg/KcLQsv17plyXRI=",
+      "Microsoft.Extensions.Http.wasm": "sha256-pdbylxkg8dzd90p0oKhBykGMuQPBN/kk9bMfEnly9xk=",
       "Microsoft.Extensions.Logging.Abstractions.wasm": "sha256-UU+BYiTRpNaFZmml1bPg1ZO5VUPiRg6y3JsMv0Ep9aw=",
       "Microsoft.Extensions.Logging.wasm": "sha256-hs9jYWOUyEFqFdE3QI7P9N1ZNcEYty75T2c+Vnicetc=",
       "Microsoft.Extensions.Options.wasm": "sha256-iRFKIZppdsDcIezL/0NgJnvtz8gfDuEqQxGRoAhklXM=",
