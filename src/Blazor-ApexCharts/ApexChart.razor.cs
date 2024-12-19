@@ -638,7 +638,7 @@ namespace ApexCharts
 
         private bool ShouldFixDataSelection()
         {
-            if ((!OnDataPointSelection.HasDelegate && !OnDataPointEnter.HasDelegate && ApexPointTooltip == null) || !Options.Series.Any()) { return false; }
+            if ((!OnDataPointSelection.HasDelegate && !OnDataPointEnter.HasDelegate) || !Options.Series.Any()) { return false; }
 
             if (Options.Chart?.Type != null && Options.Chart.Type == ChartType.Line || Options.Chart.Type == ChartType.Area || Options.Chart.Type == ChartType.Radar)
             {

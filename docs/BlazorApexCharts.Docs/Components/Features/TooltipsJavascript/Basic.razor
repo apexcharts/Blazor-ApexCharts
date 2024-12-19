@@ -33,7 +33,9 @@
 
     protected override void OnInitialized()
     {
-        options.Tooltip = new ApexCharts.Tooltip { Custom = @"function({series, seriesIndex, dataPointIndex, w}) { var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];  return '<div>' + data.x + ': ' +  data.y + '</div>' }" }
+        options.Tooltip = new ApexCharts.Tooltip
+            {
+                Custom = @"function({series, seriesIndex, dataPointIndex, w}) { var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];  return '<div class= \""p-2 \""> ' + data.x + ': ' + data.y + ' </ div > ' }" }
         ;
     }
 
