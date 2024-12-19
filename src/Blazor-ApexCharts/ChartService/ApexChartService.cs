@@ -23,13 +23,13 @@ public class ApexChartService : IApexChartService
     /// Initialize a new instance of the <see cref="ApexChartService"/> class
     /// </summary>
     /// <param name="jSRuntime"></param>
-    /// <param name="httpClient"></param>
+    /// <param name="httpClientFacory"></param>
     /// <param name="navManager"></param>
     /// <param name="serviceOptions"></param>
-    public ApexChartService(IJSRuntime jSRuntime, HttpClient httpClient, NavigationManager navManager, ApexChartsServiceOptions serviceOptions)
+    public ApexChartService(IJSRuntime jSRuntime, IHttpClientFactory httpClientFacory, NavigationManager navManager, ApexChartsServiceOptions serviceOptions)
     {
         this.jSRuntime = jSRuntime;
-        this.httpClient = httpClient;
+        this.httpClient = httpClientFacory.CreateClient();
        
         httpClient.BaseAddress = new Uri(navManager.BaseUri + "_content/Blazor-ApexCharts/");
         PopulateBuiltInLocales();
