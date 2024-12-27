@@ -10,8 +10,35 @@
         return navigator.userAgent;
     },
 
+    openContentWindow(contentType, content, urlSuffix, name, features) {
+        const blob = new Blob([content], { type: contentType });
+        var url = URL.createObjectURL(blob);
+
+        if (urlSuffix) {
+            url = url + urlSuffix;
+        }
+
+        var newWindow = window.open(url, name, features);
+
+        newWindow.addEventListener('beforeunload', () => {
+            URL.revokeObjectURL(url, name, features);
+        })
+
+    },
+
+
+
+    createObjectURL(contentType, content) {
+        const blob = new Blob([content], { type: contentType });
+        return URL.createObjectURL(blob);
+    },
+
+    revokeObjectURL(objectURL) {
+        URL.revokeObjectURL(objectURL);
+    },
+
+  
     saveAsBinary: function (filename, contentType, content) {
-        // Create the URL
         const file = new File([content], filename, { type: contentType });
         const exportUrl = URL.createObjectURL(file);
         const a = document.createElement("a");
@@ -183,7 +210,7 @@
             var currentTime = (new Date()).getTime();
 
             var handler = (e) => {
-              
+
                 var nowTime = (new Date()).getTime();
                 var diff = Math.abs((nowTime - currentTime) / 1000);
 

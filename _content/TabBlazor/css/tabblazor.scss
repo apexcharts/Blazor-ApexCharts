@@ -62,14 +62,13 @@
 .badge-list > * {
     margin: 0 0.4rem 0.3rem 0 !important;
 }
-
+ 
 .modal-max {
     min-width: 99%;
 }
 
 .dropdown-item.highlight {
-    /*  background-color : var(--tblr-light);*/
-    background-color: lightgray;
+    background-color: rgba(var(--tblr-secondary-rgb), 0.4);
 }
 
 .tree, .tree ul {

@@ -1,4 +1,4 @@
-﻿.nav-bordered .nav-item {
+.nav-bordered .nav-item {
   margin-left: 1rem !important;
 }
 
@@ -68,8 +68,7 @@
 }
 
 .dropdown-item.highlight {
-  /*  background-color : var(--tblr-light);*/
-  background-color: lightgray;
+  background-color: rgba(var(--tblr-secondary-rgb), 0.4);
 }
 
 .tree, .tree ul {
@@ -272,3 +271,5 @@ Dimmer
 .switch-icon-flip.active .switch-icon-b {
   opacity: 0;
 }
+
+/*# sourceMappingURL=tabblazor.css.map */
