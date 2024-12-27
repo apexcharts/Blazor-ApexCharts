@@ -9,7 +9,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.10" PrivateAssets="all" />
     <PackageReference Include="PublishSPAforGitHubPages.Build" Version="3.0.0" />
     <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
-	<PackageReference Include="TabBlazor" Version="0.12.2-alpha" />
+	<PackageReference Include="TabBlazor" Version="0.14.23-beta" />
 
 	  <PackageReference Include="System.Text.Json" Version="8.0.5" />
   
