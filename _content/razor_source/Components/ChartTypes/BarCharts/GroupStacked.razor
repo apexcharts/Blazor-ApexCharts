@@ -1,49 +1,49 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
-               Title="Order Net Value"
-               Options=options>
+    Title="Order Net Value"
+    Options=options Debug="true">
 
         <ApexPointSeries TItem="Order"
-                         Items="Orders"
-                         Name="Gross Value Budget"
-                         Group="Budget"
-                         SeriesType="SeriesType.Bar"
-                         XValue="@(e => e.Country)"
-                         YAggregate="@(e => e.Sum(e => e.GrossValue) - 10000)"
-                         OrderByDescending="e=>e.Y"
-                         ShowDataLabels />
+        Items="Orders"
+        Name="Gross Value Budget"
+        Group="Budget"
+        SeriesType="SeriesType.Bar"
+        XValue="@(e => e.Country)"
+        YAggregate="@(e => e.Sum(e => e.GrossValue) - 10000)"
+        OrderByDescending="e=>e.Y"
+        ShowDataLabels />
 
         <ApexPointSeries TItem="Order"
-                         Items="Orders"
-                         Name="Gross Value"
-                         Group="Actual"
-                         SeriesType="SeriesType.Bar"
-                         XValue="@(e => e.Country)"
-                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                         OrderByDescending="e=>e.Y"
-                         ShowDataLabels />
+        Items="Orders"
+        Name="Gross Value"
+        Group="Actual"
+        SeriesType="SeriesType.Bar"
+        XValue="@(e => e.Country)"
+        YAggregate="@(e => e.Sum(e => e.GrossValue))"
+        OrderByDescending="e=>e.Y"
+        ShowDataLabels />
 
 
 
         <ApexPointSeries TItem="Order"
-                         Items="Orders"
-                         Name="Net Value Budget"
-                         Group="Budget"
-                         SeriesType="SeriesType.Bar"
-                         XValue="@(e => e.Country)"
-                         YAggregate="@(e => e.Sum(e => e.NetValue))"
-                         OrderByDescending="e=>e.Y"
-                         ShowDataLabels />
+        Items="Orders"
+        Name="Net Value Budget"
+        Group="Budget"
+        SeriesType="SeriesType.Bar"
+        XValue="@(e => e.Country)"
+        YAggregate="@(e => e.Sum(e => e.NetValue))"
+        OrderByDescending="e=>e.Y"
+        ShowDataLabels />
 
         <ApexPointSeries TItem="Order"
-                         Items="Orders"
-                         Name="Net Value"
-                         Group="Actual"
-                         SeriesType="SeriesType.Bar"
-                         XValue="@(e => e.Country)"
-                         YAggregate="@(e => e.Sum(e => e.NetValue))"
-                         OrderByDescending="e=>e.Y"
-                         ShowDataLabels />
+        Items="Orders"
+        Name="Net Value"
+        Group="Actual"
+        SeriesType="SeriesType.Bar"
+        XValue="@(e => e.Country)"
+        YAggregate="@(e => e.Sum(e => e.NetValue))"
+        OrderByDescending="e=>e.Y"
+        ShowDataLabels />
     </ApexChart>
 </DemoContainer>
 @code {
@@ -66,6 +66,7 @@
                         Horizontal = true
                     }
                 },
+                Legend = new Legend {  ClusterGroupedSeriesOrientation = ClusterGroupedSeriesOrientation.Horizontal },
                 Colors = new List<string> { "#80c7fd", "#008FFB", "#80f1cb", "#00E396" },
                 Xaxis = new XAxis { Categories = new List<string> { "Category1", "Category2", "Category3", "Category4" } }
             };
