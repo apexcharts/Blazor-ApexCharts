@@ -2324,12 +2324,12 @@ namespace ApexCharts
 
         /// <summary>
         ///  Indicates if the Legends should grouped by Cluster
+        ///  Default is true in Apexcharts.js
         /// </summary>
         public bool? ClusterGroupedSeries { get; set; }
 
         /// <summary>
         /// Orientation for the Clustered Grouped Series
-        /// Only valid if ClusterGroupedSeries is set to true;
         /// </summary>
         public ClusterGroupedSeriesOrientation? ClusterGroupedSeriesOrientation { get; set; }
 
@@ -5537,7 +5537,6 @@ namespace ApexCharts
 
     /// <summary>
     /// Orientation options for the Clustered Grouped Series
-    /// Only valid if ClusterGroupedSeries is set to true;
     /// </summary>
     public enum ClusterGroupedSeriesOrientation
     {
