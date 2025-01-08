@@ -2321,7 +2321,21 @@ namespace ApexCharts
         /// Allows you to overwrite the default legend items with this customized set of labels. Please note that the click/hover events of the legend will stop working if you provide these custom legend labels.
         /// </summary>
         public List<string> CustomLegendItems { get; set; }
+
+        /// <summary>
+        ///  Indicates if the Legends should grouped by Cluster
+        /// </summary>
+        public bool? ClusterGroupedSeries { get; set; }
+
+        /// <summary>
+        /// Orientation for the Clustered Grouped Series
+        /// Only valid if ClusterGroupedSeries is set to true;
+        /// </summary>
+        public ClusterGroupedSeriesOrientation? ClusterGroupedSeriesOrientation { get; set; }
+
     }
+
+  
 
     /// <summary>
     /// Undocumented, this class exists in the TypeScript definition
@@ -5519,6 +5533,16 @@ namespace ApexCharts
         Circle,
         Square,
         Rect
+    };
+
+    /// <summary>
+    /// Orientation options for the Clustered Grouped Series
+    /// Only valid if ClusterGroupedSeries is set to true;
+    /// </summary>
+    public enum ClusterGroupedSeriesOrientation
+    {
+        Horizontal,
+        Vertical
     };
 
     /// <summary>
