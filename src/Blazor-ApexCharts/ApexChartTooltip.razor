@@ -1,0 +1,16 @@
+﻿@namespace ApexCharts.Internal
+@typeparam TItem
+
+@if (ApexTooltip != null)
+{
+    <span style="display:none">
+        <span id="tooltip_source_@ChartId">
+            @if (Data != null)
+            {
+                @ApexTooltip(Data)
+            }
+        </span>
+    </span>
+}
+
+

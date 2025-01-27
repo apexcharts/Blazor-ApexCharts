@@ -12,7 +12,7 @@ internal static class JSLoader
 {
     internal static async Task<IJSObjectReference> LoadAsync(IJSRuntime jsRuntime, string path = null)
     {
-        var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=4";
+        var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=5";
         if (!string.IsNullOrWhiteSpace(path)) { javascriptPath = path; }
 
         // load Module ftom ES6 script
