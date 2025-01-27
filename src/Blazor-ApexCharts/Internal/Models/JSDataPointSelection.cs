@@ -21,5 +21,6 @@ namespace ApexCharts.Internal
         /// The index of the data series being selected
         /// </summary>
         public int SeriesIndex { get; set; }
+
     }
 }

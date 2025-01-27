@@ -6,14 +6,19 @@
 <CascadingValue Value="(ApexChart<TItem>)this" Name="Chart">
     @ChildContent
 
-    @if (ApexPointTooltip != null)
+    <ApexCharts.Internal.ApexChartTooltip ApexTooltip="ApexPointTooltip" Data="tooltipData" TItem="TItem" JsApexchart="blazor_apexchart" ChartId="@chartId"   />
+
+   @*  @if (ApexPointTooltip != null)
     {
-        <span  id="apex-tooltip-@ChartId">
-            @if (tooltipData != null)
-            {
-                @ApexPointTooltip(tooltipData)
-            }
+        <span  id="apex-tooltip-@ChartId" style="display:none">
+            <span>
+                @if (tooltipData != null)
+                {
+                    @ApexPointTooltip(tooltipData)
+                }
+            </span>
+           
         </span>
-    }
+    } *@
 
 </CascadingValue>
