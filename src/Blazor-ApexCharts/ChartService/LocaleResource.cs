@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ApexCharts;
+﻿namespace ApexCharts;
 
 /// <summary>
 /// Locale resources built in Apexcharts
@@ -27,17 +21,8 @@ public class LocaleResource
     /// </summary>
     public ChartLocale Locale { get; set; }
 
-
-    internal string GetFileName()
-    {
-
-        return $@"locales\{Name}.json"; 
-
-    }
-
+    /// <summary>
+    /// Returns the expected file name for the locale.
+    /// </summary>
+	public string GetFileName() => $@"locales\{Name}.json";
 }
-
-
-
-
-

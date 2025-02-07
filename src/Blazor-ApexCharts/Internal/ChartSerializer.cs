@@ -8,7 +8,7 @@ namespace ApexCharts.Internal
     /// <summary>
     /// Contains methods to assist with serializing chart data
     /// </summary>
-    internal static class ChartSerializer
+    public static class ChartSerializer
     {
         private static readonly ConcurrentDictionary<Type, JsonSerializerOptions> _serializerOptions = new();
         private static JsonSerializerOptions _baseOptions;
@@ -20,7 +20,7 @@ namespace ApexCharts.Internal
             return options;
         }
 
-        private static JsonSerializerOptions GenerateBaseOptions() 
+        private static JsonSerializerOptions GenerateBaseOptions()
         {
             var serializerOptions = new JsonSerializerOptions
             {
@@ -34,16 +34,14 @@ namespace ApexCharts.Internal
             serializerOptions.Converters.Add(new ValueOrListConverter<Curve>());
             serializerOptions.Converters.Add(new ValueOrListConverter<FillPatternStyle>());
             serializerOptions.Converters.Add(new ValueOrListConverter<FillType>());
-        
-            return serializerOptions;
 
+            return serializerOptions;
         }
 
         private static void AddGenericOptions<TItem>(JsonSerializerOptions serializerOptions) where TItem : class
         {
             serializerOptions.Converters.Add(new DataPointConverter<TItem>());
             serializerOptions.Converters.Add(new SeriesConverter<TItem>());
-
         }
 
         /// <summary>
@@ -64,16 +62,23 @@ namespace ApexCharts.Internal
 
             return newOptions;
         }
-        internal static JsonSerializerOptions GetOptions() 
+
+        /// <summary>
+        /// Returns the default serializer options for the library.
+        /// </summary>
+		public static JsonSerializerOptions GetOptions()
         {
             _baseOptions ??= GenerateBaseOptions();
             return _baseOptions;
         }
 
-        internal static string SerializeOptions(IApexChartBaseOptions options)
+        /// <summary>
+        /// Serializes and returns the provided options.
+        /// </summary>
+        /// <param name="options"></param>
+		public static string SerializeOptions(IApexChartBaseOptions options)
         {
             return JsonSerializer.Serialize(options, GetOptions());
         }
-
     }
 }
