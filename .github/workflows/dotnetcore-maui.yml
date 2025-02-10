@@ -26,5 +26,5 @@ jobs:
         dotnet restore
       working-directory: ./src/Blazor-ApexCharts-MAUI
     - name: Build MAUI
-      run: dotnet build --configuration Release --no-restore --framework net${{ matrix.dotnet-version }}.0
+      run: dotnet build --configuration Release --no-restore
       working-directory: ./src/Blazor-ApexCharts-MAUI
