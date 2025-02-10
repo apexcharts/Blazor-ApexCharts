@@ -1,0 +1,30 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        dotnet-version: [8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup dotnet ${{ matrix.dotnet-version }}.0.x
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}.0.x
+    - name: Install dependencies
+      run: |
+        dotnet workload install maui
+        dotnet restore
+      working-directory: ./src/Blazor-ApexCharts-MAUI
+    - name: Build MAUI
+      run: dotnet build --configuration Release --no-restore --framework net${{ matrix.dotnet-version }}.0
+      working-directory: ./src/Blazor-ApexCharts-MAUI
