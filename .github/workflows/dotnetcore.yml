@@ -21,7 +21,18 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}.0.x
     - name: Install dependencies
-      run: dotnet restore 
-    - name: Build
+      run: dotnet restore
+      working-directory: ./src/Blazor-ApexCharts
+    - name: Build Main
       run: dotnet build --configuration Release --no-restore --framework net${{ matrix.dotnet-version }}.0
       working-directory: ./src/Blazor-ApexCharts
+    - name: Install .NET MAUI
+      if: ${{ matrix.dotnet-version == 8 }}
+      run:
+        dotnet workload install maui
+        dotnet restore
+      working-directory: ./src/Blazor-ApexCharts-MAUI
+    - name: Build MAUI
+      if: ${{ matrix.dotnet-version == 8 }}
+      run: dotnet build --configuration Release --no-restore --framework net${{ matrix.dotnet-version }}.0
+      working-directory: ./src/Blazor-ApexCharts-MAUI
