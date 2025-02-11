@@ -351,3 +351,4 @@ MigrationBackup/
 
 # XML Documentation file
 Blazor-ApexCharts.xml
+/src/Blazor-ApexCharts-MAUI/Blazor-ApexCharts-MAUI.xml
