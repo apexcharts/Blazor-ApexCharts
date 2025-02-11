@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "BlazorApexCharts.Docs.Wasm",
   "resources": {
-    "hash": "sha256-2CcBekBVzU9CQzYwXKRQi5L+duggXRaqupaN6XoeQJM=",
+    "hash": "sha256-7QG1TDU6AwVWPM6kiKPqJaADnf2UczGS5mfRzrincyQ=",
     "jsModuleNative": {
       "dotnet.native.8.0.12.5019ia6r61.js": "sha256-B6DNRvFeCUi3jbx9uKpuj+hV9cN0KG4RdZj1FgBZwj8="
     },
@@ -17,9 +17,9 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "Blazor-ApexCharts.wasm": "sha256-EyEH1ntzz4OY1IzinnRcx5Dj/sJlM3qjqUFDEsMw9DU=",
-      "BlazorApexCharts.Docs.wasm": "sha256-VkVX45NG3xKWqiD/G2pMmF7ihphLtRZ36vrhVxamVng=",
-      "BlazorApexCharts.Docs.Wasm.wasm": "sha256-t6dWqe+iDCS/SboJCmA+yF1NA1FDHIGt35iWKT9NtDc=",
+      "Blazor-ApexCharts.wasm": "sha256-xYGK8TQG1M7UdV0SdVb6wuFGECxjH9u1ypBrLl/QoXo=",
+      "BlazorApexCharts.Docs.wasm": "sha256-xxyjRCbnf0SqXqoHYTSCypj339Nb/eniIFHk0ul/3EE=",
+      "BlazorApexCharts.Docs.Wasm.wasm": "sha256-9QUXl+IHU+HQGbwfYZwU1ddmwZcO4Ww/0PCiPdENQ1o=",
       "Bogus.wasm": "sha256-f+eHEnC6EJOpjXzE11hmrwCT61N+kMiE6vm/AjRrX3E=",
       "ColorCode.Core.wasm": "sha256-MU1CG0WM9yn7fhjNqezPvT3DIqEUOz9cPFedLWKX2YQ=",
       "ColorCode.HTML.wasm": "sha256-gfdkROdz/vh5Y8eCvHzcmc6mAAKWKXQGcuQcbr0hRPQ=",
