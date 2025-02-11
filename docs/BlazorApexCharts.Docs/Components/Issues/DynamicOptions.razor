@@ -1,0 +1,44 @@
+﻿@page "/issues/dynamic-options"
+
+<DemoContainer>
+
+    <Button BackgroundColor="TablerColor.Primary" OnClick="Test">Click me</Button>
+
+
+    <ApexChart TItem="Order"
+    Options="GetOptions()" Title="Dynamic">
+
+        <ApexPointSeries TItem="Order"
+        Items="Orders"
+        Name="Gross Value"
+        SeriesType="SeriesType.Line"
+        XValue="@(e => e.Country)"
+        YAggregate="@(e => e.Sum(e => e.GrossValue))"
+        OrderByDescending="e=>e.Y" />
+
+        <ApexPointSeries TItem="Order"
+        Items="Orders"
+        Name="Net Value"
+        SeriesType="SeriesType.Line"
+        XValue="@(e => e.Country)"
+        YAggregate="@(e => e.Sum(e => e.NetValue))"
+        OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+
+    private ApexChartOptions<Order> GetOptions()
+    {
+        return new ApexChartOptions<Order> {  };
+    }
+
+    private void Test()
+    {
+
+        var tt = "click";
+
+    }
+
+}
