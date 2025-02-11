@@ -11,7 +11,7 @@
     "BlazorApexCharts.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "issues/dynamic-options",
+      "launchUrl": "bar-charts",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

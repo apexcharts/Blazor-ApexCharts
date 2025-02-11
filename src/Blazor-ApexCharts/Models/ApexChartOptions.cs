@@ -644,7 +644,7 @@ namespace ApexCharts
         /// <summary>
         /// Shape of the marker.
         /// </summary>
-        public ShapeEnum Shape { get; set; }
+        public AnnotationMarkerShape? Shape { get; set; }
 
         /// <summary>
         /// Size of the marker.
@@ -1092,7 +1092,7 @@ namespace ApexCharts
     /// </summary>
     public class ExportCSV
     {
-       
+
         /// <summary>
         /// Name of the csv file. Defaults to auto generated chart ID
         /// </summary>
@@ -1683,7 +1683,7 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.ZoomedArea" />
         public ZoomedArea ZoomedArea { get; set; }
 
-	/// <summary>
+        /// <summary>
         /// Allow use of the mouse wheel to perform zoom. Default is true.
         /// </summary>
         /// <remarks>
@@ -2335,7 +2335,7 @@ namespace ApexCharts
 
     }
 
-  
+
 
     /// <summary>
     /// Undocumented, this class exists in the TypeScript definition
@@ -2536,7 +2536,7 @@ namespace ApexCharts
         /// <summary>
         /// Shape of the marker.
         /// </summary>
-        public ShapeEnum? Shape { get; set; }
+        public MarkerShapeSelections Shape { get; set; }
 
         /// <summary>
         /// Whether to show markers for null values in a line/area chart. If disabled, any null values present in line/area charts will not be visible.
@@ -2617,7 +2617,7 @@ namespace ApexCharts
         /// <summary>
         /// The type of shape to use for the marker
         /// </summary>
-        public ShapeEnum? Shape { get; set; }
+        public MarkerShape? Shape { get; set; }
     }
 
     /// <summary>
@@ -2742,7 +2742,7 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsLine" />
         public PlotOptionsLine Line { get; set; }
-        
+
     }
 
     /// <summary>
@@ -2786,17 +2786,17 @@ namespace ApexCharts
         public string ColorBelowThreshold { get; set; }
     }
 
-        /// <summary>
-        /// Defines options specific to <see cref="ChartType.Area"/>
-        /// </summary>
-        /// <remarks>
-        /// Links:
-        /// 
-        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/area-charts">Blazor Example</see>,
-        /// <see href="https://apexcharts.com/docs/chart-types/area-chart">JavaScript Documentation</see>,
-        /// <see href="https://apexcharts.com/docs/options/plotoptions/area">JavaScript Reference</see>
-        /// </remarks>
-        public class PlotOptionsArea
+    /// <summary>
+    /// Defines options specific to <see cref="ChartType.Area"/>
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    /// 
+    /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/area-charts">Blazor Example</see>,
+    /// <see href="https://apexcharts.com/docs/chart-types/area-chart">JavaScript Documentation</see>,
+    /// <see href="https://apexcharts.com/docs/options/plotoptions/area">JavaScript Reference</see>
+    /// </remarks>
+    public class PlotOptionsArea
     {
         /// <summary>
         /// When negative values are present in the area chart, this option fill the area either from 0 (origin) or from the end of the chart as illustrated below.
@@ -3910,7 +3910,7 @@ namespace ApexCharts
         /// <summary>
         /// The new configuration object that you would like to override on the existing default configuration object. All the options which you set normally can be set here. <see href="https://codepen.io/apexcharts/pen/ajpqJp">Example</see>
         /// </summary>
-        public ApexChartOptions<TItem> Options { get; set; } 
+        public ApexChartOptions<TItem> Options { get; set; }
     }
 
     /// <summary>
@@ -5526,14 +5526,32 @@ namespace ApexCharts
     };
 
     /// <summary>
-    /// A list of shapes to generate data point markers with
+    /// Annotation Markers shape
     /// </summary>
-    public enum ShapeEnum
+    public enum AnnotationMarkerShape
     {
         Circle,
         Square,
-        Rect
     };
+
+
+    /// <summary>
+    /// Markers Shape
+    /// </summary>
+    public enum MarkerShape
+    {
+        Circle,
+        Square,
+        Line,
+        Plus,
+        Cross,
+        Star,
+        Sparkle,
+        Diamond,
+        Triangle,
+
+    };
+
 
     /// <summary>
     /// Orientation options for the Clustered Grouped Series
