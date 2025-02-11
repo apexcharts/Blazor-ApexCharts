@@ -442,7 +442,10 @@ namespace ApexCharts
         /// <inheritdoc/>
         protected override void OnParametersSet()
         {
-          
+            Options ??= new ApexChartOptions<TItem>();
+            if (Options.Chart == null) { Options.Chart = new Chart(); }
+
+            Options.Chart.Id = chartId;
 
             if (Width != null)
             {
