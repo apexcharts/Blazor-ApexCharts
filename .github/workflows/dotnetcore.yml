@@ -21,7 +21,8 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}.0.x
     - name: Install dependencies
-      run: dotnet restore 
+      run: dotnet restore
+      working-directory: ./src/Blazor-ApexCharts
     - name: Build
       run: dotnet build --configuration Release --no-restore --framework net${{ matrix.dotnet-version }}.0
       working-directory: ./src/Blazor-ApexCharts

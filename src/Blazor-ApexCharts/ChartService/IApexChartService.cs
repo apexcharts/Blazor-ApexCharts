@@ -16,7 +16,7 @@ namespace ApexCharts
         /// <summary>
         /// List all the built in locale resources
         /// </summary>
-        List<LocaleResource> LocaleResources { get; }   
+        List<LocaleResource> LocaleResources { get; }
 
         /// <summary>
         /// Current global options
@@ -30,7 +30,6 @@ namespace ApexCharts
         /// <param name="javascriptPath"></param>
         /// <returns></returns>
         Task InitalizeChartAsync(string javascriptPath = null);
-
 
         /// <summary>
         /// ReRender all charts
@@ -68,10 +67,20 @@ namespace ApexCharts
         /// <param name="reRenderCharts"></param>
         /// <returns></returns>
         Task SetLocaleAsync(ChartLocale chartLocale, bool reRenderCharts);
-          
 
-        internal Task GlobalOptionsInitializedAsync();
-        internal void RegisterChart(IApexChartBase apexChart);
-        internal void UnRegisterChart(IApexChartBase apexChart);
+        /// <summary>
+        ///
+        /// </summary>
+        Task GlobalOptionsInitializedAsync();
+
+		/// <summary>
+		/// Used to register an chart, Internal usage
+		/// </summary>
+		void RegisterChart(IApexChartBase apexChart);
+
+		/// <summary>
+		/// Used to UnRegister an chart, Internal usage
+		/// </summary>
+		void UnRegisterChart(IApexChartBase apexChart);
     }
 }
