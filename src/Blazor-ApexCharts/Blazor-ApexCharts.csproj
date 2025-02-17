@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 
 		<Authors>Joakim Dangården</Authors>
 		<Company />
@@ -23,6 +23,13 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.13" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.13" />
 	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.2" />
+	</ItemGroup>
+
 
 	<ItemGroup>
 		<None Include="..\..\LICENSE">
