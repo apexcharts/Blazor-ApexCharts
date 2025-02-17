@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: Ubuntu-latest
+    runs-on: windows-2022
     strategy:
       matrix:
         dotnet-version: [8, 9]
