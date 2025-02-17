@@ -9,10 +9,10 @@ on:
 jobs:
   build:
 
-    runs-on: Ubuntu-22.04
+    runs-on: Ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [6, 7, 8]
+        dotnet-version: [8, 9]
 
     steps:
     - uses: actions/checkout@v2
