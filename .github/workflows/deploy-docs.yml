@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 jobs:
   build-and-deploy:
-    runs-on: Ubuntu-22.04
+    runs-on: windows-2022
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
