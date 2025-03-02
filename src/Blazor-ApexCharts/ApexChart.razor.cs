@@ -862,7 +862,9 @@ namespace ApexCharts
         }
 
 
-
+        /// <summary>
+        /// The getSvgString() method is used to get svg for the chart. Currently this is not available in Blazor Server
+        /// </summary>
         public virtual async Task<string> GetSvgStringAsync()
         {
             var result = await InvokeJsAsync<string>("blazor_apexchart.getSvgStringAsync", Options.Chart.Id);
