@@ -1,0 +1,49 @@
+﻿<DemoContainer>
+    <ApexChart TItem="BoxPlotSample">
+
+        <ApexBoxPlotSeries TItem="BoxPlotSample"
+                           Items="incidents"
+                           Name="incidents"
+                           XValue="@(e => e.Name)"
+                           Max="@(e => e.Max)"
+                           Min="@(e => e.Min)"
+                           Quantile1="@(e => e.Q1)"
+                           Quantile3="@(e => e.Q3)"
+                           Median="@(e => e.Median)" DataPointMutator="SetGoals" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<BoxPlotSample> incidents { get; set; } = SampleData.GetBoxPlotData();
+
+    private void SetGoals(ListPoint<BoxPlotSample> datapoint)
+    {
+        datapoint.Goals = new();
+        var goal = new DataPointGoal { Name = "Target" };
+        datapoint.Goals.Add(goal);
+
+        switch (datapoint.X.ToString())
+        {
+            case "Jonas":
+                goal.StrokeColor = "#e3001b";
+                goal.StrokeDashArray = 5;
+                goal.StrokeHeight = 5;
+                goal.Value = 30;
+                break;
+
+            case "Cecilia":
+                goal.StrokeColor = "#145A32";
+                goal.StrokeHeight = 10;
+                goal.Value = 77;
+                break;
+
+            default:
+                goal.StrokeColor = "#ffd500";
+                goal.StrokeHeight = 13;
+                goal.StrokeWidth = 0;
+                goal.StrokeLineCap = LineCap.Round;
+                goal.Value = 22;
+                break;
+        }
+    }
+}
