@@ -25,6 +25,11 @@ namespace ApexCharts
         /// <inheritdoc cref="IDataPoint{TItem}.Extra"/>
         public object Extra { get; set; }
 
+        /// <summary>
+        /// A collection of goal markers to display with the data point
+        /// </summary>
+        public List<DataPointGoal> Goals { get; set; }
+
         /// <inheritdoc cref="IDataPoint{TItem}.Items"/>
         [JsonIgnore]
         public IEnumerable<TItem> Items { get; set; }
