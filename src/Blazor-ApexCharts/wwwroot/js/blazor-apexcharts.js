@@ -1,4 +1,4 @@
-﻿import ApexCharts from './apexcharts.esm.js?ver=4.4.0.0'
+﻿import ApexCharts from './apexcharts.esm.js?ver=4.5.0.0'
 
 // export function for Blazor to point to the window.blazor_apexchart. To be compatible with the most JS Interop calls the window will be return.
 export function get_apexcharts() {
@@ -98,7 +98,7 @@ window.blazor_apexchart = {
 
     setGlobalOptions(options) {
         var opt = this.parseOptions(options);
-      
+
         if (opt.debug === true) {
             console.log('------');
             console.log('Method: setGlobalOptions');
@@ -179,6 +179,16 @@ window.blazor_apexchart = {
             return chart.dataURI(opt);
         }
 
+        return '';
+    },
+
+   async getSvgStringAsync(id) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) {
+            this.LogMethodCall(chart, 'getSvgString');
+            const svgString = await chart.getSvgString();
+            return svgString;
+        }
         return '';
     },
 
@@ -315,12 +325,12 @@ window.blazor_apexchart = {
                     el = document.createElement("DIV");
                     el.id = targetId;
                 }
-               
+
                 dotNetObject.invokeMethodAsync('RazorTooltip', selection);
 
                 return el;
 
-               
+
             };
         }
 

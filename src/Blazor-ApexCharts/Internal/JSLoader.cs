@@ -15,7 +15,7 @@ public static class JSLoader
     /// <param name="path"></param>
 	public static async Task<IJSObjectReference> LoadAsync(IJSRuntime jsRuntime, string path = null)
     {
-        var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=5.1";
+        var javascriptPath = "./_content/Blazor-ApexCharts/js/blazor-apexcharts.js?ver=6.0";
         if (!string.IsNullOrWhiteSpace(path)) { javascriptPath = path; }
 
         // load Module ftom ES6 script
