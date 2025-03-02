@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 jobs:
   build-and-deploy:
-    runs-on: windows-2022
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -16,9 +16,6 @@ jobs:
     - name: Publish with dotnet
       run: dotnet publish -c Release -o public -p:GHPages=true 
       working-directory: ./docs/BlazorApexCharts.Docs.Wasm
-    - name: Install rsync
-      run: |
-        apt-get update && apt-get install -y rsync
     - name: Deploy to Github Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
