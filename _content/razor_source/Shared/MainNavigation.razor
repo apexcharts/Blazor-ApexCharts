@@ -162,28 +162,28 @@
                 <NavbarMenuItem Text="Annotations" Href="features/annotations" />
                 <NavbarMenuItem Text="Axis" Href="features/axis" />
                 <NavbarMenuItem Text="Blazor Options" Href="features/blazor-options" />
-              
+
                 <NavbarMenuItem Text="Data" Href="features/chart-data" />
                 <NavbarMenuItem Text="Dynamic Series" Href="features/dynamic-series" />
-              
+
                 <NavbarMenuItem Text="Export" Href="features/export" />
                 <NavbarMenuItem Text="Formatters" Href="features/formatters" />
                 <NavbarMenuItem Text="Group Points" Href="features/group-points" />
                 <NavbarMenuItem Text="Legend" Href="features/legend" />
-                 <NavbarMenuItem Text="Localization" Href="features/localization" />
+                <NavbarMenuItem Text="Localization" Href="features/localization" />
                 <NavbarMenuItem Text="Performance" Href="features/performance" />
-                 <NavbarMenuItem Text="Responsive" Href="features/responsive" />
+                <NavbarMenuItem Text="Responsive" Href="features/responsive" />
                 <NavbarMenuItem Text="Size" Href="features/chart-size" />
                 <NavbarMenuItem Text="State" Href="features/state" />
                 <NavbarMenuItem Text="Syncronized charts" Href="features/syncronized" />
                 <NavbarMenuItem Text="Toolbar" Href="features/toolbar" />
-                <NavbarMenuItem Text="Tooltip" >
-                       <SubMenu>
+                <NavbarMenuItem Text="Tooltip">
+                    <SubMenu>
                         <NavbarMenuItem Text="Javascript" Href="features/tooltip-javascript" />
                         <NavbarMenuItem Text="DotNet" Href="features/tooltip-dotnet" />
-           </SubMenu>
+                    </SubMenu>
 
-                    </NavbarMenuItem>
+                </NavbarMenuItem>
             </SubMenu>
 
         </NavbarMenuItem>
@@ -196,8 +196,12 @@
                 <NavbarMenuItem Text="Annotations" Href="methods/annotations" />
                 <NavbarMenuItem Text="Append Data" Href="methods/append-data" />
                 <NavbarMenuItem Text="Data Uri" Href="methods/data-uri" />
+                <NavbarMenuItem Text="Get SVG String" Href="methods/get-svg-string" >
+                    Get SVG string
+                    <span class="badge badge-sm bg-danger-lt ms-auto">WASM Only</span>
+                </NavbarMenuItem>
                 <NavbarMenuItem Text="Highlight Series" Href="methods/highlight-series" />
-               
+
                 <NavbarMenuItem Text="Render" Href="methods/render" />
                 <NavbarMenuItem Text="Toggle Data Point" Href="methods/toggle-data-point" />
                 <NavbarMenuItem Text="Update Options" Href="methods/update-options" />
@@ -217,7 +221,7 @@
 
         <NavbarMenuItem Text="Global Options" OnClick="ShowGlobalOptions">
             <MenuItemIcon>
-                <Icon  IconType="@Icons.Theme_light_dark" />
+                <Icon IconType="@Icons.Theme_light_dark" />
             </MenuItemIcon>
         </NavbarMenuItem>
 
