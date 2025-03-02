@@ -16,6 +16,9 @@ jobs:
     - name: Publish with dotnet
       run: dotnet publish -c Release -o public -p:GHPages=true 
       working-directory: ./docs/BlazorApexCharts.Docs.Wasm
+    - name: Install rsync
+      run: |
+        apt-get update && apt-get install -y rsync
     - name: Deploy to Github Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
