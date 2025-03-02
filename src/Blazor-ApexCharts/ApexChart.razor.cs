@@ -414,7 +414,7 @@ namespace ApexCharts
             chartService = serviceProvider.GetService<IApexChartService>();
             chartService?.RegisterChart(this);
 
-         
+
         }
 
         /// <inheritdoc/>
@@ -430,7 +430,7 @@ namespace ApexCharts
                 {
                     await chartService.GlobalOptionsInitializedAsync();
                 }
-                
+
             }
 
             if (isReady && forceRender)
@@ -622,7 +622,8 @@ namespace ApexCharts
             {
                 Options.Labels = null;
                 return;
-            };
+            }
+            ;
 
             if (Options.Series == null || !Options.Series.Any()) { return; }
             if (Options.Series.Count > 1)
@@ -858,6 +859,14 @@ namespace ApexCharts
         public virtual async Task ResetSeriesAsync(bool shouldUpdateChart, bool shouldResetZoom)
         {
             await InvokeVoidJsAsync("blazor_apexchart.resetSeries", Options.Chart.Id, shouldUpdateChart, shouldResetZoom);
+        }
+
+
+
+        public virtual async Task<string> GetSvgStringAsync()
+        {
+            var result = await InvokeJsAsync<string>("blazor_apexchart.getSvgStringAsync", Options.Chart.Id);
+            return result;
         }
 
         /// <summary>

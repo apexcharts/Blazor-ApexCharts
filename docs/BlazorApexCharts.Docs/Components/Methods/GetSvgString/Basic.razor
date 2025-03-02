@@ -1,0 +1,53 @@
+﻿<DemoContainer>
+
+    <Button OnClick=DataUri BackgroundColor="TablerColor.Primary">Chart SVG</Button>
+
+    <ApexChart @ref=chart TItem="Order"
+               Title="@title">
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderByDescending="e=>e.Y" />
+
+
+    </ApexChart>
+</DemoContainer>
+
+@if (!string.IsNullOrWhiteSpace(svgString))
+{
+    <ModalView Title="Chart SVG" Options="@(new ModalOptions { Size= ModalSize.Medium })" OnClosed=ModalClosed>
+       <div>
+           @svgString
+       </div>
+    </ModalView>
+}
+
+@code {
+    private ApexChart<Order> chart;
+    private List<Order> orders = SampleData.GetOrders();
+    private string title = "Orders";
+    private string svgString;
+
+    private void ModalClosed()
+    {
+        svgString = string.Empty;
+    }
+
+    private async Task DataUri()
+    {
+       
+        svgString = await chart.GetSvgStringAsync();
+    }
+}
