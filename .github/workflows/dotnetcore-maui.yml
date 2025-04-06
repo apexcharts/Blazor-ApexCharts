@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-2022
     strategy:
       matrix:
-        dotnet-version: [8]
+        dotnet-version: [9]
 
     steps:
     - uses: actions/checkout@v2

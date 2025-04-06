@@ -11,10 +11,18 @@ A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
 
 ## Installation
 ### NuGet
+For Blazor projects running in a web browser, WinForms, or WPF.
 [Blazor-ApexCharts](https://www.nuget.org/packages/Blazor-ApexCharts/)
 
 ```bash
 dotnet add package Blazor-ApexCharts
+```
+
+For Blazor projects running on .NET MAUI.
+[Blazor-ApexCharts-MAUI](https://www.nuget.org/packages/Blazor-ApexCharts-MAUI/)
+
+```bash
+dotnet add package Blazor-ApexCharts-MAUI
 ```
 
 ### ChartService
@@ -37,6 +45,11 @@ services.AddApexCharts(e =>
             });
 ```
 
+The same as above can be used for .NET MAUI, just make sure to use the method below to add the chart service.
+
+```razor
+services.AddApexChartsMaui();
+```
 
 ## Usage
 

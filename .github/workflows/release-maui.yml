@@ -1,0 +1,31 @@
+on:
+  push:
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+name: Create Release
+jobs:
+  build:
+    name: Create Release
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Install dependencies
+      run: |
+        dotnet workload install maui
+        dotnet restore
+
+    - name: Dotnet Pack
+      working-directory: ./src/Blazor-ApexCharts-MAUI
+      run: dotnet pack -c Release -p:Version=${GITHUB_REF##*/v}
+
+    - name: Dotnet Nuget Push
+      working-directory: ./src/Blazor-ApexCharts-MAUI/bin/Release
+      run: dotnet nuget push Blazor-ApexCharts-MAUI.*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
