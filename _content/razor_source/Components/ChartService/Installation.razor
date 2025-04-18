@@ -4,7 +4,12 @@ Add Chart Service to the DI container by using the extension AddApexCharts().
 This will add a scoped IApexChartService to the container.
 </p>
 
+For Blazor projects running in a web browser, WinForms, or WPF.
 <CodeFormatter Code="@codeMinimal" />
+
+For Blazor projects running in a MAUI application.
+<CodeFormatter Code="@codeMinimalMaui" />
+
 Or, optional add global options
 <CodeFormatter Code="@codeGlobalOptions" />
 
@@ -15,6 +20,7 @@ Or, optional add global options
 
     [Inject] public IApexChartService ChartService { get; set; }
     private string codeMinimal = @"services.AddApexCharts();";
+    private string codeMinimalMaui = @"services.AddApexCharts();";
     private string codeGlobalOptions = @"services.AddApexCharts(e =>
             {
                 e.GlobalOptions = new ApexChartBaseOptions
