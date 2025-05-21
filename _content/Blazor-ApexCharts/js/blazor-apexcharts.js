@@ -474,10 +474,10 @@ window.blazor_apexchart = {
                     seriesIndex: -1
                 };
 
-                if (config.dataPointIndex >= 0)
-                    selection.dataPointIndex = config.dataPointIndex;
+                if (config.dataPointIndex >= 0 && config.dataPointIndex !== null)
+                    selection.dataPointIndex = Number(config.dataPointIndex);
 
-                if (config.seriesIndex >= 0)
+                if (config.seriesIndex >= 0 && config.seriesIndex !== null)
                     selection.seriesIndex = config.seriesIndex;
 
                 dotNetObject.invokeMethodAsync('JSClick', selection);
