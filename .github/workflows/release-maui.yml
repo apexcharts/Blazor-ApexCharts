@@ -24,7 +24,7 @@ jobs:
 
     - name: Dotnet Pack
       working-directory: ./src/Blazor-ApexCharts-MAUI
-      run: dotnet pack -c Release -p:Version=${{ GITHUB_REF##*/v }}
+      run: dotnet pack -c Release -p:Version=${GITHUB_REF##*/v}
 
     - name: Dotnet Nuget Push
       working-directory: ./src/Blazor-ApexCharts-MAUI/bin/Release
