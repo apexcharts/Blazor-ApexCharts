@@ -15,7 +15,9 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: |
+          8.0.x
+          9.0.x
 
     - name: Install dependencies
       run: |
@@ -24,7 +26,7 @@ jobs:
 
     - name: Dotnet Pack
       working-directory: ./src/Blazor-ApexCharts-MAUI
-      run: dotnet pack -c Release -p:Version=${GITHUB_REF##*/v}
+      run: dotnet pack -c Release -p:Version=${GITHUB_REF##*/v} -p:AssemblyVersion=${GITHUB_REF##*/v}
 
     - name: Dotnet Nuget Push
       working-directory: ./src/Blazor-ApexCharts-MAUI/bin/Release
