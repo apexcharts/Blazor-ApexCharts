@@ -2,12 +2,43 @@ on:
   push:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  workflow_dispatch:
+      inputs:
+        version:
+          description: Version
+          required: true
+          type: string
+        deploy:
+          description: Deploy
+          required: true
+          type: boolean
+          default: false
 name: Create Release
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      Version: ${{ steps.set-values.outputs.Version }}
+      Deploy: ${{ steps.set-values.outputs.Deploy }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Update Environment Variables
+        id: set-values
+        run: |
+          if [[ '${{ github.event_name }}' == 'workflow_dispatch' ]]; then
+            echo "Version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+            echo "Deploy=${{ github.event.inputs.deploy }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "Version=${GITHUB_REF##*/v}" >> "$GITHUB_OUTPUT"
+            echo "Deploy=true" >> "$GITHUB_OUTPUT"
+          fi
   build:
+    needs: [ prepare ]
     name: Create Release
     runs-on: windows-2022
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -26,8 +57,9 @@ jobs:
 
     - name: Dotnet Pack
       working-directory: ./src/Blazor-ApexCharts-MAUI
-      run: dotnet pack -c Release -p:Version=${GITHUB_REF##*/v} -p:AssemblyVersion=${GITHUB_REF##*/v}
+      run: dotnet pack -c Release -p:Version=${{ needs.prepare.outputs.Version }} -p:AssemblyVersion=${{ needs.prepare.outputs.Version }}
 
     - name: Dotnet Nuget Push
+      if: ${{ needs.prepare.outputs.Deploy == 'true' }}
       working-directory: ./src/Blazor-ApexCharts-MAUI/bin/Release
       run: dotnet nuget push Blazor-ApexCharts-MAUI.*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
