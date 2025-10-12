@@ -12,8 +12,13 @@ namespace ApexCharts
         /// <inheritdoc cref="IDataPoint{TItem}.FillColor"/>
         public string FillColor { get; set; }
 
-        /// <inheritdoc cref="IDataPoint{TItem}.X"/>
-        public object X { get; set; }
+		/// <summary>
+		/// Controls the color of the border around the data point
+		/// </summary>
+		public string StrokeColor { get; set; }
+
+		/// <inheritdoc cref="IDataPoint{TItem}.X"/>
+		public object X { get; set; }
 
         /// <summary>
         /// A collection of goal markers to display with the data point
