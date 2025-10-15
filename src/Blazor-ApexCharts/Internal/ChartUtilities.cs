@@ -42,7 +42,7 @@ internal static class ChartUtilities
     /// <see langword="true"/> if the string structurally resembles a JavaScript function;
     /// otherwise, <see langword="false"/>.
     /// </returns>
-    internal static bool IsJavaScriptFunction(string? candidate)
+    internal static bool IsJavaScriptFunction(string candidate)
     {
         if (string.IsNullOrWhiteSpace(candidate))
             return false;
