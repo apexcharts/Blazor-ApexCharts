@@ -1,0 +1,43 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value" Options="@options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.OrderDate)"
+                         YValue="@(e => e.GrossValue)"
+                         DataPointMutator="MutateDataPoint"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders().Where(n => n.Country == "Sweden").ToList();
+
+    private ApexChartOptions<Order> options = new ApexCharts.ApexChartOptions<Order>()
+    {
+        Markers = new Markers
+        {
+            Size = 6,
+            FillOpacity = 1,
+            StrokeWidth = 2,
+            StrokeColors = new List<string> { "#FFFFFF" },
+            Colors = new List<string> { "#0000FF" },
+            StrokeOpacity = 1d
+        }
+    };
+
+    private void MutateDataPoint(DataPoint<Order> point)
+    {
+        var max = Orders.Max(e => e.GrossValue);
+
+        if (point.Items.Any(n => n.GrossValue == max))
+        {
+            point.FillColor = "#FF0000";
+            point.StrokeColor = "#00FFFF";
+        }
+    }
+}
