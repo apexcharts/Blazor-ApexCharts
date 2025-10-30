@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Options;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ApexCharts.Internal
 {
@@ -18,6 +14,16 @@ namespace ApexCharts.Internal
     {
         private readonly ApexChart<TItem> ChartReference;
         internal readonly DotNetObjectReference<JSHandler<TItem>> ObjectReference;
+
+        private readonly JsonSerializerOptions DeserializeOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,                                                             // Handle case mismatches
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,    // Ignore null when serializing
+            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,      // Allow read numbers from strings
+            AllowTrailingCommas = true,                                                                     // Handle malformed JSON gracefully
+            ReadCommentHandling = JsonCommentHandling.Skip,                                                 // Handle potential comments in JSON
+            Converters = { new NullToDefaultIntConverter() }                                                // Add the custom converter
+        };
 
         internal JSHandler(ApexChart<TItem> chartReference)
         {
@@ -41,8 +47,10 @@ namespace ApexCharts.Internal
         [JSInvokable]
         public string JSGetFormattedYAxisValue(JsonElement value)
         {
-            if (value.ValueKind == JsonValueKind.Null) { return ""; }
-            if (ChartReference.FormatYAxisLabel == null) { return value.ToString(); }
+            if (value.ValueKind == JsonValueKind.Null)
+            { return ""; }
+            if (ChartReference.FormatYAxisLabel == null)
+            { return value.ToString(); }
 
             if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var decimalValue))
             {
@@ -62,8 +70,10 @@ namespace ApexCharts.Internal
         [JSInvokable]
         public string JSGetFormattedXAxisValue(JsonElement value)
         {
-            if (value.ValueKind == JsonValueKind.Null) { return ""; }
-            if (ChartReference.FormatXAxisLabel == null) { return value.ToString(); }
+            if (value.ValueKind == JsonValueKind.Null)
+            { return ""; }
+            if (ChartReference.FormatXAxisLabel == null)
+            { return value.ToString(); }
 
             if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var decimalValue))
             {
@@ -76,13 +86,14 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on zoom
         /// </summary>
-        /// <param name="jSZoomed">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         /// <remarks>
         /// Will execute <see cref="ApexChart{TItem}.OnZoomed"/>
         /// </remarks>
         [JSInvokable]
-        public void JSZoomed(JSZoomed jSZoomed)
+        public void JSZoomed(JsonElement value)
         {
+            JSZoomed jSZoomed = value.Deserialize<JSZoomed>(DeserializeOptions);
             if (ChartReference.OnZoomed.HasDelegate)
             {
                 ChartReference.OnZoomed.InvokeAsync(new ZoomedData<TItem>
@@ -97,13 +108,14 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on selection updated
         /// </summary>
-        /// <param name="jsSelection">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         /// <remarks>
         /// Will execute <see cref="ApexChart{TItem}.OnBrushScrolled"/>
         /// </remarks>
         [JSInvokable]
-        public void JSBrushScrolled(JSSelection jsSelection)
+        public void JSBrushScrolled(JsonElement value)
         {
+            JSSelection jsSelection = value.Deserialize<JSSelection>(DeserializeOptions);
             if (ChartReference.OnBrushScrolled.HasDelegate)
             {
                 ChartReference.OnBrushScrolled.InvokeAsync(new SelectionData<TItem>
@@ -118,13 +130,14 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on selection updated
         /// </summary>
-        /// <param name="jsSelection">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         /// <remarks>
         /// Will execute <see cref="ApexChart{TItem}.OnSelection"/>
         /// </remarks>
         [JSInvokable]
-        public void JSSelected(JSSelection jsSelection)
+        public void JSSelected(JsonElement value)
         {
+            JSSelection jsSelection = value.Deserialize<JSSelection>(DeserializeOptions);
             if (ChartReference.OnSelection.HasDelegate)
             {
                 ChartReference.OnSelection.InvokeAsync(new SelectionData<TItem>
@@ -139,13 +152,14 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on a legend item clicked
         /// </summary>
-        /// <param name="jsLegendClicked">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         /// <remarks>
         /// Will execute <see cref="ApexChart{TItem}.OnLegendClicked"/>
         /// </remarks>
         [JSInvokable]
-        public void JSLegendClicked(JSLegendClicked jsLegendClicked)
+        public void JSLegendClicked(JsonElement value)
         {
+            JSLegendClicked jsLegendClicked = value.Deserialize<JSLegendClicked>(DeserializeOptions);
             Series<TItem> series = null;
             IDataPoint<TItem> point = null;
             if (ChartReference.IsNoAxisChart)
@@ -179,13 +193,14 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on an X-axis label clicked
         /// </summary>
-        /// <param name="jsXAxisLabelClick">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         /// <remarks>
         /// Will execute <see cref="ApexChart{TItem}.OnXAxisLabelClick"/>
         /// </remarks>
         [JSInvokable]
-        public void JSXAxisLabelClick(JSXAxisLabelClick jsXAxisLabelClick)
+        public void JSXAxisLabelClick(JsonElement value)
         {
+            JSXAxisLabelClick jsXAxisLabelClick = value.Deserialize<JSXAxisLabelClick>(DeserializeOptions);
             if (ChartReference.OnXAxisLabelClick.HasDelegate)
             {
                 var data = new XAxisLabelClicked<TItem>()
@@ -211,13 +226,14 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on marker clicked
         /// </summary>
-        /// <param name="selectedDataPoints">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         /// <remarks>
         /// Will execute <see cref="ApexChart{TItem}.OnMarkerClick"/>
         /// </remarks>
         [JSInvokable]
-        public void JSMarkerClick(JSDataPointSelection selectedDataPoints)
+        public void JSMarkerClick(JsonElement value)
         {
+            JSDataPointSelection selectedDataPoints = value.Deserialize<JSDataPointSelection>(DeserializeOptions);
             if (ChartReference.OnMarkerClick.HasDelegate)
             {
                 var series = ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
@@ -240,13 +256,14 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on data point selected
         /// </summary>
-        /// <param name="selectedDataPoints">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         /// <remarks>
         /// Will execute <see cref="ApexChart{TItem}.OnDataPointSelection"/>
         /// </remarks>
         [JSInvokable]
-        public void JSDataPointSelected(JSDataPointSelection selectedDataPoints)
+        public void JSDataPointSelected(JsonElement value)
         {
+            JSDataPointSelection selectedDataPoints = value.Deserialize<JSDataPointSelection>(DeserializeOptions);
             if (ChartReference.OnDataPointSelection.HasDelegate)
             {
                 var series = ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
@@ -269,20 +286,18 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on data point enter
         /// </summary>
-        /// <param name="selectedDataPoints">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         /// <remarks>
         /// Will execute <see cref="ApexChart{TItem}.OnDataPointEnter"/>
         /// </remarks>
         [JSInvokable]
-        public void JSDataPointEnter(JSDataPointSelection selectedDataPoints)
+        public void JSDataPointEnter(JsonElement value)
         {
+            JSDataPointSelection selectedDataPoints = value.Deserialize<JSDataPointSelection>(DeserializeOptions);
             if (ChartReference.OnDataPointEnter.HasDelegate)
             {
-         
                 var hoverData = GetHoverData(selectedDataPoints);
                 ChartReference.OnDataPointEnter.InvokeAsync(hoverData);
-
-               
             }
         }
 
@@ -291,7 +306,7 @@ namespace ApexCharts.Internal
             var series = ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
             var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
 
-            return  new HoverData<TItem>
+            return new HoverData<TItem>
             {
                 Chart = ChartReference,
                 Series = series,
@@ -302,8 +317,9 @@ namespace ApexCharts.Internal
         }
 
         [JSInvokable]
-        public void RazorTooltip(JSDataPointSelection selectedDataPoints)
+        public void RazorTooltip(JsonElement value)
         {
+            JSDataPointSelection selectedDataPoints = value.Deserialize<JSDataPointSelection>(DeserializeOptions);
             if (ChartReference.ApexPointTooltip != null)
             {
                 var hoverData = GetHoverData(selectedDataPoints);
@@ -312,16 +328,17 @@ namespace ApexCharts.Internal
 
         }
 
-            /// <summary>
-            /// Callback from JavaScript on data point leave
-            /// </summary>
-            /// <param name="selectedDataPoints">Details from JavaScript</param>
-            /// <remarks>
-            /// Will execute <see cref="ApexChart{TItem}.OnDataPointLeave"/>
-            /// </remarks>
-            [JSInvokable]
-        public void JSDataPointLeave(JSDataPointSelection selectedDataPoints)
+        /// <summary>
+        /// Callback from JavaScript on data point leave
+        /// </summary>
+        /// <param name="value">Details from JavaScript</param>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnDataPointLeave"/>
+        /// </remarks>
+        [JSInvokable]
+        public void JSDataPointLeave(JsonElement value)
         {
+            JSDataPointSelection selectedDataPoints = value.Deserialize<JSDataPointSelection>(DeserializeOptions);
             if (ChartReference.OnDataPointLeave.HasDelegate)
             {
                 var series = ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
@@ -412,8 +429,10 @@ namespace ApexCharts.Internal
         /// Will execute <see cref="ApexChart{TItem}.OnMouseMove"/>
         /// </remarks>
         [JSInvokable]
-        public void JSMouseMove(JSDataPointSelection selectedDataPoints)
+        public void JSMouseMove(JsonElement value)
         {
+            var selectedDataPoints = value.Deserialize<JSDataPointSelection>(DeserializeOptions);
+
             var series = selectedDataPoints.SeriesIndex >= 0 ?
                 ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex) :
                 null;
@@ -451,8 +470,9 @@ namespace ApexCharts.Internal
         /// Will execute <see cref="ApexChart{TItem}.OnClick"/>
         /// </remarks>
         [JSInvokable]
-        public void JSClick(JSDataPointSelection selectedDataPoints)
+        public void JSClick(JsonElement value)
         {
+            var selectedDataPoints = value.Deserialize<JSDataPointSelection>(DeserializeOptions);
             var series = selectedDataPoints.SeriesIndex >= 0 ?
                 ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex) :
                 null;
@@ -478,8 +498,9 @@ namespace ApexCharts.Internal
         /// Will execute <see cref="ApexChart{TItem}.OnBeforeZoom"/>
         /// </remarks>
         [JSInvokable]
-        public SelectionXAxis JSBeforeZoom(JSSelection jsSelection)
+        public SelectionXAxis JSBeforeZoom(JsonElement value)
         {
+            JSSelection jsSelection = value.Deserialize<JSSelection>(DeserializeOptions);
             return ChartReference.OnBeforeZoom.Invoke(jsSelection.XAxis);
         }
 
@@ -498,13 +519,14 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on scrolled
         /// </summary>
-        /// <param name="jsSelection">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         /// <remarks>
         /// Will execute <see cref="ApexChart{TItem}.OnScrolled"/>
         /// </remarks>
         [JSInvokable]
-        public void JSScrolled(JSSelection jsSelection)
+        public void JSScrolled(JsonElement value)
         {
+            JSSelection jsSelection = value.Deserialize<JSSelection>(DeserializeOptions);
             var selectionData = new SelectionData<TItem>
             {
                 Chart = ChartReference,
@@ -517,10 +539,11 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on Annotaion Label Event (Click, MouseLeave, MouseEnter)
         /// </summary>
-        /// <param name="jsAnnotationEvent">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         [JSInvokable]
-        public void JSAnnotationLabelEvent(JSAnnotationEvent jsAnnotationEvent)
+        public void JSAnnotationLabelEvent(JsonElement value)
         {
+            JSAnnotationEvent jsAnnotationEvent = value.Deserialize<JSAnnotationEvent>(DeserializeOptions);
             var eventData = new AnnotationEvent<TItem>
             {
                 Chart = ChartReference,
@@ -550,10 +573,11 @@ namespace ApexCharts.Internal
         /// <summary>
         /// Callback from JavaScript on Annotaion Label Event (Click, MouseLeave, MouseEnter)
         /// </summary>
-        /// <param name="jsAnnotationEvent">Details from JavaScript</param>
+        /// <param name="value">Details from JavaScript</param>
         [JSInvokable]
-        public void JSAnnotationPointEvent(JSAnnotationEvent jsAnnotationEvent)
+        public void JSAnnotationPointEvent(JsonElement value)
         {
+            JSAnnotationEvent jsAnnotationEvent = value.Deserialize<JSAnnotationEvent>(DeserializeOptions);
             var eventData = new AnnotationEvent<TItem>
             {
                 Chart = ChartReference,
