@@ -1856,8 +1856,36 @@ namespace ApexCharts
     public class DataLabelsStyle
     {
         /// <summary>
-        /// Fore colors for the dataLabels. Accepts an array of string colors (['#333', '#999']) or an array of functions ([function(opts) { return '#333' }]) (Each index in the array corresponds to the series).
+        /// Fore colors for the dataLabels (each index in the array corresponds to the series).
         /// </summary>
+        /// <remarks>
+        /// Accepts:
+        /// <list type="bullet">
+        /// <item><description>An array of string colors (e.g. <c>{ "#333", "#999" }</c>)</description></item>
+        /// <item><description>An array of JavaScript functions serialized as strings (e.g. <c>{ "function(opts) { return '#333' }" }</c>)</description></item>
+        /// </list>
+        /// Each index in the array corresponds to the series index.
+        /// <para>Examples:</para>
+        /// <code>
+        /// // Using static colors
+        /// var style = new DataLabelsStyle
+        /// {
+        ///     Colors = new List&lt;string&gt; { "#333", "#999" }
+        /// };
+        ///
+        /// // Using JavaScript functions (strings will be passed through the converter)
+        /// var styleWithFunctions = new DataLabelsStyle
+        /// {
+        ///     Colors = new List&lt;string&gt;
+        ///     {
+        ///         "function(opts) { return '#333'; }",
+        ///         "function(opts) { return opts.seriesIndex % 2 ? '#999' : '#555'; }"
+        ///     }
+        /// };
+        /// </code>
+        /// For short inline snippets use the inline code tag, e.g. <c>"#333"</c>.
+        /// </remarks>
+        [JsonConverter(typeof(ListStringOrFunctionConverter))]
         public List<string> Colors { get; set; }
 
         /// <summary>
