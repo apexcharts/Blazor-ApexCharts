@@ -1,4 +1,4 @@
-﻿import ApexCharts from './apexcharts.esm.js?ver=4.7.0.0'
+﻿import ApexCharts from './apexcharts.esm.js?ver=6.0.0.0'
 
 // export function for Blazor to point to the window.blazor_apexchart. To be compatible with the most JS Interop calls the window will be return.
 export function get_apexcharts() {
@@ -451,11 +451,11 @@ window.blazor_apexchart = {
                     seriesIndex: -1
                 };
 
-                if (config.dataPointIndex >= 0)
-                    selection.dataPointIndex = config.dataPointIndex;
+                if (config.dataPointIndex != null && config.dataPointIndex >= 0)
+                    selection.dataPointIndex = Number(config.dataPointIndex);
 
-                if (config.seriesIndex >= 0)
-                    selection.seriesIndex = config.seriesIndex;
+                if (config.dataPointIndex != null && config.seriesIndex >= 0)
+                    selection.seriesIndex = Number(config.seriesIndex);
 
                 dotNetObject.invokeMethodAsync('JSMouseMove', selection);
             };
@@ -478,7 +478,7 @@ window.blazor_apexchart = {
                     selection.dataPointIndex = Number(config.dataPointIndex);
 
                 if (config.seriesIndex >= 0 && config.seriesIndex !== null)
-                    selection.seriesIndex = config.seriesIndex;
+                    selection.seriesIndex = Number(config.seriesIndex);
 
                 dotNetObject.invokeMethodAsync('JSClick', selection);
             };
