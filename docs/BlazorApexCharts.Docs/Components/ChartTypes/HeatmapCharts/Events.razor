@@ -1,0 +1,73 @@
+﻿<DemoContainer>
+    <ApexChart TItem="SupportIncident"
+               Title="Incident Severity"
+               OnClick="ChartClick"
+               OnMouseMove="ChartMove"
+               OnDataPointSelection="PointSelected"
+    >
+
+        @foreach (var source in incidents.GroupBy(e => e.Source))
+        {
+            <ApexPointSeries TItem="SupportIncident"
+                         Items="source.OrderBy(e=>e.WeekNumber)"
+                         Name="@source.Key.ToString()"
+                         SeriesType="SeriesType.Heatmap"
+                         XValue="@(e => e.WeekName)"
+                         YAggregate="@(e => (int)e.Average(a=>a.Severity))" />
+        }
+
+    </ApexChart>
+
+    <Alert>
+        Moved: @moved?.DataPointIndex @moved?.Series?.Name
+    </Alert>
+
+    <Alert>
+        Clicked: @clicked?.DataPointIndex @clicked?.Series?.Name
+    </Alert>
+
+    <Alert>
+        Selected: @selected?.DataPointIndex @selected?.Series?.Name
+    </Alert>
+
+</DemoContainer>
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents();
+    private SelectedData<SupportIncident> clicked;
+    private SelectedData<SupportIncident> moved;
+    private SelectedData<SupportIncident> selected;
+
+    private void ChartClick(SelectedData<SupportIncident> selected)
+    {
+        
+        if (selected.DataPointIndex == -1)
+        {
+            this.clicked = null;
+        }
+        else
+        {
+            this.clicked = selected;
+        }
+    }
+
+    private void PointSelected(SelectedData<SupportIncident> selected)
+    {
+        this.selected = selected; 
+    }
+
+    private void ChartMove(SelectedData<SupportIncident> selected)
+    {
+        if (selected.DataPointIndex == -1)
+        {
+            moved = null;
+        }
+        else
+        {
+            this.moved = selected;
+        }
+
+       
+    }
+
+    }

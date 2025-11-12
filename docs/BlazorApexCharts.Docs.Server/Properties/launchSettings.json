@@ -11,7 +11,7 @@
     "BlazorApexCharts.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "bar-charts",
+      "launchUrl": "heatmap-charts#events",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
