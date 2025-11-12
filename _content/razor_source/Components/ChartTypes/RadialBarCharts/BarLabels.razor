@@ -1,0 +1,44 @@
+﻿
+<DemoContainer>
+	<ApexChart TItem="Order"
+			   Title="Bar Lables"
+			   Options="options">
+
+		<ApexPointSeries TItem="Order"
+						 Items="orders"
+						 SeriesType=SeriesType.RadialBar
+						 Name="Gross Value"
+						 XValue="@(e => e.Country)"
+						 YAggregate="@(e => decimal.Round(e.Average(e => e.DiscountPercentage)))"
+						 OrderByDescending="e=>e.Y" />
+	</ApexChart>
+</DemoContainer>
+
+
+
+@code {
+	private List<Order> orders = SampleData.GetOrders();
+	private ApexChartOptions<Order> options = new();
+
+	protected override void OnInitialized()
+	{
+		options.PlotOptions = new PlotOptions
+		{
+			RadialBar = new PlotOptionsRadialBar
+			{
+				OffsetY= 0,
+				StartAngle= 0,
+				EndAngle = 270,
+				BarLabels = new RadialBarBarLabels
+				{
+					Enabled = true,
+					OffsetX = -12,
+					UseSeriesColors = true,
+					Formatter = @"function(seriesName, opts) {
+						return seriesName + ': ' + opts.w.globals.series[opts.seriesIndex];
+						}"
+				},
+			}
+		};
+	}
+}
