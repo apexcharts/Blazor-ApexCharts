@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using ApexCharts.Internal;
@@ -3637,6 +3638,9 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.RadialBarDataLabels" />
         public RadialBarDataLabels DataLabels { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.RadialBarBarLabels" />
+        public RadialBarBarLabels BarLabels { get; set; }
+
         /// <summary>
         /// Angle to which the radialBars should end. The sum of the startAngle and endAngle should not exceed 360.
         /// </summary>
@@ -3669,10 +3673,51 @@ namespace ApexCharts
         public Track Track { get; set; }
     }
 
+
     /// <summary>
-    /// Defines how to style labels for the radial bar chart
+    /// Defines how to style Bar labels for the radial bar chart
     /// </summary>
-    public class RadialBarDataLabels
+    public class RadialBarBarLabels
+    {
+        /// <summary>
+        /// Enabled
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+       
+        /// <summary>
+        /// Use colors from the series
+        /// </summary>
+        public bool? UseSeriesColors { get; set; }
+
+        /// <summary>
+        /// X-Offset for bar labels
+        /// </summary>
+        public int? OffsetX { get; set; }
+
+        /// <summary>
+        /// Fontsize for the label
+        /// </summary>
+        public string FontSize { get; set; }
+
+
+        /// <summary>
+        /// To format the Label of the bar
+		/// <code>
+		///         formatter: function(seriesName, opts) {
+		///             return value
+		///         }
+		/// </code>
+        /// </summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string Formatter { get; set; }
+
+
+    }
+
+        /// <summary>
+        /// Defines how to style labels for the radial bar chart
+        /// </summary>
+        public class RadialBarDataLabels
     {
         /// <inheritdoc cref="ApexCharts.RadialBarDataLabelsName" />
         public RadialBarDataLabelsName Name { get; set; }
