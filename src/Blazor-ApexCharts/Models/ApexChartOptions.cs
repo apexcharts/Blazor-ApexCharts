@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using ApexCharts.Internal;
@@ -1856,8 +1857,36 @@ namespace ApexCharts
     public class DataLabelsStyle
     {
         /// <summary>
-        /// Fore colors for the dataLabels. Accepts an array of string colors (['#333', '#999']) or an array of functions ([function(opts) { return '#333' }]) (Each index in the array corresponds to the series).
+        /// Fore colors for the dataLabels (each index in the array corresponds to the series).
         /// </summary>
+        /// <remarks>
+        /// Accepts:
+        /// <list type="bullet">
+        /// <item><description>An array of string colors (e.g. <c>{ "#333", "#999" }</c>)</description></item>
+        /// <item><description>An array of JavaScript functions serialized as strings (e.g. <c>{ "function(opts) { return '#333' }" }</c>)</description></item>
+        /// </list>
+        /// Each index in the array corresponds to the series index.
+        /// <para>Examples:</para>
+        /// <code>
+        /// // Using static colors
+        /// var style = new DataLabelsStyle
+        /// {
+        ///     Colors = new List&lt;string&gt; { "#333", "#999" }
+        /// };
+        ///
+        /// // Using JavaScript functions (strings will be passed through the converter)
+        /// var styleWithFunctions = new DataLabelsStyle
+        /// {
+        ///     Colors = new List&lt;string&gt;
+        ///     {
+        ///         "function(opts) { return '#333'; }",
+        ///         "function(opts) { return opts.seriesIndex % 2 ? '#999' : '#555'; }"
+        ///     }
+        /// };
+        /// </code>
+        /// For short inline snippets use the inline code tag, e.g. <c>"#333"</c>.
+        /// </remarks>
+        [JsonConverter(typeof(ListStringOrFunctionConverter))]
         public List<string> Colors { get; set; }
 
         /// <summary>
@@ -3609,6 +3638,9 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.RadialBarDataLabels" />
         public RadialBarDataLabels DataLabels { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.RadialBarBarLabels" />
+        public RadialBarBarLabels BarLabels { get; set; }
+
         /// <summary>
         /// Angle to which the radialBars should end. The sum of the startAngle and endAngle should not exceed 360.
         /// </summary>
@@ -3641,10 +3673,51 @@ namespace ApexCharts
         public Track Track { get; set; }
     }
 
+
     /// <summary>
-    /// Defines how to style labels for the radial bar chart
+    /// Defines how to style Bar labels for the radial bar chart
     /// </summary>
-    public class RadialBarDataLabels
+    public class RadialBarBarLabels
+    {
+        /// <summary>
+        /// Enabled
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+       
+        /// <summary>
+        /// Use colors from the series
+        /// </summary>
+        public bool? UseSeriesColors { get; set; }
+
+        /// <summary>
+        /// X-Offset for bar labels
+        /// </summary>
+        public int? OffsetX { get; set; }
+
+        /// <summary>
+        /// Fontsize for the label
+        /// </summary>
+        public string FontSize { get; set; }
+
+
+        /// <summary>
+        /// To format the Label of the bar
+		/// <code>
+		///         formatter: function(seriesName, opts) {
+		///             return value
+		///         }
+		/// </code>
+        /// </summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string Formatter { get; set; }
+
+
+    }
+
+        /// <summary>
+        /// Defines how to style labels for the radial bar chart
+        /// </summary>
+        public class RadialBarDataLabels
     {
         /// <inheritdoc cref="ApexCharts.RadialBarDataLabelsName" />
         public RadialBarDataLabelsName Name { get; set; }
