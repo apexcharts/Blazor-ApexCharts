@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ApexCharts
 {
@@ -25,11 +26,27 @@ namespace ApexCharts
 
         private ApexChartOptions<GaugeValue> options;
 
+        ApexChart<GaugeValue> GaugeReference;
+
         /// <inheritdoc/>
         protected override void OnInitialized()
         {
             options = Options;
         }
+
+
+        /// <summary>
+        /// Allows you to update the series array overriding the existing one. If you want to append series to existing series, use the appendSeries() method
+        /// </summary>
+        /// <param name="animate">Should the chart animate on re-rendering</param>
+        /// <remarks>
+        /// Links:
+        /// 
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/methods/update-series">Blazor Example</see>,
+        /// <see href="https://apexcharts.com/docs/methods/#updateSeries">JavaScript Documentation</see>
+        /// </remarks>
+        public Task UpdateValueAsync(bool animate = true) =>
+               GaugeReference?.UpdateSeriesAsync(animate);
 
         private List<GaugeValue> GetItems()
         {
