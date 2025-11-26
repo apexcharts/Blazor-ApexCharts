@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Docs/">
+    <Project Path="docs/BlazorApexCharts.Docs.Server/BlazorApexCharts.Docs.Server.csproj" />
+    <Project Path="docs/BlazorApexCharts.Docs.Wasm/BlazorApexCharts.Docs.Wasm.csproj" />
+    <Project Path="docs/BlazorApexCharts.Docs/BlazorApexCharts.Docs.csproj" />
+  </Folder>
+  <Project Path="src/Blazor-ApexCharts-MAUI/Blazor-ApexCharts-MAUI.csproj" />
+  <Project Path="src/Blazor-ApexCharts/Blazor-ApexCharts.csproj" />
+</Solution>
