@@ -19,7 +19,9 @@ jobs:
     - name: Setup dotnet ${{ matrix.dotnet-version }}.0.x
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: ${{ matrix.dotnet-version }}.0.x
+        dotnet-version: |
+          10.0.x
+          ${{ matrix.dotnet-version }}.0.x
     - name: Install dependencies
       run: dotnet restore
       working-directory: ./src/Blazor-ApexCharts
