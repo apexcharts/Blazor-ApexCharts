@@ -313,8 +313,14 @@ window.blazor_apexchart = {
         if (options.tooltip != undefined && options.tooltip.customTooltip == true) {
             options.tooltip.custom = function ({ series, seriesIndex, dataPointIndex, w }) {
 
+                if (dataPointIndex == null) {
+                    dataPointIndex = seriesIndex;
+                    seriesIndex = 0
+                }
+
+
                 var selection = {
-                    dataPointIndex: dataPointIndex,
+                    dataPointIndex: dataPointIndex || 0,
                     seriesIndex: seriesIndex
                 };
 
