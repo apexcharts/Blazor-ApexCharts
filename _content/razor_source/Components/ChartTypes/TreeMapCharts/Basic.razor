@@ -1,0 +1,32 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Net Value">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         ShowDataLabels="true"
+                         SeriesType="SeriesType.Treemap"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         PointColor="e => GetPointColor(e)"
+                         OrderByDescending="e=>e.Y" />
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+
+    public string GetPointColor(Order order)
+    {
+        return order.Country switch
+        {
+            "Brazil" => "#008FFB",
+            "Sweden" => "#00E396",
+            "Spain" => "#FEB019",
+            "France" => "#775DD0",
+            _ => "#546E7A",
+        };
+    }
+}
