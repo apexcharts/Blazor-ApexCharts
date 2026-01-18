@@ -54,6 +54,7 @@ jobs:
       run: |
         dotnet workload install maui
         dotnet restore
+      working-directory: ./src/Blazor-ApexCharts-MAUI
 
     - name: Dotnet Pack
       working-directory: ./src/Blazor-ApexCharts-MAUI
