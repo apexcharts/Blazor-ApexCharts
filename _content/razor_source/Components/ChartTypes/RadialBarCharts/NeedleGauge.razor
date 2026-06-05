@@ -1,0 +1,106 @@
+@*
+    Needle gauge with a continuous multi-color sweep — bands are butted together
+    (Gap = 0, LineCap = Butt) so adjacent colors read as one smooth gradient.
+
+    For a segmented/zoned look (each band rendered as a discrete rounded pill,
+    e.g. a tachometer with red/amber/green zones) use:
+        BandsStyle.Gap = 4
+        BandsStyle.LineCap = LineCap.Round
+    and reduce the Bands list to a handful of wider, distinct-color entries.
+*@
+
+<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Live Risk Score"
+               Options="options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType=SeriesType.RadialBar
+                         Name="Neutral"
+                         XValue="@(e => e.Country)"
+                         YValue="@(e => (decimal)e.DiscountPercentage)" />
+    </ApexChart>
+</DemoContainer>
+
+
+@code {
+    private List<Order> orders = new()
+    {
+        new Order { Country = "Neutral", DiscountPercentage = 50 }
+    };
+
+    private ApexChartOptions<Order> options = new();
+
+    protected override void OnInitialized()
+    {
+        options.PlotOptions = new PlotOptions
+        {
+            RadialBar = new PlotOptionsRadialBar
+            {
+                Shape = RadialBarShape.Needle,
+                StartAngle = -110,
+                EndAngle = 110,
+                Hollow = new Hollow
+                {
+                    Size = "60%"
+                },
+                Needle = new RadialBarNeedle
+                {
+                    Color = "#777",
+                    Length = "78%",
+                    BaseWidth = 5,
+                    TipWidth = 1,
+                    ShowValueArc = false,
+                    Animation = new RadialBarNeedleAnimation
+                    {
+                        Enabled = true,
+                        Duration = 800,
+                        Easing = "ease-out"
+                    }
+                },
+                BandsStyle = new RadialBarBandsStyle
+                {
+                    StrokeWidth = "22%",
+                    Gap = 0,
+                    HideTrackWhenPresent = true,
+                    LineCap = LineCap.Butt
+                },
+                Bands = new List<RadialBarBand>
+                {
+                    new() { From = 0,   To = 8,   Color = "#2E7D32" },
+                    new() { From = 8,   To = 16,  Color = "#43A047" },
+                    new() { From = 16,  To = 24,  Color = "#66BB6A" },
+                    new() { From = 24,  To = 32,  Color = "#9CCC65" },
+                    new() { From = 32,  To = 40,  Color = "#C5E1A5" },
+                    new() { From = 40,  To = 48,  Color = "#E6EE9C" },
+                    new() { From = 48,  To = 52,  Color = "#F0F4C3" },
+                    new() { From = 52,  To = 60,  Color = "#FFE082" },
+                    new() { From = 60,  To = 68,  Color = "#FFCC80" },
+                    new() { From = 68,  To = 76,  Color = "#FFB74D" },
+                    new() { From = 76,  To = 84,  Color = "#FFA726" },
+                    new() { From = 84,  To = 92,  Color = "#FB8C00" },
+                    new() { From = 92,  To = 100, Color = "#E65100" }
+                },
+                DataLabels = new RadialBarDataLabels
+                {
+                    Name = new RadialBarDataLabelsName
+                    {
+                        Show = true,
+                        OffsetY = 95,
+                        Color = "#777",
+                        FontSize = "14px"
+                    },
+                    Value = new RadialBarDataLabelsValue
+                    {
+                        Show = true,
+                        OffsetY = 55,
+                        Color = "#444",
+                        FontSize = "28px",
+                        Formatter = "function (val) { return '0.0'; }"
+                    }
+                }
+            }
+        };
+    }
+}
