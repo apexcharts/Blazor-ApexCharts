@@ -1,0 +1,80 @@
+﻿<DemoContainer>
+    <ApexChart TItem="DataRecord"
+           Title=""
+    Options="@chartOptions">
+           <ApexRangeSeries TItem="DataRecord"
+               Items="@dataRecords"
+               XValue="@(e => e.X)"
+               YMinValue="@(e => e.Y[0])"
+               YMaxValue="@(e => e.Y[1])" />
+
+</ApexChart>
+</DemoContainer>
+
+@code {
+    private record DataRecord(string X, List<decimal> Y);
+
+
+    private ApexChartOptions<DataRecord> chartOptions = new()
+    {
+        Chart = new Chart()
+        {
+            Type = ChartType.RangeBar,
+            Zoom = new Zoom()
+            {
+                Enabled = false
+            },
+        },
+        Legend = new Legend()
+        {
+        Show = true,
+        ShowForSingleSeries = true,
+        Position = LegendPosition.Top,
+        HorizontalAlign = ApexCharts.Align.Left,
+        CustomLegendItems = ["Product A", "Product B"]
+        },
+        Fill = new Fill()
+        {
+        Type = FillType.Gradient,
+        Gradient = new FillGradient()
+        {
+            Type = GradientType.Vertical,
+            GradientToColors = ["#00E396"],
+            InverseColors = true,
+            Stops = [0, 100]
+        }
+        },
+        Grid = new Grid()
+        {
+            Xaxis = new GridXAxis()
+            {
+                Lines = new()
+                {
+                    Show = true
+                }
+            },
+            Yaxis = new()
+            {
+                Lines = new()
+                {
+                    Show = false
+                }
+            }
+        },
+        Xaxis = new()
+        {
+            TickPlacement = TickPlacement.On
+        }
+    };
+
+    private List<DataRecord> dataRecords = 
+    [
+        new DataRecord("2008", [2800, 4500]),
+        new DataRecord("2009", [3200, 3100]),
+        new DataRecord("2010", [2950, 7800]),
+        new DataRecord("2011", [3000, 4600]),
+        new DataRecord("2012", [3500, 4100]),
+        new DataRecord("2013", [4500, 6500]),
+        new DataRecord("2014", [4100, 5600]),
+    ];
+}

@@ -1,0 +1,111 @@
+﻿<DemoContainer>
+    <div class="car-heatmap">
+        <ApexChart TItem="DamagePoint"
+        Height="@("229px")"
+                   Options="chartOptions">
+
+            <ApexBubbleSeries TItem="DamagePoint"
+                             Items="_points"
+                             Name="Reported Damages"
+                             XValue="@(e => e.X)"
+                             YAggregate="@(e => e.Sum(x => x.Y))"
+                             ZAggregate="@(e => e.Sum(x => x.Count))"
+                             OrderByDescending="e=>e.X" />
+        </ApexChart>
+    </div>
+    
+</DemoContainer>
+
+<style>
+    .car-heatmap {
+        width: 500px;
+        height: 229px;
+        background-image: url("/_content/BlazorApexCharts.Docs/img/assets/car.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+</style>
+
+@code {
+    public record DamagePoint(decimal X, decimal Y, decimal Count, string Part);
+
+    private List<DamagePoint> _points =
+    [
+        new(20, 90, 40, "Front Left tire"),
+        new(32, 4, 12, "Right side mirror"),
+        new(50, 45, 25, "Roof")
+    ];
+
+    private ApexChartOptions<DamagePoint> chartOptions = new()
+    {
+        Chart = new Chart
+        {
+            Type = ChartType.Bubble,
+            Background = "transparent",
+            Toolbar = new Toolbar
+            {
+                Show = false
+            },
+            Zoom = new Zoom
+            {
+                Enabled = false
+            }
+        },
+
+        Xaxis = new XAxis
+        {
+            Min = 0,
+            Max = 100,
+            Labels = new XAxisLabels
+            {
+                Show = false
+            },
+            AxisBorder = new AxisBorder
+            {
+                Show = false
+            },
+            AxisTicks = new AxisTicks
+            {
+                Show = false
+            }
+        },
+
+        Yaxis = new List<YAxis>
+    {
+        new()
+        {
+            Min = 0,
+            Max = 100,
+            Reversed = true,
+            Labels = new YAxisLabels
+            {
+                Show = false
+            },
+            AxisBorder = new AxisBorder
+            {
+                Show = false
+            },
+            AxisTicks = new AxisTicks
+            {
+                Show = false
+            }
+        }
+    },
+
+        Grid = new Grid
+        {
+            Show = false
+        },
+
+        Legend = new Legend
+        {
+            Show = false
+        },
+
+        Tooltip = new ApexCharts.Tooltip
+        {
+            Enabled = true
+        }
+    };
+}

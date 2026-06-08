@@ -1,0 +1,40 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Image Sample"
+                Options="@chartOptions">
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="% Gross"
+                         SeriesType="SeriesType.Scatter"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.GrossValue)"
+                         OrderByDescending="e=>e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@code 
+{
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+
+    private ApexChartOptions<Order> chartOptions = new()
+    {
+        Fill = new()
+        {
+            Type = FillType.Image,
+            Image = new FillImage()
+            {
+                Width = 32,
+                Height = 32,
+                Src =
+                [
+                    "/_content/BlazorApexCharts.Docs/img/assets/someicon.png"
+                ]
+            }
+        },
+        Markers = new()
+        {
+            Size = 16   // Set to half the size of the image you like to display
+        }
+    };
+}

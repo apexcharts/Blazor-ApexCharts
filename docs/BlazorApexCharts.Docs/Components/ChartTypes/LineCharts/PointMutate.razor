@@ -1,5 +1,6 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
+        XAxisType="XAxisType.Datetime"
                Title="Order Net Value" Options="@options">
 
         <ApexPointSeries TItem="Order"
@@ -9,13 +10,12 @@
                          SeriesType="SeriesType.Line"
                          XValue="@(e => e.OrderDate)"
                          YValue="@(e => e.GrossValue)"
-                         DataPointMutator="MutateDataPoint"
-                         OrderByDescending="e=>e.Y" />
+                         DataPointMutator="MutateDataPoint" />
     </ApexChart>
 </DemoContainer>
 
 @code {
-    private List<Order> Orders { get; set; } = SampleData.GetOrders().Where(n => n.Country == "Sweden").ToList();
+    private List<Order> Orders { get; set; } = SampleData.GetOrders().Where(n => n.Country == "Sweden").OrderBy(n => n.OrderDate).ToList();
 
     private ApexChartOptions<Order> options = new ApexCharts.ApexChartOptions<Order>()
     {

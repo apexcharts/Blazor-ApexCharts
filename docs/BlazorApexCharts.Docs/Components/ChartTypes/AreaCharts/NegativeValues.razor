@@ -1,0 +1,41 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Negative color for values less than 0"
+               Options=options>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         SeriesType="@SeriesType.Area"
+                         Name="Gross Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue)-200000)" />
+    </ApexChart>
+</DemoContainer>
+@code {
+    private List<Order> orders = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new ApexChartOptions<Order>()
+    {
+        PlotOptions = new PlotOptions
+        {
+            Area = new PlotOptionsArea
+            {
+                FillTo = AreaFillTo.Origin,
+            },
+            Line = new PlotOptionsLine()
+            {
+                Colors = new LineColors()
+                {
+                    Threshold = 0,
+                    ColorAboveThreshold = "#32F16C",
+                    ColorBelowThreshold = "#F13232"
+                }
+            }
+        },
+        Stroke = new Stroke()
+        {
+            Width = 0,
+        }
+
+    };
+
+ }

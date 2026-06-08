@@ -2,7 +2,9 @@
 using Bogus;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BlazorApexCharts.Docs
@@ -200,8 +202,47 @@ namespace BlazorApexCharts.Docs
                 new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(-1), Open = 11.8m, High = 12.4m, Low = 9.5m, Close = 12.6m, Volume = 13021 },
                 new StockPrice { Company = "ApexInc", Date = DateTimeOffset.Now.AddDays(0), Open = 12.6m, High = 13.1m, Low = 12.3m, Close = 13.2m, Volume = 8562 },
             };
+        }
 
+        public static async Task<List<StockPrice>> GetStockPricesAsync(HttpClient http, string csvUrl, string companyName)
+        {
+            var result = new List<StockPrice>();
+            var csv = await http.GetStringAsync(csvUrl);
 
+            foreach (var line in csv.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1))
+            {
+                var parts = line.Trim().Split(',');
+                if (parts.Length == 6)
+                {
+                    result.Add(new StockPrice
+                    {
+                        Company = companyName,
+                        Date = DateTimeOffset.Parse(parts[0], CultureInfo.InvariantCulture),
+                        Open = decimal.Parse(parts[1], CultureInfo.InvariantCulture),
+                        High = decimal.Parse(parts[2], CultureInfo.InvariantCulture),
+                        Low = decimal.Parse(parts[3], CultureInfo.InvariantCulture),
+                        Close = decimal.Parse(parts[4], CultureInfo.InvariantCulture),
+                        Volume = long.Parse(parts[5], CultureInfo.InvariantCulture)
+                    });
+                }
+            }
+
+            return result;
+        }
+
+        public static decimal CalculateStdDev(IEnumerable<decimal> values)
+        {
+            var data = values.ToArray();
+
+            if (data.Length < 2)
+                return 0;
+
+            var mean = data.Average();
+            
+            var variance = data.Sum(x => Math.Pow((double)(x - mean), 2))
+                              / (data.Length - 1);
+
+            return (decimal)Math.Sqrt(variance);
         }
 
         public static List<MeteoSample> GetMeteoSample()

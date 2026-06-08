@@ -1,0 +1,176 @@
+﻿<DemoContainer>
+    <ApexChart TItem="DataValue"
+    Options="@chartOptions">
+
+        <ApexPointSeries TItem="DataValue"
+                         Items="incomes"
+                         Name="Income"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Year)"
+                         YValue="@(e => e.Value)" />
+
+        <ApexPointSeries TItem="DataValue"
+                         Items="cashflow"
+                         Name="Cashflow"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Year)"
+                         YValue="@(e => e.Value)" />
+
+        <ApexPointSeries TItem="DataValue"
+                         Items="revenue"
+                         Name="Revenue"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Year)"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private record DataValue(string Year, decimal Value);
+    private List<DataValue> incomes =[ new ("2009", 1.4m), new ("2010", 2m), new ("2011", 2.5m), new ("2012", 1.5m), new ("2013", 2.5m), new("2014", 2.8m), new ("2015", 3.8m), new ("2016", 4.6m)];
+    private List<DataValue> cashflow =[ new ("2009", 1.1m), new ("2010", 3m), new ("2011", 3.1m), new ("2012", 4m), new ("2013", 4.1m), new("2014", 4.9m), new ("2015", 6.5m), new ("2016", 8.5m)];
+    private List<DataValue> revenue =[ new ("2009", 20m), new ("2010", 29m), new ("2011", 37m), new ("2012", 36m), new ("2013", 44m), new("2014", 45m), new ("2015", 50m), new ("2016", 58m)];
+
+    private ApexChartOptions<DataValue> chartOptions = new()
+    {
+        Chart = new()
+        {
+            Type = ChartType.Line,
+            Stacked = false
+        },
+        DataLabels = new()
+        {
+            Enabled = false
+        },
+        Stroke = new()
+        {
+            Width = [1,1,4] 
+        },
+        Title = new()
+        {
+            Text = "XYZ - Stock Analysis (2009 - 2016)",
+            Align = ApexCharts.Align.Left,
+            OffsetX = 40
+        },
+        Xaxis = new()
+        {
+            Categories = new string[] { "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016" }
+        },
+        Yaxis =
+        [
+            new YAxis()
+            {
+                SeriesName = "Income",
+                AxisTicks = new()
+                {
+                    Show = true
+                },
+                AxisBorder = new()
+                {
+                    Show = true,
+                    Color = "#008FFB"
+                },
+                Labels = new()
+                {
+                    Style = new()
+                    {
+                        Colors = "#008FFB"
+                    }
+                },
+                Title = new()
+                {
+                    Text = "Income (thousand crores)",
+                    Style = new()
+                    {
+                        Color = "#008FFB"
+                    }
+                },
+                Tooltip = new()
+                {
+                    Enabled = true
+                }
+            },
+            new YAxis()
+            {
+                SeriesName = "Cashflow",
+                Opposite = true,
+                AxisTicks = new()
+                {
+                    Show = true
+                },
+                AxisBorder = new()
+                {
+                    Show = true,
+                    Color = "#00E396"
+                },
+                Labels = new()
+                {
+                    Style = new()
+                    {
+                        Colors = "#00E396"
+                    }
+                },
+                Title = new()
+                {
+                    Text = "Operating Cashflow (thousand crores)",
+                    Style = new()
+                    {
+                        Color = "#00E396"
+                    }
+                },
+                Tooltip = new()
+                {
+                    Enabled = true
+                }
+            },
+            new YAxis()
+            {
+                SeriesName = "Revenue",
+                Opposite = true,
+                AxisTicks = new()
+                {
+                    Show = true
+                },
+                AxisBorder = new()
+                {
+                    Show = true,
+                    Color = "#FEB019"
+                },
+                Labels = new()
+                {
+                    Style = new()
+                    {
+                        Colors = "#FEB019"
+                    }
+                },
+                Title = new()
+                {
+                    Text = "Revenue (thousand crores)",
+                    Style = new()
+                    {
+                        Color = "#FEB019"
+                    }
+                },
+                Tooltip = new()
+                {
+                    Enabled = true
+                }
+            }
+        ],
+        Tooltip = new()
+        {
+            Fixed = new()
+            {
+                Enabled = true,
+                Position = TooltipPosition.TopLeft,
+                OffsetY = 30,
+                OffsetX = 60
+            }
+        },
+        Legend = new()
+        {
+            HorizontalAlign = ApexCharts.Align.Left,
+            OffsetX = 40
+        }
+    };
+}

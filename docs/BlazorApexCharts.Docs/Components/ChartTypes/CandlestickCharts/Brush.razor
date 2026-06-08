@@ -1,0 +1,114 @@
+﻿<DemoContainer>
+    <ApexChart TItem="StockPrice"
+               XAxisType="XAxisType.Datetime"
+    Options="candlestickChartOptions">
+
+        <ApexCandleSeries TItem="StockPrice"
+                          Items="stockPrices"
+                          Name="Apex Stock Price"
+                          XValue="@(e => e.Date.DayOnly().ToUnixTimeMilliseconds())"
+                          Open="@(e => e.Open)"
+                          High="@(e => e.High)"
+                          Low="@(e => e.Low)"
+                          Close="@(e => e.Close)"
+                          OrderByDescending="e=> e.X" />
+    </ApexChart>
+
+    <ApexChart TItem="StockPrice"
+               XAxisType="XAxisType.Datetime"
+    Options="barChartOptions">
+
+        <ApexPointSeries TItem="StockPrice"
+                          Items="stockPrices"
+                          SeriesType="SeriesType.Bar"
+                          Name="Apex Stock Price"
+                          XValue="@(e => e.Date.DayOnly().ToUnixTimeMilliseconds())"
+                          YValue="@(e => e.Close - e.Open)"
+                          OrderByDescending="e=> e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@code 
+{
+    private List<StockPrice> stockPrices { get; set; } = SampleData.GetStockPrices();
+
+    private ApexChartOptions<StockPrice> candlestickChartOptions = new()
+    {
+        Chart = new()
+        {
+            Id = "candles"
+        }
+    };
+
+    private ApexChartOptions<StockPrice> barChartOptions = default!;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        barChartOptions = new()
+        {
+            Chart = new()
+            {
+                Height = 100,
+                Brush = new()
+                {
+                    Enabled = true,
+                    Target = "candles"
+                },
+                Selection = new()
+                {
+                    Enabled = true,
+                    Xaxis = new()
+                    {
+                        Min = stockPrices.Min(n => n.Date.DayOnly().ToUnixTimeMilliseconds()),
+                        Max = stockPrices.Max(n => n.Date.DayOnly().ToUnixTimeMilliseconds())
+                    }
+                }
+            },
+            DataLabels = new()
+            {
+                Enabled = false,
+            },
+            PlotOptions = new()
+            {
+                Bar = new()
+                {
+                    ColumnWidth = "80%",
+                    Colors = new ()
+                    {
+                        Ranges = [
+                        new()
+                        {
+                            From = -1000,
+                            To = 0,
+                            Color = "#F15B46"
+                        },
+                        new()
+                        {
+                            From = 0,
+                            To = 1000,
+                            Color = "#FEB019"
+                        }
+                        ]
+                    }
+                }
+            },
+            Yaxis = [
+                new()
+                {
+                    Labels = new()
+                    {
+                        Show = false
+                    }
+                }
+            ],
+            Xaxis = new()
+            {
+                Labels = new()
+                {
+                    Show = false
+                }
+            }
+        };
+    }
+}

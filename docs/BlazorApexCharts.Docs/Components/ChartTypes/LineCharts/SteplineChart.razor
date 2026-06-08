@@ -1,0 +1,27 @@
+﻿<DemoContainer>
+    <ApexChart TItem="IntBox"
+               Title="Stepline Chart"
+    Options="@chartOptions">
+
+        <ApexPointSeries TItem="IntBox"
+                         Items="Series"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Index)"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private record IntBox(int Index, int Value);
+
+    private List<IntBox> Series { get; set; } = (new[] { 34, 44, 54, 21, 12, 43, 33, 23, 66, 66, 58 }).Select((value, index) => new IntBox(index, value)).ToList();
+
+    private ApexChartOptions<IntBox> chartOptions = new ApexChartOptions<IntBox>()
+    {
+        Stroke = new Stroke()
+        {
+            Curve = Curve.Stepline,
+        }
+    };
+}

@@ -1,0 +1,34 @@
+﻿<DemoContainer>
+<ApexChart TItem="Order"
+           Title="Basic Sample"
+Options="@options">
+
+    <ApexPointSeries TItem="Order"
+                Items="orders"
+                 SeriesType="@SeriesType.Area"
+                Name="Gross Value"
+                XValue="@(e => e.Country)"
+                YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                OrderByDescending="e=>e.Y" />
+
+    <ApexPointSeries TItem="Order"
+                Items="orders"
+                 SeriesType="@SeriesType.Area"
+                Name="Net Value"
+                XValue="@(e => e.Country)"
+                YAggregate="@(e => e.Sum(e => e.NetValue))"
+                OrderByDescending="e=>e.Y" />
+</ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    
+    private ApexChartOptions<Order> options = new ApexChartOptions<Order>()
+    {
+        Chart = new Chart
+        {
+            Stacked = true
+        }
+    };
+}

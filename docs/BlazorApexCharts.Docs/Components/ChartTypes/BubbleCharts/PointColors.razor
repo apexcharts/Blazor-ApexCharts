@@ -15,7 +15,8 @@
     </ApexChart>
 </DemoContainer>
 
-@code {
+@code 
+{
     private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents(); 
 
     private string GetPointColor(SupportIncident incident)
@@ -27,4 +28,4 @@
         return null;
     }
 
-    }
+}
