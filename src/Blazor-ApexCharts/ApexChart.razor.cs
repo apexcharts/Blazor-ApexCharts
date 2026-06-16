@@ -1342,14 +1342,32 @@ namespace ApexCharts
         /// <inheritdoc/>
         public virtual void Dispose()
         {
-            DisposeCore();
-            GC.SuppressFinalize(this);
+            if (!TryBeginDispose())
+            {
+                return;
+            }
+
+            try
+            {
+                if (Options.Chart?.Id != null && isReady && blazor_apexchart is IJSInProcessObjectReference blazorApexChartInProcess)
+                {
+                    blazorApexChartInProcess.InvokeVoid("blazor_apexchart.destroyChart", Options.Chart.Id);
+                    blazorApexChartInProcess.Dispose();
+                }
+            }
+            catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+            { }
+            finally
+            {
+                DisposeManagedResources();
+                GC.SuppressFinalize(this);
+            }
         }
 
         /// <inheritdoc/>
         public virtual async ValueTask DisposeAsync()
         {
-            if (!DisposeCore())
+            if (!TryBeginDispose())
             {
                 return;
             }
@@ -1369,11 +1387,12 @@ namespace ApexCharts
             { }
             finally
             {
+                DisposeManagedResources();
                 GC.SuppressFinalize(this);
             }
         }
 
-        private bool DisposeCore()
+        private bool TryBeginDispose()
         {
             if (Interlocked.Exchange(ref isDisposed, 1) != 0)
             {
@@ -1381,8 +1400,15 @@ namespace ApexCharts
             }
 
             chartService?.UnRegisterChart(this);
-            JSHandler?.Dispose();
+            chartService = null;
             return true;
+        }
+
+        private void DisposeManagedResources()
+        {
+            JSHandler?.Dispose();
+            JSHandler = null;
+            blazor_apexchart = null;
         }
 
         internal void UpdateTooltipData(HoverData<TItem> tooltipData)
