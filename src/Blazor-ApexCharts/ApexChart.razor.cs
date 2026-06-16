@@ -33,7 +33,7 @@ namespace ApexCharts
     /// Main component to create an Apex chart in Blazor
     /// </summary>
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
-    public partial class ApexChart<TItem> : IApexChartBase, IDisposable where TItem : class
+    public partial class ApexChart<TItem> : IApexChartBase, IDisposable, IAsyncDisposable where TItem : class
     {
         /// <summary>
         /// None generic version of the options object
@@ -387,6 +387,7 @@ namespace ApexCharts
         private JSHandler<TItem> JSHandler;
         private IJSObjectReference blazor_apexchart;
         private IApexChartService chartService;
+        private int isDisposed;
 
         /// <inheritdoc cref="Chart.Id"/>
         public string ChartId => chartId;
@@ -1341,22 +1342,38 @@ namespace ApexCharts
         /// <inheritdoc/>
         public virtual void Dispose()
         {
+            _ = DisposeAsync();
+        }
+
+        /// <inheritdoc/>
+        public virtual async ValueTask DisposeAsync()
+        {
+            if (Interlocked.Exchange(ref isDisposed, 1) != 0)
+            {
+                return;
+            }
+
             GC.SuppressFinalize(this);
 
             chartService?.UnRegisterChart(this);
 
-            if (Options.Chart?.Id != null && isReady && blazor_apexchart != null)
+            try
             {
-                try
+                if (Options.Chart?.Id != null && isReady && blazor_apexchart != null)
                 {
-                    InvokeAsync(async () => { await InvokeVoidJsAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
-                    InvokeAsync(async () => { await blazor_apexchart.DisposeAsync(); });
+                    await InvokeAsync(async () =>
+                    {
+                        await InvokeVoidJsAsync("blazor_apexchart.destroyChart", Options.Chart.Id);
+                        await blazor_apexchart.DisposeAsync();
+                    });
                 }
-                catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
-                { }
-
             }
-            JSHandler?.Dispose();
+            catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+            { }
+            finally
+            {
+                JSHandler?.Dispose();
+            }
         }
 
         internal void UpdateTooltipData(HoverData<TItem> tooltipData)
