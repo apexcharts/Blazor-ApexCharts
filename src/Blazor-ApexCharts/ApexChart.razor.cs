@@ -1342,20 +1342,17 @@ namespace ApexCharts
         /// <inheritdoc/>
         public virtual void Dispose()
         {
-            _ = DisposeAsync();
+            DisposeCore();
+            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc/>
         public virtual async ValueTask DisposeAsync()
         {
-            if (Interlocked.Exchange(ref isDisposed, 1) != 0)
+            if (!DisposeCore())
             {
                 return;
             }
-
-            GC.SuppressFinalize(this);
-
-            chartService?.UnRegisterChart(this);
 
             try
             {
@@ -1372,8 +1369,20 @@ namespace ApexCharts
             { }
             finally
             {
-                JSHandler?.Dispose();
+                GC.SuppressFinalize(this);
             }
+        }
+
+        private bool DisposeCore()
+        {
+            if (Interlocked.Exchange(ref isDisposed, 1) != 0)
+            {
+                return false;
+            }
+
+            chartService?.UnRegisterChart(this);
+            JSHandler?.Dispose();
+            return true;
         }
 
         internal void UpdateTooltipData(HoverData<TItem> tooltipData)
