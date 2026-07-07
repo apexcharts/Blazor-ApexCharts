@@ -1,3 +1,4 @@
+using ApexCharts.Internal;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -30,17 +31,18 @@ namespace ApexCharts
         /// <summary>
         /// Expression to determine the ordering of X-Values (categories) in the series
         /// </summary>
-        [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
+        [Parameter] public Func<ViolinPoint<TItem>, object> OrderBy { get; set; }
 
         /// <summary>
         /// Expression to determine the inverse ordering of X-Values (categories) in the series
         /// </summary>
-        [Parameter] public Func<ListPoint<TItem>, object> OrderByDescending { get; set; }
+        [Parameter] public Func<ViolinPoint<TItem>, object> OrderByDescending { get; set; }
 
         /// <summary>
-        /// Function to conditionally modify individual data points in the series
+        /// Function to conditionally modify individual violins in the series (for example to set a
+        /// per-violin <see cref="ViolinPoint{TItem}.FillColor"/>).
         /// </summary>
-        [Parameter] public Action<ListPoint<TItem>> DataPointMutator { get; set; }
+        [Parameter] public Action<ViolinPoint<TItem>> DataPointMutator { get; set; }
 
         /// <inheritdoc/>
         protected override void OnInitialized()
@@ -63,12 +65,14 @@ namespace ApexCharts
                 return Enumerable.Empty<IDataPoint<TItem>>();
             }
 
+            // apexcharts.js renders a violin from a precomputed density profile; it does not estimate
+            // the density itself. Group the raw observations per category and build that profile here.
             var data = items
                .GroupBy(d => XValue.Invoke(d))
-               .Select(g => new ListPoint<TItem>
+               .Select(g => new ViolinPoint<TItem>
                {
                    X = g.Key,
-                   Y = g.Select(d => (decimal?)YValue.Invoke(d)).ToList(),
+                   Y = ViolinDensity.Compute(g.Select(d => (double)YValue.Invoke(d)).ToList()),
                    Items = g.ToList()
                });
 
