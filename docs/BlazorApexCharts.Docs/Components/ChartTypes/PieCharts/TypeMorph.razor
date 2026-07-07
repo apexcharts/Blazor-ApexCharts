@@ -1,0 +1,59 @@
+@*
+    Chart-type morph (apexcharts.js 5.14+). With Animations.ChartTypeMorph enabled, switching the
+    chart type tweens between shapes instead of the destroy-and-recreate flicker. bar <-> pie is a
+    supported morph pair. The switch goes through UpdateOptionsAsync (the live-update path) so the
+    morph animation runs; incompatible pairs fall back to an instant snap.
+*@
+
+<DemoContainer>
+
+    <Button Size="ButtonSize.Small" class="mb-2" OnClick="ToggleType" BackgroundColor="TablerColor.Primary">
+        Morph to @(currentType == SeriesType.Pie ? "Bar" : "Pie")
+    </Button>
+
+    <ApexChart TItem="Order"
+               Title="Gross Value by Country"
+               Options="options"
+               @ref="chart">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="currentType"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChart<Order> chart;
+    private SeriesType currentType = SeriesType.Pie;
+    private ApexChartOptions<Order> options = new();
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart
+        {
+            Animations = new Animations
+            {
+                Enabled = true,
+                ChartTypeMorph = new ChartTypeMorph
+                {
+                    Enabled = true,
+                    Speed = 600
+                }
+            }
+        };
+    }
+
+    private async Task ToggleType()
+    {
+        currentType = currentType == SeriesType.Pie ? SeriesType.Bar : SeriesType.Pie;
+        // Let the series component pick up the new SeriesType before the options are re-serialized.
+        StateHasChanged();
+        await Task.Yield();
+        await chart.UpdateOptionsAsync(false, true, false);
+    }
+}

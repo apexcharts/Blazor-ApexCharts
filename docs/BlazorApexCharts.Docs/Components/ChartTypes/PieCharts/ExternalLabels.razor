@@ -1,0 +1,50 @@
+@*
+    External (outer) pie labels with leader lines (apexcharts.js 5.16+). The category name renders
+    outside the slice, joined by a connector line, so the chart reads without the legend. The
+    percentage keeps rendering inside the slice.
+*@
+
+<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Gross Value by Country"
+               Options="options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Pie"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+
+    private ApexChartOptions<Order> options = new();
+
+    protected override void OnInitialized()
+    {
+        options.PlotOptions = new PlotOptions
+        {
+            Pie = new PlotOptionsPie
+            {
+                DataLabels = new PieDataLabels
+                {
+                    External = new PieDataLabelsExternal
+                    {
+                        Show = true,
+                        Connector = new PieDataLabelsExternalConnector
+                        {
+                            Show = true,
+                            Width = 1,
+                            Length = 16,
+                            Gap = 6
+                        }
+                    }
+                }
+            }
+        };
+    }
+}

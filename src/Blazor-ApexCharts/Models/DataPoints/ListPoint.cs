@@ -19,8 +19,14 @@ namespace ApexCharts
         /// The Y-values for the data point to create on the chart
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
-        
+
         public IEnumerable<decimal?> Y { get; set; }
+
+        /// <summary>
+        /// Raw individual observations for the data point, overlaid as jittered dots on box-plot charts
+        /// (see <see cref="BoxPlotPoints"/>). Ignored when null, so existing box plots are unchanged.
+        /// </summary>
+        public IEnumerable<decimal?> Points { get; set; }
 
         /// <inheritdoc cref="IDataPoint{TItem}.Extra"/>
         public object Extra { get; set; }
