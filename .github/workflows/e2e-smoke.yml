@@ -10,6 +10,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# The smoke test only reads the repo, builds, and runs; it needs no write scopes.
+permissions:
+  contents: read
+
 jobs:
   e2e:
     runs-on: ubuntu-latest
