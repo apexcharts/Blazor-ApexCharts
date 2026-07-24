@@ -1,1 +1,55 @@
-{"name":"fi","options":{"days":["Sunnuntai","Maanantai","Tiistai","Keskiviikko","Torstai","Perjantai","Lauantai"],"months":["Tammikuu","Helmikuu","Maaliskuu","Huhtikuu","Toukokuu","Kes\u00E4kuu","Hein\u00E4kuu","Elokuu","Syyskuu","Lokakuu","Marraskuu","Joulukuu"],"shortDays":["Su","Ma","Ti","Ke","To","Pe","La"],"shortMonths":["Tammi","Helmi","Maalis","Huhti","Touko","Kes\u00E4","Hein\u00E4","Elo","Syys","Loka","Marras","Joulu"],"toolbar":{"menu":"Valikko","pan":"Panoroi","reset":"Nollaa zoomaus","selection":"Valinta","selectionZoom":"Valinnan zoomaus","zoomIn":"L\u00E4henn\u00E4","zoomOut":"Loitonna","exportToSVG":"Lataa SVG","exportToPNG":"Lataa PNG","exportToCSV":"Lataa CSV"}}}
+{
+  "name": "fi",
+  "options": {
+    "months": [
+      "Tammikuu",
+      "Helmikuu",
+      "Maaliskuu",
+      "Huhtikuu",
+      "Toukokuu",
+      "Kesäkuu",
+      "Heinäkuu",
+      "Elokuu",
+      "Syyskuu",
+      "Lokakuu",
+      "Marraskuu",
+      "Joulukuu"
+    ],
+    "shortMonths": [
+      "Tammi",
+      "Helmi",
+      "Maalis",
+      "Huhti",
+      "Touko",
+      "Kesä",
+      "Heinä",
+      "Elo",
+      "Syys",
+      "Loka",
+      "Marras",
+      "Joulu"
+    ],
+    "days": [
+      "Sunnuntai",
+      "Maanantai",
+      "Tiistai",
+      "Keskiviikko",
+      "Torstai",
+      "Perjantai",
+      "Lauantai"
+    ],
+    "shortDays": ["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"],
+    "toolbar": {
+      "exportToSVG": "Lataa SVG",
+      "exportToPNG": "Lataa PNG",
+      "exportToCSV": "Lataa CSV",
+      "menu": "Valikko",
+      "selection": "Valinta",
+      "selectionZoom": "Valinnan zoomaus",
+      "zoomIn": "Lähennä",
+      "zoomOut": "Loitonna",
+      "pan": "Panoroi",
+      "reset": "Nollaa zoomaus"
+    }
+  }
+}

@@ -1,1 +1,55 @@
-{"name":"sl","options":{"days":["Nedelja","Ponedeljek","Torek","Sreda","\u010Cetrtek","Petek","Sobota"],"months":["Januar","Februar","Marec","April","Maj","Junij","Julij","Avgust","Septemer","Oktober","November","December"],"shortDays":["Ne","Po","To","Sr","\u010Ce","Pe","So"],"shortMonths":["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Avg","Sep","Okt","Nov","Dec"],"toolbar":{"menu":"Menu","pan":"Pomikanje","reset":"Resetiraj","selection":"Izbiranje","selectionZoom":"Zoom: Izbira","zoomIn":"Zoom: Pribli\u017Eaj","zoomOut":"Zoom: Oddalji","exportToSVG":"Prenesi SVG","exportToPNG":"Prenesi PNG","exportToCSV":"Prenesi CSV"}}}
+{
+  "name": "sl",
+  "options": {
+    "months": [
+      "Januar",
+      "Februar",
+      "Marec",
+      "April",
+      "Maj",
+      "Junij",
+      "Julij",
+      "Avgust",
+      "Septemer",
+      "Oktober",
+      "November",
+      "December"
+    ],
+    "shortMonths": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Maj",
+      "Jun",
+      "Jul",
+      "Avg",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Dec"
+    ],
+    "days": [
+      "Nedelja",
+      "Ponedeljek",
+      "Torek",
+      "Sreda",
+      "Četrtek",
+      "Petek",
+      "Sobota"
+    ],
+    "shortDays": ["Ne", "Po", "To", "Sr", "Če", "Pe", "So"],
+    "toolbar": {
+      "exportToSVG": "Prenesi SVG",
+      "exportToPNG": "Prenesi PNG",
+      "exportToCSV": "Prenesi CSV",
+      "menu": "Menu",
+      "selection": "Izbiranje",
+      "selectionZoom": "Zoom: Izbira",
+      "zoomIn": "Zoom: Približaj",
+      "zoomOut": "Zoom: Oddalji",
+      "pan": "Pomikanje",
+      "reset": "Resetiraj"
+    }
+  }
+}

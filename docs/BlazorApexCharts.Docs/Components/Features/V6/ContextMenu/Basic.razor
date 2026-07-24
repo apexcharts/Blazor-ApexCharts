@@ -1,0 +1,58 @@
+@*
+    ApexCharts v6 point context menu (premium: shows an APEXCHARTS trial watermark without a
+    license). Right-click (or long-press) a data point for verbs that act at that exact point:
+    annotate, add an x/y line, or measure from there.
+*@
+<div class="mb-2">
+    <span>Right-click a data point to open the context menu (annotate, xline, yline, measure).</span>
+</div>
+
+<DemoContainer>
+    <ApexChart @ref="chart" TItem="Pt" Title="Right-click a point" Options="options">
+        <ApexPointSeries TItem="Pt"
+                         Items="points"
+                         Name="Series 1"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Y)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Pt> chart;
+    private ApexChartOptions<Pt> options { get; set; } = new();
+    private List<Pt> points { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart
+            {
+                Height = 320,
+                ContextMenu = new ChartContextMenu
+                {
+                    Enabled = true,
+                    Items = new List<ContextMenuItem>
+                    {
+                        ContextMenuItem.BuiltIn("annotate"),
+                        ContextMenuItem.BuiltIn("xline"),
+                        ContextMenuItem.BuiltIn("yline"),
+                        ContextMenuItem.BuiltIn("measure")
+                    }
+                },
+                Measure = new ChartMeasure { Enabled = true }
+            };
+
+        // Numeric x-axis avoids duplicate integer labels when zoomed in from the context menu.
+        options.Xaxis = new XAxis { Type = XAxisType.Numeric };
+
+        var rnd = new Random(9);
+        double y = 45;
+        for (var i = 0; i < 24; i++)
+        {
+            y += rnd.NextDouble() * 10 - 5;
+            points.Add(new Pt(i, (decimal)Math.Round(y, 2)));
+        }
+    }
+
+    private record Pt(int X, decimal Y);
+}

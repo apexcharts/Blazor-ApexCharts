@@ -25,12 +25,23 @@ const channel = process.env.PW_CHANNEL;
 const ROUTES = [
   'violin-charts', 'boxplot-charts', 'heatmap-charts',
   'line-charts', 'scatter-charts', 'pie-charts',
+  // v6 feature demo pages (each renders a chart; premium ones show the trial watermark locally).
+  'features/v6/renderer', 'features/v6/streaming', 'features/v6/easing', 'features/v6/bar-race',
+  'features/v6/os-theme', 'features/v6/measure', 'features/v6/history', 'features/v6/perspectives',
+  'features/v6/ink', 'features/v6/context-menu', 'features/v6/storyboard', 'features/v6/linked-views',
 ];
 
 // The docs "view source" widget fetches each demo's .razor from the deployed GitHub Pages site; for
 // demos not yet deployed that is a harmless 404 the app catches and shows as text. Ignore those so
 // the smoke test only fails on real chart/interop errors.
-const isIgnorableError = t => /Failed to load resource: the server responded with a status of 404/.test(t);
+// - the docs "view source" widget fetching each demo's .razor from the deployed site: a 404 when a demo is not yet
+//   deployed, or ERR_CONNECTION_REFUSED when the runner has no outbound network. Neither is a chart/interop error.
+// - the `[Apex]` license-domain notice: the demo's app-wide key is domain-locked to apexcharts.github.io, so on any
+//   other host (CI, localhost) the premium features render in trial mode and the core logs this. That is expected.
+const isIgnorableError = t =>
+  /Failed to load resource: the server responded with a status of 404/.test(t) ||
+  /ERR_CONNECTION_REFUSED|ERR_NAME_NOT_RESOLVED|ERR_INTERNET_DISCONNECTED/.test(t) ||
+  /\[Apex\].*licen[sc]e|not valid for this domain/i.test(t);
 
 const failures = [];
 const launchOpts = channel ? { channel, headless: true } : { headless: true };
@@ -95,10 +106,30 @@ const morphErrs = realErrors();
 if (morphErrs.length) failures.push(`[typemorph] console/page errors: ${JSON.stringify(morphErrs)}`);
 console.log(`[typemorph] bars before=${before} after=${after} realErrors=${morphErrs.length}`);
 
+// v6 premium features + licensing: the page must render both charts; the chart relying on the app-wide
+// (domain-locked) key is watermarked in trial mode here, while the per-chart-licensed chart is not. This guards
+// the whole license/watermark chain (typed premium options -> serialize -> core gating) which build+serialize can't.
+pageErrors = [];
+await page.goto(BASE + '/v6-premium-features', { waitUntil: 'domcontentloaded' });
+await page.waitForSelector('#licensed-wrap .apexcharts-canvas svg', { timeout: 30000 });
+await page.waitForTimeout(2500);
+const v6 = await page.evaluate(() => ({
+  trialCanvas: document.querySelectorAll('#trial-wrap .apexcharts-canvas svg').length,
+  licensedCanvas: document.querySelectorAll('#licensed-wrap .apexcharts-canvas svg').length,
+  trialWatermarks: document.querySelectorAll('#trial-wrap [data-apexcharts-watermark]').length,
+  licensedWatermarks: document.querySelectorAll('#licensed-wrap [data-apexcharts-watermark]').length,
+}));
+const v6errs = realErrors();
+if (v6.trialCanvas === 0 || v6.licensedCanvas === 0) failures.push(`[v6] premium page did not render (trial=${v6.trialCanvas}, licensed=${v6.licensedCanvas})`);
+if (v6.trialWatermarks !== 1) failures.push(`[v6] trial (unlicensed) chart should show exactly 1 watermark, got ${v6.trialWatermarks}`);
+if (v6.licensedWatermarks !== 0) failures.push(`[v6] per-chart-licensed chart should have no watermark, got ${v6.licensedWatermarks}`);
+if (v6errs.length) failures.push(`[v6] console/page errors: ${JSON.stringify(v6errs)}`);
+console.log(`[v6-premium-features] trialWM=${v6.trialWatermarks} licensedWM=${v6.licensedWatermarks} canvases=${v6.trialCanvas}/${v6.licensedCanvas} realErrors=${v6errs.length}`);
+
 await browser.close();
 
 if (failures.length) {
   console.error('\nE2E SMOKE FAILED:\n' + failures.map(f => '  - ' + f).join('\n'));
   process.exit(1);
 }
-console.log('\nE2E smoke passed: all chart pages rendered, violin drew density bodies, and type-morph re-rendered.');
+console.log('\nE2E smoke passed: all chart pages rendered, violin drew density bodies, type-morph re-rendered, and v6 premium licensing gated the watermark (trial watermarked, per-chart-licensed clean).');

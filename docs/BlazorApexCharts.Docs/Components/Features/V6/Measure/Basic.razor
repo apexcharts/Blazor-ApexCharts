@@ -1,0 +1,84 @@
+@*
+    ApexCharts v6 measure / delta ruler (premium: shows an APEXCHARTS trial watermark without a
+    license). The measure tool is pre-selected in the toolbar (Toolbar.AutoSelected = Measure), so
+    you can drag directly on the plot to measure. Each completed measurement raises OnMeasured with
+    the change, percent and slope between the two points.
+*@
+<div class="mb-2">
+    @if (last is null)
+    {
+        <span>The <strong>ruler</strong> tool is already selected in the toolbar. Drag across the plot to measure two points.</span>
+    }
+    else
+    {
+        <span>
+            Last measurement: dx=<strong>@Fmt(last.Dx)</strong>,
+            dy=<strong>@Fmt(last.Dy)</strong>,
+            change=<strong>@Fmt(last.PercentChange)%</strong>,
+            slope=<strong>@Fmt(last.Slope)</strong>
+        </span>
+    }
+    <button class="btn btn-outline-secondary btn-sm ms-2" @onclick="ClearMeasures">Clear</button>
+</div>
+
+<DemoContainer>
+    <ApexChart @ref="chart" TItem="Pt" Title="Measure ruler (tool pre-selected)" Options="options" OnMeasured="OnMeasured">
+        <ApexPointSeries TItem="Pt"
+                         Items="points"
+                         Name="Price"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Y)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Pt> chart;
+    private ApexChartOptions<Pt> options { get; set; } = new();
+    private List<Pt> points { get; set; } = new();
+    private MeasuredData last;
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart
+            {
+                Height = 320,
+                Measure = new ChartMeasure
+                {
+                    Enabled = true,
+                    Mode = MeasureMode.Span,
+                    PinOnRelease = true
+                },
+                // Pre-select the measure tool in the toolbar so the user can drag to measure
+                // immediately. The measure button only appears when Chart.Measure is enabled.
+                Toolbar = new Toolbar
+                {
+                    Show = true,
+                    AutoSelected = AutoSelected.Measure,
+                    Tools = new Tools { Measure = true }
+                }
+            };
+
+        options.Xaxis = new XAxis { Type = XAxisType.Numeric };
+
+        var rnd = new Random(7);
+        double y = 50;
+        for (var i = 0; i < 40; i++)
+        {
+            y += rnd.NextDouble() * 12 - 5;
+            points.Add(new Pt(i, (decimal)Math.Round(y, 2)));
+        }
+    }
+
+    private async Task ClearMeasures() => await chart.ClearMeasuresAsync();
+
+    private void OnMeasured(MeasuredData data)
+    {
+        last = data;
+        StateHasChanged();
+    }
+
+    private static string Fmt(double? value) => value?.ToString("0.##") ?? "-";
+
+    private record Pt(int X, decimal Y);
+}

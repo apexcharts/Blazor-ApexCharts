@@ -1,0 +1,110 @@
+@*
+    ApexCharts v6 ink layer (premium: shows an APEXCHARTS trial watermark without a license).
+    The chart starts with a few annotations already placed; the ink layer makes them draggable,
+    resizable and editable (click one for the floating editor, drag to move, snap to gridlines).
+    Right-click a data point for the context menu to add more. Events appear below.
+*@
+<div class="mb-2">
+    <span>The annotations below were placed on load. Drag or click one to edit it, or right-click a point to add more.</span>
+</div>
+
+<DemoContainer>
+    <ApexChart @ref="chart" TItem="Pt" Title="Ink annotations (pre-placed + editable)" Options="options"
+               OnAnnotationCreated="OnCreated"
+               OnAnnotationDragged="OnDragged"
+               OnAnnotationEdited="OnEdited"
+               OnAnnotationDeleted="OnDeleted">
+        <ApexPointSeries TItem="Pt"
+                         Items="points"
+                         Name="Series 1"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Y)" />
+    </ApexChart>
+</DemoContainer>
+
+<div class="mt-2">
+    <h5>Event log</h5>
+    @if (logs.Count == 0)
+    {
+        <em>No annotation events yet.</em>
+    }
+    else
+    {
+        <ul>
+            @foreach (var entry in logs)
+            {
+                <li><code>@entry</code></li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    private ApexChart<Pt> chart;
+    private ApexChartOptions<Pt> options { get; set; } = new();
+    private List<Pt> points { get; set; } = new();
+    private readonly List<string> logs = new();
+
+    protected override void OnInitialized()
+    {
+        var rnd = new Random(5);
+        double y = 50;
+        for (var i = 0; i < 24; i++)
+        {
+            y += rnd.NextDouble() * 10 - 5;
+            points.Add(new Pt(i, (decimal)Math.Round(y, 2)));
+        }
+
+        options.Chart = new Chart
+            {
+                Height = 320,
+                Ink = new ChartInk { Enabled = true, Palette = true, Snap = true },
+                // Right-click a point to add annotations / lines / measure from the exact point.
+                ContextMenu = new ChartContextMenu
+                {
+                    Enabled = true,
+                    Items = new List<ContextMenuItem>
+                    {
+                        ContextMenuItem.BuiltIn("annotate"),
+                        ContextMenuItem.BuiltIn("xline"),
+                        ContextMenuItem.BuiltIn("yline")
+                    }
+                }
+            };
+
+        options.Xaxis = new XAxis { Type = XAxisType.Numeric };
+
+        // Pre-place a couple of annotations on the actual data; the ink layer adopts any standard
+        // point/xaxis/yaxis annotations from the config and makes them editable on render.
+        options.Annotations = new Annotations
+            {
+                Points = new List<AnnotationsPoint>
+                {
+                    new() { X = 6, Y = (double)points[6].Y, Label = new Label { Text = "Peak" }, Marker = new AnnotationMarker { Size = 6 } },
+                    new() { X = 18, Y = (double)points[18].Y, Label = new Label { Text = "Watch" }, Marker = new AnnotationMarker { Size = 6 } }
+                },
+                Xaxis = new List<AnnotationsXAxis>
+                {
+                    new() { X = 12, Label = new Label { Text = "Midpoint" } }
+                }
+            };
+    }
+
+    private void OnCreated(InkAnnotationEventData d) => Log("created", d);
+    private void OnDragged(InkAnnotationEventData d) => Log("dragged", d);
+    private void OnEdited(InkAnnotationEventData d) => Log("edited", d);
+    private void OnDeleted(InkAnnotationEventData d) => Log("deleted", d);
+
+    private void Log(string action, InkAnnotationEventData d)
+    {
+        logs.Insert(0, $"{action}: type={d.Type} id={d.Id} x={d.X} y={d.Y} text={d.Text}");
+        if (logs.Count > 8)
+        {
+            logs.RemoveRange(8, logs.Count - 8);
+        }
+        StateHasChanged();
+    }
+
+    private record Pt(int X, decimal Y);
+}
