@@ -23,7 +23,6 @@ namespace BlazorApexCharts.Docs.Server
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddDocs();
             services.AddScoped<ICodeSnippetService, LocalSnippetService>();
 
             services.AddApexCharts();

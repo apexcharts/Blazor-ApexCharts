@@ -1,0 +1,64 @@
+@typeparam TItem
+@typeparam TValue
+@namespace BlazorApexCharts.Docs.Components.UI
+@using System.Linq
+
+<div @attributes="AdditionalAttributes" class="@UIHelpers.MergeClass("dropdown", AdditionalAttributes)">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="form-label">@Label</label>
+    }
+    <button class="btn dropdown-toggle w-100 text-start" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        @DisplayText
+    </button>
+    <ul class="dropdown-menu" style="@ListStyle">
+        @foreach (var item in Items ?? Enumerable.Empty<TItem>())
+        {
+            <li>
+                <a class="dropdown-item" href="javascript:void(0)" @onclick="() => SelectAsync(item)">
+                    @if (ListTemplate != null)
+                    {
+                        @ListTemplate(item)
+                    }
+                    else
+                    {
+                        @GetText(item)
+                    }
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; }
+    [Parameter] public IEnumerable<TItem> Items { get; set; }
+    [Parameter] public TValue SelectedValue { get; set; }
+    [Parameter] public EventCallback<TValue> SelectedValueChanged { get; set; }
+    [Parameter] public EventCallback Changed { get; set; }
+    [Parameter] public Func<TItem, string> SelectedTextExpression { get; set; }
+    [Parameter] public RenderFragment<TItem> ListTemplate { get; set; }
+    [Parameter] public string MaxListHeight { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private string ListStyle => MaxListHeight is null ? null : $"max-height:{MaxListHeight};overflow-y:auto";
+
+    private string GetText(TItem item) => SelectedTextExpression != null ? SelectedTextExpression(item) : item?.ToString() ?? string.Empty;
+
+    private string DisplayText
+    {
+        get
+        {
+            var selectedItem = (Items ?? Enumerable.Empty<TItem>()).FirstOrDefault(i => Equals(i, (object)SelectedValue));
+            return selectedItem != null ? GetText(selectedItem) : (SelectedValue?.ToString() ?? "Select...");
+        }
+    }
+
+    private async Task SelectAsync(TItem item)
+    {
+        var value = (TValue)(object)item;
+        SelectedValue = value;
+        await SelectedValueChanged.InvokeAsync(value);
+        await Changed.InvokeAsync();
+    }
+}

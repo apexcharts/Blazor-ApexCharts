@@ -17,7 +17,6 @@ namespace BlazorApexCharts.Docs.Wasm
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddDocs();
 
             builder.Services.AddHttpClient("GitHub", client => client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Blazor-ApexCharts", "1")));
             builder.Services.AddScoped<ICodeSnippetService, GitHubSnippetService>();

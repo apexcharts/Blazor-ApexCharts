@@ -1,0 +1,32 @@
+@namespace BlazorApexCharts.Docs.Components.UI
+
+<div class="modal modal-blur fade show" style="display:block" tabindex="-1">
+    <div class="modal-dialog @SizeClass modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+                <button type="button" class="btn-close" @onclick="CloseAsync"></button>
+            </div>
+            <div class="modal-body">
+                @ChildContent
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade show" @onclick="CloseAsync"></div>
+
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public ModalOptions Options { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback OnClosed { get; set; }
+
+    private string SizeClass => Options?.Size switch
+    {
+        ModalSize.Small => "modal-sm",
+        ModalSize.Large => "modal-lg",
+        _ => ""
+    };
+
+    private async Task CloseAsync() => await OnClosed.InvokeAsync();
+}

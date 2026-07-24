@@ -1,0 +1,42 @@
+@typeparam Item
+@namespace BlazorApexCharts.Docs.Components.UI
+@implements IDisposable
+@using System.Linq.Expressions
+
+@code {
+    [CascadingParameter] public Table<Item> ParentTable { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public Expression<Func<Item, object>> Property { get; set; }
+    [Parameter] public bool Searchable { get; set; }
+    [Parameter] public bool Sortable { get; set; }
+    // Grouping was dropped when replacing TabBlazor; kept as a no-op so existing markup keeps compiling unchanged.
+    [Parameter] public bool Groupable { get; set; }
+    [Parameter] public RenderFragment<Item> Template { get; set; }
+
+    private string propertyName;
+    private Func<Item, object> compiledAccessor;
+
+    protected override void OnInitialized()
+    {
+        if (Property != null)
+        {
+            propertyName = GetMemberName(Property);
+            compiledAccessor = Property.Compile();
+        }
+
+        ParentTable?.AddColumn(this);
+    }
+
+    public string HeaderText => Title ?? propertyName;
+
+    public object GetValue(Item item) => compiledAccessor != null ? compiledAccessor(item) : null;
+
+    private static string GetMemberName(Expression<Func<Item, object>> expr)
+    {
+        var body = expr.Body;
+        if (body is UnaryExpression unary) body = unary.Operand;
+        return (body as MemberExpression)?.Member.Name;
+    }
+
+    public void Dispose() => ParentTable?.RemoveColumn(this);
+}

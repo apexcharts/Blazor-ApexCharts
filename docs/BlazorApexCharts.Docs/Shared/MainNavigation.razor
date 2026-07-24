@@ -1,267 +1,301 @@
-﻿<Navbar Background=NavbarBackground.Dark Direction=NavbarDirection.Vertical NavLinkMatch="Microsoft.AspNetCore.Components.Routing.NavLinkMatch.All">
+@using Microsoft.AspNetCore.Components.Routing
 
-    <a href="https://github.com/apexcharts/Blazor-ApexCharts" target=_blank class="navbar-brand navbar-brand-autodark">
-        <h3 class="">
-            Blazor ApexCharts
-            <Icon IconType=@Icons.Brand_github BackgroundColor=TablerColor.White />
-        </h3>
-    </a>
-    <NavbarMenu>
-        <NavbarMenuItem Href="" Text="Chart Gallery">
-            <MenuItemIcon>
-                <Icon class="icon" IconType="@Icons.Apps" />
-            </MenuItemIcon>
-        </NavbarMenuItem>
+<aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
 
-        <NavbarMenuItem Href="chart-service" Text="Chart Service">
-            <MenuItemIcon>
-                <Icon class="icon" IconType="@Icons.Ghost" />
-            </MenuItemIcon>
-        </NavbarMenuItem>
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu" aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <NavbarMenuItem Text="Chart Types">
-            <MenuItemIcon>
-                <Icon class="icon" IconType="@Icons.Chart_infographic" />
-            </MenuItemIcon>
+        <a href="https://github.com/apexcharts/Blazor-ApexCharts" target=_blank class="navbar-brand navbar-brand-autodark">
+            <h3 class="">
+                Blazor ApexCharts
+                <Icon IconType=@Icons.Brand_github BackgroundColor=TablerColor.White />
+            </h3>
+        </a>
 
-            <SubMenu>
+    <div class="collapse navbar-collapse" id="sidebar-menu">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Apps" /></span>
+                    <span class="nav-link-title">Chart Gallery</span>
+                </NavLink>
+            </li>
 
-                <NavbarMenuItem Href="area-charts" Text="Area">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_area" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="chart-service" Match="NavLinkMatch.All">
+                    <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Ghost" /></span>
+                    <span class="nav-link-title">Chart Service</span>
+                </NavLink>
+            </li>
 
-                <NavbarMenuItem Href="bar-charts" Text="Bar">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_bar" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#nav-chart-types" role="button" aria-expanded="false">
+                    <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_infographic" /></span>
+                    <span class="nav-link-title">Chart Types</span>
+                </a>
+                <div class="collapse" id="nav-chart-types">
+                    <ul class="nav nav-pills flex-column ms-3">
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="area-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_area" /></span>
+                                <span class="nav-link-title">Area</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="bar-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_bar" /></span>
+                                <span class="nav-link-title">Bar</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="boxplot-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_candle" /></span>
+                                <span class="nav-link-title">BoxPlot</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="bubble-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_scatter" /></span>
+                                <span class="nav-link-title">Bubble</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="candlestick-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_candle" /></span>
+                                <span class="nav-link-title">Candlestick</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="donut-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_donut_3" /></span>
+                                <span class="nav-link-title">Donut</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="funnel-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Triangle_inverted" /></span>
+                                <span class="nav-link-title">Funnel</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="heatmap-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Grid_dots" /></span>
+                                <span class="nav-link-title">Heatmap</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="line-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_line" /></span>
+                                <span class="nav-link-title">Line</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="mixed-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_area_line" /></span>
+                                <span class="nav-link-title">Mixed</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="pie-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_pie_3" /></span>
+                                <span class="nav-link-title">Pie</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="radar-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_radar" /></span>
+                                <span class="nav-link-title">Radar</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="radialbar-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_donut_4" /></span>
+                                <span class="nav-link-title">Radial bars</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="rangebar-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_arrows_vertical" /></span>
+                                <span class="nav-link-title">Range bar</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="scatter-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_scatter" /></span>
+                                <span class="nav-link-title">Scatter</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="slope-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_line" /></span>
+                                <span class="nav-link-title">Slope</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="tree-map-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_treemap" /></span>
+                                <span class="nav-link-title">TreeMap</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="rangearea-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_area_line" /></span>
+                                <span class="nav-link-title">RangeArea</span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="violin-charts" Match="NavLinkMatch.All">
+                                <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Chart_candle" /></span>
+                                <span class="nav-link-title">Violin</span>
+                            </NavLink>
+                        </li>
+                    </ul>
+                </div>
+            </li>
 
-                <NavbarMenuItem Href="boxplot-charts" Text="BoxPlot">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_candle" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#nav-events" role="button" aria-expanded="false">
+                    <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Bolt" /></span>
+                    <span class="nav-link-title">Events</span>
+                </a>
+                <div class="collapse" id="nav-events">
+                    <ul class="nav nav-pills flex-column ms-3">
+                        <li class="nav-item"><NavLink class="nav-link" href="events/before-reset-zoom" Match="NavLinkMatch.All"><span class="nav-link-title">Before Reset Zoom</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/before-zoom" Match="NavLinkMatch.All"><span class="nav-link-title">Before Zoom</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/brush-scrolled" Match="NavLinkMatch.All"><span class="nav-link-title">Brush Scrolled</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/chart-setup" Match="NavLinkMatch.All"><span class="nav-link-title">Chart Setup</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/click" Match="NavLinkMatch.All"><span class="nav-link-title">Click</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/data-point-hover" Match="NavLinkMatch.All"><span class="nav-link-title">Data Point Hover</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/data-point-selection" Match="NavLinkMatch.All"><span class="nav-link-title">Data Point Selection</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/legend-click" Match="NavLinkMatch.All"><span class="nav-link-title">Legend Click</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/marker-click" Match="NavLinkMatch.All"><span class="nav-link-title">Marker Click</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/mouse-hover" Match="NavLinkMatch.All"><span class="nav-link-title">Mouse Hover</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/scrolled" Match="NavLinkMatch.All"><span class="nav-link-title">Scrolled</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/selection" Match="NavLinkMatch.All"><span class="nav-link-title">Selection</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/xaxis-label-click" Match="NavLinkMatch.All"><span class="nav-link-title">XAxisLabelClick</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="events/zoomed" Match="NavLinkMatch.All"><span class="nav-link-title">Zoomed</span></NavLink></li>
+                    </ul>
+                </div>
+            </li>
 
-                <NavbarMenuItem Href="bubble-charts" Text="Bubble">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_scatter" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#nav-features" role="button" aria-expanded="false">
+                    <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Ad" /></span>
+                    <span class="nav-link-title">Features</span>
+                </a>
+                <div class="collapse" id="nav-features">
+                    <ul class="nav nav-pills flex-column ms-3">
+                        <li class="nav-item"><NavLink class="nav-link" href="features/annotations" Match="NavLinkMatch.All"><span class="nav-link-title">Annotations</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/axis" Match="NavLinkMatch.All"><span class="nav-link-title">Axis</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/blazor-options" Match="NavLinkMatch.All"><span class="nav-link-title">Blazor Options</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/chart-data" Match="NavLinkMatch.All"><span class="nav-link-title">Data</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/dynamic-series" Match="NavLinkMatch.All"><span class="nav-link-title">Dynamic Series</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/export" Match="NavLinkMatch.All"><span class="nav-link-title">Export</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/formatters" Match="NavLinkMatch.All"><span class="nav-link-title">Formatters</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/group-points" Match="NavLinkMatch.All"><span class="nav-link-title">Group Points</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/legend" Match="NavLinkMatch.All"><span class="nav-link-title">Legend</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/localization" Match="NavLinkMatch.All"><span class="nav-link-title">Localization</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/performance" Match="NavLinkMatch.All"><span class="nav-link-title">Performance</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/responsive" Match="NavLinkMatch.All"><span class="nav-link-title">Responsive</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/chart-size" Match="NavLinkMatch.All"><span class="nav-link-title">Size</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/state" Match="NavLinkMatch.All"><span class="nav-link-title">State</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/syncronized" Match="NavLinkMatch.All"><span class="nav-link-title">Syncronized charts</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/toolbar" Match="NavLinkMatch.All"><span class="nav-link-title">Toolbar</span></NavLink></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#nav-features-tooltip" role="button" aria-expanded="false">
+                                <span class="nav-link-title">Tooltip</span>
+                            </a>
+                            <div class="collapse" id="nav-features-tooltip">
+                                <ul class="nav nav-pills flex-column ms-3">
+                                    <li class="nav-item"><NavLink class="nav-link" href="features/tooltip-javascript" Match="NavLinkMatch.All"><span class="nav-link-title">Javascript</span></NavLink></li>
+                                    <li class="nav-item"><NavLink class="nav-link" href="features/tooltip-dotnet" Match="NavLinkMatch.All"><span class="nav-link-title">DotNet</span></NavLink></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
 
-                <NavbarMenuItem Href="candlestick-charts" Text="Candlestick">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_candle" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#nav-v6-features" role="button" aria-expanded="false">
+                    <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Bolt" /></span>
+                    <span class="nav-link-title">v6 Features</span>
+                </a>
+                <div class="collapse" id="nav-v6-features">
+                    <ul class="nav nav-pills flex-column ms-3">
+                        <li class="nav-item"><NavLink class="nav-link" href="v6-premium-features" Match="NavLinkMatch.All"><span class="nav-link-title">Premium &amp; Licensing</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/renderer" Match="NavLinkMatch.All"><span class="nav-link-title">Canvas Renderer</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/streaming" Match="NavLinkMatch.All"><span class="nav-link-title">Streaming</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/easing" Match="NavLinkMatch.All"><span class="nav-link-title">Pluggable Easing</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/bar-race" Match="NavLinkMatch.All"><span class="nav-link-title">Bar Chart Race</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/os-theme" Match="NavLinkMatch.All"><span class="nav-link-title">OS-aware Theme</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/measure" Match="NavLinkMatch.All"><span class="nav-link-title">Measure Ruler</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/history" Match="NavLinkMatch.All"><span class="nav-link-title">History Undo/Redo</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/perspectives" Match="NavLinkMatch.All"><span class="nav-link-title">Perspectives</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/ink" Match="NavLinkMatch.All"><span class="nav-link-title">Ink Annotations</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/context-menu" Match="NavLinkMatch.All"><span class="nav-link-title">Context Menu</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/storyboard" Match="NavLinkMatch.All"><span class="nav-link-title">Storyboard</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="features/v6/linked-views" Match="NavLinkMatch.All"><span class="nav-link-title">Linked Views</span></NavLink></li>
+                    </ul>
+                </div>
+            </li>
 
-                <NavbarMenuItem Href="donut-charts" Text="Donut">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_donut_3" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#nav-methods" role="button" aria-expanded="false">
+                    <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Affiliate" /></span>
+                    <span class="nav-link-title">Methods</span>
+                </a>
+                <div class="collapse" id="nav-methods">
+                    <ul class="nav nav-pills flex-column ms-3">
+                        <li class="nav-item"><NavLink class="nav-link" href="methods/annotations" Match="NavLinkMatch.All"><span class="nav-link-title">Annotations</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="methods/append-data" Match="NavLinkMatch.All"><span class="nav-link-title">Append Data</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="methods/data-uri" Match="NavLinkMatch.All"><span class="nav-link-title">Data Uri</span></NavLink></li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="methods/get-svg-string" Match="NavLinkMatch.All">
+                                <span class="nav-link-title">Get SVG string<span class="badge badge-sm bg-danger-lt ms-auto">WASM Only</span></span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item"><NavLink class="nav-link" href="methods/highlight-series" Match="NavLinkMatch.All"><span class="nav-link-title">Highlight Series</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="methods/render" Match="NavLinkMatch.All"><span class="nav-link-title">Render</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="methods/toggle-data-point" Match="NavLinkMatch.All"><span class="nav-link-title">Toggle Data Point</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="methods/update-options" Match="NavLinkMatch.All"><span class="nav-link-title">Update Options</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="methods/update-series" Match="NavLinkMatch.All"><span class="nav-link-title">Update Series</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="methods/show-hide-series" Match="NavLinkMatch.All"><span class="nav-link-title">Show/Hide Series</span></NavLink></li>
+                        <li class="nav-item"><NavLink class="nav-link" href="methods/zoomx" Match="NavLinkMatch.All"><span class="nav-link-title">Zoom X</span></NavLink></li>
+                    </ul>
+                </div>
+            </li>
 
-                <NavbarMenuItem Href="funnel-charts" Text="Funnel">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Triangle_inverted" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="chart-themes" Match="NavLinkMatch.All">
+                    <span class="nav-link-icon"><Icon class="icon" IconType="@Icons.Color_swatch" /></span>
+                    <span class="nav-link-title">Themes</span>
+                </NavLink>
+            </li>
 
-                <NavbarMenuItem Href="heatmap-charts" Text="Heatmap">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Grid_dots" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)" @onclick="ShowGlobalOptions">
+                    <span class="nav-link-icon"><Icon IconType="@Icons.Theme_light_dark" /></span>
+                    <span class="nav-link-title">Global Options</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    </div>
+</aside>
 
-                <NavbarMenuItem Href="line-charts" Text="Line">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_line" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-
-
-                <NavbarMenuItem Href="mixed-charts" Text="Mixed">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_area_line" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-
-                <NavbarMenuItem Href="pie-charts" Text="Pie">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_pie_3" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-
-                <NavbarMenuItem Href="radar-charts" Text="Radar">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_radar" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-
-                <NavbarMenuItem Href="radialbar-charts" Text="Radial bars">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_donut_4" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-
-                <NavbarMenuItem Href="rangebar-charts" Text="Range bar">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_arrows_vertical" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-
-                <NavbarMenuItem Href="scatter-charts" Text="Scatter">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_scatter" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-
-                <NavbarMenuItem Href="slope-charts" Text="Slope">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_line" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-
-                <NavbarMenuItem Href="tree-map-charts" Text="TreeMap">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_treemap" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-
-                <NavbarMenuItem Href="rangearea-charts" Text="RangeArea">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_area_line" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-
-                <NavbarMenuItem Href="violin-charts" Text="Violin">
-                    <MenuItemIcon>
-                        <Icon class="icon" IconType="@Icons.Chart_candle" />
-                    </MenuItemIcon>
-                </NavbarMenuItem>
-            </SubMenu>
-        </NavbarMenuItem>
-
-        <NavbarMenuItem Text="Events">
-            <MenuItemIcon>
-                <Icon class="icon" IconType="@Icons.Bolt" />
-            </MenuItemIcon>
-            <SubMenu>
-                <NavbarMenuItem Text="Before Reset Zoom" Href="events/before-reset-zoom" />
-                <NavbarMenuItem Text="Before Zoom" Href="events/before-zoom" />
-                <NavbarMenuItem Text="Brush Scrolled" Href="events/brush-scrolled" />
-                <NavbarMenuItem Text="Chart Setup" Href="events/chart-setup" />
-                <NavbarMenuItem Text="Click" Href="events/click" />
-                <NavbarMenuItem Text="Data Point Hover" Href="events/data-point-hover" />
-                <NavbarMenuItem Text="Data Point Selection" Href="events/data-point-selection" />
-                <NavbarMenuItem Text="Legend Click" Href="events/legend-click" />
-                <NavbarMenuItem Text="Marker Click" Href="events/marker-click" />
-                <NavbarMenuItem Text="Mouse Hover" Href="events/mouse-hover" />
-                <NavbarMenuItem Text="Scrolled" Href="events/scrolled" />
-                <NavbarMenuItem Text="Selection" Href="events/selection" />
-                <NavbarMenuItem Text="XAxisLabelClick" Href="events/xaxis-label-click" />
-                <NavbarMenuItem Text="Zoomed" Href="events/zoomed" />
-            </SubMenu>
-        </NavbarMenuItem>
-
-        <NavbarMenuItem Text="Features">
-            <MenuItemIcon>
-                <Icon class="icon" IconType="@Icons.Ad" />
-            </MenuItemIcon>
-
-            <SubMenu>
-                <NavbarMenuItem Text="Annotations" Href="features/annotations" />
-                <NavbarMenuItem Text="Axis" Href="features/axis" />
-                <NavbarMenuItem Text="Blazor Options" Href="features/blazor-options" />
-
-                <NavbarMenuItem Text="Data" Href="features/chart-data" />
-                <NavbarMenuItem Text="Dynamic Series" Href="features/dynamic-series" />
-
-                <NavbarMenuItem Text="Export" Href="features/export" />
-                <NavbarMenuItem Text="Formatters" Href="features/formatters" />
-                <NavbarMenuItem Text="Group Points" Href="features/group-points" />
-                <NavbarMenuItem Text="Legend" Href="features/legend" />
-                <NavbarMenuItem Text="Localization" Href="features/localization" />
-                <NavbarMenuItem Text="Performance" Href="features/performance" />
-                <NavbarMenuItem Text="Responsive" Href="features/responsive" />
-                <NavbarMenuItem Text="Size" Href="features/chart-size" />
-                <NavbarMenuItem Text="State" Href="features/state" />
-                <NavbarMenuItem Text="Syncronized charts" Href="features/syncronized" />
-                <NavbarMenuItem Text="Toolbar" Href="features/toolbar" />
-                <NavbarMenuItem Text="Tooltip">
-                    <SubMenu>
-                        <NavbarMenuItem Text="Javascript" Href="features/tooltip-javascript" />
-                        <NavbarMenuItem Text="DotNet" Href="features/tooltip-dotnet" />
-                    </SubMenu>
-
-                </NavbarMenuItem>
-            </SubMenu>
-
-        </NavbarMenuItem>
-
-        <NavbarMenuItem Text="v6 Features">
-            <MenuItemIcon>
-                <Icon class="icon" IconType="@Icons.Bolt" />
-            </MenuItemIcon>
-
-            <SubMenu>
-                <NavbarMenuItem Text="Premium &amp; Licensing" Href="v6-premium-features" />
-                <NavbarMenuItem Text="Canvas Renderer" Href="features/v6/renderer" />
-                <NavbarMenuItem Text="Streaming" Href="features/v6/streaming" />
-                <NavbarMenuItem Text="Pluggable Easing" Href="features/v6/easing" />
-                <NavbarMenuItem Text="Bar Chart Race" Href="features/v6/bar-race" />
-                <NavbarMenuItem Text="OS-aware Theme" Href="features/v6/os-theme" />
-                <NavbarMenuItem Text="Measure Ruler" Href="features/v6/measure" />
-                <NavbarMenuItem Text="History Undo/Redo" Href="features/v6/history" />
-                <NavbarMenuItem Text="Perspectives" Href="features/v6/perspectives" />
-                <NavbarMenuItem Text="Ink Annotations" Href="features/v6/ink" />
-                <NavbarMenuItem Text="Context Menu" Href="features/v6/context-menu" />
-                <NavbarMenuItem Text="Storyboard" Href="features/v6/storyboard" />
-                <NavbarMenuItem Text="Linked Views" Href="features/v6/linked-views" />
-            </SubMenu>
-        </NavbarMenuItem>
-
-        <NavbarMenuItem Text="Methods">
-            <MenuItemIcon>
-                <Icon class="icon" IconType="@Icons.Affiliate" />
-            </MenuItemIcon>
-            <SubMenu>
-                <NavbarMenuItem Text="Annotations" Href="methods/annotations" />
-                <NavbarMenuItem Text="Append Data" Href="methods/append-data" />
-                <NavbarMenuItem Text="Data Uri" Href="methods/data-uri" />
-                <NavbarMenuItem Text="Get SVG String" Href="methods/get-svg-string" >
-                    Get SVG string
-                    <span class="badge badge-sm bg-danger-lt ms-auto">WASM Only</span>
-                </NavbarMenuItem>
-                <NavbarMenuItem Text="Highlight Series" Href="methods/highlight-series" />
-
-                <NavbarMenuItem Text="Render" Href="methods/render" />
-                <NavbarMenuItem Text="Toggle Data Point" Href="methods/toggle-data-point" />
-                <NavbarMenuItem Text="Update Options" Href="methods/update-options" />
-                <NavbarMenuItem Text="Update Series" Href="methods/update-series" />
-                <NavbarMenuItem Text="Show/Hide Series" Href="methods/show-hide-series" />
-                <NavbarMenuItem Text="Zoom X" Href="methods/zoomx" />
-            </SubMenu>
-        </NavbarMenuItem>
-
-
-
-        <NavbarMenuItem Href="chart-themes" Text="Themes">
-            <MenuItemIcon>
-                <Icon class="icon" IconType="@Icons.Color_swatch" />
-            </MenuItemIcon>
-        </NavbarMenuItem>
-
-        <NavbarMenuItem Text="Global Options" OnClick="ShowGlobalOptions">
-            <MenuItemIcon>
-                <Icon IconType="@Icons.Theme_light_dark" />
-            </MenuItemIcon>
-        </NavbarMenuItem>
-
-
-    </NavbarMenu>
-</Navbar>
-
-
-
+@if (showGlobalOptions)
+{
+    <div class="offcanvas offcanvas-end show" style="visibility:visible" tabindex="-1" @ref="panelRef" @onkeydown="OnPanelKeyDown">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Global Options</h5>
+            <button type="button" class="btn-close" @onclick="CloseGlobalOptions"></button>
+        </div>
+        <div class="offcanvas-body">
+            <GlobalOptions />
+        </div>
+    </div>
+    <div class="docs-offcanvas-catcher" @onclick="CloseGlobalOptions"></div>
+}

@@ -1,0 +1,26 @@
+@namespace BlazorApexCharts.Docs.Components.UI
+
+<svg @attributes="AdditionalAttributes" class="@FinalClass" style="@SizeStyle" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    @((MarkupString)(IconType ?? string.Empty))
+</svg>
+
+@code {
+    [Parameter] public string IconType { get; set; }
+    [Parameter] public TablerColor? BackgroundColor { get; set; }
+    [Parameter] public TablerColor? TextColor { get; set; }
+    [Parameter] public int? Size { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private string ColorSuffix => (TextColor ?? BackgroundColor).ToColorSuffix();
+
+    private string FinalClass
+    {
+        get
+        {
+            var baseClass = ColorSuffix is null ? "icon" : $"icon text-{ColorSuffix}";
+            return UIHelpers.MergeClass(baseClass, AdditionalAttributes);
+        }
+    }
+
+    private string SizeStyle => Size.HasValue ? $"width:{Size}px;height:{Size}px;" : null;
+}

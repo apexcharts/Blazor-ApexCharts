@@ -1,21 +1,69 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+using System;
 using System.Threading.Tasks;
-using TabBlazor;
 
 namespace BlazorApexCharts.Docs.Shared
 {
-    public partial class MainNavigation
+    public partial class MainNavigation : IDisposable
     {
-        [Inject] public IOffcanvasService offCanvas { get; set; }
+        [Inject] public NavigationManager NavManager { get; set; }
+        [Inject] public IJSRuntime JSRuntime { get; set; }
 
-        public async Task ShowGlobalOptions()
+        private bool showGlobalOptions;
+        private ElementReference panelRef;
+        private bool focusPending;
+
+        protected override void OnInitialized()
         {
-
-            var component = new RenderComponent<GlobalOptions>();
-            await offCanvas.ShowAsync("Global Options", component, new OffcanvasOptions {  Position = OffcanvasPosition.End, Backdrop = false, CloseOnClickOutside = true, CloseOnEsc = true} );
-
-
+            NavManager.LocationChanged += OnLocationChanged;
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await JSRuntime.InvokeVoidAsync("docsInterop.expandActiveNavParents");
+            }
+
+            if (focusPending)
+            {
+                focusPending = false;
+                await panelRef.FocusAsync();
+            }
+        }
+
+        private async void OnLocationChanged(object sender, LocationChangedEventArgs e)
+        {
+            await Task.Delay(100);
+            await JSRuntime.InvokeVoidAsync("docsInterop.expandActiveNavParents");
+        }
+
+        public Task ShowGlobalOptions()
+        {
+            showGlobalOptions = true;
+            focusPending = true;
+            return Task.CompletedTask;
+        }
+
+        private void CloseGlobalOptions()
+        {
+            showGlobalOptions = false;
+        }
+
+        private void OnPanelKeyDown(KeyboardEventArgs e)
+        {
+            if (e.Key == "Escape")
+            {
+                CloseGlobalOptions();
+            }
+        }
+
+        public void Dispose()
+        {
+            NavManager.LocationChanged -= OnLocationChanged;
+        }
     }
 }
