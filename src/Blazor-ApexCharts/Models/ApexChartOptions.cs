@@ -1049,6 +1049,37 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.Zoom" />
         public Zoom Zoom { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.DataReducer" />
+        public DataReducer DataReducer { get; set; }
+    }
+
+    /// <summary>
+    /// Downsamples large series before rendering to keep charts responsive. Line and area series use
+    /// LTTB (Largest-Triangle-Three-Buckets) reduction; <see cref="ChartType.RangeArea"/> and
+    /// <see cref="ChartType.RangeBar"/> use min-max bucket aggregation, preserving each bucket's visual extremes.
+    /// </summary>
+    public class DataReducer
+    {
+        /// <summary>
+        /// Enable data reduction.
+        /// </summary>
+        public bool? Enabled { get; set; }
+
+        /// <summary>
+        /// Reduction algorithm. Currently only <see cref="DataReducerAlgorithm.Lttb"/>.
+        /// </summary>
+        public DataReducerAlgorithm? Algorithm { get; set; }
+
+        /// <summary>
+        /// Number of points to reduce each series down to.
+        /// </summary>
+        public double? TargetPoints { get; set; }
+
+        /// <summary>
+        /// Only reduce a series when its point count exceeds this threshold.
+        /// </summary>
+        public double? Threshold { get; set; }
     }
 
     /// <summary>
@@ -1163,6 +1194,28 @@ namespace ApexCharts
 
         /// <summary>
         /// Speed at which animation runs.
+        /// </summary>
+        public double? Speed { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ChartTypeMorph" />
+        public ChartTypeMorph ChartTypeMorph { get; set; }
+    }
+
+    /// <summary>
+    /// Tweens between chart types instead of the destroy-and-recreate flicker when the chart's
+    /// type changes. Supported pairs include bar to {pie, donut, radialBar, polarArea}, the pie /
+    /// donut / polarArea trio, and cross-type morphs involving funnel / pyramid / gauge. When the
+    /// source and target shapes are incompatible it falls back to an instant snap.
+    /// </summary>
+    public class ChartTypeMorph
+    {
+        /// <summary>
+        /// Enable chart-type morph animations.
+        /// </summary>
+        public bool? Enabled { get; set; }
+
+        /// <summary>
+        /// Morph tween duration in milliseconds.
         /// </summary>
         public double? Speed { get; set; }
     }
@@ -2773,6 +2826,12 @@ namespace ApexCharts
         /// <inheritdoc cref="ApexCharts.PlotOptionsLine" />
         public PlotOptionsLine Line { get; set; }
 
+        /// <inheritdoc cref="ApexCharts.PlotOptionsScatter" />
+        public PlotOptionsScatter Scatter { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.PlotOptionsViolin" />
+        public PlotOptionsViolin Violin { get; set; }
+
     }
 
     /// <summary>
@@ -2848,6 +2907,9 @@ namespace ApexCharts
     {
         /// <inheritdoc cref="ApexCharts.BloxPlotColors" />
         public BloxPlotColors Colors { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.BoxPlotPoints" />
+        public BoxPlotPoints Points { get; set; }
     }
 
     /// <summary>
@@ -2864,6 +2926,227 @@ namespace ApexCharts
         /// Color for the lower quartile (median to Q1) of the box plot.
         /// </summary>
         public string Lower { get; set; }
+    }
+
+    /// <summary>
+    /// Overlays the individual observations ("jitter") on each box of a box plot.
+    /// Inert unless a data point supplies a <c>points</c> array of raw values, and
+    /// <see cref="Show"/> is off by default, so existing box-plot charts are unchanged.
+    /// </summary>
+    public class BoxPlotPoints
+    {
+        /// <summary>
+        /// Show the overlaid observation dots. Defaults to false.
+        /// </summary>
+        public bool? Show { get; set; }
+
+        /// <summary>
+        /// Marker shape for each dot. <see cref="JitterPointShape.Circle"/> or <see cref="JitterPointShape.Square"/>.
+        /// </summary>
+        public JitterPointShape? Shape { get; set; }
+
+        /// <summary>
+        /// Marker radius in pixels.
+        /// </summary>
+        public double? Size { get; set; }
+
+        /// <summary>
+        /// 0..1 fraction of the box half-width to scatter the dots within.
+        /// </summary>
+        public double? Jitter { get; set; }
+
+        /// <summary>
+        /// Cap per box; observations beyond this are stride-thinned for performance.
+        /// </summary>
+        public double? MaxPoints { get; set; }
+
+        /// <summary>
+        /// Dot opacity (0..1).
+        /// </summary>
+        public double? Opacity { get; set; }
+
+        /// <summary>
+        /// Dot fill color. Defaults to <c>"series-dark"</c> (a darker shade of the series color).
+        /// Use <c>"series"</c> for the series color, or any literal color string.
+        /// </summary>
+        public string FillColor { get; set; }
+
+        /// <summary>
+        /// Color of the outline around each dot. Defaults to <c>"#fff"</c>.
+        /// </summary>
+        public string StrokeColor { get; set; }
+
+        /// <summary>
+        /// Width of the dot's outline in pixels. Defaults to 1; 0 disables it.
+        /// </summary>
+        public double? StrokeWidth { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.PointsColorScale" />
+        public PointsColorScale ColorScale { get; set; }
+    }
+
+    /// <summary>
+    /// Defines options specific to <see cref="ChartType.Scatter"/>.
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    ///
+    /// <see href="https://apexcharts.com/docs/chart-types/scatter-chart">JavaScript Documentation</see>
+    /// </remarks>
+    public class PlotOptionsScatter
+    {
+        /// <inheritdoc cref="ApexCharts.ScatterJitter" />
+        public ScatterJitter Jitter { get; set; }
+    }
+
+    /// <summary>
+    /// Spreads overlapping scatter points apart ("jitter"). Two uses, one engine:
+    /// <list type="bullet">
+    ///   <item><description><b>Strip plot</b>: supply data as <c>{ x: "Category", y: [v1, v2, ...] }</c>. Each category becomes a band and its values scatter horizontally within it.</description></item>
+    ///   <item><description><b>Overplotting</b>: ordinary <c>{ x, y }</c> points get a small random offset so dense clusters fan out.</description></item>
+    /// </list>
+    /// Offsets are in axis units and deterministic (stable across re-renders); the underlying data and tooltip values stay exact.
+    /// </summary>
+    public class ScatterJitter
+    {
+        /// <summary>
+        /// Enable jitter.
+        /// </summary>
+        public bool? Enabled { get; set; }
+
+        /// <summary>
+        /// Max +/- horizontal offset, in x-axis units (1 = one category step).
+        /// </summary>
+        public double? X { get; set; }
+
+        /// <summary>
+        /// Max +/- vertical offset, in y-axis units.
+        /// </summary>
+        public double? Y { get; set; }
+
+        /// <summary>
+        /// Single series: color each band differently (by its position).
+        /// </summary>
+        public bool? Distributed { get; set; }
+
+        /// <summary>
+        /// Per-band cap; values beyond this are stride-thinned.
+        /// </summary>
+        public double? MaxPoints { get; set; }
+    }
+
+    /// <summary>
+    /// Defines options specific to <see cref="ChartType.Violin"/>. A violin chart renders a
+    /// kernel-density curve for each category, optionally overlaid with the individual observations.
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    ///
+    /// <see href="https://apexcharts.com/docs/chart-types/violin">JavaScript Documentation</see>
+    /// </remarks>
+    public class PlotOptionsViolin
+    {
+        /// <summary>
+        /// Multiplies the density-derived half-width. 1 maps the density's own maxWeight to half the category slot.
+        /// </summary>
+        public double? BandwidthScale { get; set; }
+
+        /// <summary>
+        /// How each violin's width is scaled. <see cref="ViolinNormalize.Individual"/> (default) scales each
+        /// violin to its own peak so all reach the full slot width; <see cref="ViolinNormalize.Group"/> shares
+        /// one scale across categories, keeping widths proportional to density.
+        /// </summary>
+        public ViolinNormalize? Normalize { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ViolinPoints" />
+        public ViolinPoints Points { get; set; }
+    }
+
+    /// <summary>
+    /// Individual observations ("jitter") overlaid on the violin shape.
+    /// </summary>
+    public class ViolinPoints
+    {
+        /// <summary>
+        /// Show the overlaid observation dots.
+        /// </summary>
+        public bool? Show { get; set; }
+
+        /// <summary>
+        /// Marker shape for each dot. <see cref="JitterPointShape.Circle"/> or <see cref="JitterPointShape.Square"/>.
+        /// </summary>
+        public JitterPointShape? Shape { get; set; }
+
+        /// <summary>
+        /// Marker radius in pixels.
+        /// </summary>
+        public double? Size { get; set; }
+
+        /// <summary>
+        /// 0..1 fraction of the half-width to scatter the dots within.
+        /// </summary>
+        public double? Jitter { get; set; }
+
+        /// <summary>
+        /// Clamp jitter to the density width at each value so points stay inside the violin.
+        /// </summary>
+        public bool? ConstrainToViolin { get; set; }
+
+        /// <summary>
+        /// Cap per violin; observations beyond this are stride-thinned for performance.
+        /// </summary>
+        public double? MaxPoints { get; set; }
+
+        /// <summary>
+        /// Dot opacity (0..1).
+        /// </summary>
+        public double? Opacity { get; set; }
+
+        /// <summary>
+        /// Dot fill color. Defaults to <c>"series-dark"</c> (a darker shade of each violin's color).
+        /// Use <c>"series"</c> for the violin's color as-is, or any literal color string.
+        /// </summary>
+        public string FillColor { get; set; }
+
+        /// <summary>
+        /// Color of the ring/outline around each dot. Defaults to <c>"#fff"</c>.
+        /// </summary>
+        public string StrokeColor { get; set; }
+
+        /// <summary>
+        /// Width of the dot's outline in pixels. Defaults to 1; 0 disables it.
+        /// </summary>
+        public double? StrokeWidth { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.PointsColorScale" />
+        public PointsColorScale ColorScale { get; set; }
+    }
+
+    /// <summary>
+    /// Colors each observation dot by its value along a color ramp (overrides the flat fill color).
+    /// Points are bucketed into <see cref="Steps"/> shades to keep rendering performant.
+    /// </summary>
+    public class PointsColorScale
+    {
+        /// <summary>
+        /// Hex color stops, low to high (a sequential color ramp).
+        /// </summary>
+        public List<string> Colors { get; set; }
+
+        /// <summary>
+        /// Value mapped to the first stop. Defaults to the data minimum.
+        /// </summary>
+        public double? Min { get; set; }
+
+        /// <summary>
+        /// Value mapped to the last stop. Defaults to the data maximum.
+        /// </summary>
+        public double? Max { get; set; }
+
+        /// <summary>
+        /// Number of shade buckets. Defaults to 24.
+        /// </summary>
+        public double? Steps { get; set; }
     }
 
     /// <summary>
@@ -3226,6 +3509,110 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.PlotOptionsHeatmapColorScaleRange" />
         public List<PlotOptionsHeatmapColorScaleRange> Ranges { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.HeatmapGradientLegend" />
+        public HeatmapGradientLegend GradientLegend { get; set; }
+    }
+
+    /// <summary>
+    /// When enabled, replaces the default categorical heatmap legend with a continuous color
+    /// gradient strip and a hover indicator arrow that tracks the currently hovered cell's value.
+    /// Follows <see cref="Legend.Position"/> (top / right / bottom / left).
+    /// </summary>
+    public class HeatmapGradientLegend
+    {
+        /// <summary>
+        /// Enable the continuous gradient legend.
+        /// </summary>
+        public bool? Enabled { get; set; }
+
+        /// <summary>
+        /// Strip length for horizontal placements (top/bottom). Accepts a number (pixels) or a
+        /// percentage string (e.g. "70%", resolved against the chart's SVG width). Default "70%".
+        /// </summary>
+        public object Width { get; set; }
+
+        /// <summary>
+        /// Strip length for vertical placements (left/right). Accepts a number (pixels) or a
+        /// percentage string (e.g. "70%", resolved against the chart's SVG height). Default "70%".
+        /// </summary>
+        public object Height { get; set; }
+
+        /// <summary>
+        /// Strip thickness (short axis) in pixels. Default 12.
+        /// </summary>
+        public double? Thickness { get; set; }
+
+        /// <summary>
+        /// Strip alignment within the legend area. For top/bottom, <see cref="GradientLegendAlign.Start"/> = left
+        /// and <see cref="GradientLegendAlign.End"/> = right; for left/right, Start = top and End = bottom. Default Center.
+        /// </summary>
+        public GradientLegendAlign? Align { get; set; }
+
+        /// <summary>
+        /// Number of color stops sampled from the shade function when no explicit ranges are provided. Default 16.
+        /// </summary>
+        public double? Stops { get; set; }
+
+        /// <summary>
+        /// Show min/max labels at the ends of the strip. Default true.
+        /// </summary>
+        public bool? ShowLabels { get; set; }
+
+        /// <summary>
+        /// Show a value tooltip next to the arrow on cell hover. Default true.
+        /// </summary>
+        public bool? ShowHoverValue { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.HeatmapGradientLegendLabelStyle" />
+        public HeatmapGradientLegendLabelStyle LabelStyle { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.HeatmapGradientLegendArrow" />
+        public HeatmapGradientLegendArrow Arrow { get; set; }
+
+        /// <summary>
+        /// Formatter for the min/max labels and the hover value tooltip. JavaScript function of the
+        /// form <c>function(value) { return string }</c>.
+        /// </summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string Formatter { get; set; }
+    }
+
+    /// <summary>
+    /// Text styling for the heatmap gradient legend's min/max labels.
+    /// </summary>
+    public class HeatmapGradientLegendLabelStyle
+    {
+        /// <summary>
+        /// Font size (e.g. "11px").
+        /// </summary>
+        public string FontSize { get; set; }
+
+        /// <summary>
+        /// Font family.
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Text color.
+        /// </summary>
+        public string Colors { get; set; }
+    }
+
+    /// <summary>
+    /// Styling for the hover indicator arrow of the heatmap gradient legend.
+    /// </summary>
+    public class HeatmapGradientLegendArrow
+    {
+        /// <summary>
+        /// Arrow size in pixels.
+        /// </summary>
+        public double? Size { get; set; }
+
+        /// <summary>
+        /// Arrow color.
+        /// </summary>
+        public string Color { get; set; }
     }
 
     /// <summary>
@@ -3325,6 +3712,95 @@ namespace ApexCharts
         /// Offset by which labels will move outside / inside of the donut area
         /// </summary>
         public double? Offset { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.PieDataLabelsExternal" />
+        public PieDataLabelsExternal External { get; set; }
+    }
+
+    /// <summary>
+    /// External (outer) pie/donut labels: render the category/series name outside the slice, joined
+    /// by a leader (connector) line, so the chart is readable without the legend. The percentage keeps
+    /// rendering inside the slice. Applies to pie and donut only (ignored for polar area).
+    /// </summary>
+    public class PieDataLabelsExternal
+    {
+        /// <summary>
+        /// Show the external labels.
+        /// </summary>
+        public bool? Show { get; set; }
+
+        /// <summary>
+        /// Horizontal offset of the label from its computed position.
+        /// </summary>
+        public double? OffsetX { get; set; }
+
+        /// <summary>
+        /// Vertical offset of the label from its computed position.
+        /// </summary>
+        public double? OffsetY { get; set; }
+
+        /// <summary>
+        /// Font size (e.g. "12px").
+        /// </summary>
+        public string FontSize { get; set; }
+
+        /// <summary>
+        /// Font family.
+        /// </summary>
+        public string FontFamily { get; set; }
+
+        /// <summary>
+        /// Font weight (e.g. "normal", "bold", or a numeric weight).
+        /// </summary>
+        public object FontWeight { get; set; }
+
+        /// <summary>
+        /// Label text color.
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Formatter for the external label. JavaScript function of the form
+        /// <c>function(name, opts) { return string | string[] }</c> where <c>opts</c> carries
+        /// <c>seriesIndex</c>, <c>percent</c>, <c>value</c> and <c>w</c>. Return an array of strings
+        /// to stack multiple lines (e.g. <c>[name, percent + "%"]</c>).
+        /// </summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string Formatter { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.PieDataLabelsExternalConnector" />
+        public PieDataLabelsExternalConnector Connector { get; set; }
+    }
+
+    /// <summary>
+    /// The leader line drawn from the slice edge to an external pie/donut label.
+    /// </summary>
+    public class PieDataLabelsExternalConnector
+    {
+        /// <summary>
+        /// Show the connector line.
+        /// </summary>
+        public bool? Show { get; set; }
+
+        /// <summary>
+        /// Line width in pixels.
+        /// </summary>
+        public double? Width { get; set; }
+
+        /// <summary>
+        /// Line color.
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Length of the horizontal segment leading to the label.
+        /// </summary>
+        public double? Length { get; set; }
+
+        /// <summary>
+        /// Gap between the connector's end and the label text.
+        /// </summary>
+        public double? Gap { get; set; }
     }
 
     /// <summary>
@@ -5664,7 +6140,8 @@ namespace ApexCharts
         Scatter,
         Treemap,
         BoxPlot,
-        RangeArea
+        RangeArea,
+        Violin
     };
 
     /// <summary>
@@ -5797,6 +6274,52 @@ namespace ApexCharts
         /// Replaces the value-arc with a rotating pointer/needle.
         /// </summary>
         Needle
+    };
+
+    /// <summary>
+    /// Marker shape for the observation dots overlaid on violin and box-plot charts.
+    /// </summary>
+    public enum JitterPointShape
+    {
+        Circle,
+        Square
+    };
+
+    /// <summary>
+    /// How each violin's width is scaled, used by <see cref="PlotOptionsViolin.Normalize"/>.
+    /// </summary>
+    public enum ViolinNormalize
+    {
+        /// <summary>
+        /// Each violin is scaled to its own peak density, so all violins reach the full slot width.
+        /// </summary>
+        Individual,
+
+        /// <summary>
+        /// All violins share the densest violin's scale, keeping widths proportional to density across categories.
+        /// </summary>
+        Group
+    };
+
+    /// <summary>
+    /// Strip alignment for the heatmap gradient legend, used by <see cref="HeatmapGradientLegend.Align"/>.
+    /// </summary>
+    public enum GradientLegendAlign
+    {
+        Start,
+        Center,
+        End
+    };
+
+    /// <summary>
+    /// Reduction algorithm for <see cref="DataReducer.Algorithm"/>.
+    /// </summary>
+    public enum DataReducerAlgorithm
+    {
+        /// <summary>
+        /// Largest-Triangle-Three-Buckets downsampling.
+        /// </summary>
+        Lttb
     };
 
 

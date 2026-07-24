@@ -1,0 +1,12 @@
+{
+  "name": "blazor-apexcharts-e2e",
+  "private": true,
+  "type": "module",
+  "description": "Headless browser smoke + interaction test for the Blazor-ApexCharts docs demo. Guards against interop-only regressions (a chart that builds and serializes cleanly but fails to render in the browser) whenever the apexcharts core is bumped.",
+  "scripts": {
+    "test": "node smoke.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}

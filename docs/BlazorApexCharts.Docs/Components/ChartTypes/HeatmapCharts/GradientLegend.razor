@@ -1,0 +1,52 @@
+@*
+    Heatmap continuous gradient legend (apexcharts.js 5.14+). Replaces the categorical legend with
+    a color strip and a hover-tracking arrow. Enable it via
+    PlotOptions.Heatmap.ColorScale.GradientLegend.
+*@
+
+<DemoContainer>
+    <ApexChart TItem="SupportIncident"
+               Title="Incident Severity"
+               Options="options">
+
+        @foreach (var source in incidents.GroupBy(e => e.Source))
+        {
+            <ApexPointSeries TItem="SupportIncident"
+                             Items="source.OrderBy(e=>e.WeekNumber)"
+                             Name="@source.Key.ToString()"
+                             SeriesType="SeriesType.Heatmap"
+                             XValue="@(e => e.WeekName)"
+                             YAggregate="@(e => (int)e.Average(a=>a.Severity))" />
+        }
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents();
+
+    private ApexChartOptions<SupportIncident> options = new();
+
+    protected override void OnInitialized()
+    {
+        options.PlotOptions = new PlotOptions
+        {
+            Heatmap = new PlotOptionsHeatmap
+            {
+                ColorScale = new PlotOptionsHeatmapColorScale
+                {
+                    GradientLegend = new HeatmapGradientLegend
+                    {
+                        Enabled = true,
+                        Width = "70%",
+                        Thickness = 12,
+                        Align = GradientLegendAlign.Center,
+                        ShowLabels = true,
+                        ShowHoverValue = true
+                    }
+                }
+            }
+        };
+
+        options.Legend = new Legend { Position = LegendPosition.Bottom };
+    }
+}

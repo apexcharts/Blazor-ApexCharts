@@ -1,0 +1,61 @@
+@*
+    Data reducer (apexcharts.js 5.16+). Large series are downsampled before rendering to stay
+    responsive. Line/area use LTTB (Largest-Triangle-Three-Buckets), which preserves the visual
+    shape while drawing far fewer points. Configure via Chart.DataReducer.
+*@
+
+<DemoContainer>
+    <ApexChart TItem="Point"
+               Title="@($"Signal ({points.Count:N0} raw points, reduced to 400)")"
+               Options="options">
+
+        <ApexPointSeries TItem="Point"
+                         Items="points"
+                         Name="Signal"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Y)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChartOptions<Point> options = new();
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart
+        {
+            DataReducer = new DataReducer
+            {
+                Enabled = true,
+                Algorithm = DataReducerAlgorithm.Lttb,
+                Threshold = 500,
+                TargetPoints = 400
+            }
+        };
+        options.Stroke = new Stroke { Width = 1, Curve = Curve.Straight };
+    }
+
+    // Deterministic ~5000-point signal (sine + harmonic + a linear drift). No randomness.
+    private List<Point> points = Build();
+
+    private static List<Point> Build()
+    {
+        var list = new List<Point>(5000);
+        for (int i = 0; i < 5000; i++)
+        {
+            var y = 50
+                    + 30 * Math.Sin(i / 40.0)
+                    + 12 * Math.Sin(i / 7.0)
+                    + i / 250.0;
+            list.Add(new Point { X = i, Y = (decimal)Math.Round(y, 2) });
+        }
+        return list;
+    }
+
+    public class Point
+    {
+        public int X { get; set; }
+        public decimal Y { get; set; }
+    }
+}

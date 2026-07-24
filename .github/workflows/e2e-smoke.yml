@@ -1,0 +1,65 @@
+name: E2E Smoke (browser render + interaction)
+
+# Drives the docs demo WASM app in a real headless browser to catch interop-only regressions:
+# a chart that builds and serializes fine but fails to render or wire up events in the browser.
+# Runs on every push/PR, and especially matters when the vendored apexcharts core is bumped.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# The smoke test only reads the repo, builds, and runs; it needs no write scopes.
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build docs demo
+        run: dotnet build docs/BlazorApexCharts.Docs.Wasm/BlazorApexCharts.Docs.Wasm.csproj -c Debug
+
+      - name: Install Playwright (chromium)
+        working-directory: tests/e2e
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Run docs demo (background)
+        run: |
+          nohup dotnet run --project docs/BlazorApexCharts.Docs.Wasm/BlazorApexCharts.Docs.Wasm.csproj -c Debug --no-build --urls http://localhost:5184 > demo.log 2>&1 &
+          echo "Waiting for demo to come up..."
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5184/ || true)
+            if [ "$code" = "200" ]; then echo "Demo up after ${i}s"; break; fi
+            sleep 2
+          done
+
+      - name: Run smoke test
+        working-directory: tests/e2e
+        env:
+          BASE_URL: http://localhost:5184
+        run: npm test
+
+      - name: Upload demo log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-log
+          path: demo.log
+          if-no-files-found: ignore

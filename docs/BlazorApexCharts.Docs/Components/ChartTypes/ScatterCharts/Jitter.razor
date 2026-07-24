@@ -1,0 +1,41 @@
+@*
+    Scatter jitter (apexcharts.js 5.16+). Small deterministic offsets fan out overlapping
+    points so dense clusters are readable. The underlying data and tooltip values stay exact;
+    only the drawn positions move.
+*@
+
+<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Discount vs Gross (jittered)"
+               Options="options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Orders"
+                         SeriesType="SeriesType.Scatter"
+                         XValue="@(e => e.DiscountPercentage)"
+                         YValue="@(e => e.GrossValue)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+
+    private ApexChartOptions<Order> options = new();
+
+    protected override void OnInitialized()
+    {
+        options.PlotOptions = new PlotOptions
+        {
+            Scatter = new PlotOptionsScatter
+            {
+                Jitter = new ScatterJitter
+                {
+                    Enabled = true,
+                    X = 0.35,
+                    Y = 0
+                }
+            }
+        };
+    }
+}

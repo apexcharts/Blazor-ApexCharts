@@ -43,6 +43,13 @@ namespace ApexCharts
         [Parameter] public Func<TItem, decimal> Max { get; set; }
 
         /// <summary>
+        /// Optional expression to get the raw individual observations for each box. When provided (and
+        /// <see cref="PlotOptionsBoxPlot.Points"/> is enabled with <see cref="BoxPlotPoints.Show"/> set to true),
+        /// the observations are overlaid as jittered dots on the box. Leave null to keep the classic box plot.
+        /// </summary>
+        [Parameter] public Func<TItem, IEnumerable<decimal>> Points { get; set; }
+
+        /// <summary>
         /// Expression to determine the ordering of X-Values in the series
         /// </summary>
         [Parameter] public Func<ListPoint<TItem>, object> OrderBy { get; set; }
@@ -90,6 +97,7 @@ namespace ApexCharts
                                Quantile3.Invoke(d),
                                Max.Invoke(d)
                    },
+                   Points = Points?.Invoke(d)?.Select(v => (decimal?)v).ToList(),
                    Items = new List<TItem> { d }
                });
 
