@@ -35,12 +35,15 @@ const ROUTES = [
 // demos not yet deployed that is a harmless 404 the app catches and shows as text. Ignore those so
 // the smoke test only fails on real chart/interop errors.
 // - the docs "view source" widget fetching each demo's .razor from the deployed site: a 404 when a demo is not yet
-//   deployed, or ERR_CONNECTION_REFUSED when the runner has no outbound network. Neither is a chart/interop error.
+//   deployed, ERR_CONNECTION_REFUSED when the runner has no outbound network, or a CORS block / ERR_FAILED when the
+//   runner CAN reach apexcharts.github.io (cross-origin fetch, no CORS headers). All are the same harmless fallback,
+//   not a chart/interop error. The razor_source path is the only cross-origin fetch the app makes.
 // - the `[Apex]` license-domain notice: the demo's app-wide key is domain-locked to apexcharts.github.io, so on any
 //   other host (CI, localhost) the premium features render in trial mode and the core logs this. That is expected.
 const isIgnorableError = t =>
   /Failed to load resource: the server responded with a status of 404/.test(t) ||
   /ERR_CONNECTION_REFUSED|ERR_NAME_NOT_RESOLVED|ERR_INTERNET_DISCONNECTED/.test(t) ||
+  /razor_source|blocked by CORS policy|Access to fetch|net::ERR_FAILED/.test(t) ||
   /\[Apex\].*licen[sc]e|not valid for this domain/i.test(t);
 
 const failures = [];

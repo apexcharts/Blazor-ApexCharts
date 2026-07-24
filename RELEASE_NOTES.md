@@ -1,6 +1,6 @@
 # Release notes
 
-## v7.0.0 (proposed) — ApexCharts.js 6.5.0 upgrade + premium licensing
+## v7.0.0 (proposed): ApexCharts.js 6.5.0 upgrade + premium licensing
 
 > The package version is set from the git tag at release time (`dotnet pack -p:Version=<tag>`). `7.0.0` is the
 > recommended tag for this release (major: the vendored core jumps from 5.16.0 to 6.5.0, several ApexCharts 6.0
@@ -22,14 +22,14 @@ across the ApexCharts family (apexgantt, apextree, apexsankey).
 
 ### ✨ New free options (no license required)
 
-- **Canvas renderer** (`Chart.Renderer` = `Svg`/`Canvas`/`Auto`, `Chart.RendererThreshold`) — hybrid SVG/canvas for
+- **Canvas renderer** (`Chart.Renderer` = `Svg`/`Canvas`/`Auto`, `Chart.RendererThreshold`): hybrid SVG/canvas for
   large datasets and heatmaps. `chart.GetActiveRendererAsync()` reports the active renderer.
 - **Real-time streaming** (`Chart.Streaming` { `Enabled`, `MaxPoints` }).
 - **Native mobile gestures** (`Chart.Zoom.Pinch`, new `Chart.Pan` { `Inertia`, `Friction` }).
 - **OS-aware themes** (`Theme.Follow` = `Os`, `Theme.Name`).
-- **Pluggable easing** — `Easing` enum extended with `EaseInSine`…`EaseInOutBack`; new `DynamicAnimation.Easing`.
-- **Bar chart race** — `DataLabels.Animate` and `DataLabels.CountUp`.
-- **Measure toolbar tool** — `Toolbar.AutoSelected = Measure`, `Toolbar.Tools.Measure`.
+- **Pluggable easing**: `Easing` enum extended with `EaseInSine`…`EaseInOutBack`; new `DynamicAnimation.Easing`.
+- **Bar chart race**: `DataLabels.Animate` and `DataLabels.CountUp`.
+- **Measure toolbar tool**: `Toolbar.AutoSelected = Measure`, `Toolbar.Tools.Measure`.
 
 ### ✨ New premium options (gated)
 
@@ -40,8 +40,8 @@ across the ApexCharts family (apexgantt, apextree, apexsankey).
 
 - History: `UndoAsync`, `RedoAsync`, `JumpHistoryAsync`.
 - Measure: `StartMeasureAsync`, `StopMeasureAsync`, `ClearMeasuresAsync`.
-- Perspectives: `CapturePerspectiveAsync`, `ApplyPerspectiveAsync`, `PerspectiveToUrlAsync`, `SavePerspectiveAsync`, `ListPerspectivesAsync`.
-- Storyboard: `StoryboardBindAsync`, `StoryboardGoToAsync`, `StoryboardCurrentAsync`, `StoryboardUnbindAsync`.
+- Perspectives: `CapturePerspectiveAsync`, `ApplyPerspectiveAsync`, `PerspectiveToUrlAsync`, `ApplyPerspectiveFromUrlAsync` (restore a shared `#apex=` link on render), `SavePerspectiveAsync`, `ListPerspectivesAsync`.
+- Storyboard: `StoryboardBindAsync` (with `StoryboardOptions.Scroller`/`Offset`/`Animate` and per-beat `View`/`Options`/`Announce` for scroll-driven scrollytelling), `StoryboardGoToAsync`, `StoryboardCurrentAsync`, `StoryboardUnbindAsync`.
 - Renderer/theme: `GetActiveRendererAsync`, `RefreshTokensAsync`.
 
 ### ✨ New crossfilter engine (on `IApexChartService`)

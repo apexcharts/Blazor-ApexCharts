@@ -1,33 +1,37 @@
+@inject IJSRuntime JS
+@using Microsoft.JSInterop
 @*
     ApexCharts v6 perspectives (premium: shows an APEXCHARTS trial watermark without a license).
     A perspective serializes the exact view (zoom window, hidden series, selection, annotations,
-    theme) into a compact token you can put in a URL and restore anywhere.
+    theme) into a compact token. PerspectiveToUrlAsync encodes it into a #apex=... URL fragment;
+    opening that URL (even in another browser) restores the view via ApplyPerspectiveFromUrlAsync
+    on render. Zoom with the toolbar or toggle a legend series, then copy the shareable URL.
 *@
 <div class="mb-2">
-    <button class="btn btn-primary me-1" @onclick="Capture">Capture perspective</button>
-    <button class="btn btn-secondary me-1" @onclick="Apply" disabled="@(token is null)">Apply captured</button>
-    <button class="btn btn-outline-secondary" @onclick="ToUrl">Get URL</button>
+    <button class="btn btn-primary me-1" @onclick="CopyUrl">Copy shareable URL</button>
+    <button class="btn btn-outline-secondary me-1" @onclick="Capture">Capture token</button>
+    <button class="btn btn-outline-secondary" @onclick="Apply" disabled="@(token is null)">Apply captured</button>
+</div>
+
+<div class="mb-2">
+    <span>@status</span>
 </div>
 
 <div class="mb-2" style="max-width:640px;word-break:break-all">
-    @if (token is not null)
-    {
-        <div>Token: <code>@token</code></div>
-    }
     @if (url is not null)
     {
-        <div>URL: <code>@url</code></div>
+        <div><small>URL: <code>@url</code></small></div>
+    }
+    @if (token is not null)
+    {
+        <div><small>Token: <code>@token</code></small></div>
     }
 </div>
 
 <DemoContainer>
-    <ApexChart @ref="chart" TItem="Pt" Title="Capture a view as a token" Options="options">
-        <ApexPointSeries TItem="Pt"
-                         Items="points"
-                         Name="Series 1"
-                         SeriesType="SeriesType.Line"
-                         XValue="@(e => e.X)"
-                         YValue="@(e => e.Y)" />
+    <ApexChart @ref="chart" TItem="Pt" Title="Capture a view, share it as a URL" Options="options" OnRendered="OnChartRendered">
+        <ApexPointSeries TItem="Pt" Items="points" Name="Signal A" SeriesType="SeriesType.Line" XValue="@(e => e.X)" YValue="@(e => e.A)" />
+        <ApexPointSeries TItem="Pt" Items="points" Name="Signal B" SeriesType="SeriesType.Line" XValue="@(e => e.X)" YValue="@(e => e.B)" />
     </ApexChart>
 </DemoContainer>
 
@@ -37,30 +41,54 @@
     private List<Pt> points { get; set; } = new();
     private string token;
     private string url;
+    private string status = "Zoom (toolbar) or hide a legend series, then click Copy shareable URL.";
+    private bool restoreAttempted;
 
     protected override void OnInitialized()
     {
-        options.Chart = new Chart
-            {
-                Height = 320,
-                Perspectives = new ChartPerspectives()
-            };
-
-        // Numeric x-axis avoids duplicate integer labels when a captured perspective zooms in.
+        options.Chart = new Chart { Height = 320, Perspectives = new ChartPerspectives() };
         options.Xaxis = new XAxis { Type = XAxisType.Numeric };
 
         var rnd = new Random(3);
-        double y = 40;
+        double a = 40, b = 60;
         for (var i = 0; i < 30; i++)
         {
-            y += rnd.NextDouble() * 10 - 4;
-            points.Add(new Pt(i, (decimal)Math.Round(y, 2)));
+            a += rnd.NextDouble() * 10 - 4;
+            b += rnd.NextDouble() * 8 - 4;
+            points.Add(new Pt(i, (decimal)Math.Round(a, 2), (decimal)Math.Round(b, 2)));
         }
+    }
+
+    // After the chart's JS instance exists, restore a view if the page URL carries one (#apex=...).
+    private async Task OnChartRendered()
+    {
+        if (restoreAttempted) { return; }
+        restoreAttempted = true;
+
+        var restored = await chart.ApplyPerspectiveFromUrlAsync();
+        if (restored)
+        {
+            status = "Restored the shared view from the URL fragment.";
+            StateHasChanged();
+        }
+    }
+
+    private async Task CopyUrl()
+    {
+        url = await chart.PerspectiveToUrlAsync();
+        // Copy the link and reflect it in the address bar so it can be shared/reloaded to restore this view.
+        await JS.InvokeVoidAsync("blazor_apexchart.setBrowserUrl", url);
+        var copied = await JS.InvokeAsync<bool>("blazor_apexchart.copyText", url);
+        status = copied
+            ? "Shareable URL copied to the clipboard. Open it (even in another browser) to restore this view."
+            : "Shareable URL ready (copy it from below or the address bar).";
+        StateHasChanged();
     }
 
     private async Task Capture()
     {
         token = await chart.CapturePerspectiveAsync();
+        status = "Captured the current view as a token. Change the view, then Apply captured to restore it.";
         StateHasChanged();
     }
 
@@ -69,14 +97,10 @@
         if (token is not null)
         {
             await chart.ApplyPerspectiveAsync(token);
+            status = "Applied the captured token.";
+            StateHasChanged();
         }
     }
 
-    private async Task ToUrl()
-    {
-        url = await chart.PerspectiveToUrlAsync();
-        StateHasChanged();
-    }
-
-    private record Pt(int X, decimal Y);
+    private record Pt(int X, decimal A, decimal B);
 }

@@ -13,6 +13,13 @@
     </div>
     <span class="ms-2">Active series renderer: <strong>@renderer</strong> (@points.Count marks, threshold @threshold)</span>
 </div>
+<div class="mb-2">
+    <small class="text-muted">
+        In canvas mode the points paint to <code>&lt;canvas class="apexcharts-series-canvas"&gt;</code>
+        (inside <code>.apexcharts-inner &gt; .apexcharts-canvas-series-wrap</code>); the axes, grid and
+        title stay SVG, so seeing an <code>&lt;svg&gt;</code> in the DOM is expected in the hybrid renderer.
+    </small>
+</div>
 
 <DemoContainer>
     <ApexChart @ref="chart" TItem="Pt" Title="Hybrid renderer (5000-mark scatter)" Options="options">
