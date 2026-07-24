@@ -238,6 +238,33 @@ window.blazor_apexchart = {
         return chart !== undefined ? JSON.stringify(chart.perspectives.list()) : null;
     },
 
+    // Restore a perspective encoded in the current page URL (#apex=<token>). Returns true if a
+    // token was present and applied, so a shared link reopens the exact captured view.
+    applyPerspectiveFromUrl(id) {
+        var chart = this.findChart(id);
+        if (chart === undefined) { return false; }
+        var token = ApexCharts.perspectives.fromURL(window.location.href);
+        if (!token) { return false; }
+        chart.perspectives.apply(token);
+        return true;
+    },
+
+    // Copy text to the clipboard (from a user gesture, on a secure context / localhost).
+    copyText(text) {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text);
+                return true;
+            }
+        } catch (e) { /* clipboard blocked */ }
+        return false;
+    },
+
+    // Reflect a URL in the address bar without navigating/reloading (so it can be copied there too).
+    setBrowserUrl(url) {
+        try { history.replaceState(null, '', url); } catch (e) { /* ignore */ }
+    },
+
     storyboardBind(id, options) {
         var chart = this.findChart(id);
         return chart !== undefined ? chart.storyboard.bind(this.parseOptions(options)) : null;

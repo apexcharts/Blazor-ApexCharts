@@ -1189,6 +1189,17 @@ namespace ApexCharts
         }
 
         /// <summary>
+        /// Restore a perspective encoded in the current page URL fragment (<c>#apex=&lt;token&gt;</c>), as produced by
+        /// <see cref="PerspectiveToUrlAsync"/> (ApexCharts v6.0). Call after the chart has rendered (e.g. from
+        /// <c>OnRendered</c>) so a shared link reopens the exact captured view. Requires the perspectives feature.
+        /// </summary>
+        /// <returns><c>true</c> if a token was present in the URL and applied; otherwise <c>false</c>.</returns>
+        public virtual async Task<bool> ApplyPerspectiveFromUrlAsync()
+        {
+            return await InvokeJsAsync<bool>("blazor_apexchart.applyPerspectiveFromUrl", Options.Chart.Id);
+        }
+
+        /// <summary>
         /// Save the current perspective under a name (ApexCharts v6.0). Requires the perspectives feature.
         /// </summary>
         /// <param name="name">Name to save the perspective as.</param>
