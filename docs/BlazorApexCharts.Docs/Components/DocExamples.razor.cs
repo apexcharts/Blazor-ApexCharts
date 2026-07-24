@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using TabBlazor.Services;
 
 namespace BlazorApexCharts.Docs.Components
 {
     public partial class DocExamples : ComponentBase, IDisposable
     {
-        [Inject] public TablerService TablerService { get; set; }
+        [Inject] public IJSRuntime JSRuntime { get; set; }
         [Inject] NavigationManager NavManager { get; set; }
 
         [Parameter] public string Title { get; set; }
@@ -80,7 +80,7 @@ namespace BlazorApexCharts.Docs.Components
             url = url + "#" + codeSnippet.Title.ToLower();
 
             NavManager.NavigateTo(url, false);
-            await TablerService.ScrollToFragment(codeSnippet.Id.ToString());
+            await JSRuntime.InvokeVoidAsync("docsInterop.scrollToFragment", codeSnippet.Id.ToString());
         }
 
         public void AddCodeSnippet(ICodeSnippet codeSnippet)

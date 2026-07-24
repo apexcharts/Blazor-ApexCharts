@@ -1,0 +1,35 @@
+@namespace BlazorApexCharts.Docs.Components.UI
+
+<div @attributes="AdditionalAttributes" class="@FinalClass">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public bool Auto { get; set; }
+    [Parameter] public int? Xs { get; set; }
+    [Parameter] public int? Sm { get; set; }
+    [Parameter] public int? Md { get; set; }
+    [Parameter] public int? Lg { get; set; }
+    [Parameter] public int? Xl { get; set; }
+    [Parameter] public int? Xxl { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private string FinalClass
+    {
+        get
+        {
+            var breakpoints = new List<string>();
+            if (Auto) breakpoints.Add("col-auto");
+            if (Xs.HasValue) breakpoints.Add($"col-{Xs}");
+            if (Sm.HasValue) breakpoints.Add($"col-sm-{Sm}");
+            if (Md.HasValue) breakpoints.Add($"col-md-{Md}");
+            if (Lg.HasValue) breakpoints.Add($"col-lg-{Lg}");
+            if (Xl.HasValue) breakpoints.Add($"col-xl-{Xl}");
+            if (Xxl.HasValue) breakpoints.Add($"col-xxl-{Xxl}");
+
+            var baseClass = breakpoints.Count > 0 ? string.Join(" ", breakpoints) : "col";
+            return UIHelpers.MergeClass(baseClass, AdditionalAttributes);
+        }
+    }
+}

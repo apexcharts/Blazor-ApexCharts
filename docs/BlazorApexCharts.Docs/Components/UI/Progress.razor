@@ -1,0 +1,14 @@
+@namespace BlazorApexCharts.Docs.Components.UI
+
+<div @attributes="AdditionalAttributes" class="@UIHelpers.MergeClass("progress", AdditionalAttributes)">
+    <div class="@BarClass" role="progressbar" style="width: 100%"></div>
+</div>
+
+@code {
+    [Parameter] public bool Indeterminate { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private string BarClass => Indeterminate
+        ? "progress-bar progress-bar-indeterminate"
+        : "progress-bar";
+}

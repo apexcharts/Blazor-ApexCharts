@@ -1,0 +1,21 @@
+@namespace BlazorApexCharts.Docs.Components.UI
+
+<label @attributes="AdditionalAttributes" class="@UIHelpers.MergeClass(Switch ? "form-check form-switch" : "form-check", AdditionalAttributes)">
+    <input class="form-check-input" type="checkbox" checked="@Value" @onchange="OnChangeAsync" />
+    <span class="form-check-label">@Label</span>
+</label>
+
+@code {
+    [Parameter] public string Label { get; set; }
+    [Parameter] public bool Switch { get; set; }
+    [Parameter] public bool Value { get; set; }
+    [Parameter] public EventCallback<bool> ValueChanged { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private async Task OnChangeAsync(ChangeEventArgs e)
+    {
+        var value = (bool)e.Value;
+        Value = value;
+        await ValueChanged.InvokeAsync(value);
+    }
+}
