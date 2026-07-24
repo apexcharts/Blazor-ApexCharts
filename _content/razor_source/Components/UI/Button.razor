@@ -1,0 +1,24 @@
+@namespace BlazorApexCharts.Docs.Components.UI
+
+<button @attributes="AdditionalAttributes" class="@UIHelpers.MergeClass(BaseClass, AdditionalAttributes)" disabled="@Disabled" @onclick="OnClick">
+    @ChildContent
+</button>
+
+@code {
+    [Parameter] public TablerColor? BackgroundColor { get; set; }
+    [Parameter] public ButtonSize Size { get; set; } = ButtonSize.Default;
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private string BaseClass
+    {
+        get
+        {
+            var classes = new List<string> { "btn", $"btn-{(BackgroundColor?.ToColorSuffix() ?? "secondary")}" };
+            if (Size == ButtonSize.Small) classes.Add("btn-sm");
+            return string.Join(" ", classes);
+        }
+    }
+}

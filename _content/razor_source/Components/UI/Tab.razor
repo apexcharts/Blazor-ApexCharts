@@ -1,0 +1,12 @@
+@namespace BlazorApexCharts.Docs.Components.UI
+@implements IDisposable
+
+@code {
+    [CascadingParameter] public Tabs ParentTabs { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected override void OnInitialized() => ParentTabs?.AddTab(this);
+
+    public void Dispose() => ParentTabs?.RemoveTab(this);
+}

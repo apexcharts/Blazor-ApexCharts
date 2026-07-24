@@ -1,0 +1,38 @@
+@namespace BlazorApexCharts.Docs.Components.UI
+
+<CascadingValue Value="this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+<ul class="nav nav-tabs">
+    @foreach (var tab in tabs)
+    {
+        <li class="nav-item">
+            <a class="nav-link @(tab == activeTab ? "active" : "")" href="javascript:void(0)" @onclick="() => SetActive(tab)">@tab.Title</a>
+        </li>
+    }
+</ul>
+<div class="tab-content pt-3">
+    @if (activeTab != null)
+    {
+        @activeTab.ChildContent
+    }
+</div>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private readonly List<Tab> tabs = new();
+    private Tab activeTab;
+
+    public void AddTab(Tab tab)
+    {
+        tabs.Add(tab);
+        activeTab ??= tab;
+        StateHasChanged();
+    }
+
+    public void RemoveTab(Tab tab) => tabs.Remove(tab);
+
+    private void SetActive(Tab tab) => activeTab = tab;
+}

@@ -1,0 +1,13 @@
+@namespace BlazorApexCharts.Docs.Components.UI
+
+<div @attributes="AdditionalAttributes" class="@UIHelpers.MergeClass(BaseClass, AdditionalAttributes)">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public CardSize Size { get; set; } = CardSize.Default;
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    private string BaseClass => Size == CardSize.Small ? "card card-sm" : "card";
+}

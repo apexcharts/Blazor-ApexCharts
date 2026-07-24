@@ -1,0 +1,115 @@
+@typeparam Item
+@namespace BlazorApexCharts.Docs.Components.UI
+@using System.Linq
+
+<CascadingValue Value="this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+@if (HeaderTemplate != null)
+{
+    @HeaderTemplate
+}
+
+@if (columns.Any(c => c.Searchable))
+{
+    <input class="form-control form-control-sm mb-2" style="max-width:250px" placeholder="Search..." value="@searchText" @oninput="OnSearch" />
+}
+
+<div class="table-responsive">
+    <table class="table table-vcenter card-table">
+        <thead>
+            <tr>
+                @foreach (var column in columns)
+                {
+                    <th @onclick="() => Sort(column)" style="@(column.Sortable ? "cursor:pointer" : null)">
+                        @column.HeaderText
+                        @if (sortColumn == column)
+                        {
+                            <span>@(sortDescending ? " ▼" : " ▲")</span>
+                        }
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in DisplayItems)
+            {
+                <tr>
+                    @foreach (var column in columns)
+                    {
+                        <td>
+                            @if (column.Template != null)
+                            {
+                                @column.Template(item)
+                            }
+                            else
+                            {
+                                @column.GetValue(item)
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter] public IEnumerable<Item> Items { get; set; }
+    [Parameter] public RenderFragment HeaderTemplate { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private readonly List<Column<Item>> columns = new();
+    private string searchText = string.Empty;
+    private Column<Item> sortColumn;
+    private bool sortDescending;
+
+    public void AddColumn(Column<Item> column)
+    {
+        columns.Add(column);
+        StateHasChanged();
+    }
+
+    public void RemoveColumn(Column<Item> column) => columns.Remove(column);
+
+    private void OnSearch(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? string.Empty;
+    }
+
+    private void Sort(Column<Item> column)
+    {
+        if (!column.Sortable) return;
+
+        if (sortColumn == column) sortDescending = !sortDescending;
+        else { sortColumn = column; sortDescending = false; }
+    }
+
+    private IEnumerable<Item> DisplayItems
+    {
+        get
+        {
+            var result = Items ?? Enumerable.Empty<Item>();
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                var searchable = columns.Where(c => c.Searchable).ToList();
+                if (searchable.Count > 0)
+                {
+                    result = result.Where(item => searchable.Any(c =>
+                        c.GetValue(item)?.ToString()?.Contains(searchText, StringComparison.OrdinalIgnoreCase) == true));
+                }
+            }
+
+            if (sortColumn != null)
+            {
+                result = sortDescending
+                    ? result.OrderByDescending(item => sortColumn.GetValue(item))
+                    : result.OrderBy(item => sortColumn.GetValue(item));
+            }
+
+            return result;
+        }
+    }
+}

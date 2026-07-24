@@ -29,6 +29,13 @@ pre.highlight,
 
 
 
+.docs-offcanvas-catcher {
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    background: transparent;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
