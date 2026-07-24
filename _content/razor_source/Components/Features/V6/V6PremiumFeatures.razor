@@ -1,0 +1,77 @@
+@page "/v6-premium-features"
+@using ApexCharts
+
+<h3>ApexCharts v6 Premium Features &amp; Licensing</h3>
+
+<p>
+    The v6 premium modules (history, perspectives, link/crossfilter, ink, measure, contextMenu, storyboard) work in
+    trial mode with an <code>APEXCHARTS</code> watermark until a valid license key is applied. Set a key application-wide
+    via <code>AddApexCharts(o =&gt; o.LicenseKey = "APEX-...")</code>, or per-chart via <code>Chart.License</code>.
+</p>
+
+<div id="trial-wrap" style="max-width:640px">
+    <h4>App-wide license (<code>AddApexCharts(o =&gt; o.LicenseKey = ...)</code>)</h4>
+    <p>
+        This chart relies on the application-wide key configured at startup. On the official demo host it is licensed
+        (no watermark); on any other host (including local development) it renders in trial mode with the
+        <code>APEXCHARTS</code> watermark.
+    </p>
+    <ApexChart TItem="Point" Title="History + measure enabled" Options="_trialOptions">
+        <ApexPointSeries TItem="Point" Items="_data" Name="Series 1"
+                         SeriesType="SeriesType.Line" XValue="e => e.X" YValue="e => e.Y" />
+    </ApexChart>
+</div>
+
+<div id="licensed-wrap" style="max-width:640px">
+    <h4>Per-chart license (<code>Chart.License</code>)</h4>
+    <p>This chart sets its own key via <code>Chart.License</code>, so it is never watermarked.</p>
+    <ApexChart @ref="_licensedChart" TItem="Point" Title="History + measure enabled" Options="_licensedOptions">
+        <ApexPointSeries TItem="Point" Items="_data" Name="Series 1"
+                         SeriesType="SeriesType.Line" XValue="e => e.X" YValue="e => e.Y" />
+    </ApexChart>
+
+    <button id="get-renderer" class="btn btn-primary" @onclick="GetRendererAsync">Get active renderer</button>
+    <span id="renderer-result">@_renderer</span>
+</div>
+
+@code {
+    // Demo key domain-locked to the official demo host and localhost, so the licensed example is clean both on
+    // https://apexcharts.github.io/ and during local development, without being a universal key.
+    private const string DemoKey = "APEX-eyJpc3N1ZURhdGUiOiIyMDI2LTA3LTAxIiwiZXhwaXJ5RGF0ZSI6IjIwNTAtMDEtMDEiLCJwbGFuIjoiZW50ZXJwcmlzZSIsImRvbWFpbnMiOlsiYXBleGNoYXJ0cy5naXRodWIuaW8iLCJsb2NhbGhvc3QiXX0=";
+
+    private ApexChart<Point> _licensedChart;
+    private string _renderer = "";
+
+    private readonly List<Point> _data = new()
+    {
+        new(1, 3), new(2, 6), new(3, 4), new(4, 8), new(5, 5), new(6, 7), new(7, 2)
+    };
+
+    private readonly ApexChartOptions<Point> _trialOptions = new()
+    {
+        Chart = new Chart
+        {
+            Height = 300,
+            History = new ChartHistory { Enabled = true },
+            Measure = new ChartMeasure { Enabled = true }
+        }
+    };
+
+    private readonly ApexChartOptions<Point> _licensedOptions = new()
+    {
+        Chart = new Chart
+        {
+            Height = 300,
+            License = DemoKey,
+            History = new ChartHistory { Enabled = true },
+            Measure = new ChartMeasure { Enabled = true }
+        }
+    };
+
+    private async Task GetRendererAsync()
+    {
+        _renderer = await _licensedChart.GetActiveRendererAsync();
+    }
+
+    public record Point(int X, int Y);
+}

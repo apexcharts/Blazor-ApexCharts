@@ -1,0 +1,82 @@
+@*
+    ApexCharts v6 perspectives (premium: shows an APEXCHARTS trial watermark without a license).
+    A perspective serializes the exact view (zoom window, hidden series, selection, annotations,
+    theme) into a compact token you can put in a URL and restore anywhere.
+*@
+<div class="mb-2">
+    <button class="btn btn-primary me-1" @onclick="Capture">Capture perspective</button>
+    <button class="btn btn-secondary me-1" @onclick="Apply" disabled="@(token is null)">Apply captured</button>
+    <button class="btn btn-outline-secondary" @onclick="ToUrl">Get URL</button>
+</div>
+
+<div class="mb-2" style="max-width:640px;word-break:break-all">
+    @if (token is not null)
+    {
+        <div>Token: <code>@token</code></div>
+    }
+    @if (url is not null)
+    {
+        <div>URL: <code>@url</code></div>
+    }
+</div>
+
+<DemoContainer>
+    <ApexChart @ref="chart" TItem="Pt" Title="Capture a view as a token" Options="options">
+        <ApexPointSeries TItem="Pt"
+                         Items="points"
+                         Name="Series 1"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Y)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Pt> chart;
+    private ApexChartOptions<Pt> options { get; set; } = new();
+    private List<Pt> points { get; set; } = new();
+    private string token;
+    private string url;
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart
+            {
+                Height = 320,
+                Perspectives = new ChartPerspectives()
+            };
+
+        // Numeric x-axis avoids duplicate integer labels when a captured perspective zooms in.
+        options.Xaxis = new XAxis { Type = XAxisType.Numeric };
+
+        var rnd = new Random(3);
+        double y = 40;
+        for (var i = 0; i < 30; i++)
+        {
+            y += rnd.NextDouble() * 10 - 4;
+            points.Add(new Pt(i, (decimal)Math.Round(y, 2)));
+        }
+    }
+
+    private async Task Capture()
+    {
+        token = await chart.CapturePerspectiveAsync();
+        StateHasChanged();
+    }
+
+    private async Task Apply()
+    {
+        if (token is not null)
+        {
+            await chart.ApplyPerspectiveAsync(token);
+        }
+    }
+
+    private async Task ToUrl()
+    {
+        url = await chart.PerspectiveToUrlAsync();
+        StateHasChanged();
+    }
+
+    private record Pt(int X, decimal Y);
+}

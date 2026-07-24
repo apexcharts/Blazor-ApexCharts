@@ -1,0 +1,111 @@
+@implements IDisposable
+@*
+    ApexCharts v6 bar-chart-race. On a horizontal bar chart, data labels ride to their bar's new
+    position (Animate) and count up to the new value (CountUp) as bars re-rank. This demo advances
+    automatically on a timer; the bars reorder and the labels count up on every frame.
+*@
+<div class="mb-2">
+    <button class="btn btn-primary" @onclick="ToggleRun">@(running ? "Pause" : "Play")</button>
+    <span class="ms-2">Frame: <strong>@frame</strong></span>
+</div>
+
+<DemoContainer>
+    <ApexChart @ref="chart" TItem="Racer" Title="Bar chart race (live)" Options="options">
+        <ApexPointSeries TItem="Racer"
+                         Items="racers"
+                         Name="Score"
+                         SeriesType="SeriesType.Bar"
+                         ShowDataLabels="true"
+                         XValue="@(e => e.Name)"
+                         YValue="@(e => e.Value)"
+                         OrderByDescending="e => e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Racer> chart;
+    private ApexChartOptions<Racer> options { get; set; } = new();
+    private List<Racer> racers { get; set; } = new();
+    private int frame;
+    private bool running = true;
+    private readonly Random rnd = new();
+    private System.Timers.Timer timer;
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart
+            {
+                Height = 340,
+                Animations = new Animations
+                {
+                    DynamicAnimation = new DynamicAnimation { Enabled = true, Speed = 900 }
+                }
+            };
+
+        options.PlotOptions = new PlotOptions
+            {
+                Bar = new PlotOptionsBar { Horizontal = true }
+            };
+
+        options.DataLabels = new DataLabels
+            {
+                Enabled = true,
+                Animate = new DataLabelsAnimate { Enabled = true },
+                CountUp = new DataLabelsCountUp { Enabled = true }
+            };
+
+        foreach (var name in new[] { "Alpha", "Bravo", "Charlie", "Delta", "Echo" })
+        {
+            racers.Add(new Racer { Name = name, Value = rnd.Next(20, 100) });
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            timer = new System.Timers.Timer(1400);
+            timer.Elapsed += async (_, _) => await Tick();
+            timer.AutoReset = true;
+            timer.Start();
+        }
+    }
+
+    private async Task Tick()
+    {
+        if (!running || chart is null) { return; }
+
+        await InvokeAsync(async () =>
+        {
+            frame++;
+
+            // Every few frames, reshuffle from a fresh base so the race keeps re-ranking and
+            // values stay in a readable range instead of growing without bound.
+            if (frame % 8 == 0)
+            {
+                foreach (var r in racers) { r.Value = rnd.Next(20, 100); }
+            }
+            else
+            {
+                foreach (var r in racers) { r.Value += rnd.Next(0, 40); }
+            }
+
+            await chart.UpdateSeriesAsync(true);
+            StateHasChanged();
+        });
+    }
+
+    private void ToggleRun() => running = !running;
+
+    public void Dispose()
+    {
+        timer?.Stop();
+        timer?.Dispose();
+    }
+
+    private class Racer
+    {
+        public string Name { get; set; }
+        public decimal Value { get; set; }
+    }
+}

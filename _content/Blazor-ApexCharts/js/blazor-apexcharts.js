@@ -1,4 +1,4 @@
-﻿import ApexCharts from './apexcharts.esm.js?ver=6.2.0.0'
+﻿import ApexCharts from './apexcharts.esm.js?ver=6.5.0'
 
 // export function for Blazor to point to the window.blazor_apexchart. To be compatible with the most JS Interop calls the window will be return.
 export function get_apexcharts() {
@@ -108,6 +108,154 @@ window.blazor_apexchart = {
 
         opt._chartInstances = Apex._chartInstances;
         Apex = opt;
+    },
+
+    setLicense(licenseKey) {
+        try {
+            if (ApexCharts && typeof ApexCharts.setLicense === 'function') {
+                ApexCharts.setLicense(licenseKey);
+                return true;
+            }
+            console.error('ApexCharts.setLicense is not available');
+            return false;
+        } catch (error) {
+            console.error('failed to set apexcharts license:', error);
+            return false;
+        }
+    },
+
+    // ===== v6 crossfilter engine (link filter mode) =====
+
+    registerCrossfilter(id, records) {
+        try {
+            if (ApexCharts && typeof ApexCharts.crossfilter === 'function') {
+                ApexCharts.crossfilter({ id: id, records: records });
+                return true;
+            }
+            console.error('ApexCharts.crossfilter is not available');
+            return false;
+        } catch (error) {
+            console.error('failed to register crossfilter:', error);
+            return false;
+        }
+    },
+
+    resetCrossfilter(id) {
+        var cf = ApexCharts.getCrossfilter(id);
+        if (cf && typeof cf.reset === 'function') { cf.reset(); }
+    },
+
+    onCrossfilterChange(id, dotNetRef) {
+        var cf = ApexCharts.getCrossfilter(id);
+        if (cf && typeof cf.on === 'function') {
+            cf.on('change', function (state) {
+                // Sanitize to plain, serializable data before crossing the interop boundary.
+                dotNetRef.invokeMethodAsync('OnCrossfilterChange', {
+                    total: state.total,
+                    filteredCount: state.filteredCount,
+                    filters: state.filters
+                });
+            });
+        }
+    },
+
+    // Center a storyboard step inside its own scroll container WITHOUT scrolling the page: adjust
+    // only the scroller's scrollTop. Used by manual beat controls (prev/next/dots) to keep the
+    // story panel in sync with a goTo(). Mirrors the scrollytelling reference's scrollToBeat.
+    scrollStoryToStep(scrollerSelector, stepSelector) {
+        var scroller = document.querySelector(scrollerSelector);
+        var step = document.querySelector(stepSelector);
+        if (!scroller || !step) { return; }
+        var sRect = step.getBoundingClientRect();
+        var cRect = scroller.getBoundingClientRect();
+        scroller.scrollTop += sRect.top - cRect.top - (scroller.clientHeight - step.clientHeight) / 2;
+    },
+
+    // ===== v6 premium feature methods =====
+
+    undo(id) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.history.undo(); }
+    },
+
+    redo(id) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.history.redo(); }
+    },
+
+    jumpHistory(id, historyId) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.history.jump(historyId); }
+    },
+
+    startMeasure(id) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.startMeasure(); }
+    },
+
+    stopMeasure(id) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.stopMeasure(); }
+    },
+
+    clearMeasures(id) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.clearMeasures(); }
+    },
+
+    refreshTokens(id) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.refreshTokens(); }
+    },
+
+    getActiveRenderer(id) {
+        var chart = this.findChart(id);
+        return chart !== undefined ? chart.getActiveRenderer() : null;
+    },
+
+    capturePerspective(id) {
+        var chart = this.findChart(id);
+        return chart !== undefined ? JSON.stringify(chart.perspectives.capture()) : null;
+    },
+
+    applyPerspective(id, token, animate) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.perspectives.apply(JSON.parse(token), { animate: animate }); }
+    },
+
+    perspectiveToUrl(id) {
+        var chart = this.findChart(id);
+        return chart !== undefined ? chart.perspectives.toURL() : null;
+    },
+
+    savePerspective(id, name) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.perspectives.save(name); }
+    },
+
+    listPerspectives(id) {
+        var chart = this.findChart(id);
+        return chart !== undefined ? JSON.stringify(chart.perspectives.list()) : null;
+    },
+
+    storyboardBind(id, options) {
+        var chart = this.findChart(id);
+        return chart !== undefined ? chart.storyboard.bind(this.parseOptions(options)) : null;
+    },
+
+    storyboardGoTo(id, beat, animate) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.storyboard.goTo(beat, { animate: animate }); }
+    },
+
+    storyboardCurrent(id) {
+        var chart = this.findChart(id);
+        return chart !== undefined ? JSON.stringify(chart.storyboard.current()) : null;
+    },
+
+    storyboardUnbind(id) {
+        var chart = this.findChart(id);
+        if (chart !== undefined) { chart.storyboard.unbind(); }
     },
 
     updateOptions(id, options, redrawPaths, animate, updateSyncedCharts, zoom) {
@@ -522,6 +670,54 @@ window.blazor_apexchart = {
         if (events.hasScrolled === true) {
             options.chart.events.scrolled = function (chartContext, config) {
                 dotNetObject.invokeMethodAsync('JSScrolled', config);
+            };
+        };
+
+        // v6 premium feature events (ink / measure / storyboard)
+        if (events.hasAnnotationCreated === true) {
+            options.chart.events.annotationCreated = function (ctx, args) {
+                dotNetObject.invokeMethodAsync('JSAnnotationCreated', args);
+            };
+        };
+
+        if (events.hasAnnotationDragged === true) {
+            options.chart.events.annotationDragged = function (ctx, args) {
+                dotNetObject.invokeMethodAsync('JSAnnotationDragged', args);
+            };
+        };
+
+        if (events.hasAnnotationEdited === true) {
+            options.chart.events.annotationEdited = function (ctx, args) {
+                dotNetObject.invokeMethodAsync('JSAnnotationEdited', args);
+            };
+        };
+
+        if (events.hasAnnotationStyled === true) {
+            options.chart.events.annotationStyled = function (ctx, args) {
+                dotNetObject.invokeMethodAsync('JSAnnotationStyled', args);
+            };
+        };
+
+        if (events.hasAnnotationDeleted === true) {
+            options.chart.events.annotationDeleted = function (ctx, args) {
+                dotNetObject.invokeMethodAsync('JSAnnotationDeleted', args);
+            };
+        };
+
+        if (events.hasMeasured === true) {
+            options.chart.events.measured = function (ctx, payload) {
+                dotNetObject.invokeMethodAsync('JSMeasured', payload);
+            };
+        };
+
+        if (events.hasBeatChange === true) {
+            options.chart.events.beatChange = function (ctx, info) {
+                // info may carry a DOM element (info.el); forward only serializable fields
+                dotNetObject.invokeMethodAsync('JSBeatChange', {
+                    index: info != null ? info.index : null,
+                    key: info != null ? info.key : null,
+                    direction: info != null ? info.direction : null
+                });
             };
         };
 

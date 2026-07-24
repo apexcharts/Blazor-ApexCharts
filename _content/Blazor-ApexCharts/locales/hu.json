@@ -1,1 +1,64 @@
-{"name":"hu","options":{"days":["h\u00E9tf\u0151","kedd","szerda","cs\u00FCt\u00F6rt\u00F6k","p\u00E9ntek","szombat","vas\u00E1rnap"],"months":["janu\u00E1r","febru\u00E1r","m\u00E1rcius","\u00E1prilis","m\u00E1jus","j\u00FAnius","j\u00FAlius","augusztus","szeptember","okt\u00F3ber","november","december"],"shortDays":["H","K","Sze","Cs","P","Szo","V"],"shortMonths":["jan","feb","mar","\u00E1pr","m\u00E1j","j\u00FAn","j\u00FAl","aug","szept","okt","nov","dec"],"toolbar":{"menu":"F\u0151 aj\u00E1nlat","pan":"K\u00E9pcs\u00FAsztat\u00E1s","reset":"Nagy\u00EDt\u00F3 vissza\u00E1ll\u00EDt\u00E1sa","selection":"Kiv\u00E1laszt\u00E1s","selectionZoom":"Nagy\u00EDt\u00F3 kiv\u00E1laszt\u00E1sa","zoomIn":"Nagy\u00EDt\u00E1s","zoomOut":"Kicsiny\u00EDt\u00E9s","exportToSVG":"Export\u00E1l\u00E1s SVG-be","exportToPNG":"Export\u00E1l\u00E1s PNG-be","exportToCSV":"Export\u00E1l\u00E1s CSV-be"}}}
+{
+  "name": "hu",
+  "options": {
+    "months": [
+      "január",
+      "február",
+      "március",
+      "április",
+      "május",
+      "június",
+      "július",
+      "augusztus",
+      "szeptember",
+      "október",
+      "november",
+      "december"
+    ],
+    "shortMonths": [
+      "jan",
+      "feb",
+      "mar",
+      "ápr",
+      "máj",
+      "jún",
+      "júl",
+      "aug",
+      "szept",
+      "okt",
+      "nov",
+      "dec"
+    ],
+    "days": [
+      "hétfő",
+      "kedd",
+      "szerda",
+      "csütörtök",
+      "péntek",
+      "szombat",
+      "vasárnap"
+    ],
+    "shortDays": [
+      "H",
+      "K",
+      "Sze",
+      "Cs",
+      "P",
+      "Szo",
+      "V"
+    ],
+    "toolbar": {
+      "exportToSVG": "Exportálás SVG-be",
+      "exportToPNG": "Exportálás PNG-be",
+      "exportToCSV": "Exportálás CSV-be",
+      "menu": "Fő ajánlat",
+      "download": "SVG letöltése",
+      "selection": "Kiválasztás",
+      "selectionZoom": "Nagyító kiválasztása",
+      "zoomIn": "Nagyítás",
+      "zoomOut": "Kicsinyítés",
+      "pan": "Képcsúsztatás",
+      "reset": "Nagyító visszaállítása"
+    }
+  }
+}

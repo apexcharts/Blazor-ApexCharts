@@ -1,0 +1,57 @@
+@*
+    ApexCharts v6 "Rewind" history (premium: shows an APEXCHARTS trial watermark without a license).
+    Zooms, series toggles, option changes and annotation edits are recorded into a command journal.
+    Zoom or toggle a legend series, then Undo/Redo (or use Ctrl/Cmd+Z with Keyboard enabled).
+*@
+<div class="mb-2">
+    <button class="btn btn-primary me-1" @onclick="Undo">Undo</button>
+    <button class="btn btn-secondary" @onclick="Redo">Redo</button>
+    <span class="ms-2">Zoom or toggle a series, then undo/redo the change.</span>
+</div>
+
+<DemoContainer>
+    <ApexChart @ref="chart" TItem="Pt" Title="Undo / redo journal" Options="options">
+        <ApexPointSeries TItem="Pt"
+                         Items="points"
+                         Name="Series A"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.A)" />
+        <ApexPointSeries TItem="Pt"
+                         Items="points"
+                         Name="Series B"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.B)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Pt> chart;
+    private ApexChartOptions<Pt> options { get; set; } = new();
+    private List<Pt> points { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart
+            {
+                Height = 320,
+                History = new ChartHistory { Enabled = true, Keyboard = true }
+            };
+
+        // Numeric x-axis avoids the duplicate integer labels the category->numeric conversion
+        // produces when zoomed into a narrow window.
+        options.Xaxis = new XAxis { Type = XAxisType.Numeric };
+
+        var rnd = new Random(11);
+        for (var i = 0; i < 30; i++)
+        {
+            points.Add(new Pt(i, rnd.Next(20, 80), rnd.Next(20, 80)));
+        }
+    }
+
+    private async Task Undo() => await chart.UndoAsync();
+    private async Task Redo() => await chart.RedoAsync();
+
+    private record Pt(int X, decimal A, decimal B);
+}

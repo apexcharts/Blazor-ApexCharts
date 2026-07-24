@@ -1,1 +1,64 @@
-{"name":"lv","options":{"days":["sv\u0113tdiena","pirmdiena","otrdiena","tre\u0161diena","ceturtdiena","piektdiena","sestdiena"],"months":["janv\u0101ris","febru\u0101ris","marts","apr\u012Blis","maijs","j\u016Bnijs","j\u016Blijs","augusts","septembris","oktobris","novembris","decembris"],"shortDays":["Sv","P","O","T","C","P","S"],"shortMonths":["janv","febr","marts","apr","maijs","j\u016Bn","j\u016Bl","aug","sept","okt","nov","dec"],"toolbar":{"menu":"Izv\u0113lne","pan":"P\u0101rvietoties diagramm\u0101","reset":"Atiestat\u012Bt pietuvin\u0101jumu","selection":"Atlase","selectionZoom":"Pietuvin\u0101t atlasi","zoomIn":"Pietuvin\u0101t","zoomOut":"Att\u0101lin\u0101t","exportToSVG":"Lejupl\u0101d\u0113t SVG","exportToPNG":"Lejupl\u0101d\u0113t PNG","exportToCSV":"Lejupl\u0101d\u0113t CSV"}}}
+{
+  "name": "lv",
+  "options": {
+    "months": [
+      "janvāris",
+      "februāris",
+      "marts",
+      "aprīlis",
+      "maijs",
+      "jūnijs",
+      "jūlijs",
+      "augusts",
+      "septembris",
+      "oktobris",
+      "novembris",
+      "decembris"
+    ],
+    "shortMonths": [
+      "janv",
+      "febr",
+      "marts",
+      "apr",
+      "maijs",
+      "jūn",
+      "jūl",
+      "aug",
+      "sept",
+      "okt",
+      "nov",
+      "dec"
+    ],
+    "days": [
+      "svētdiena",
+      "pirmdiena",
+      "otrdiena",
+      "trešdiena",
+      "ceturtdiena",
+      "piektdiena",
+      "sestdiena"
+    ],
+    "shortDays": [
+      "Sv",
+      "P",
+      "O",
+      "T",
+      "C",
+      "P",
+      "S"
+    ],
+    "toolbar": {
+      "exportToSVG": "Lejuplādēt SVG",
+      "exportToPNG": "Lejuplādēt PNG",
+      "exportToCSV": "Lejuplādēt CSV",
+      "menu": "Izvēlne",
+      "selection": "Atlase",
+      "selectionZoom": "Pietuvināt atlasi",
+      "zoomIn": "Pietuvināt",
+      "zoomOut": "Attālināt",
+      "pan": "Pārvietoties diagrammā",
+      "reset": "Atiestatīt pietuvinājumu"
+    }
+  }
+}
+

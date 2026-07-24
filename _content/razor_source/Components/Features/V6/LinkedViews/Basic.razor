@@ -1,0 +1,144 @@
+@implements IDisposable
+@inject IApexChartService ChartService
+@using Microsoft.JSInterop
+@*
+    ApexCharts v6 crossfilter / linked views (premium: shows an APEXCHARTS trial watermark without a
+    license). All three charts aggregate one shared record set registered with
+    IApexChartService.RegisterCrossfilterAsync; each declares a Chart.Link.Dimension over it. Click a
+    slice or bar to toggle that bucket: the clicked chart dims its other buckets and every other chart
+    re-aggregates over the filtered trades and animates to its new values. Selections combine (a chart
+    never filters itself). Reset clears everything.
+*@
+<div class="mb-2">
+    <button class="btn btn-primary" @onclick="Reset">Reset filters</button>
+    <span class="ms-2"><strong>@readout</strong></span>
+</div>
+
+@if (ready)
+{
+    <DemoContainer>
+        <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:1rem; margin-bottom:1rem;">
+            <div style="min-width:0;">
+                <ApexChart TItem="Trade" Title="By quarter" Options="quarterOptions">
+                    <ApexPointSeries TItem="Trade" Items="records" Name="Trades" SeriesType="SeriesType.Donut"
+                                     XValue="@(t => t.Q)" YAggregate="@(g => (decimal)g.Count())" />
+                </ApexChart>
+            </div>
+            <div style="min-width:0;">
+                <ApexChart TItem="Trade" Title="By outcome" Options="outcomeOptions">
+                    <ApexPointSeries TItem="Trade" Items="records" Name="Trades" SeriesType="SeriesType.Donut"
+                                     XValue="@(t => t.Gl)" YAggregate="@(g => (decimal)g.Count())" />
+                </ApexChart>
+            </div>
+        </div>
+
+        <ApexChart TItem="Trade" Title="By day of week (click a bar too)" Options="dayOptions">
+            <ApexPointSeries TItem="Trade" Items="records" Name="Trades" SeriesType="SeriesType.Bar"
+                             XValue="@(t => t.Day)" YAggregate="@(g => (decimal)g.Count())" />
+        </ApexChart>
+    </DemoContainer>
+}
+
+@code {
+    private const string CfId = "trades";
+
+    private bool ready;
+    private string readout = "Click a slice or bar to filter every chart";
+    private DotNetObjectReference<Basic> selfRef;
+
+    private readonly List<Trade> records = TradesData();
+    private ApexChartOptions<Trade> quarterOptions { get; set; } = new();
+    private ApexChartOptions<Trade> outcomeOptions { get; set; } = new();
+    private ApexChartOptions<Trade> dayOptions { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        quarterOptions.Chart = new Chart
+            {
+                Height = 300,
+                Link = new ChartLink { Id = CfId, Dimension = "function(r){ return r.q; }", DimOpacity = 0.18 }
+            };
+        quarterOptions.Colors = new List<string> { "#818cf8", "#38bdf8", "#4ade80", "#fbbf24" };
+        quarterOptions.Legend = new Legend { Position = LegendPosition.Bottom };
+
+        outcomeOptions.Chart = new Chart
+            {
+                Height = 300,
+                Link = new ChartLink { Id = CfId, Dimension = "function(r){ return r.gl; }", Order = LinkOrder.Asc, DimOpacity = 0.18 }
+            };
+        outcomeOptions.Colors = new List<string> { "#4ade80", "#f87171" };
+        outcomeOptions.Legend = new Legend { Position = LegendPosition.Bottom };
+
+        dayOptions.Chart = new Chart
+            {
+                Height = 280,
+                Link = new ChartLink { Id = CfId, Dimension = "function(r){ return r.day; }", SeriesName = "Trades", Order = LinkOrder.FirstSeen, DimOpacity = 0.18 }
+            };
+        dayOptions.Colors = new List<string> { "#818cf8", "#38bdf8", "#4ade80", "#fbbf24", "#f472b6" };
+        dayOptions.Legend = new Legend { Show = false };
+        dayOptions.PlotOptions = new PlotOptions { Bar = new PlotOptionsBar { Distributed = true, ColumnWidth = "55%", BorderRadius = 3 } };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Register the shared record set BEFORE the linked charts render, so their first paint is
+        // already the aggregation (no empty flash), then reveal them.
+        selfRef = DotNetObjectReference.Create(this);
+        await ChartService.RegisterCrossfilterAsync(CfId, records);
+        await ChartService.SubscribeCrossfilterAsync(CfId, selfRef);
+        ready = true;
+    }
+
+    [JSInvokable]
+    public void OnCrossfilterChange(CrossfilterState state)
+    {
+        var values = state.Filters?.SelectMany(kv => kv.Value).ToList() ?? new List<string>();
+        readout = values.Count == 0
+            ? $"No filter (all {state.Total} trades)"
+            : $"{string.Join(", ", values)}   ->   {state.FilteredCount} / {state.Total} trades";
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task Reset() => await ChartService.ResetCrossfilterAsync(CfId);
+
+    public void Dispose() => selfRef?.Dispose();
+
+    // Deterministic trade records (one row per trade). Distributions are intentionally uneven so the
+    // crossfilter is visible: quarters have different totals, each quarter peaks on a different weekday,
+    // and outcomes lean Gain early in the week and Loss later.
+    private static List<Trade> TradesData()
+    {
+        var days = new[] { "Mon", "Tue", "Wed", "Thu", "Fri" };
+        var plan = new Dictionary<string, int[]>
+        {
+            ["Q1"] = new[] { 8, 4, 3, 2, 1 },
+            ["Q2"] = new[] { 1, 2, 5, 3, 1 },
+            ["Q3"] = new[] { 2, 2, 3, 4, 5 },
+            ["Q4"] = new[] { 3, 6, 2, 2, 1 },
+        };
+        var gainByDay = new[] { 0.85, 0.7, 0.5, 0.3, 0.15 };
+
+        var trades = new List<Trade>();
+        foreach (var q in plan.Keys)
+        {
+            var counts = plan[q];
+            for (var di = 0; di < counts.Length; di++)
+            {
+                var count = counts[di];
+                var gains = (int)Math.Round(count * gainByDay[di]);
+                for (var k = 0; k < count; k++)
+                {
+                    trades.Add(new Trade { Q = q, Day = days[di], Gl = k < gains ? "Gain" : "Loss" });
+                }
+            }
+        }
+        return trades;
+    }
+
+    public class Trade
+    {
+        public string Q { get; set; }
+        public string Day { get; set; }
+        public string Gl { get; set; }
+    }
+}
