@@ -1,0 +1,69 @@
+@*
+    Box plot with the raw observations overlaid as jittered dots (apexcharts.js 5.15+).
+    Supply the observations via the ApexBoxPlotSeries.Points accessor and enable the overlay
+    through PlotOptionsBoxPlot.Points. The overlay is inert unless both are provided.
+*@
+
+<DemoContainer>
+    <ApexChart TItem="BoxSample"
+               Title="Latency by Region (with observations)"
+               Options="options">
+
+        <ApexBoxPlotSeries TItem="BoxSample"
+                           Items="samples"
+                           Name="latency"
+                           XValue="@(e => e.Region)"
+                           Min="@(e => e.Min)"
+                           Quantile1="@(e => e.Q1)"
+                           Median="@(e => e.Median)"
+                           Quantile3="@(e => e.Q3)"
+                           Max="@(e => e.Max)"
+                           Points="@(e => e.Observations)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChartOptions<BoxSample> options = new();
+
+    protected override void OnInitialized()
+    {
+        options.PlotOptions = new PlotOptions
+        {
+            BoxPlot = new PlotOptionsBoxPlot
+            {
+                Points = new BoxPlotPoints
+                {
+                    Show = true,
+                    Shape = JitterPointShape.Circle,
+                    Size = 2.5,
+                    Jitter = 0.5,
+                    Opacity = 0.7,
+                    FillColor = "series-dark",
+                    StrokeColor = "#fff",
+                    StrokeWidth = 1
+                }
+            }
+        };
+    }
+
+    private List<BoxSample> samples = new()
+    {
+        new BoxSample { Region = "US", Min = 20, Q1 = 34, Median = 42, Q3 = 55, Max = 78,
+            Observations = new List<decimal> { 20, 28, 31, 34, 36, 39, 42, 44, 48, 52, 55, 61, 70, 78 } },
+        new BoxSample { Region = "EU", Min = 30, Q1 = 44, Median = 52, Q3 = 66, Max = 95,
+            Observations = new List<decimal> { 30, 38, 41, 44, 47, 50, 52, 55, 59, 63, 66, 74, 85, 95 } },
+        new BoxSample { Region = "APAC", Min = 45, Q1 = 60, Median = 72, Q3 = 88, Max = 120,
+            Observations = new List<decimal> { 45, 54, 58, 60, 65, 69, 72, 76, 81, 85, 88, 99, 110, 120 } },
+    };
+
+    public class BoxSample
+    {
+        public string Region { get; set; }
+        public decimal Min { get; set; }
+        public decimal Q1 { get; set; }
+        public decimal Median { get; set; }
+        public decimal Q3 { get; set; }
+        public decimal Max { get; set; }
+        public List<decimal> Observations { get; set; }
+    }
+}

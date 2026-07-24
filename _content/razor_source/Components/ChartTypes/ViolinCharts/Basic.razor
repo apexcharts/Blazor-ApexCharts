@@ -1,0 +1,70 @@
+@*
+    Violin chart (apexcharts.js 5.15+). Each item carries a single observation via YValue;
+    items sharing the same XValue (team) are grouped into that team's distribution. The dot
+    overlay (PlotOptionsViolin.Points) draws the raw observations that produced each curve.
+*@
+
+<DemoContainer>
+    <ApexChart TItem="Observation"
+               Title="Response Time Distribution (ms)"
+               Options="options">
+
+        <ApexViolinSeries TItem="Observation"
+                          Items="observations"
+                          Name="Response time"
+                          XValue="@(e => e.Team)"
+                          YValue="@(e => e.Value)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChartOptions<Observation> options = new();
+
+    protected override void OnInitialized()
+    {
+        options.PlotOptions = new PlotOptions
+        {
+            Violin = new PlotOptionsViolin
+            {
+                BandwidthScale = 1,
+                Normalize = ViolinNormalize.Individual,
+                Points = new ViolinPoints
+                {
+                    Show = true,
+                    Shape = JitterPointShape.Circle,
+                    Size = 2.5,
+                    Jitter = 0.5,
+                    ConstrainToViolin = true,
+                    Opacity = 0.6,
+                    FillColor = "series-dark"
+                }
+            }
+        };
+    }
+
+    // Deterministic sample distributions (no randomness, so the demo renders identically each time).
+    private List<Observation> observations = Build();
+
+    private static List<Observation> Build()
+    {
+        var data = new List<Observation>();
+        AddTeam(data, "Alpha", new[] { 120m, 128, 131, 134, 138, 140, 142, 145, 149, 152, 158, 165, 172, 190, 210 });
+        AddTeam(data, "Bravo", new[] { 90m, 95, 98, 100, 103, 105, 108, 110, 112, 115, 120, 128, 140, 160, 185 });
+        AddTeam(data, "Charlie", new[] { 150m, 160, 168, 172, 176, 180, 182, 185, 188, 192, 198, 205, 214, 228, 250 });
+        return data;
+    }
+
+    private static void AddTeam(List<Observation> data, string team, decimal[] values)
+    {
+        foreach (var v in values)
+        {
+            data.Add(new Observation { Team = team, Value = v });
+        }
+    }
+
+    public class Observation
+    {
+        public string Team { get; set; }
+        public decimal Value { get; set; }
+    }
+}
