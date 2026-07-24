@@ -28,14 +28,22 @@ internal class ApexChartServiceMaui : IApexChartService
 		{
 			globalOptions ??= new ApexChartBaseOptions();
 		}
+
+		licenseKey = serviceOptions.LicenseKey;
+		if (!string.IsNullOrWhiteSpace(licenseKey))
+		{
+			licenseInitialized = false;
+		}
 	}
 
 	private readonly ConcurrentDictionary<string, IApexChartBase> charts = new();
 	private readonly Dictionary<string, LocaleResource> locales = new();
 	private readonly IJSRuntime jSRuntime;
 	private IApexChartBaseOptions globalOptions;
+	private readonly string? licenseKey;
 
 	private bool globalOptionsInitialized = true;
+	private bool licenseInitialized = true;
 
 	/// <inheritdoc/>
 	public List<IApexChartBase> Charts => charts.Values.ToList();
@@ -117,6 +125,7 @@ internal class ApexChartServiceMaui : IApexChartService
 	public async Task InitalizeChartAsync(string? javascriptPath = null)
 	{
 		await JSLoader.LoadAsync(jSRuntime, javascriptPath);
+		await InitializeLicenseAsync();
 		await GlobalOptionsInitializedAsync();
 	}
 
@@ -147,6 +156,62 @@ internal class ApexChartServiceMaui : IApexChartService
 		options ??= new ApexChartBaseOptions();
 		globalOptions = options;
 		await SetGlobalOptionsAsync(reRenderCharts);
+	}
+
+	/// <inheritdoc/>
+	public async Task SetLicenseAsync(string licenseKey)
+	{
+		if (string.IsNullOrWhiteSpace(licenseKey)) { return; }
+		var jSObjectReference = await JSLoader.LoadAsync(jSRuntime, globalOptions?.Blazor?.JavascriptPath);
+		await jSObjectReference.InvokeVoidAsync("blazor_apexchart.setLicense", licenseKey);
+	}
+
+	/// <inheritdoc/>
+	public async Task RegisterCrossfilterAsync(string id, object records)
+	{
+		if (string.IsNullOrWhiteSpace(id)) { return; }
+		var jSObjectReference = await JSLoader.LoadAsync(jSRuntime, globalOptions?.Blazor?.JavascriptPath);
+		await jSObjectReference.InvokeVoidAsync("blazor_apexchart.registerCrossfilter", id, records);
+	}
+
+	/// <inheritdoc/>
+	public async Task ResetCrossfilterAsync(string id)
+	{
+		if (string.IsNullOrWhiteSpace(id)) { return; }
+		var jSObjectReference = await JSLoader.LoadAsync(jSRuntime, globalOptions?.Blazor?.JavascriptPath);
+		await jSObjectReference.InvokeVoidAsync("blazor_apexchart.resetCrossfilter", id);
+	}
+
+	/// <inheritdoc/>
+	public async Task SubscribeCrossfilterAsync<T>(string id, DotNetObjectReference<T> handler) where T : class
+	{
+		if (string.IsNullOrWhiteSpace(id) || handler == null) { return; }
+		var jSObjectReference = await JSLoader.LoadAsync(jSRuntime, globalOptions?.Blazor?.JavascriptPath);
+		await jSObjectReference.InvokeVoidAsync("blazor_apexchart.onCrossfilterChange", id, handler);
+	}
+
+	private readonly SemaphoreSlim _licenseSemaphore = new(1, 1);
+
+	/// <inheritdoc/>
+	public async Task InitializeLicenseAsync()
+	{
+		if (licenseInitialized)
+			return;
+
+		await _licenseSemaphore.WaitAsync();
+
+		try
+		{
+			if (!licenseInitialized)
+			{
+				await SetLicenseAsync(licenseKey!);
+				licenseInitialized = true;
+			}
+		}
+		finally
+		{
+			_licenseSemaphore.Release();
+		}
 	}
 
 	private readonly SemaphoreSlim _semaphore = new(1, 1);

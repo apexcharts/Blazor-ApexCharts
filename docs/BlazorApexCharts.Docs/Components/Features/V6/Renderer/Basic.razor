@@ -1,0 +1,81 @@
+@*
+    ApexCharts v6 "Strata" hybrid renderer. Renderer.Auto keeps the series as SVG below
+    RendererThreshold marks and paints to canvas above it (axes, grid, tooltips stay SVG).
+    This scatter has 5000 marks, so Auto switches it to canvas. Flip the mode to compare:
+    a plain line has no per-point "marks", so Auto would keep it SVG; canvas needs either
+    a mark-heavy type (scatter/markers/heatmap) over the threshold or an explicit Canvas mode.
+*@
+<div class="mb-2">
+    <div class="btn-group" role="group">
+        <button class="btn @(mode == Renderer.Auto ? "btn-primary" : "btn-outline-primary")" @onclick="() => SetMode(Renderer.Auto)">Auto</button>
+        <button class="btn @(mode == Renderer.Canvas ? "btn-primary" : "btn-outline-primary")" @onclick="() => SetMode(Renderer.Canvas)">Canvas</button>
+        <button class="btn @(mode == Renderer.Svg ? "btn-primary" : "btn-outline-primary")" @onclick="() => SetMode(Renderer.Svg)">SVG</button>
+    </div>
+    <span class="ms-2">Active series renderer: <strong>@renderer</strong> (@points.Count marks, threshold @threshold)</span>
+</div>
+
+<DemoContainer>
+    <ApexChart @ref="chart" TItem="Pt" Title="Hybrid renderer (5000-mark scatter)" Options="options">
+        <ApexPointSeries TItem="Pt"
+                         Items="points"
+                         Name="Signal"
+                         SeriesType="SeriesType.Scatter"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Y)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Pt> chart;
+    private ApexChartOptions<Pt> options { get; set; } = new();
+    private List<Pt> points { get; set; } = new();
+    private string renderer = "(resolving)";
+    private Renderer mode = Renderer.Auto;
+    private const double threshold = 2000;
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart
+            {
+                Height = 320,
+                Renderer = mode,
+                RendererThreshold = threshold,
+                Animations = new Animations { Enabled = false }
+            };
+
+        options.Xaxis = new XAxis { Type = XAxisType.Numeric };
+        options.Markers = new Markers { Size = 2 };
+
+        var rnd = new Random(42);
+        double y = 100;
+        for (var i = 0; i < 5000; i++)
+        {
+            y += rnd.NextDouble() * 10 - 5;
+            points.Add(new Pt(i, (decimal)Math.Round(y, 2)));
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ReadRenderer();
+        }
+    }
+
+    private async Task SetMode(Renderer newMode)
+    {
+        mode = newMode;
+        options.Chart.Renderer = newMode;
+        await chart.RenderAsync();
+        await ReadRenderer();
+    }
+
+    private async Task ReadRenderer()
+    {
+        renderer = await chart.GetActiveRendererAsync();
+        StateHasChanged();
+    }
+
+    private record Pt(int X, decimal Y);
+}

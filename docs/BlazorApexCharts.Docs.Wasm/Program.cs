@@ -22,7 +22,13 @@ namespace BlazorApexCharts.Docs.Wasm
             builder.Services.AddHttpClient("GitHub", client => client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Blazor-ApexCharts", "1")));
             builder.Services.AddScoped<ICodeSnippetService, GitHubSnippetService>();
 
-            builder.Services.AddApexCharts();
+            // Domain-locked license for the public demo hosted at https://apexcharts.github.io/ (removes the
+            // trial watermark on the v6 premium features there). The key is valid only on that host, so local
+            // runs and any other domain render in trial mode (watermarked), which is expected.
+            builder.Services.AddApexCharts(options =>
+            {
+                options.LicenseKey = "APEX-eyJpc3N1ZURhdGUiOiIyMDI2LTA3LTAxIiwiZXhwaXJ5RGF0ZSI6IjIwNTAtMDEtMDEiLCJwbGFuIjoiZW50ZXJwcmlzZSIsImRvbWFpbnMiOlsiYXBleGNoYXJ0cy5naXRodWIuaW8iXX0=";
+            });
 
           
 

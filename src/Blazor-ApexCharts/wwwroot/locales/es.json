@@ -1,1 +1,55 @@
-{"name":"es","options":{"days":["Domingo","Lunes","Martes","Mi\u00E9rcoles","Jueves","Viernes","S\u00E1bado"],"months":["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],"shortDays":["Dom","Lun","Mar","Mie","Jue","Vie","Sab"],"shortMonths":["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],"toolbar":{"menu":"Menu","pan":"Navegaci\u00F3n","reset":"Reiniciar Zoom","selection":"Seleccionar","selectionZoom":"Seleccionar Zoom","zoomIn":"Aumentar","zoomOut":"Disminuir","exportToSVG":"Descargar SVG","exportToPNG":"Descargar PNG","exportToCSV":"Descargar CSV"}}}
+{
+  "name": "es",
+  "options": {
+    "months": [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre"
+    ],
+    "shortMonths": [
+      "Ene",
+      "Feb",
+      "Mar",
+      "Abr",
+      "May",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dic"
+    ],
+    "days": [
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado"
+    ],
+    "shortDays": ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+    "toolbar": {
+      "exportToSVG": "Descargar SVG",
+      "exportToPNG": "Descargar PNG",
+      "exportToCSV": "Descargar CSV",
+      "menu": "Menu",
+      "selection": "Seleccionar",
+      "selectionZoom": "Seleccionar Zoom",
+      "zoomIn": "Aumentar",
+      "zoomOut": "Disminuir",
+      "pan": "Navegación",
+      "reset": "Reiniciar Zoom"
+    }
+  }
+}

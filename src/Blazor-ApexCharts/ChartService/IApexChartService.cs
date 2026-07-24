@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.JSInterop;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ApexCharts
@@ -72,6 +73,42 @@ namespace ApexCharts
         ///
         /// </summary>
         Task GlobalOptionsInitializedAsync();
+
+        /// <summary>
+        /// Applies a license key application-wide via <c>ApexCharts.setLicense</c>. A valid key removes the
+        /// trial-mode <c>APEXCHARTS</c> watermark from the gated premium features. Can be called at runtime;
+        /// a late valid key followed by a chart update clears an on-screen watermark without a full re-render.
+        /// </summary>
+        /// <param name="licenseKey"></param>
+        Task SetLicenseAsync(string licenseKey);
+
+        /// <summary>
+        /// Applies the license key configured via <see cref="ApexChartsServiceOptions.LicenseKey"/> once,
+        /// before any chart renders. Internal usage (called by the chart component on first render).
+        /// </summary>
+        Task InitializeLicenseAsync();
+
+        /// <summary>
+        /// Registers a shared record set with the crossfilter engine via <c>ApexCharts.crossfilter</c> (ApexCharts v6
+        /// premium <c>link</c> feature). Charts that declare <see cref="ChartLink.Id"/> matching <paramref name="id"/>
+        /// with a <see cref="ChartLink.Dimension"/> aggregate over these records; clicking a mark filters every linked
+        /// chart. Register before the linked charts render so their first paint is already aggregated.
+        /// </summary>
+        /// <param name="id">Shared crossfilter group id.</param>
+        /// <param name="records">The record set (one object per row); serialized to JS as-is.</param>
+        Task RegisterCrossfilterAsync(string id, object records);
+
+        /// <summary>
+        /// Clears all active filters on the crossfilter group <paramref name="id"/> (<c>getCrossfilter(id).reset()</c>).
+        /// </summary>
+        Task ResetCrossfilterAsync(string id);
+
+        /// <summary>
+        /// Subscribes to <c>change</c> events on the crossfilter group <paramref name="id"/>. The handler's
+        /// <c>[JSInvokable] OnCrossfilterChange(CrossfilterState)</c> method is invoked whenever the active filters
+        /// change. Dispose the <see cref="DotNetObjectReference{T}"/> when done.
+        /// </summary>
+        Task SubscribeCrossfilterAsync<T>(string id, DotNetObjectReference<T> handler) where T : class;
 
 		/// <summary>
 		/// Used to register an chart, Internal usage

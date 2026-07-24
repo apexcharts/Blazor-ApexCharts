@@ -1,0 +1,27 @@
+@*
+    ApexCharts v6 "Facet" OS-aware theme. Theme.Follow = ThemeFollow.Os makes the chart follow the
+    operating system's light/dark preference with no JavaScript. Toggle your OS light/dark setting
+    to see the chart's text and background colors update automatically.
+*@
+<DemoContainer>
+    <ApexChart TItem="Order" Title="Theme follows the operating system" Options="options">
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e => e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart { Height = 320 };
+        options.Theme = new Theme { Follow = ThemeFollow.Os };
+    }
+}

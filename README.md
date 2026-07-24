@@ -110,6 +110,44 @@ Apex Chart options are available in the `ApexChartOptions` class that can be pas
 
 **The chart options cannot be shared.  Each chart instance must have its own ApexChartOptions instance**
 
+## Premium Features & Licensing
+ApexCharts 6.0 introduced a set of premium interaction modules: history (undo/redo), perspectives (shareable view state), link (crossfilter / linked views), ink (draggable annotations), measure (delta ruler), contextMenu (point actions) and storyboard (scroll-driven views). All chart types and every other option remain free and are never gated.
+
+The premium modules work fully in **trial mode**, but a chart that uses one shows an unobtrusive `APEXCHARTS` watermark until a valid license key is applied. The key format is shared across the ApexCharts family (apexgantt, apextree, apexsankey) and is validated offline (no network call).
+
+Apply a key one of three ways:
+
+**1. Application-wide via the chart service** (recommended; the key is applied once before any chart renders):
+```razor
+services.AddApexCharts(e =>
+{
+    e.LicenseKey = "APEX-your-license-key";
+});
+```
+For .NET MAUI use `AddApexChartsMaui(...)` with the same option.
+
+**2. From configuration / environment:**
+```razor
+services.AddApexCharts(e =>
+{
+    e.LicenseKey = builder.Configuration["APEXCHARTS_LICENSE_KEY"];
+});
+```
+
+**3. Per-chart** via the chart options (works without the service, and never causes a first-render flash):
+```razor
+<ApexChart TItem="MyData" Options="@(new ApexChartOptions<MyData> { Chart = new Chart { License = "APEX-your-license-key" } })">
+    ...
+</ApexChart>
+```
+
+You can also apply or change a key at runtime through the service; a late valid key followed by a chart update clears an on-screen watermark without a full re-render:
+```razor
+await ChartService.SetLicenseAsync("APEX-your-license-key");
+```
+
+Without any key, `AddApexCharts()` still works; premium features simply render watermarked.
+
 ## Acknowledgments
 Credits to [@thirstyape](https://github.com/thirstyape) for making production release possible.
 

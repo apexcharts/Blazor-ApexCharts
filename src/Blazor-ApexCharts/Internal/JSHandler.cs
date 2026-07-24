@@ -580,5 +580,61 @@ namespace ApexCharts.Internal
             }
 
         }
+
+        /// <summary>
+        /// Callback from JavaScript when an ink annotation is created.
+        /// Will execute <see cref="ApexChart{TItem}.OnAnnotationCreated"/>.
+        /// </summary>
+        [JSInvokable]
+        public void JSAnnotationCreated(InkAnnotationEventData data)
+            => ChartReference.OnAnnotationCreated.InvokeAsync(data);
+
+        /// <summary>
+        /// Callback from JavaScript when an ink annotation is dragged.
+        /// Will execute <see cref="ApexChart{TItem}.OnAnnotationDragged"/>.
+        /// </summary>
+        [JSInvokable]
+        public void JSAnnotationDragged(InkAnnotationEventData data)
+            => ChartReference.OnAnnotationDragged.InvokeAsync(data);
+
+        /// <summary>
+        /// Callback from JavaScript when an ink annotation is edited.
+        /// Will execute <see cref="ApexChart{TItem}.OnAnnotationEdited"/>.
+        /// </summary>
+        [JSInvokable]
+        public void JSAnnotationEdited(InkAnnotationEventData data)
+            => ChartReference.OnAnnotationEdited.InvokeAsync(data);
+
+        /// <summary>
+        /// Callback from JavaScript when an ink annotation is styled.
+        /// Will execute <see cref="ApexChart{TItem}.OnAnnotationStyled"/>.
+        /// </summary>
+        [JSInvokable]
+        public void JSAnnotationStyled(InkAnnotationEventData data)
+            => ChartReference.OnAnnotationStyled.InvokeAsync(data);
+
+        /// <summary>
+        /// Callback from JavaScript when an ink annotation is deleted.
+        /// Will execute <see cref="ApexChart{TItem}.OnAnnotationDeleted"/>.
+        /// </summary>
+        [JSInvokable]
+        public void JSAnnotationDeleted(InkAnnotationEventData data)
+            => ChartReference.OnAnnotationDeleted.InvokeAsync(data);
+
+        /// <summary>
+        /// Callback from JavaScript when the measure ruler completes a measurement.
+        /// Will execute <see cref="ApexChart{TItem}.OnMeasured"/>.
+        /// </summary>
+        [JSInvokable]
+        public void JSMeasured(MeasuredData data)
+            => ChartReference.OnMeasured.InvokeAsync(data);
+
+        /// <summary>
+        /// Callback from JavaScript when the active storyboard beat changes.
+        /// Will execute <see cref="ApexChart{TItem}.OnBeatChange"/>.
+        /// </summary>
+        [JSInvokable]
+        public void JSBeatChange(BeatChangeData data)
+            => ChartReference.OnBeatChange.InvokeAsync(data);
     }
 }

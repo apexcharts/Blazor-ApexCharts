@@ -1,0 +1,294 @@
+@implements IDisposable
+@inject IJSRuntime JS
+@using Microsoft.JSInterop
+@*
+    ApexCharts v6 scroll-driven storyboard / scrollytelling (premium: shows an APEXCHARTS trial
+    watermark without a license). One live chart tells a five-beat story: the same twelve columns
+    recolor and annotate, and the finale morphs the bars into a donut. Scroll the story column (or
+    use the dots / Prev / Next) to drive the beats; scrolling back up rewinds. StoryboardBindAsync
+    pairs each prose step with a saved view + options payload, and Scroller points the observer at
+    the story column so beats fire as each step crosses its middle.
+*@
+<style>
+    .sbs-card { background: var(--tblr-bg-surface, #fff); border: 1px solid #e4e7f2; border-radius: 12px; padding: 16px; height: 520px; box-sizing: border-box; }
+    .sbs-layout { display: grid; grid-template-columns: minmax(160px, 190px) 1fr; gap: 16px; height: 100%; }
+    .sbs-scroller { height: 100%; overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; }
+    .sbs-steps { margin: 0; padding: 130px 6px 210px; }
+    .sbs-step { min-height: 220px; display: flex; flex-direction: column; justify-content: center; opacity: 0.32; transition: opacity 0.3s ease; }
+    .sbs-step.is-active { opacity: 1; }
+    .sbs-step .sbs-inner { border-left: 3px solid #c7d2fe; background: #fbfcff; border-radius: 0 8px 8px 0; padding: 14px 16px; box-shadow: 0 1px 3px rgba(30,41,59,0.06); }
+    .sbs-step.is-active .sbs-inner { border-left-color: #6366f1; }
+    .sbs-step h5 { margin: 0 0 6px; font-size: 15px; color: #101828; }
+    .sbs-step p { margin: 0; font-size: 13px; line-height: 1.6; color: #4b5563; }
+    .sbs-graphic { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+    .sbs-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+    .sbs-chip { font-family: monospace; font-size: 12px; color: #4338ca; background: #eef2ff; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+    .sbs-nav { display: flex; align-items: center; gap: 8px; }
+    .sbs-btn { padding: 4px 12px; border-radius: 8px; border: 1px solid #d0d5dd; background: #fff; color: #344054; cursor: pointer; font-size: 13px; font-weight: 600; }
+    .sbs-btn:disabled { opacity: 0.45; cursor: default; }
+    .sbs-dot { width: 12px; height: 12px; padding: 0; border-radius: 50%; border: 1px solid #a5b4fc; background: #fff; cursor: pointer; }
+    .sbs-dot.is-active { background: #6366f1; border-color: #6366f1; }
+    @@media (max-width: 760px) {
+        .sbs-card { height: auto; }
+        .sbs-layout { grid-template-columns: 1fr; gap: 14px; }
+        .sbs-graphic { order: -1; }
+        .sbs-scroller { height: 240px; border-top: 1px solid #eef0f6; }
+        .sbs-steps { padding: 70px 6px 100px; }
+        .sbs-step { min-height: 170px; }
+    }
+</style>
+
+<div class="sbs-card">
+    <div class="sbs-layout">
+            <div class="sbs-scroller" id="sbs-scroller">
+                <div class="sbs-steps">
+                    <section class="sbs-step @Active(0)" id="sbs-step-1">
+                        <div class="sbs-inner">
+                            <h5>One year of revenue</h5>
+                            <p>Fiscal 2025, month by month: 341 k$ across twelve columns. A slow start and a strong finish, with two turning points hiding in plain sight.</p>
+                        </div>
+                    </section>
+                    <section class="sbs-step @Active(1)" id="sbs-step-2">
+                        <div class="sbs-inner">
+                            <h5>March: the outage</h5>
+                            <p>A bad deploy took sign-ups offline for two days, and March is the only month that broke the climb. The spotlight narrows.</p>
+                        </div>
+                    </section>
+                    <section class="sbs-step @Active(2)" id="sbs-step-3">
+                        <div class="sbs-inner">
+                            <h5>May: v2 ships</h5>
+                            <p>The hinge of the year. From May on, every month tops the last, and the slope never looks back.</p>
+                        </div>
+                    </section>
+                    <section class="sbs-step @Active(3)" id="sbs-step-4">
+                        <div class="sbs-inner">
+                            <h5>The quarters take shape</h5>
+                            <p>Same columns, new grouping. Each quarter beats the last by half again or more: 35 k$ in Q1 grows to 157 k$ by Q4.</p>
+                        </div>
+                    </section>
+                    <section class="sbs-step @Active(4)" id="sbs-step-5">
+                        <div class="sbs-inner">
+                            <h5>The year in one circle</h5>
+                            <p>The twelve months curl into a ring, each column becoming its own slice. The quarter colors survive the change of shape.</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="sbs-graphic">
+                <ApexChart @ref="chart" TItem="Month" Options="options" OnBeatChange="OnBeat" OnRendered="OnChartRendered">
+                    <ApexPointSeries TItem="Month"
+                                     Items="months"
+                                     Name="Revenue (k$)"
+                                     SeriesType="SeriesType.Bar"
+                                     XValue="@(m => m.Name)"
+                                     YValue="@(m => m.Value)" />
+                </ApexChart>
+
+                <div class="sbs-head">
+                    <div>
+                        <strong>FY25 revenue, monthly</strong>
+                        <span class="sbs-chip ms-1">Beat @(activeBeat + 1) of @BeatCount</span>
+                    </div>
+                    <div class="sbs-nav">
+                        <button class="sbs-btn" @onclick="Prev" disabled="@(activeBeat == 0)">Prev</button>
+                        @for (var i = 0; i < BeatCount; i++)
+                        {
+                            var beat = i;
+                            <button class="sbs-dot @Active(beat)" @onclick="() => GoTo(beat)" aria-label="@($"Go to beat {beat + 1}")"></button>
+                        }
+                        <button class="sbs-btn" @onclick="Next" disabled="@(activeBeat == BeatCount - 1)">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@code {
+    private const int BeatCount = 5;
+
+    private ApexChart<Month> chart;
+    private ApexChartOptions<Month> options { get; set; } = new();
+    private List<Month> months { get; set; } = new();
+    private int activeBeat;
+    private bool bound;
+
+    private static readonly int[] REV = { 12, 14, 9, 15, 18, 22, 26, 31, 37, 44, 52, 61 };
+    private static readonly string[] MONTHS = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
+    private const string Indigo = "#818cf8";
+    private const string Fade = "#e3e8f4";
+    private const string Red = "#f87171";
+    private static readonly string[] QColors = { "#818cf8", "#7dd3fc", "#4ade80", "#fbbf24" };
+
+    protected override void OnInitialized()
+    {
+        for (var i = 0; i < MONTHS.Length; i++)
+        {
+            months.Add(new Month(MONTHS[i], REV[i]));
+        }
+
+        options.Chart = new Chart
+            {
+                Height = 320,
+                Toolbar = new Toolbar { Show = false },
+                Zoom = new Zoom { Enabled = false },
+                Animations = new Animations { Speed = 700, DynamicAnimation = new DynamicAnimation { Speed = 500 } }
+            };
+        options.PlotOptions = new PlotOptions { Bar = new PlotOptionsBar { Distributed = true, ColumnWidth = "58%", BorderRadius = 3 } };
+        options.Colors = ColorsAll();
+        options.Legend = new Legend { Show = false };
+        options.Grid = new Grid { BorderColor = "#eef0f6" };
+        // Explicit month categories so the axis stays categorical across beat updates; the beats
+        // swap colors and (for the finale) the series/labels, but never the categories, so the
+        // "Mar"/"May" xaxis annotations keep mapping to the right column.
+        options.Xaxis = new XAxis { Categories = MONTHS };
+    }
+
+    // Bind once the chart's JS instance actually exists. OnRendered fires after the wrapper has
+    // created the ApexCharts instance, so getChartByID resolves and the beats bind (binding from the
+    // parent's OnAfterRender races the child's render and silently binds zero beats).
+    private async Task OnChartRendered()
+    {
+        if (bound) { return; }
+        bound = true;
+        try
+        {
+            var count = await chart.StoryboardBindAsync(BuildStoryboard());
+            if (count > 0)
+            {
+                await chart.StoryboardGoToAsync(0);
+            }
+        }
+        catch
+        {
+            // Binding requires the premium storyboard module; ignore failures in trial mode.
+        }
+    }
+
+    private void OnBeat(BeatChangeData data)
+    {
+        activeBeat = data.Index ?? activeBeat;
+        StateHasChanged();
+    }
+
+    private async Task GoTo(int index)
+    {
+        index = Math.Clamp(index, 0, BeatCount - 1);
+        await chart.StoryboardGoToAsync(index);
+        await JS.InvokeVoidAsync("blazor_apexchart.scrollStoryToStep", "#sbs-scroller", $"#sbs-step-{index + 1}");
+    }
+
+    private Task Prev() => GoTo(activeBeat - 1);
+    private Task Next() => GoTo(activeBeat + 1);
+
+    private string Active(int index) => activeBeat == index ? "is-active" : string.Empty;
+
+    // ---- storyboard beats: same twelve marks; emphasis by color + annotations; finale morphs to donut ----
+
+    private StoryboardOptions BuildStoryboard() => new()
+        {
+            Scroller = "#sbs-scroller",
+            Beats = new List<StoryboardBeat>
+            {
+                new() { Selector = "#sbs-step-1", Key = "1", View = EmptyView(), Options = ColumnOptions(ColorsAll().ToArray()), Announce = "Overview: fiscal 2025 revenue, month by month" },
+                new() { Selector = "#sbs-step-2", Key = "2", View = AnnotationView("Mar", "The outage", Red, "#fca5a5", "#7f1d1d", "#fee2e2"), Options = ColumnOptions(ColorsOutage()), Announce = "Spotlight on March: the outage month" },
+                new() { Selector = "#sbs-step-3", Key = "3", View = AnnotationView("May", "v2 ships", "#4ade80", "#86efac", "#14532d", "#dcfce7"), Options = ColumnOptions(ColorsV2()), Announce = "Spotlight from May on: v2 changes the slope" },
+                new() { Selector = "#sbs-step-4", Key = "4", View = EmptyView(), Options = ColumnOptions(ColorsQuarters()), Announce = "The months grouped into quarters by color" },
+                new() { Selector = "#sbs-step-5", Key = "5", View = EmptyView(), Options = DonutOptions(), Announce = "The twelve months as a donut ring" }
+            }
+        };
+
+    private static Dictionary<string, object> EmptyView() => new();
+
+    private static Dictionary<string, object> AnnotationView(string x, string text, string border, string labelBorder, string color, string background) => new()
+        {
+            ["annotations"] = new Dictionary<string, object>
+            {
+                ["static"] = new Dictionary<string, object>
+                {
+                    ["xaxis"] = new object[]
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["x"] = x,
+                            ["strokeDashArray"] = 4,
+                            ["borderColor"] = border,
+                            ["label"] = new Dictionary<string, object>
+                            {
+                                ["text"] = text,
+                                ["borderColor"] = labelBorder,
+                                ["style"] = new Dictionary<string, object> { ["color"] = color, ["background"] = background }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+    private static Dictionary<string, object> ColumnOptions(string[] colors) => new()
+        {
+            ["chart"] = new Dictionary<string, object> { ["type"] = "bar" },
+            ["series"] = new object[] { new Dictionary<string, object> { ["name"] = "Revenue (k$)", ["data"] = REV } },
+            ["labels"] = new string[0],
+            ["stroke"] = new Dictionary<string, object> { ["width"] = 0 },
+            ["plotOptions"] = new Dictionary<string, object> { ["bar"] = new Dictionary<string, object> { ["columnWidth"] = "58%", ["borderRadius"] = 3, ["distributed"] = true } },
+            ["legend"] = new Dictionary<string, object> { ["show"] = false },
+            ["colors"] = colors
+        };
+
+    private static Dictionary<string, object> DonutOptions() => new()
+        {
+            ["chart"] = new Dictionary<string, object> { ["type"] = "donut" },
+            ["series"] = REV,
+            ["labels"] = MONTHS,
+            ["colors"] = ColorsQuarters(),
+            ["stroke"] = new Dictionary<string, object> { ["width"] = 2, ["colors"] = new[] { "#fff" } },
+            ["legend"] = new Dictionary<string, object> { ["show"] = false },
+            ["plotOptions"] = new Dictionary<string, object>
+            {
+                ["pie"] = new Dictionary<string, object>
+                {
+                    ["expandOnClick"] = false,
+                    ["donut"] = new Dictionary<string, object>
+                    {
+                        ["size"] = "68%",
+                        ["labels"] = new Dictionary<string, object>
+                        {
+                            ["show"] = true,
+                            ["total"] = new Dictionary<string, object> { ["show"] = true, ["label"] = "FY25 revenue" }
+                        }
+                    }
+                }
+            }
+        };
+
+    private static List<string> ColorsAll() => Enumerable.Repeat(Indigo, 12).ToList();
+
+    private static string[] ColorsOutage()
+    {
+        var c = new string[12];
+        for (var i = 0; i < 12; i++) { c[i] = i == 2 ? Red : (i >= 1 && i <= 3 ? Indigo : Fade); }
+        return c;
+    }
+
+    private static string[] ColorsV2()
+    {
+        var c = new string[12];
+        for (var i = 0; i < 12; i++) { c[i] = i >= 4 ? Indigo : Fade; }
+        return c;
+    }
+
+    private static string[] ColorsQuarters()
+    {
+        var c = new string[12];
+        for (var i = 0; i < 12; i++) { c[i] = QColors[i / 3]; }
+        return c;
+    }
+
+    public void Dispose()
+    {
+        try { _ = chart?.StoryboardUnbindAsync(); } catch { /* disposing */ }
+    }
+
+    private record Month(string Name, int Value);
+}

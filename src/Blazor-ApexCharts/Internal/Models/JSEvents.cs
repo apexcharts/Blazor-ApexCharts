@@ -21,5 +21,13 @@
         public bool HasBeforeZoom { get; init; }
         public bool HasBeforeResetZoom { get; init; }
         public bool HasZoomed { get; init; }
+        // v6 premium feature events (ink / measure / storyboard)
+        public bool HasAnnotationCreated { get; init; }
+        public bool HasAnnotationDragged { get; init; }
+        public bool HasAnnotationEdited { get; init; }
+        public bool HasAnnotationStyled { get; init; }
+        public bool HasAnnotationDeleted { get; init; }
+        public bool HasMeasured { get; init; }
+        public bool HasBeatChange { get; init; }
     }
 }

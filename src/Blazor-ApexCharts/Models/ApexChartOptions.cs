@@ -970,6 +970,18 @@ namespace ApexCharts
         /// </summary>
         public string Id { get; set; }
 
+        /// <summary>
+        /// License key that unlocks the gated premium features (history, perspectives, link/crossfilter,
+        /// ink, measure, contextMenu, storyboard). Without a valid key those features still work in trial
+        /// mode but the chart shows an <c>APEXCHARTS</c> watermark. The key format is shared across the
+        /// ApexCharts family (apexgantt, apextree, apexsankey) and is validated offline (no network call).
+        /// You can also set a key application-wide via <see cref="ApexChartsServiceOptions.LicenseKey"/>.
+        /// </summary>
+        /// <remarks>
+        /// <see href="https://apexcharts.com/docs/">JavaScript Reference</see>
+        /// </remarks>
+        public string License { get; set; }
+
         /// <inheritdoc cref="ApexCharts.ChartLocale" />
         public List<ChartLocale> Locales { get; set; }
 
@@ -1052,6 +1064,44 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.DataReducer" />
         public DataReducer DataReducer { get; set; }
+
+        /// <summary>
+        /// Rendering backend for the series layer (ApexCharts v6.0 "Strata" hybrid SVG + canvas renderer).
+        /// <see cref="ApexCharts.Renderer.Svg"/> (default) keeps everything as SVG; <see cref="ApexCharts.Renderer.Canvas"/>
+        /// paints the series (and large heatmaps) to a canvas; <see cref="ApexCharts.Renderer.Auto"/> switches to canvas
+        /// above <see cref="RendererThreshold"/>. Axes, grid, tooltips, annotations and exports stay SVG.
+        /// </summary>
+        public Renderer? Renderer { get; set; }
+
+        /// <summary>
+        /// Data-point count above which <see cref="ApexCharts.Renderer.Auto"/> switches the series layer to canvas.
+        /// Added in ApexCharts v6.0.
+        /// </summary>
+        public double? RendererThreshold { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ChartStreaming" />
+        public ChartStreaming Streaming { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.Pan" />
+        public Pan Pan { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ChartHistory" />
+        public ChartHistory History { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ChartPerspectives" />
+        public ChartPerspectives Perspectives { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ChartLink" />
+        public ChartLink Link { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ChartInk" />
+        public ChartInk Ink { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ChartMeasure" />
+        public ChartMeasure Measure { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ChartContextMenu" />
+        public ChartContextMenu ContextMenu { get; set; }
     }
 
     /// <summary>
@@ -1080,6 +1130,321 @@ namespace ApexCharts
         /// Only reduce a series when its point count exceeds this threshold.
         /// </summary>
         public double? Threshold { get; set; }
+    }
+
+    /// <summary>
+    /// Real-time streaming options (ApexCharts v6.0). Rolling-window updates scroll at constant velocity and the
+    /// window is bounded to <see cref="MaxPoints"/> so long-running feeds do not grow memory without bound.
+    /// </summary>
+    public class ChartStreaming
+    {
+        /// <summary>
+        /// Enable constant-velocity streaming scroll behaviour for continuing updates (appendData / shifted updateSeries).
+        /// </summary>
+        public bool? Enabled { get; set; }
+
+        /// <summary>
+        /// Maximum number of points to retain per series; older points are trimmed as new data arrives.
+        /// </summary>
+        public double? MaxPoints { get; set; }
+    }
+
+    /// <summary>
+    /// Panning options (ApexCharts v6.0). Controls the kinetic inertia applied after a one-finger flick on touch devices.
+    /// </summary>
+    public class Pan
+    {
+        /// <summary>
+        /// Enable kinetic inertia (momentum) after a flick gesture. On by default in v6.
+        /// </summary>
+        public bool? Inertia { get; set; }
+
+        /// <summary>
+        /// Friction coefficient controlling how quickly inertial panning decelerates.
+        /// </summary>
+        public double? Friction { get; set; }
+    }
+
+    /// <summary>
+    /// History / undo-redo options (ApexCharts v6.0 "Rewind"). Records zooms, series toggles, option changes and
+    /// annotation edits into a command journal so they can be undone and redone.
+    /// This is a gated premium feature: without a valid license the chart shows an <c>APEXCHARTS</c> watermark in trial mode.
+    /// </summary>
+    /// <remarks>
+    /// Drive it from code via <see cref="ApexChart{TItem}.UndoAsync"/>, <see cref="ApexChart{TItem}.RedoAsync"/> and
+    /// <see cref="ApexChart{TItem}.JumpHistoryAsync"/>. See <see cref="Chart.License"/> and
+    /// <see cref="ApexChartsServiceOptions.LicenseKey"/> for licensing.
+    /// </remarks>
+    public class ChartHistory
+    {
+        /// <summary>Enable the undo/redo command journal.</summary>
+        public bool? Enabled { get; set; }
+
+        /// <summary>Maximum number of steps retained in the journal.</summary>
+        public double? MaxDepth { get; set; }
+
+        /// <summary>High-frequency gestures within this many milliseconds coalesce into a single undoable step.</summary>
+        public double? CoalesceMs { get; set; }
+
+        /// <summary>Enable the built-in keyboard shortcuts (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z).</summary>
+        public bool? Keyboard { get; set; }
+    }
+
+    /// <summary>
+    /// Perspectives options (ApexCharts v6.0). A perspective serializes the exact view (zoom window, hidden series,
+    /// selection, annotations, theme) into a compact token you can put in a URL and restore anywhere.
+    /// This is a gated premium feature (watermark in trial mode).
+    /// </summary>
+    /// <remarks>
+    /// Capture/apply from code via <see cref="ApexChart{TItem}.CapturePerspectiveAsync"/>,
+    /// <see cref="ApexChart{TItem}.ApplyPerspectiveAsync"/>, <see cref="ApexChart{TItem}.PerspectiveToUrlAsync"/>.
+    /// </remarks>
+    public class ChartPerspectives
+    {
+        /// <summary>Explicit list of option paths to include when serializing a perspective.</summary>
+        public List<string> SerializeOptions { get; set; }
+    }
+
+    /// <summary>
+    /// Linked-views / crossfilter options (ApexCharts v6.0). In highlight mode, brushing one chart dims the
+    /// non-matching marks in the others (charts sharing the same <see cref="Chart.Group"/>); filter mode uses the
+    /// crossfilter engine. This is a gated premium feature (watermark in trial mode).
+    /// </summary>
+    public class ChartLink
+    {
+        /// <summary>Enable linking/crossfilter coordination for this chart.</summary>
+        public bool? Enabled { get; set; }
+
+        /// <summary>Coordination mode: highlight (dim non-matching marks, no redraw) or filter (crossfilter engine).</summary>
+        public LinkMode? Mode { get; set; }
+
+        /// <summary>Opacity applied to dimmed (non-matching) marks in highlight mode.</summary>
+        public double? DimOpacity { get; set; }
+
+        /// <summary>Crossfilter group id shared by the coordinated charts.</summary>
+        public string Id { get; set; }
+
+        /// <summary>Dimension kind for the crossfilter target.</summary>
+        public LinkType? Type { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ChartLinkBins" />
+        public ChartLinkBins Bins { get; set; }
+
+        /// <summary>Ordering of categorical dimension values.</summary>
+        public LinkOrder? Order { get; set; }
+
+        /// <summary>Series name to use for the reduced/aggregated crossfilter series.</summary>
+        public string SeriesName { get; set; }
+
+        /// <summary>
+        /// JS accessor function <c>(row) =&gt; value</c> selecting the dimension value from each record. Provide the
+        /// function body as a string; it is evaluated on the client.
+        /// </summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string Dimension { get; set; }
+
+        /// <summary>
+        /// JS reducer, e.g. <c>(rows) =&gt; rows.length</c>. Provide the function body as a string; it is evaluated on the client.
+        /// </summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string Reduce { get; set; }
+    }
+
+    /// <summary>
+    /// Binning options for a range-type <see cref="ChartLink"/> crossfilter dimension (histogram).
+    /// </summary>
+    public class ChartLinkBins
+    {
+        /// <summary>Fixed bin width.</summary>
+        public double? Width { get; set; }
+
+        /// <summary>Number of bins.</summary>
+        public double? Count { get; set; }
+
+        /// <summary>Explicit bin edge thresholds.</summary>
+        public List<double> Thresholds { get; set; }
+    }
+
+    /// <summary>
+    /// Ink layer options (ApexCharts v6.0). Makes annotations draggable and resizable with click-to-create, snap to
+    /// gridlines and a floating editor. This is a gated premium feature (watermark in trial mode). Ink edits raise the
+    /// <see cref="ApexChart{TItem}.OnAnnotationDragged"/>, <see cref="ApexChart{TItem}.OnAnnotationEdited"/>,
+    /// <see cref="ApexChart{TItem}.OnAnnotationStyled"/> and <see cref="ApexChart{TItem}.OnAnnotationDeleted"/> events.
+    /// </summary>
+    public class ChartInk
+    {
+        /// <summary>Enable direct-manipulation annotation authoring.</summary>
+        public bool? Enabled { get; set; }
+
+        /// <summary>Show the color palette in the floating editor.</summary>
+        public bool? Palette { get; set; }
+
+        /// <summary>Snap dragged/created annotations to gridlines.</summary>
+        public bool? Snap { get; set; }
+
+        /// <summary>Preset note colors offered in the editor.</summary>
+        public List<string> NoteColors { get; set; }
+    }
+
+    /// <summary>
+    /// Measure / delta ruler options (ApexCharts v6.0). Hold a key and drag to read the change, percent, range and
+    /// slope between two points. This is a gated premium feature (watermark in trial mode). Drive it from code via
+    /// <see cref="ApexChart{TItem}.StartMeasureAsync"/>, <see cref="ApexChart{TItem}.StopMeasureAsync"/> and
+    /// <see cref="ApexChart{TItem}.ClearMeasuresAsync"/>; completed measurements raise <see cref="ApexChart{TItem}.OnMeasured"/>.
+    /// </summary>
+    public class ChartMeasure
+    {
+        /// <summary>Enable the measure ruler.</summary>
+        public bool? Enabled { get; set; }
+
+        /// <summary>Ruler mode: a finance-style vertical span, or a free diagonal ruler between two arbitrary points.</summary>
+        public MeasureMode? Mode { get; set; }
+
+        /// <summary>Keyboard key held to arm the ruler drag (e.g. <c>"m"</c>).</summary>
+        public string Key { get; set; }
+
+        /// <summary>Pin the ruler as a data-anchored overlay on release (re-projects on zoom/resize).</summary>
+        public bool? PinOnRelease { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.MeasureColors" />
+        public MeasureColors Colors { get; set; }
+
+        /// <summary>Show the shaded band (span mode).</summary>
+        public bool? Band { get; set; }
+
+        /// <summary>Show the guide lines.</summary>
+        public bool? Guides { get; set; }
+
+        /// <summary>Show the end markers.</summary>
+        public bool? Markers { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.MeasureFormat" />
+        public MeasureFormat Format { get; set; }
+
+        /// <summary>
+        /// JS function returning the ruler readout label(s). Provide the function body as a string; it is evaluated on the client.
+        /// </summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string Label { get; set; }
+    }
+
+    /// <summary>
+    /// Colors used by the measure ruler.
+    /// </summary>
+    public class MeasureColors
+    {
+        /// <summary>Color used when the change is positive.</summary>
+        public string Up { get; set; }
+
+        /// <summary>Color used when the change is negative.</summary>
+        public string Down { get; set; }
+
+        /// <summary>Color used when the change is neutral.</summary>
+        public string Neutral { get; set; }
+
+        /// <summary>Color of the guide lines.</summary>
+        public string Guide { get; set; }
+    }
+
+    /// <summary>
+    /// Value formatters for the measure ruler readout. Each is a JS function body provided as a string and evaluated on the client.
+    /// </summary>
+    public class MeasureFormat
+    {
+        /// <summary>Formats the x value, <c>(x) =&gt; string</c>.</summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string X { get; set; }
+
+        /// <summary>Formats the y value, <c>(y) =&gt; string</c>.</summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string Y { get; set; }
+
+        /// <summary>Formats the percent value, <c>(pct) =&gt; string</c>.</summary>
+        [JsonConverter(typeof(FunctionStringConverter))]
+        public string Percent { get; set; }
+    }
+
+    /// <summary>
+    /// Context menu (radial actions) options (ApexCharts v6.0). Right-click or long-press a data point for verbs that
+    /// act at that exact point. This is a gated premium feature (watermark in trial mode).
+    /// </summary>
+    public class ChartContextMenu
+    {
+        /// <summary>Enable the point context menu.</summary>
+        public bool? Enabled { get; set; }
+
+        /// <summary>
+        /// Menu items: built-in verbs (<c>annotate</c>, <c>xline</c>, <c>yline</c>, <c>measure</c>) and/or custom items.
+        /// </summary>
+        public List<ContextMenuItem> Items { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ContextMenuLabels" />
+        public ContextMenuLabels Labels { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.ContextMenuLine" />
+        public ContextMenuLine Line { get; set; }
+    }
+
+    /// <summary>
+    /// A context-menu item. Set only <see cref="Name"/> to reference a built-in verb (<c>annotate</c>, <c>xline</c>,
+    /// <c>yline</c>, <c>measure</c>); set the other properties to define a custom item.
+    /// </summary>
+    [JsonConverter(typeof(ContextMenuItemConverter))]
+    public class ContextMenuItem
+    {
+        /// <summary>Convenience factory for a built-in item.</summary>
+        public static ContextMenuItem BuiltIn(string name) => new() { Name = name };
+
+        /// <summary>Built-in verb name (<c>annotate</c>, <c>xline</c>, <c>yline</c>, <c>measure</c>). Serializes as a bare string.</summary>
+        public string Name { get; set; }
+
+        /// <summary>Custom item id.</summary>
+        public string Id { get; set; }
+
+        /// <summary>Custom item label.</summary>
+        public string Label { get; set; }
+
+        /// <summary>Custom item icon (SVG/HTML string).</summary>
+        public string Icon { get; set; }
+
+        /// <summary>
+        /// JS click handler <c>(ctx, { x, y, seriesIndex, dataPointIndex }) =&gt; void</c> for a custom item. Provide
+        /// the function body as a string; it is evaluated on the client.
+        /// </summary>
+        public string OnClick { get; set; }
+    }
+
+    /// <summary>
+    /// Locale labels for the built-in context-menu verbs.
+    /// </summary>
+    public class ContextMenuLabels
+    {
+        /// <summary>Label for the <c>annotate</c> verb.</summary>
+        public string Annotate { get; set; }
+
+        /// <summary>Label for the <c>xline</c> verb.</summary>
+        public string Xline { get; set; }
+
+        /// <summary>Label for the <c>yline</c> verb.</summary>
+        public string Yline { get; set; }
+
+        /// <summary>Label for the <c>measure</c> verb.</summary>
+        public string Measure { get; set; }
+    }
+
+    /// <summary>
+    /// Styling for lines created by the context-menu <c>xline</c>/<c>yline</c> verbs.
+    /// </summary>
+    public class ContextMenuLine
+    {
+        /// <summary>Default label text for a created line.</summary>
+        public string Text { get; set; }
+
+        /// <summary>Dash pattern for a created line.</summary>
+        public double? StrokeDashArray { get; set; }
+
+        /// <summary>Color for a created line.</summary>
+        public string Color { get; set; }
     }
 
     /// <summary>
@@ -1250,6 +1615,12 @@ namespace ApexCharts
         /// Speed at which dynamic animation runs whenever data changes.
         /// </summary>
         public double? Speed { get; set; }
+
+        /// <summary>
+        /// Easing curve applied specifically to data-change (dynamic) animations, overriding <see cref="Animations.Easing"/>
+        /// for updates. Added in ApexCharts v6.0 ("Cadence").
+        /// </summary>
+        public Easing? Easing { get; set; }
     }
 
     /// <summary>
@@ -1649,10 +2020,17 @@ namespace ApexCharts
         public object Zoomin { get; set; } = true;
 
         /// <summary>
-        /// Show the zoom-out icon which zooms out 50% from the visible chart area. 
+        /// Show the zoom-out icon which zooms out 50% from the visible chart area.
         /// If you want to display a custom icon for zoom-out, you can provide HTML string in this property.
         /// </summary>
         public object Zoomout { get; set; } = true;
+
+        /// <summary>
+        /// Show the measure / delta ruler icon in the toolbar (ApexCharts v6.1). The button only appears when the
+        /// measure feature is enabled on the chart. Accepts <c>true</c>/<c>false</c> or a custom SVG/HTML string,
+        /// like the other tools. Measure is a gated premium feature (shows a watermark in trial mode).
+        /// </summary>
+        public object Measure { get; set; } = true;
     }
 
     /// <summary>
@@ -1744,6 +2122,12 @@ namespace ApexCharts
         /// Not currently documented in the apexchart-js documentation.
         /// </remarks>
         public bool? AllowMouseWheelZoom { get; set; }
+
+        /// <summary>
+        /// Enable two-finger pinch-to-zoom on touch devices (ApexCharts v6.0, on by default). Set to
+        /// <c>false</c> to disable the native mobile pinch gesture.
+        /// </summary>
+        public bool? Pinch { get; set; }
     }
 
     /// <summary>
@@ -1858,6 +2242,36 @@ namespace ApexCharts
         /// </summary>
         [JsonConverter(typeof(FunctionStringConverter))]
         public string Formatter { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.DataLabelsAnimate" />
+        public DataLabelsAnimate Animate { get; set; }
+
+        /// <inheritdoc cref="ApexCharts.DataLabelsCountUp" />
+        public DataLabelsCountUp CountUp { get; set; }
+    }
+
+    /// <summary>
+    /// Bar-chart-race option (ApexCharts v6.4). When enabled, value labels ride to their bar's new position as bars
+    /// re-rank during a reorder update. Applies to bar and column charts; off by default.
+    /// </summary>
+    public class DataLabelsAnimate
+    {
+        /// <summary>
+        /// Animate value labels to the new rank alongside the bars.
+        /// </summary>
+        public bool? Enabled { get; set; }
+    }
+
+    /// <summary>
+    /// Bar-chart-race option (ApexCharts v6.4). When enabled, the value label tweens (counts up/down) from its previous
+    /// value to the new one during a reorder update. Applies to bar and column charts; off by default.
+    /// </summary>
+    public class DataLabelsCountUp
+    {
+        /// <summary>
+        /// Count the value label up or down from its previous value.
+        /// </summary>
+        public bool? Enabled { get; set; }
     }
 
     /// <summary>
@@ -4832,6 +5246,18 @@ namespace ApexCharts
         /// Available palettes – palette1 to palette10
         /// </summary>
         public PaletteType? Palette { get; set; }
+
+        /// <summary>
+        /// Follow the operating system's light/dark and contrast preferences with no JS (ApexCharts v6.0 "Facet").
+        /// Set to <see cref="ThemeFollow.Os"/> to opt in; leave unset to not follow the OS.
+        /// </summary>
+        public ThemeFollow? Follow { get; set; }
+
+        /// <summary>
+        /// Name of a registered brand theme to apply (ApexCharts v6.0 "Facet"). Themes are registered in JavaScript
+        /// via <c>ApexCharts.registerTheme(name, def)</c>.
+        /// </summary>
+        public string Name { get; set; }
     }
 
     /// <summary>
@@ -6097,7 +6523,19 @@ namespace ApexCharts
         Easein,
         Easeinout,
         Easeout,
-        Linear
+        Linear,
+        // Pluggable named easing curves added in ApexCharts v6.0 ("Cadence").
+        EaseInSine,
+        EaseOutSine,
+        EaseInOutSine,
+        EaseInQuad,
+        EaseOutQuad,
+        EaseInOutQuad,
+        EaseInCubic,
+        EaseOutCubic,
+        EaseInOutCubic,
+        EaseOutBack,
+        EaseInOutBack
     };
 
     /// <summary>
@@ -6117,7 +6555,82 @@ namespace ApexCharts
     {
         Pan,
         Selection,
-        Zoom
+        Zoom,
+        /// <summary>Pre-select the measure/delta ruler tool on load (ApexCharts v6.1). Requires the measure feature to be enabled on the chart.</summary>
+        Measure
+    };
+
+    /// <summary>
+    /// Rendering backend for the series layer (ApexCharts v6.0 "Strata").
+    /// </summary>
+    public enum Renderer
+    {
+        /// <summary>Always render as SVG (default).</summary>
+        Svg,
+        /// <summary>Render the series (and large heatmaps) to a canvas.</summary>
+        Canvas,
+        /// <summary>Render as SVG below <see cref="Chart.RendererThreshold"/>, switching to canvas above it.</summary>
+        Auto
+    };
+
+    /// <summary>
+    /// Operating-system preference the theme should follow (ApexCharts v6.0 "Facet"). Leave unset to not follow the OS.
+    /// </summary>
+    public enum ThemeFollow
+    {
+        /// <summary>Follow the operating system's light/dark and contrast preferences.</summary>
+        Os
+    };
+
+    /// <summary>
+    /// Measure ruler mode (ApexCharts v6.0).
+    /// </summary>
+    public enum MeasureMode
+    {
+        /// <summary>Finance-style vertical band with a change/percent/range readout.</summary>
+        Span,
+        /// <summary>Diagonal ruler between two arbitrary points.</summary>
+        Free
+    };
+
+    /// <summary>
+    /// Linked-views coordination mode (ApexCharts v6.0).
+    /// </summary>
+    public enum LinkMode
+    {
+        /// <summary>Dim non-matching marks in the other charts (no redraw).</summary>
+        Highlight,
+        /// <summary>Use the crossfilter engine to filter the data.</summary>
+        Filter
+    };
+
+    /// <summary>
+    /// Crossfilter dimension kind for a linked view (ApexCharts v6.0).
+    /// </summary>
+    public enum LinkType
+    {
+        /// <summary>Categorical click-filter dimension.</summary>
+        Category,
+        /// <summary>Numeric range (histogram) dimension.</summary>
+        Range,
+        /// <summary>2D matrix (heatmap) target.</summary>
+        Matrix
+    };
+
+    /// <summary>
+    /// Ordering of categorical crossfilter dimension values (ApexCharts v6.0).
+    /// </summary>
+    public enum LinkOrder
+    {
+        /// <summary>Preserve first-seen order.</summary>
+        [EnumMember(Value = "first-seen")]
+        FirstSeen,
+        /// <summary>Ascending.</summary>
+        [EnumMember(Value = "asc")]
+        Asc,
+        /// <summary>Descending.</summary>
+        [EnumMember(Value = "desc")]
+        Desc
     };
 
     /// <summary>

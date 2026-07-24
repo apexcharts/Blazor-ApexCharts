@@ -344,6 +344,49 @@ namespace ApexCharts
 
 
         /// <summary>
+        /// Fires when a draggable (ink) annotation is created (ApexCharts v6.0). Requires <see cref="ChartInk.Enabled"/>
+        /// and is a gated premium feature.
+        /// </summary>
+        [Parameter] public EventCallback<InkAnnotationEventData> OnAnnotationCreated { get; set; }
+
+        /// <summary>
+        /// Fires when a draggable (ink) annotation is dragged (ApexCharts v6.0). Requires <see cref="ChartInk.Enabled"/>
+        /// and is a gated premium feature.
+        /// </summary>
+        [Parameter] public EventCallback<InkAnnotationEventData> OnAnnotationDragged { get; set; }
+
+        /// <summary>
+        /// Fires when a draggable (ink) annotation's text is edited (ApexCharts v6.0). Requires <see cref="ChartInk.Enabled"/>
+        /// and is a gated premium feature.
+        /// </summary>
+        [Parameter] public EventCallback<InkAnnotationEventData> OnAnnotationEdited { get; set; }
+
+        /// <summary>
+        /// Fires when a draggable (ink) annotation is restyled (ApexCharts v6.0). Requires <see cref="ChartInk.Enabled"/>
+        /// and is a gated premium feature.
+        /// </summary>
+        [Parameter] public EventCallback<InkAnnotationEventData> OnAnnotationStyled { get; set; }
+
+        /// <summary>
+        /// Fires when a draggable (ink) annotation is deleted (ApexCharts v6.0). Requires <see cref="ChartInk.Enabled"/>
+        /// and is a gated premium feature.
+        /// </summary>
+        [Parameter] public EventCallback<InkAnnotationEventData> OnAnnotationDeleted { get; set; }
+
+        /// <summary>
+        /// Fires when the measure ruler completes a measurement (ApexCharts v6.0). Requires <see cref="ChartMeasure.Enabled"/>
+        /// and is a gated premium feature.
+        /// </summary>
+        [Parameter] public EventCallback<MeasuredData> OnMeasured { get; set; }
+
+        /// <summary>
+        /// Fires when the active storyboard beat changes (ApexCharts v6.0). Requires a bound storyboard
+        /// (<see cref="StoryboardBindAsync"/>) and is a gated premium feature.
+        /// </summary>
+        [Parameter] public EventCallback<BeatChangeData> OnBeatChange { get; set; }
+
+
+        /// <summary>
         /// A custom function to execute for generating Y-axis labels. Only supported in Blazor WebAssembly!
         /// </summary>
         /// <remarks>
@@ -428,6 +471,7 @@ namespace ApexCharts
 
                 if (chartService != null)
                 {
+                    await chartService.InitializeLicenseAsync();
                     await chartService.GlobalOptionsInitializedAsync();
                 }
 
@@ -1066,6 +1110,157 @@ namespace ApexCharts
             await InvokeVoidJsAsync("blazor_apexchart.highlightSeries", Options.Chart.Id, seriesName);
         }
 
+        // ===== v6 premium feature methods (gated; watermark in trial mode) =====
+
+        /// <summary>
+        /// Undo the last recorded action (ApexCharts v6.0 "Rewind"). Requires <see cref="ChartHistory.Enabled"/>.
+        /// </summary>
+        public virtual async Task UndoAsync()
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.undo", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Redo the last undone action (ApexCharts v6.0 "Rewind"). Requires <see cref="ChartHistory.Enabled"/>.
+        /// </summary>
+        public virtual async Task RedoAsync()
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.redo", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Jump to a specific entry in the history journal (ApexCharts v6.0 "Rewind"). Requires <see cref="ChartHistory.Enabled"/>.
+        /// </summary>
+        /// <param name="historyId">Id of the history entry to jump to.</param>
+        public virtual async Task JumpHistoryAsync(string historyId)
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.jumpHistory", Options.Chart.Id, historyId);
+        }
+
+        /// <summary>
+        /// Arm the measure / delta ruler (ApexCharts v6.0). Requires <see cref="ChartMeasure.Enabled"/>.
+        /// </summary>
+        public virtual async Task StartMeasureAsync()
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.startMeasure", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Disarm the measure / delta ruler (ApexCharts v6.0). Requires <see cref="ChartMeasure.Enabled"/>.
+        /// </summary>
+        public virtual async Task StopMeasureAsync()
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.stopMeasure", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Clear all pinned measurements (ApexCharts v6.0). Requires <see cref="ChartMeasure.Enabled"/>.
+        /// </summary>
+        public virtual async Task ClearMeasuresAsync()
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.clearMeasures", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Capture the current view as a perspective token (ApexCharts v6.0). Requires the perspectives feature.
+        /// </summary>
+        /// <returns>A JSON token that can be passed to <see cref="ApplyPerspectiveAsync"/>.</returns>
+        public virtual async Task<string> CapturePerspectiveAsync()
+        {
+            return await InvokeJsAsync<string>("blazor_apexchart.capturePerspective", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Apply a previously captured perspective token (ApexCharts v6.0). Requires the perspectives feature.
+        /// </summary>
+        /// <param name="token">A token from <see cref="CapturePerspectiveAsync"/>.</param>
+        /// <param name="animate">Animate the transition.</param>
+        public virtual async Task ApplyPerspectiveAsync(string token, bool animate = true)
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.applyPerspective", Options.Chart.Id, token, animate);
+        }
+
+        /// <summary>
+        /// Get a shareable URL with the current view encoded in the fragment (ApexCharts v6.0). Requires the perspectives feature.
+        /// </summary>
+        public virtual async Task<string> PerspectiveToUrlAsync()
+        {
+            return await InvokeJsAsync<string>("blazor_apexchart.perspectiveToUrl", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Save the current perspective under a name (ApexCharts v6.0). Requires the perspectives feature.
+        /// </summary>
+        /// <param name="name">Name to save the perspective as.</param>
+        public virtual async Task SavePerspectiveAsync(string name)
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.savePerspective", Options.Chart.Id, name);
+        }
+
+        /// <summary>
+        /// List saved perspectives (ApexCharts v6.0). Requires the perspectives feature.
+        /// </summary>
+        /// <returns>A JSON array of saved perspectives.</returns>
+        public virtual async Task<string> ListPerspectivesAsync()
+        {
+            return await InvokeJsAsync<string>("blazor_apexchart.listPerspectives", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Bind prose sections to saved chart views for scroll-driven storytelling (ApexCharts v6.0). Requires the storyboard feature.
+        /// </summary>
+        /// <param name="options">Beats configuration.</param>
+        /// <returns>The number of bound beats.</returns>
+        public virtual async Task<int> StoryboardBindAsync(StoryboardOptions options)
+        {
+            var json = Serialize(options);
+            return await InvokeJsAsync<int>("blazor_apexchart.storyboardBind", Options.Chart.Id, json);
+        }
+
+        /// <summary>
+        /// Jump to a specific storyboard beat (ApexCharts v6.0). Requires the storyboard feature.
+        /// </summary>
+        /// <param name="beatIndex">Index of the beat to go to.</param>
+        /// <param name="animate">Animate the transition.</param>
+        public virtual async Task StoryboardGoToAsync(int beatIndex, bool animate = true)
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.storyboardGoTo", Options.Chart.Id, beatIndex, animate);
+        }
+
+        /// <summary>
+        /// Get the current storyboard beat (ApexCharts v6.0). Requires the storyboard feature.
+        /// </summary>
+        /// <returns>A JSON object describing the current beat, or null.</returns>
+        public virtual async Task<string> StoryboardCurrentAsync()
+        {
+            return await InvokeJsAsync<string>("blazor_apexchart.storyboardCurrent", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Unbind the storyboard (ApexCharts v6.0). Requires the storyboard feature.
+        /// </summary>
+        public virtual async Task StoryboardUnbindAsync()
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.storyboardUnbind", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Re-read the CSS design tokens from the cascade (ApexCharts v6.0 "Facet") after a runtime token change.
+        /// </summary>
+        public virtual async Task RefreshTokensAsync()
+        {
+            await InvokeVoidJsAsync("blazor_apexchart.refreshTokens", Options.Chart.Id);
+        }
+
+        /// <summary>
+        /// Get the renderer currently in use for the series layer (ApexCharts v6.0 "Strata").
+        /// </summary>
+        /// <returns><c>"svg"</c> or <c>"canvas"</c>.</returns>
+        public virtual async Task<string> GetActiveRendererAsync()
+        {
+            return await InvokeJsAsync<string>("blazor_apexchart.getActiveRenderer", Options.Chart.Id);
+        }
+
         private void SetCustomIcons()
         {
             var customIcons = Options?.Chart?.Toolbar?.Tools?.CustomIcons?.Where(e => e.OnClick != null);
@@ -1239,7 +1434,14 @@ namespace ApexCharts
                 HasClick = OnClick.HasDelegate,
                 HasBeforeZoom = OnBeforeZoom != null,
                 HasBeforeResetZoom = OnBeforeResetZoom != null,
-                HasScrolled = OnScrolled.HasDelegate
+                HasScrolled = OnScrolled.HasDelegate,
+                HasAnnotationCreated = OnAnnotationCreated.HasDelegate,
+                HasAnnotationDragged = OnAnnotationDragged.HasDelegate,
+                HasAnnotationEdited = OnAnnotationEdited.HasDelegate,
+                HasAnnotationStyled = OnAnnotationStyled.HasDelegate,
+                HasAnnotationDeleted = OnAnnotationDeleted.HasDelegate,
+                HasMeasured = OnMeasured.HasDelegate,
+                HasBeatChange = OnBeatChange.HasDelegate
             });
 
             await OnRendered.InvokeAsync();

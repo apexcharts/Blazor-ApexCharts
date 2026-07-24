@@ -1,0 +1,86 @@
+@*
+    ApexCharts v6 "Cadence" pluggable easing. Pick any easing curve from the dropdown: the
+    values re-randomize and the bars animate to their new heights using that curve, so you can
+    feel the difference between, say, EaseOutBack (overshoots then settles) and Linear.
+*@
+<div class="mb-2 d-flex align-items-center gap-2">
+    <label class="me-1">Easing curve:</label>
+    <select class="form-select" style="width:auto" @bind="selectedEasing" @bind:after="Animate">
+        @foreach (var e in Enum.GetValues<Easing>())
+        {
+            <option value="@e">@e</option>
+        }
+    </select>
+    <button class="btn btn-primary" @onclick="Animate">Replay</button>
+</div>
+
+<DemoContainer>
+    <ApexChart @ref="chart" TItem="Bar" Title="@($"Animating with {selectedEasing}")" Options="options">
+        <ApexPointSeries TItem="Bar"
+                         Items="bars"
+                         Name="Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Label)"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Bar> chart;
+    private ApexChartOptions<Bar> options { get; set; } = new();
+    private List<Bar> bars { get; set; } = new();
+    private Easing selectedEasing = Easing.EaseOutBack;
+    private readonly Random rnd = new();
+
+    protected override void OnInitialized()
+    {
+        BuildOptions();
+
+        for (var i = 1; i <= 8; i++)
+        {
+            bars.Add(new Bar { Label = $"P{i}", Value = rnd.Next(20, 100) });
+        }
+    }
+
+    private void BuildOptions()
+    {
+        options.Chart = new Chart
+            {
+                Height = 320,
+                Animations = new Animations
+                {
+                    Easing = selectedEasing,
+                    Speed = 1200,
+                    DynamicAnimation = new DynamicAnimation
+                    {
+                        Enabled = true,
+                        Easing = selectedEasing,
+                        Speed = 1200
+                    }
+                }
+            };
+    }
+
+    private async Task Animate()
+    {
+        // Apply the selected easing to the chart's options FIRST, while the values are unchanged, so
+        // this update itself is a no-op (no jump). UpdateOptionsAsync re-reads the current data, so
+        // randomizing before it would apply the new values instantly and leave nothing to animate.
+        BuildOptions();
+        await chart.UpdateOptionsAsync(false, false, false);
+
+        // Now change the values and animate the transition with the selected dynamic-animation easing.
+        foreach (var b in bars)
+        {
+            b.Value = rnd.Next(20, 100);
+        }
+
+        await chart.UpdateSeriesAsync(true);
+    }
+
+    private class Bar
+    {
+        public string Label { get; set; }
+        public decimal Value { get; set; }
+    }
+}

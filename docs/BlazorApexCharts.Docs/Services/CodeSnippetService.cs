@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -43,46 +44,49 @@ namespace BlazorApexCharts.Docs.Services
 
     public class GitHubSnippetService : ICodeSnippetService
     {
-       const string baseUrl = "https://apexcharts.github.io/Blazor-ApexCharts/_content/razor_source";
-     
+        // Production fallback: the deployed docs copy every demo .razor into _content/razor_source (see the
+        // BuildClientAssets target in the WASM csproj).
+        const string fallbackBaseUrl = "https://apexcharts.github.io/Blazor-ApexCharts/_content/razor_source";
+
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly NavigationManager navigationManager;
 
         private Dictionary<string, string> cachedCode = new Dictionary<string, string>();
 
-        public GitHubSnippetService(IHttpClientFactory httpClientFactory)
+        public GitHubSnippetService(IHttpClientFactory httpClientFactory, NavigationManager navigationManager)
         {
             this.httpClientFactory = httpClientFactory;
+            this.navigationManager = navigationManager;
         }
 
         public async Task<string> GetCodeSnippet(string className)
         {
-            try
+            if (cachedCode.TryGetValue(className, out var cached)) { return cached; }
+
+            var baseName = "BlazorApexCharts.Docs";
+            var relative = "/_content/razor_source/" + className.Replace(baseName, "").Replace(".", "/").TrimStart('/') + ".razor";
+
+            // Try same-origin first (works locally and on any host the docs are deployed to), then the
+            // apexcharts.github.io copy, so a not-yet-deployed demo still resolves wherever the source exists.
+            var sameOrigin = navigationManager.BaseUri.TrimEnd('/') + relative;
+            var candidates = new[] { sameOrigin, fallbackBaseUrl + relative.Replace("/_content/razor_source", "") };
+
+            using var httpClient = httpClientFactory.CreateClient("GitHub");
+            foreach (var url in candidates)
             {
-                if (!cachedCode.ContainsKey(className))
+                try
                 {
-                    var baseName = "BlazorApexCharts.Docs";
-                    var path = baseUrl + "/" + className.Replace(baseName, "").Replace(".", "/") + ".razor";
-
-                    using var httpClient = httpClientFactory.CreateClient("GitHub");
-                    using var stream = await httpClient.GetStreamAsync(path);
-                    StreamReader reader = new StreamReader(stream);
-
-                    var code = reader.ReadToEnd();
-
-                    if (!cachedCode.ContainsKey(className))
-                    {
-                        cachedCode[className] = code;
-                    }
-                 
+                    var code = await httpClient.GetStringAsync(url);
+                    cachedCode[className] = code;
+                    return code;
                 }
-
-                return cachedCode[className];
-
+                catch
+                {
+                    // try next candidate
+                }
             }
-            catch (Exception ex)
-            {
-                return $"Unable to load code. Error: {ex.Message}";
-            }
+
+            return "// Source for this demo isn't available on this host yet.\n// It is viewable in the deployed docs and in the GitHub repository.";
         }
     }
 }

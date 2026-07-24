@@ -1,0 +1,91 @@
+@implements IDisposable
+@*
+    ApexCharts v6 streaming. A rolling window bounded to MaxPoints trims old points as new
+    data arrives so long-running feeds do not grow memory without bound. This demo appends a
+    point automatically on a timer; once past the window size it scrolls at constant velocity.
+*@
+<div class="mb-2">
+    <button class="btn btn-primary" @onclick="ToggleFeed">@(running ? "Pause feed" : "Resume feed")</button>
+    <span class="ms-2">Live points: <strong>@points.Count</strong> (window max 50)</span>
+</div>
+
+<DemoContainer>
+    <ApexChart @ref="chart" TItem="Pt" Title="Streaming rolling window (live)" Options="options">
+        <ApexPointSeries TItem="Pt"
+                         Items="points"
+                         Name="Live"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Y)"
+                         OrderBy="e => e.X" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChart<Pt> chart;
+    private ApexChartOptions<Pt> options { get; set; } = new();
+    private List<Pt> points { get; set; } = new();
+    private int nextX;
+    private bool running = true;
+    private readonly Random rnd = new();
+    private System.Timers.Timer timer;
+
+    protected override void OnInitialized()
+    {
+        options.Chart = new Chart
+            {
+                Height = 320,
+                Streaming = new ChartStreaming { Enabled = true, MaxPoints = 50 }
+            };
+
+        // Numeric x-axis: without it, ApexCharts converts the category axis to numeric with a
+        // per-data-point tick count, which produces duplicate integer labels when zoomed in.
+        options.Xaxis = new XAxis { Type = XAxisType.Numeric };
+
+        for (nextX = 0; nextX < 20; nextX++)
+        {
+            points.Add(new Pt(nextX, rnd.Next(10, 90)));
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            timer = new System.Timers.Timer(900);
+            timer.Elapsed += async (_, _) => await Tick();
+            timer.AutoReset = true;
+            timer.Start();
+        }
+    }
+
+    private async Task Tick()
+    {
+        if (!running || chart is null) { return; }
+
+        await InvokeAsync(async () =>
+        {
+            var added = new List<Pt> { new(nextX++, rnd.Next(10, 90)) };
+            points.Add(added[0]);
+
+            // Keep the C# backing list bounded too; the core trims the rendered window itself.
+            if (points.Count > 50)
+            {
+                points.RemoveRange(0, points.Count - 50);
+            }
+
+            await chart.AppendDataAsync(added);
+            StateHasChanged();
+        });
+    }
+
+    private void ToggleFeed() => running = !running;
+
+    public void Dispose()
+    {
+        timer?.Stop();
+        timer?.Dispose();
+    }
+
+    private record Pt(int X, decimal Y);
+}
