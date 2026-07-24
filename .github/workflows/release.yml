@@ -1,8 +1,14 @@
+name: Create Release
+
 on:
   push:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-name: Create Release
+
+# The GitHub release step needs write access; the repo default token is read-only.
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Create Release
@@ -10,31 +16,30 @@ jobs:
     timeout-minutes: 10
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
           8.0.x
           9.0.x
           10.0.x
 
-    - name: Dotnet Pack 
+    - name: Dotnet Pack
       working-directory: ./src/Blazor-ApexCharts
       run: dotnet pack -c Release -p:Version=${GITHUB_REF##*/v}
 
-    - name: Dotnet Nuget Push   
+    - name: Dotnet Nuget Push
       working-directory: ./src/Blazor-ApexCharts/bin/Release
       run: dotnet nuget push Blazor-ApexCharts.*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
       continue-on-error: false
 
-    - name: Create Release
-      uses: actions/create-release@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ github.ref_name }}
+        name: ${{ github.ref_name }}
         draft: false
-        prerelease: true
+        prerelease: false
+        generate_release_notes: true
