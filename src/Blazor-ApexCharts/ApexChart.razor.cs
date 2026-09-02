@@ -28,6 +28,28 @@ namespace ApexCharts
         Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts, ZoomOptions zoom = null);
     }
 
+    public class ApexLineSeries<TItem> : ApexPointSeries<TItem>, IMarkerSize, IMarkerColor where TItem : class
+    {
+        [Parameter] public double? MarkerSize { get; set; } = null;
+
+        [Parameter] public string MarkerColor { get; set; } = null;
+
+        public ApexLineSeries()
+        {
+            SeriesType = SeriesType.Line;
+        }
+    }
+
+    public interface IMarkerSize
+    {
+        double? MarkerSize { get; set; }
+    }
+
+    public interface IMarkerColor
+    {
+        string MarkerColor { get; set; }
+    }
+
 
     /// <summary>
     /// Main component to create an Apex chart in Blazor
@@ -544,6 +566,46 @@ namespace ApexCharts
             }
 
             Options.Colors = colors;
+        }
+
+        private void SetSeriesMarkerSizes()
+        {
+            if (Options?.Series == null) { return; }
+            if (apexSeries.All(e => e is not IMarkerSize)) { return; }
+            if (Options.Markers == null) { Options.Markers = new Markers(); }
+            var markerSizes = new Size();
+            foreach (var series in Options.Series)
+            {
+                if (series.ApexSeries is IMarkerSize markerSizeSeries)
+                {
+                    markerSizes.Add(markerSizeSeries.MarkerSize ?? 0);
+                }
+                else
+                {
+                    markerSizes.Add(0);
+                }
+            }
+            Options.Markers.Size = markerSizes;
+        }
+
+        private void SetMarkerColors()
+        {
+            if (Options?.Series == null) { return; }
+            if (apexSeries.All(e => e is not IMarkerColor)) { return; }
+            if (Options.Markers == null) { Options.Markers = new Markers(); }
+            var markerColors = new Color();
+            foreach (var series in Options.Series)
+            {
+                if (series.ApexSeries is IMarkerColor markerColorSeries)
+                {
+                    markerColors.Add(markerColorSeries.MarkerColor ?? string.Empty);
+                }
+                else
+                {
+                    markerColors.Add("#d3d3d3"); //Default is light gray
+                }
+            }
+            Options.Markers.Colors = markerColors;
         }
 
         private void SetSeriesStroke()
@@ -1094,6 +1156,8 @@ namespace ApexCharts
             SetSeries();
             SetSeriesColors();
             SetSeriesStroke();
+            SetSeriesMarkerSizes();
+            SetMarkerColors();
             SetDataLabels();
             SetCustomIcons();
             FixLineDataSelection();
