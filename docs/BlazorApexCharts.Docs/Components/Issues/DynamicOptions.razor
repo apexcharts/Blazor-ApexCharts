@@ -1,42 +1,58 @@
 ﻿@page "/issues/dynamic-options"
 
 <DemoContainer>
-
-    <Button BackgroundColor="TablerColor.Primary" OnClick="Test">Click me</Button>
-
+    <p id="dynamic-options-events">Clicks: @clicks, Selections: @selections, Last: @last</p>
 
     <ApexChart TItem="Order"
-    Options="GetOptions()" Title="Dynamic">
+               Options="GetOptions()"
+               Title="Dynamic"
+               OnClick="Clicked"
+               OnDataPointSelection="DataPointSelected">
 
-        <ApexPointSeries TItem="Order"
-        Items="Orders"
-        Name="Gross Value"
-        SeriesType="SeriesType.Line"
-        XValue="@(e => e.Country)"
-        YAggregate="@(e => e.Sum(e => e.GrossValue))"
-        OrderByDescending="e=>e.Y" />
+        <ChildContent>
+            <ApexPointSeries TItem="Order"
+                             Items="Orders"
+                             Name="Gross Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                             OrderByDescending="e=>e.Y" />
 
-        <ApexPointSeries TItem="Order"
-        Items="Orders"
-        Name="Net Value"
-        SeriesType="SeriesType.Line"
-        XValue="@(e => e.Country)"
-        YAggregate="@(e => e.Sum(e => e.NetValue))"
-        OrderByDescending="e=>e.Y" />
+            <ApexPointSeries TItem="Order"
+                             Items="Orders"
+                             Name="Net Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.NetValue))"
+                             OrderByDescending="e=>e.Y" />
+        </ChildContent>
+
+        <ApexPointTooltip>
+            <div class="p-2">@context.Series.Name: @context.DataPoint.X</div>
+        </ApexPointTooltip>
     </ApexChart>
 </DemoContainer>
 
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private int clicks;
+    private int selections;
+    private string last;
 
+    // A new instance on every render: each event re-renders this page and replaces the chart options.
     private ApexChartOptions<Order> GetOptions()
     {
-        return new ApexChartOptions<Order> {  };
+        return new ApexChartOptions<Order> { };
     }
 
-    private void Test()
+    private void Clicked(SelectedData<Order> data)
     {
-      
+        clicks++;
     }
 
+    private void DataPointSelected(SelectedData<Order> data)
+    {
+        selections++;
+        last = $"{data.Series.Name} {data.DataPoint.X}";
+    }
 }

@@ -150,13 +150,15 @@ namespace ApexCharts.Internal
             IDataPoint<TItem> point = null;
             if (ChartReference.IsNoAxisChart)
             {
-                series = ChartReference.Options.Series.First();
-                point = series.Data.ElementAt(jsLegendClicked.SeriesIndex);
+                series = ChartReference.Options.Series?.FirstOrDefault();
+                point = series?.Data?.ElementAtOrDefault(jsLegendClicked.SeriesIndex);
             }
             else
             {
-                series = ChartReference.Options.Series.ElementAt(jsLegendClicked.SeriesIndex);
+                series = ChartReference.Options.Series?.ElementAtOrDefault(jsLegendClicked.SeriesIndex);
             }
+
+            if (series == null) { return; }
 
             var legendClicked = new LegendClicked<TItem>
             {
@@ -195,12 +197,12 @@ namespace ApexCharts.Internal
                     SeriesPoints = new List<SeriesDataPoint<TItem>>()
                 };
 
-                foreach (var series in ChartReference.Options.Series)
+                foreach (var series in ChartReference.Options.Series ?? [])
                 {
                     data.SeriesPoints.Add(new SeriesDataPoint<TItem>
                     {
                         Series = series,
-                        DataPoint = series.Data.ElementAt(jsXAxisLabelClick.LabelIndex)
+                        DataPoint = series.Data?.ElementAtOrDefault(jsXAxisLabelClick.LabelIndex)
                     });
                 }
 
@@ -220,14 +222,14 @@ namespace ApexCharts.Internal
         {
             if (ChartReference.OnMarkerClick.HasDelegate)
             {
-                var series = ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+                var hoverData = GetHoverData(selectedDataPoints);
+                if (hoverData == null) { return; }
 
                 var selection = new SelectedData<TItem>
                 {
                     Chart = ChartReference,
-                    Series = series,
-                    DataPoint = dataPoint,
+                    Series = hoverData.Series,
+                    DataPoint = hoverData.DataPoint,
                     IsSelected = selectedDataPoints.SelectedDataPoints?.Any(e => e != null && e.Any(e => e != null && e.HasValue)) ?? false,
                     DataPointIndex = selectedDataPoints.DataPointIndex,
                     SeriesIndex = selectedDataPoints.SeriesIndex
@@ -249,15 +251,15 @@ namespace ApexCharts.Internal
         {
             if (ChartReference.OnDataPointSelection.HasDelegate)
             {
-                var series = ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+                var hoverData = GetHoverData(selectedDataPoints);
+                if (hoverData == null) { return; }
 
                 var selection = new SelectedData<TItem>
                 {
                     Chart = ChartReference,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    IsSelected = selectedDataPoints.SelectedDataPoints.Any(e => e != null && e.Any(e => e != null && e.HasValue)),
+                    Series = hoverData.Series,
+                    DataPoint = hoverData.DataPoint,
+                    IsSelected = selectedDataPoints.SelectedDataPoints?.Any(e => e != null && e.Any(e => e != null && e.HasValue)) ?? false,
                     DataPointIndex = selectedDataPoints.DataPointIndex,
                     SeriesIndex = selectedDataPoints.SeriesIndex
                 };
@@ -278,20 +280,20 @@ namespace ApexCharts.Internal
         {
             if (ChartReference.OnDataPointEnter.HasDelegate)
             {
-         
                 var hoverData = GetHoverData(selectedDataPoints);
-                ChartReference.OnDataPointEnter.InvokeAsync(hoverData);
+                if (hoverData == null) { return; }
 
-               
+                ChartReference.OnDataPointEnter.InvokeAsync(hoverData);
             }
         }
 
         private HoverData<TItem> GetHoverData(JSDataPointSelection selectedDataPoints)
         {
-            var series = ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-            var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
+            var series = ChartReference.Options.Series?.ElementAtOrDefault(selectedDataPoints.SeriesIndex);
+            var dataPoint = series?.Data?.ElementAtOrDefault(selectedDataPoints.DataPointIndex);
+            if (series == null || dataPoint == null) { return null; }
 
-            return  new HoverData<TItem>
+            return new HoverData<TItem>
             {
                 Chart = ChartReference,
                 Series = series,
@@ -307,6 +309,8 @@ namespace ApexCharts.Internal
             if (ChartReference.ApexPointTooltip != null)
             {
                 var hoverData = GetHoverData(selectedDataPoints);
+                if (hoverData == null) { return; }
+
                 ChartReference.UpdateTooltipData(hoverData);
             }
 
@@ -324,17 +328,8 @@ namespace ApexCharts.Internal
         {
             if (ChartReference.OnDataPointLeave.HasDelegate)
             {
-                var series = ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex);
-                var dataPoint = series.Data.ElementAt(selectedDataPoints.DataPointIndex);
-
-                var hoverData = new HoverData<TItem>
-                {
-                    Chart = ChartReference,
-                    Series = series,
-                    DataPoint = dataPoint,
-                    DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
-                };
+                var hoverData = GetHoverData(selectedDataPoints);
+                if (hoverData == null) { return; }
 
                 ChartReference.OnDataPointLeave.InvokeAsync(hoverData);
             }
@@ -414,13 +409,8 @@ namespace ApexCharts.Internal
         [JSInvokable]
         public void JSMouseMove(JSDataPointSelection selectedDataPoints)
         {
-            var series = selectedDataPoints.SeriesIndex >= 0 ?
-                ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex) :
-                null;
-
-            var dataPoint = selectedDataPoints.DataPointIndex >= 0 ?
-                series?.Data.ElementAt(selectedDataPoints.DataPointIndex) :
-                null;
+            var series = ChartReference.Options.Series?.ElementAtOrDefault(selectedDataPoints.SeriesIndex);
+            var dataPoint = series?.Data?.ElementAtOrDefault(selectedDataPoints.DataPointIndex);
 
             ChartReference.OnMouseMove.InvokeAsync(new SelectedData<TItem>
             {
@@ -453,13 +443,8 @@ namespace ApexCharts.Internal
         [JSInvokable]
         public void JSClick(JSDataPointSelection selectedDataPoints)
         {
-            var series = selectedDataPoints.SeriesIndex >= 0 ?
-                ChartReference.Options.Series.ElementAt(selectedDataPoints.SeriesIndex) :
-                null;
-
-            var dataPoint = selectedDataPoints.DataPointIndex >= 0 ?
-                series?.Data.ElementAt(selectedDataPoints.DataPointIndex) :
-                null;
+            var series = ChartReference.Options.Series?.ElementAtOrDefault(selectedDataPoints.SeriesIndex);
+            var dataPoint = series?.Data?.ElementAtOrDefault(selectedDataPoints.DataPointIndex);
 
             ChartReference.OnClick.InvokeAsync(new SelectedData<TItem>
             {
