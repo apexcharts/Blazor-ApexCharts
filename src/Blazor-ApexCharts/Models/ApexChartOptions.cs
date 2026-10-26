@@ -1558,6 +1558,12 @@ namespace ApexCharts
         public bool Enabled { get; set; } = true;
 
         /// <summary>
+        /// Whether to skip animations when the user's operating system requests reduced motion.
+        /// Defaults to true in ApexCharts.js; set to false to always allow animations.
+        /// </summary>
+        public bool? RespectReducedMotion { get; set; }
+
+        /// <summary>
         /// Speed at which animation runs.
         /// </summary>
         public double? Speed { get; set; }
