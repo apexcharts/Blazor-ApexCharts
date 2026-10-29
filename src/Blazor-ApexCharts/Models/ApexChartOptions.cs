@@ -2925,9 +2925,9 @@ namespace ApexCharts
         public string StrokeColor { get; set; }
 
         /// <summary>
-        /// Stroke Size of the marker point.
+        /// Stroke Size of the marker point. Accepts a single value or one value per series.
         /// </summary>
-        public Size? StrokeWidth { get; set; }
+        public Size StrokeWidth { get; set; }
 
         /// <summary>
         /// Width of the marker that appears before series name.
@@ -3641,8 +3641,15 @@ namespace ApexCharts
 
         /// <summary>
         /// When dumbbell chart is enabled, use this option to set custom colors for the dots at the starting and ending shape.
+        /// Each entry belongs to the series at the same index: a single color paints both dots, a pair paints the start and end dot.
         /// </summary>
-        public List<List<string>> DumbbellColors { get; set; }
+        /// <example>
+        /// <code>
+        /// DumbbellColors = ["#008FFB", "#00E396"];           // one color per series
+        /// DumbbellColors = [["#008FFB", "#00E396"]];         // start and end color for the first series
+        /// </code>
+        /// </example>
+        public DumbbellColorList DumbbellColors { get; set; }
 
         /// <summary>
         /// Is chart funnel
@@ -3661,41 +3668,60 @@ namespace ApexCharts
         public PlotOptionsBarDataLabels DataLabels { get; set; }
     }
 
-    public enum FunnelShapes
+    /// <summary>
+    /// How consecutive stages of a funnel chart are connected, used by <see cref="PlotOptionsFunnel.Shape"/>.
+    /// </summary>
+    public enum FunnelShape
     {
         /// <summary>
-        /// preserves the existing centered-rectangle funnel geometry. Each stage is rendered as an independent rectangle.
+        /// Default. Each stage is drawn as an independent, centered rectangle.
         /// </summary>
         Rectangle,
+
         /// <summary>
-        ///  produces continuous sloped sides between consecutive stages: each stage's bottom width matches the next stage's top width, giving the funnel a smooth poured-glass look.
+        /// Stages have continuous sloped sides: each stage's bottom width matches the next stage's top width.
         /// </summary>
         Trapezoid
-    }
+    };
 
+    /// <summary>
+    /// How the bottom edge of the last funnel stage is drawn, used by <see cref="PlotOptionsFunnel.LastShape"/>.
+    /// </summary>
     public enum FunnelLastShape
     {
         /// <summary>
-        /// the last stage keeps parallel sides and a flat bottom.
+        /// Default. The last stage keeps parallel sides and a flat bottom.
         /// </summary>
         Flat,
+
         /// <summary>
-        /// the last stage tapers to a point, producing a classic funnel/pyramid silhouette.
+        /// The last stage tapers to a point, giving a classic funnel silhouette.
         /// </summary>
         Taper
-    }
+    };
 
+    /// <summary>
+    /// Defines options specific to <see cref="ChartType.Funnel"/> and <see cref="ChartType.Pyramid"/>
+    /// </summary>
+    /// <remarks>
+    /// Links:
+    ///
+    /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/funnel-charts">Blazor Example</see>,
+    /// <see href="https://apexcharts.com/docs/chart-types/funnel-chart/">JavaScript Documentation</see>
+    /// </remarks>
     public class PlotOptionsFunnel
     {
         /// <summary>
         /// Controls how consecutive funnel stages are connected.
         /// </summary>
-        public FunnelShapes Shape { get; set; } = FunnelShapes.Rectangle;
+        /// <remarks>Defaults to <see cref="FunnelShape.Rectangle"/>.</remarks>
+        public FunnelShape? Shape { get; set; }
 
         /// <summary>
-        /// Only used when shape: 'trapezoid'. Controls how the bottom edge of the final stage is drawn.
+        /// Controls how the bottom edge of the final stage is drawn. Only used when <see cref="Shape"/> is <see cref="FunnelShape.Trapezoid"/>.
         /// </summary>
-        public FunnelLastShape LastShape { get; set; } = FunnelLastShape.Flat;
+        /// <remarks>Defaults to <see cref="FunnelLastShape.Flat"/>.</remarks>
+        public FunnelLastShape? LastShape { get; set; }
     }
 
     /// <summary>

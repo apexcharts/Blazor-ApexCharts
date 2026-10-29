@@ -24,10 +24,6 @@ namespace BlazorApexCharts.Docs.Server
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<ICodeSnippetService, LocalSnippetService>();
-            services.AddHttpClient("", opt =>
-            {
-                opt.BaseAddress = new System.Uri("http://localhost:46190");
-            });
 
             services.AddApexCharts();
         }
