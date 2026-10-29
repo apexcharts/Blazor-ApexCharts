@@ -1,0 +1,85 @@
+﻿<DemoContainer>
+    <ApexChart TItem="ProcessedEmployees"
+               Options=options>
+
+        <ApexPointSeries TItem="ProcessedEmployees"
+                         Items="processedEmployees"
+                         Name="Pipeline"
+                         XValue="@(e => e.Category)"
+                         SeriesType="SeriesType.Bar"
+                         YValue="@(e => e.Count)"
+                         OrderByDescending="e=>e.Y"
+                         ShowDataLabels
+                         />
+
+      
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private record ProcessedEmployees(string Category, decimal Count);
+    private List<ProcessedEmployees> processedEmployees = [
+        new("Sourced", 1200m), 
+        new("Screened", 480m), 
+        new("Interviewed", 160), 
+        new("Hired", 32m)];
+
+    private ApexChartOptions<ProcessedEmployees> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<ProcessedEmployees>
+        {
+            Chart = new Chart()
+            {
+                Type = ChartType.Funnel,
+                DropShadow = new()
+                {
+                    Enabled = true
+                }
+            },
+            PlotOptions = new PlotOptions
+            {
+                Funnel = new()
+                {
+                    Shape = FunnelShapes.Trapezoid,
+                    LastShape = FunnelLastShape.Taper
+                },
+                Bar = new PlotOptionsBar
+                {
+                    BarHeight = "90%",
+                    BorderRadius = 0,
+                    Distributed = true,
+                    Horizontal = true,
+                    IsFunnel = true,
+                    IsFunnel3d = true,
+                }
+            },
+            Colors = ["#10B981", "#34D399", "#6EE7B7", "#A7F3D0"],
+            DataLabels = new()
+            {
+                Enabled = true,
+                Formatter = "function (val, opt) { return opt.w.globals.labels[opt.dataPointIndex]; }",
+                Style = new()
+                {
+                    Colors = ["#064E3B"],
+                    FontSize = "13px",
+                    FontWeight = 600
+                }
+            },
+            Title = new()
+            {
+                Text = "Recruitment Funnel — Tapered",
+                Align = ApexCharts.Align.Center
+            },
+            Xaxis = new()
+            {
+                Categories = processedEmployees.Select(f => f.Category).ToArray()
+            },
+            Legend = new()
+            {
+                Show = false
+            }
+        };
+    }
+}

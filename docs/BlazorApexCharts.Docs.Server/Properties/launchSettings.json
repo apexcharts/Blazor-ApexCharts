@@ -3,7 +3,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "features/group-points",
+      "launchUrl": "area-charts",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -11,7 +11,7 @@
     "BlazorApexCharts.Docs.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "features/tooltip-dotnet",
+      "launchUrl": "area-charts",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

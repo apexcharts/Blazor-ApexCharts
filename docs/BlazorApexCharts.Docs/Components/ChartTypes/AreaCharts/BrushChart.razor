@@ -1,0 +1,84 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order" Title="Orders Value"
+               XAxisType="XAxisType.Datetime"
+               Options="mainChartOptions">
+
+        <ApexPointSeries TItem="Order"
+                         Items="SampleData.GetOrders()"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Area"
+                         XValue="@(e => e.OrderDate)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderBy="e=>e.X" />
+
+    </ApexChart>
+
+    <ApexChart TItem="Order"
+               XAxisType="XAxisType.Datetime"
+               Height="@("130")"
+               Options="previewChartOptions">
+        <ApexPointSeries TItem="Order"
+                         Items="SampleData.GetOrders()"
+                         SeriesType="SeriesType.Area"
+                         XValue="@(e => e.OrderDate)"
+                         YAggregate="@(e => e.Sum(e => e.NetValue))"
+                         OrderBy="e=>e.X" />
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChartOptions<Order> mainChartOptions = new ApexCharts.ApexChartOptions<Order>()
+    {
+        Chart = new Chart()
+        {
+            Id = "MainChart",
+            Toolbar = new Toolbar()
+            {
+                AutoSelected = AutoSelected.Pan,
+                Show = false
+            }
+        }
+    };
+
+    private ApexChartOptions<Order> previewChartOptions = new ApexChartOptions<Order>()
+    {
+        Chart = new Chart()
+        {
+            Selection = new Selection()
+            {
+                Enabled = true,
+                Xaxis = new SelectionXaxis()
+                {
+                    Min = SampleData.GetOrders().Min(e => e.OrderDate).AddDays(50).ToUnixTimeMilliseconds(),
+                    Max = SampleData.GetOrders().Max(e => e.OrderDate).AddDays(-50).ToUnixTimeMilliseconds()
+                }
+            },
+            Brush = new Brush()
+            {
+                Target = "MainChart",
+                Enabled = true
+            }
+        },
+        Stroke = new Stroke()
+        {
+            Width = 1
+        },
+        Xaxis = new XAxis()
+        {
+            Type = XAxisType.Datetime,
+            Tooltip = new XAxisTooltip()
+            {
+                Enabled = false
+            }
+        },
+        Yaxis = new List<YAxis>() {
+            new YAxis()
+            {
+                Max = SampleData.GetOrders().Max(n => n.NetValue),
+                Min = 0,
+                TickAmount = 2
+            } 
+        }
+    };
+}

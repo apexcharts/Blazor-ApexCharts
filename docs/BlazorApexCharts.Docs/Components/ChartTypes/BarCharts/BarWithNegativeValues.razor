@@ -1,0 +1,120 @@
+﻿<DemoContainer>
+    <ApexChart TItem="GenderAgeGroup"
+           Title="Mauritius population pyramid 2011"
+    Options="chartOptions">
+
+        <ApexPointSeries TItem="GenderAgeGroup"
+                Items="males"
+                Name="Males"
+                XValue="@(e => e.AgeRange)"
+                YValue="@(e => e.Percentage)"
+                SeriesType="SeriesType.Bar" />
+
+        <ApexPointSeries TItem="GenderAgeGroup"
+                         Items="females"
+                         Name="Females"
+                         XValue="@(e => e.AgeRange)"
+                         YValue="@(e => e.Percentage)"
+                         SeriesType="SeriesType.Bar" />
+</ApexChart>
+</DemoContainer>
+
+@code {
+    private record GenderAgeGroup(string AgeRange, decimal Percentage);
+
+    private List<string> ageGroups = ["85+", "80-84","75-79","70-74","65-69","60-64","55-59","50-54","45-49","40-44","35-39","30-34","25-29","20-24","15-19","10-14","5-9","0-4",];
+    private List<double> maleNumbers = [ 0.4, 0.65, 0.76, 0.88, 1.5, 2.1, 2.9, 3.8, 3.9, 4.2, 4, 4.3, 4.1, 4.2, 4.5, 3.9, 3.5, 3];
+    private List<double> femaleNumbers = [0.8, 1.05, 1.06, 1.18, 1.4, 2.2, 2.85, 3.7, 3.96, 4.22, 4.3, 4.4, 4.1, 4, 4.1, 3.4, 3.1, 2.8];
+
+    private ApexChartOptions<GenderAgeGroup> chartOptions = default!;
+
+    private IEnumerable<GenderAgeGroup> males
+    {
+        get
+        {
+            int index = 0;
+            while (index < ageGroups.Count && index < maleNumbers.Count)
+            {
+                yield return new(ageGroups[index], (decimal)maleNumbers[index]);
+                index++;
+            }
+        }
+    }
+
+    private IEnumerable<GenderAgeGroup> females
+    {
+        get
+        {
+            int index = 0;
+            while (index < ageGroups.Count && index < femaleNumbers.Count)
+            {
+                yield return new(ageGroups[index], -(decimal)femaleNumbers[index]);
+                index++;
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        chartOptions = new ApexChartOptions<GenderAgeGroup>()
+        {
+            Chart = new Chart()
+            {
+                Type = ChartType.Bar,
+                Stacked = true,
+            },
+            Colors = ["#008FFB", "#FF4560"],
+            PlotOptions = new PlotOptions()
+            {
+                Bar = new PlotOptionsBar()
+                {
+                    BorderRadius = 5,
+                    BorderRadiusApplication = BorderRadiusApplication.End,
+                    BorderRadiusWhenStacked = BorderRadiusWhenStacked.All,
+                    Horizontal = true,
+                    BarHeight = "80%"
+                }
+            },
+            DataLabels = new()
+            {
+                Enabled = false
+            },
+            Stroke = new()
+            {
+                Width = 1,
+                Colors = ["#fff"]
+            },
+            Grid = new()
+            {
+                Xaxis = new()
+                {
+                    Lines = new()
+                    {
+                        Show = true
+                    }
+                }
+            },
+            Yaxis = [
+                new() 
+                {
+                    StepSize = 1,
+                }
+            ],
+            Title = new()
+            {
+                Text = "Mauritius population pyramid 2011",
+                Align = ApexCharts.Align.Left,
+                OffsetX = 10
+            },
+            Xaxis = new()
+            {
+                Categories = ageGroups.ToArray(),
+                Labels = new XAxisLabels()
+                {
+                    Formatter = "function (val) { return Math.abs(val) + '%'; }"
+                }
+            },
+        };
+    }
+}

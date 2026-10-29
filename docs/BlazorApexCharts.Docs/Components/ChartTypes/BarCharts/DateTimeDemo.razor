@@ -1,0 +1,33 @@
+﻿@using System.Net.Http
+<DemoContainer>
+    <ApexChart TItem="IGrouping<DateTimeOffset, StockPrice>"
+           Title="AAPL Average Close per Month">
+           
+        <ApexPointSeries TItem="IGrouping<DateTimeOffset, StockPrice>"
+                Items="stockPrices.GroupBy(n => new DateTimeOffset(new DateTime(n.Date.Year, n.Date.Month, 1, 12, 0, 0), TimeSpan.Zero)).OrderBy(n => n.Key)"
+                Name="Close"
+                XValue="@(e => $"{e.Key:MMM yy}")"
+                YAggregate="@(e => Math.Round(e.SelectMany(n => n).Average(n => n.Close), 2))"
+                SeriesType="SeriesType.Bar"/>
+</ApexChart>
+</DemoContainer>
+
+@code {
+    [Inject] private HttpClient Http { get; set; }
+
+    private List<StockPrice> stockPrices { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var appleStock = await SampleData.GetStockPricesAsync(
+            Http,
+            "/_content/BlazorApexCharts.Docs/data/stock/aapl_us_d.csv",
+            "AAPL");
+        stockPrices = appleStock
+            .Where(n => n.Date.Year >= 2005 && n.Date.Year <= 2006)
+            .OrderBy(n => n.Date)
+            .ToList();
+
+    }
+}

@@ -1,0 +1,73 @@
+﻿<DemoContainer>
+    <ApexChart TItem="FoodItem"
+               Options=options>
+
+        <ApexPointSeries TItem="FoodItem"
+                         Items="foods"
+                         Name="Gross Value"
+                         XValue="@(e => e.Name)"
+                         SeriesType="SeriesType.Bar"
+                         YValue="@(e => e.Value)"
+                         OrderBy="e=>e.Y"
+                         ShowDataLabels
+                         />
+
+      
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private record FoodItem(string Name, decimal Value);
+    private List<FoodItem> foods = [new("Sweets", 200m),new("Processed Foods", 330m),new("Healthy Fats", 548),new("Meat", 740m), new("Beans & Legumes", 880),new("Diary", 990), new("Fruits & Vegetables", 1100), new("Grains", 1380m)];
+
+    private ApexChartOptions<FoodItem> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<FoodItem>
+        {
+            Chart = new Chart()
+            {
+                Type = ChartType.Pyramid,
+                DropShadow = new()
+                {
+                    Enabled = true
+                }
+            },
+            PlotOptions = new PlotOptions
+            {
+                Bar = new PlotOptionsBar
+                {
+                    BorderRadius = 0,
+                    Distributed = true,
+                    Horizontal = true,
+                    IsFunnel = true,
+                    
+                }
+            },
+            Colors = ["#809bce", "#95b8d1", "#b8e0d4", "#d6eadf", "#eac4d5", "#d1625c", "#26a69a", "#e89c81", "#ffd6a5"],
+            DataLabels = new()
+            {
+                Enabled = true,
+                Formatter = "function (val, opt) { return opt.w.globals.labels[opt.dataPointIndex]; }",
+                DropShadow = new()
+                {
+                    Enabled = true
+                }
+            },
+            Title = new()
+            {
+                Text = "Food Pyramid",
+                Align = ApexCharts.Align.Center
+            },
+            Xaxis = new()
+            {
+                Categories = foods.Select(f => f.Name).ToArray()
+            },
+            Legend = new()
+            {
+                Show = false
+            }
+        };
+    }
+}

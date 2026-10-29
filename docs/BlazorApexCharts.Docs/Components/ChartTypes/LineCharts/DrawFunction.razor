@@ -1,0 +1,186 @@
+﻿@using System.Text
+<DemoContainer>
+    <ApexChart TItem="DrawPoint"
+               Title="Graph"
+    Options="chartOptions">
+
+        <ApexPointSeries TItem="DrawPoint"
+                         Items="points"
+                         Name="Values"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Y)" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private record DrawPoint(decimal X, decimal Y);
+
+    private decimal stepSize = 0.1m;
+    private decimal minimum = -10;
+    private decimal maximum = 10;
+    private decimal a = 1;
+    private decimal b = 2;
+    private decimal c = -2;
+
+
+    private List<DrawPoint> points { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        points = [];
+        decimal value = minimum;
+        while (value < maximum)
+        {
+            points.Add(new(value, a * value * value + b * value + c));
+            value += stepSize;
+        }
+
+        chartOptions = new()
+        {
+            Chart = new()
+            {
+                Type = ChartType.Line,
+            },
+            Xaxis = new()
+            {
+                Type = XAxisType.Numeric,
+                Min = minimum,
+                Max = maximum,
+                TickAmount = 20,
+                AxisBorder = new()
+                {
+                    Show = false,
+                },
+                AxisTicks = new()
+                {
+                    Show = false
+                }
+            },
+            Yaxis = 
+            [
+                new ()
+                {
+                    AxisBorder = new()
+                    {
+                        Show = false
+                    },
+                    AxisTicks = new()
+                    {
+                        Show = false
+                    }
+                }
+            ],
+            Grid = new()
+            {
+                Show = true,
+                BorderColor = "#ddd",
+                Xaxis = new()
+                {
+                    Lines = new()
+                    {
+                        Show = true,
+                    }
+                },
+                Yaxis = new()
+                {
+                    Lines = new()
+                    {
+                        Show = true,
+                    }
+                }
+            },
+            Annotations = new()
+            {
+                Xaxis =
+                [
+                    new() {
+                        X = 0,
+                        BorderColor = "#333",
+                        StrokeDashArray = 0,
+                        Label = new()
+                        {
+                            Text = ""
+                        }
+                    }
+                ],
+                Yaxis =
+                [
+                    new()
+                    {
+                        Y = 0,
+                        BorderColor = "#333",
+                        StrokeDashArray = 0,
+                        Label = new()
+                        {
+                            Text = ""
+                        }
+                    }
+                ],
+                Points =
+                [
+                    new ()
+                    {
+                        X = points.First().X,
+                        Y = (double)points.First().Y,
+                        Marker = new()
+                        {
+                            Size = 0
+                        },
+                        Label = new()
+                        {
+                            Text = $"f(x) = {FormatQuadratic(a, b, c)}",
+                            OffsetX = 50,
+                            OffsetY = 0,
+                            BorderColor = "#333",
+                            Style = new()
+                            {
+                                FontSize = "16px",
+                                Background = "#fff",
+                                Color = "#333"
+                            }
+                        }
+                    }
+                ]
+            },
+        };
+    }
+
+    public static string FormatQuadratic(decimal a, decimal b, decimal c)
+    {
+        var sb = new StringBuilder();
+
+        // ax²
+        if (a == 1)
+            sb.Append("x²");
+        else if (a == -1)
+            sb.Append("-x²");
+        else
+            sb.Append($"{a}x²");
+
+        // bx
+        if (b != 0)
+        {
+            sb.Append(b > 0 ? "+" : "");
+
+            if (b == 1)
+                sb.Append("x");
+            else if (b == -1)
+                sb.Append("-x");
+            else
+                sb.Append($"{b}x");
+        }
+
+        // c
+        if (c != 0)
+        {
+            sb.Append(c > 0 ? "+" : "");
+            sb.Append(c);
+        }
+
+        return sb.ToString();
+    }
+
+    private ApexChartOptions<DrawPoint> chartOptions = default!;
+}

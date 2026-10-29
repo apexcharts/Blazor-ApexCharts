@@ -1,0 +1,82 @@
+﻿@using System.Net.Http
+<DemoContainer>
+    <ApexChart TItem="StockPrice"
+               Title="Order Net Value"
+               Options="@chartOptions"
+    XAxisType="XAxisType.Datetime">
+
+        <ApexPointSeries TItem="StockPrice"
+                         Items="@stockPrices"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Date)"
+                         YValue="@(e => e.Close)" />
+
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    [Inject] private HttpClient Http { get; set; }
+
+    private List<StockPrice> stockPrices { get; set; } = [];
+
+    private ApexChartOptions<StockPrice> chartOptions = new ApexChartOptions<StockPrice>()
+        {
+            Annotations = new Annotations()
+            {
+                Xaxis = new List<AnnotationsXAxis>()
+                {
+                    new AnnotationsXAxis()
+                    {
+                        X = new DateTimeOffset(2005, 6, 6, 0, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds(),
+                        BorderColor = "red",
+                        Label = new Label()
+                        {
+                            Text = "Switch to Intel",
+                        }
+                    },
+                    new AnnotationsXAxis()
+                    {
+                        X = new DateTimeOffset(2007, 6, 29, 0, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds(),
+                        X2 = new DateTimeOffset(2008, 7, 11, 0, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds(),
+                        BorderColor = "blue",
+                        FillColor = "lightblue",
+                        Label = new Label()
+                        {
+                            Text = "iOS 1",
+                        }
+                    }
+                }
+            }
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var appleStock = await SampleData.GetStockPricesAsync(
+            Http,
+            "/_content/BlazorApexCharts.Docs/data/stock/aapl_us_d.csv",
+            "AAPL");
+        stockPrices = appleStock
+            .Where(n => n.Date.Year >= 2005 && n.Date.Year <= 2009)
+            .OrderBy(n => n.Date)
+            .ToList();
+
+        var mean = stockPrices.Average(n => n.Close);
+        var stdDev = SampleData.CalculateStdDev(stockPrices.Select(n => n.Close));
+
+        chartOptions.Annotations.Yaxis = new List<AnnotationsYAxis>()
+        {
+            new AnnotationsYAxis()
+            {
+                Y = mean - stdDev,
+                Y2 = mean + stdDev,
+                Label = new Label()
+                {
+                    Text = "Std Dev"
+                }
+            }
+        };
+
+
+    }
+}
