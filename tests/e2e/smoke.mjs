@@ -109,6 +109,28 @@ const morphErrs = realErrors();
 if (morphErrs.length) failures.push(`[typemorph] console/page errors: ${JSON.stringify(morphErrs)}`);
 console.log(`[typemorph] bars before=${before} after=${after} realErrors=${morphErrs.length}`);
 
+// Events with dynamic options: the page passes a new Options instance on every render, and every event
+// re-renders the page. Each later hover and click must still resolve its data point instead of throwing.
+pageErrors = [];
+await page.goto(BASE + '/issues/dynamic-options', { waitUntil: 'domcontentloaded' });
+await page.waitForSelector('.apexcharts-bar-area', { timeout: 30000 });
+await page.waitForTimeout(2500);
+const bars = page.locator('.apexcharts-bar-area');
+const tooltips = [];
+for (const i of [0, 1, 2]) {
+  await bars.nth(i).hover();
+  await page.waitForTimeout(400);
+  tooltips.push((await page.locator('.apexcharts-tooltip').innerText().catch(() => '')).trim());
+  await bars.nth(i).click();
+  await page.waitForTimeout(600);
+}
+const eventsText = await page.locator('#dynamic-options-events').innerText();
+if (!eventsText.includes('Clicks: 3, Selections: 3')) failures.push(`[dynamic-options] events lost: ${eventsText}`);
+if (new Set(tooltips).size !== 3) failures.push(`[dynamic-options] tooltip did not follow the hovered bar: ${JSON.stringify(tooltips)}`);
+const dynErrs = realErrors();
+if (dynErrs.length) failures.push(`[dynamic-options] console/page errors: ${JSON.stringify(dynErrs)}`);
+console.log(`[dynamic-options] ${eventsText} tooltips=${JSON.stringify(tooltips)} realErrors=${dynErrs.length}`);
+
 // v6 premium features + licensing: the page must render both charts; the chart relying on the app-wide
 // (domain-locked) key is watermarked in trial mode here, while the per-chart-licensed chart is not. This guards
 // the whole license/watermark chain (typed premium options -> serialize -> core gating) which build+serialize can't.
@@ -135,4 +157,4 @@ if (failures.length) {
   console.error('\nE2E SMOKE FAILED:\n' + failures.map(f => '  - ' + f).join('\n'));
   process.exit(1);
 }
-console.log('\nE2E smoke passed: all chart pages rendered, violin drew density bodies, type-morph re-rendered, and v6 premium licensing gated the watermark (trial watermarked, per-chart-licensed clean).');
+console.log('\nE2E smoke passed: all chart pages rendered, violin drew density bodies, type-morph re-rendered, events survived replaced options, and v6 premium licensing gated the watermark (trial watermarked, per-chart-licensed clean).');

@@ -427,6 +427,7 @@ namespace ApexCharts
         private bool forceRender = true;
         private string chartId;
         private HoverData<TItem> tooltipData;
+        private ApexChartOptions<TItem> previousOptions;
         private JSHandler<TItem> JSHandler;
         private IJSObjectReference blazor_apexchart;
         private IApexChartService chartService;
@@ -490,6 +491,16 @@ namespace ApexCharts
             if (Options.Chart == null) { Options.Chart = new Chart(); }
 
             Options.Chart.Id = chartId;
+
+            // A new Options instance has no series until the next render or update, but the chart
+            // in the browser still shows the old ones and sends events with their indexes.
+            if (previousOptions != null && previousOptions != Options)
+            {
+                Options.Series ??= previousOptions.Series;
+                Options.Chart.Type ??= previousOptions.Chart?.Type;
+            }
+
+            previousOptions = Options;
 
             if (Width != null)
             {
