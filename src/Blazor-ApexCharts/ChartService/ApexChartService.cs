@@ -75,6 +75,7 @@ public class ApexChartService : IApexChartService
     {
         locales.Clear();
         locales.Add("ar", new LocaleResource { Name = "ar", Language = "Arabic" });
+        locales.Add("az", new LocaleResource { Name = "az", Language = "Azerbaijani" });
         locales.Add("be-cyrl", new LocaleResource { Name = "be-cyrl", Language = "Belarusian (Cyrillic)" });
         locales.Add("be-latn", new LocaleResource { Name = "be-latn", Language = "Belarusian (Latin)" });
         locales.Add("ca", new LocaleResource { Name = "ca", Language = "Catalan" });
