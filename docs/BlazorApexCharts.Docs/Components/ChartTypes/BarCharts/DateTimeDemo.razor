@@ -22,7 +22,7 @@
         await base.OnInitializedAsync();
         var appleStock = await SampleData.GetStockPricesAsync(
             Http,
-            "/_content/BlazorApexCharts.Docs/data/stock/aapl_us_d.csv",
+            "_content/BlazorApexCharts.Docs/data/stock/aapl_us_d.csv",
             "AAPL");
         stockPrices = appleStock
             .Where(n => n.Date.Year >= 2005 && n.Date.Year <= 2006)

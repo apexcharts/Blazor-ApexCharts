@@ -1,5 +1,8 @@
 using BlazorApexCharts.Docs.Services;
+using System;
+using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +27,9 @@ namespace BlazorApexCharts.Docs.Server
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<ICodeSnippetService, LocalSnippetService>();
+
+            // Demos read sample files from wwwroot, so the client points at this app's own base address.
+            services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(sp.GetRequiredService<NavigationManager>().BaseUri) });
 
             services.AddApexCharts();
         }

@@ -1,33 +1,30 @@
-﻿<DemoContainer>
+<DemoContainer>
     <ApexChart TItem="Data"
                Title="Order Net Value"
-    XAxisType="XAxisType.Datetime">
+               XAxisType="XAxisType.Datetime"
+               Options="options">
 
-        <ApexLineSeries TItem="Data"
-                        Items="data"
+        <ApexPointSeries TItem="Data"
+                         Items="data"
                          Name="Gross Value"
                          SeriesType="SeriesType.Line"
                          XValue="@(e => e.Timestamp)"
                          YValue="@(e => e.Value)"
-                         MarkerSize="5"
                          Color="green"
-                        MarkerColor="red"
-                        Stroke="@(new ApexCharts.SeriesStroke() { DashSpace = 5, Width = 2 })" />
+                         Stroke="@(new ApexCharts.SeriesStroke { DashSpace = 5, Width = 2 })" />
 
-        <ApexLineSeries TItem="Data"
-                        Items="data"
-                        Name="Gross Value"
-                        SeriesType="SeriesType.Line"
-                        XValue="@(e => e.Timestamp)"
-                        YValue="@(e => e.Value - 10)"
-                        Color="red"
-                        Stroke="@(new ApexCharts.SeriesStroke() { Width = 1 })" />
+        <ApexPointSeries TItem="Data"
+                         Items="data"
+                         Name="Net Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Timestamp)"
+                         YValue="@(e => e.Value - 10)"
+                         Color="red"
+                         Stroke="@(new ApexCharts.SeriesStroke { Width = 1 })" />
     </ApexChart>
-
 </DemoContainer>
 
-@code 
-{
+@code {
     private record Data(DateTimeOffset Timestamp, decimal Value);
 
     private List<Data> data { get; set; } = new List<Data>
@@ -38,5 +35,15 @@
         new Data(DateTimeOffset.Now.AddDays(-2), 180),
         new Data(DateTimeOffset.Now.AddDays(-1), 130),
         new Data(DateTimeOffset.Now, 170)
+    };
+
+    // Marker size and color are set per series, in series order: only the first series shows red markers.
+    private ApexChartOptions<Data> options = new()
+    {
+        Markers = new Markers
+        {
+            Size = new ApexCharts.Size(5, 0),
+            Colors = new Color("red", "red")
+        }
     };
 }
