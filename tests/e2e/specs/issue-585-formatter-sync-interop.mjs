@@ -12,6 +12,17 @@ const DISPATCHER_ERROR = 'The current dispatcher does not support synchronous ca
 export default async function (page, BASE) {
   const realErrors = watchErrors(page);
 
+  // Collect the library's warnings from the first chart render on, so a false warning on the real
+  // WebAssembly path is caught too.
+  await page.addInitScript(() => {
+    window.__issue585Warnings = [];
+    const warn = console.warn.bind(console);
+    console.warn = (...args) => {
+      if (String(args[0]).startsWith('Blazor-ApexCharts:')) window.__issue585Warnings.push(String(args[0]));
+      warn(...args);
+    };
+  });
+
   await gotoChart(page, BASE, 'features/formatters');
   await page.waitForFunction(() => window.blazor_apexchart && window.blazor_apexchart.dotNetRefs.size > 0, null, { timeout: 30000 });
 
@@ -23,15 +34,22 @@ export default async function (page, BASE) {
   });
   assert(formatted.includes('$1,234'), `expected a .NET formatted "$1,234" label, got ${JSON.stringify(formatted)}`);
 
-  // Count the library's warnings from here on.
-  await page.evaluate(() => {
-    window.__issue585Warnings = [];
-    const warn = console.warn.bind(console);
-    console.warn = (...args) => {
-      if (String(args[0]).startsWith('Blazor-ApexCharts:')) window.__issue585Warnings.push(String(args[0]));
-      warn(...args);
-    };
+  // The chart calls the formatters with undefined (tooltips on series of unequal length, missing
+  // range starts). The value must still reach .NET as one argument (sent as null), which
+  // JSGetFormattedYAxisValue / JSGetFormattedXAxisValue turn into "".
+  const empty = await page.evaluate(() => {
+    const api = window.blazor_apexchart;
+    return [...api.dotNetRefs.keys()].map(id => {
+      const w = { config: { chart: { id } } };
+      return [api.getYAxisLabel(undefined, 0, w), api.getXAxisLabel(undefined, 0, w)];
+    });
   });
+  assert(empty.length > 0 && empty.every(([y, x]) => y === '' && x === ''),
+    `expected "" for an undefined value on WebAssembly, got ${JSON.stringify(empty)}`);
+
+  // WebAssembly can call .NET synchronously, so none of the real charts may warn.
+  const wasmWarnings = await page.evaluate(() => window.__issue585Warnings.slice());
+  assert(wasmWarnings.length === 0, `the WebAssembly demo logged sync interop warnings: ${JSON.stringify(wasmWarnings)}`);
 
   // 2. getYAxisLabel / getXAxisLabel never throw when invokeMethod throws, return the raw value,
   //    and warn once per chart rather than once per label.
@@ -57,6 +75,40 @@ export default async function (page, BASE) {
   assert(direct.warnings.length === 2, `expected one warning for FormatYAxisLabel and one for FormatXAxisLabel, got ${JSON.stringify(direct.warnings)}`);
   assert(direct.warnings[0].includes('FormatYAxisLabel') && direct.warnings[0].includes('Labels.Formatter'),
     `warning is not actionable: ${direct.warnings[0]}`);
+  assert(direct.warnings[0].includes('cannot call .NET synchronously') && direct.warnings[0].includes('MAUI'),
+    `warning does not name the hosts it applies to: ${direct.warnings[0]}`);
+
+  // 2b. On a host that can call .NET synchronously, an exception from the user's callback is not
+  //     swallowed: it surfaces as before and does not produce the "cannot call .NET synchronously"
+  //     warning. A formatter always passes exactly one argument, even for an undefined value.
+  const userError = await page.evaluate(() => {
+    const api = window.blazor_apexchart;
+    const id = 'issue585-user-error';
+    const argCounts = [];
+    api.dotNetRefs.set(id, {
+      invokeMethod(...args) {
+        argCounts.push(args.length);
+        if (args[1] === 'boom') throw new Error('callback failed');
+        return 'ok';
+      },
+      invokeMethodAsync() { return Promise.resolve(); }
+    });
+    const w = { config: { chart: { id } } };
+    const out = { error: null, argCounts };
+    out.undefinedValue = api.getYAxisLabel(undefined, 0, w);
+    try {
+      api.getYAxisLabel('boom', 0, w);
+    } catch (e) {
+      out.error = e.message;
+    }
+    api.dotNetRefs.delete(id);
+    out.warnings = window.__issue585Warnings.filter(m => m.includes(id));
+    return out;
+  });
+  assert(userError.undefinedValue === 'ok', `undefined value did not reach .NET: ${JSON.stringify(userError)}`);
+  assert(JSON.stringify(userError.argCounts) === '[2,2]', `invokeMethod got the wrong argument count: ${JSON.stringify(userError.argCounts)}`);
+  assert(userError.error === 'callback failed', `an exception from the user's callback was swallowed: ${JSON.stringify(userError)}`);
+  assert(userError.warnings.length === 0, `a callback exception produced a sync interop warning: ${JSON.stringify(userError.warnings)}`);
 
   // 3. A whole chart render with a .NET y-axis formatter and before zoom handlers completes when
   //    the dispatcher cannot call .NET synchronously: labels are drawn and zoomX does not throw.
@@ -90,6 +142,10 @@ export default async function (page, BASE) {
     }
   }, render);
   assert(zoom === null, `zoomX threw through beforeZoom: ${zoom}`);
+
+  const zoomWarnings = await page.evaluate((id) => window.__issue585Warnings.filter(m => m.includes(id) && m.includes('OnBeforeZoom')), render);
+  assert(zoomWarnings.length === 1, `expected one OnBeforeZoom warning, got ${JSON.stringify(zoomWarnings)}`);
+  assert(!zoomWarnings[0].includes('Labels.Formatter'), `the zoom warning points at axis label formatters: ${zoomWarnings[0]}`);
 
   // 4. When .NET reports no sync interop, the script does not even try invokeMethod and warns once,
   //    naming the callbacks .NET skipped.

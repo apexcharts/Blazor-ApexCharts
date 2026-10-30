@@ -29,7 +29,7 @@
         public bool HasAnnotationDeleted { get; init; }
         public bool HasMeasured { get; init; }
         public bool HasBeatChange { get; init; }
-        // False when JavaScript cannot call .NET synchronously (Blazor Server, InteractiveAuto on its server circuit)
+        // False when JavaScript cannot call .NET synchronously (Blazor Server, InteractiveAuto on its server circuit, BlazorWebView hosts such as .NET MAUI)
         public bool SyncInterop { get; init; } = true;
         // Synchronous .NET callbacks set on the chart that were skipped because SyncInterop is false
         public string[] UnsupportedSyncCallbacks { get; init; } = System.Array.Empty<string>();

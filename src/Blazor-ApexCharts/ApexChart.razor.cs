@@ -248,9 +248,12 @@ namespace ApexCharts
 
         /// <summary>
         /// This function, if defined, runs just before zooming in/out of the chart allowing you to set a custom range for zooming in/out.
-        /// Needs synchronous JavaScript to .NET interop, so it only runs in Blazor WebAssembly. In Blazor Server, and on the
-        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, the chart zooms to the selected range
-        /// and a warning is written to the browser console once per chart.
+        /// Returning null keeps the range the user selected.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
+        /// .NET MAUI cannot call .NET synchronously. There the function is not called, the chart zooms to the selected range
+        /// and a warning is written to the browser console once per chart (earlier versions threw a <see cref="NotSupportedException"/>
+        /// when the chart rendered).
         /// </summary>
         /// <remarks>
         /// Links:
@@ -261,9 +264,12 @@ namespace ApexCharts
 
         /// <summary>
         /// This function, if defined, runs just before the user hits the HOME button on the toolbar to reset the chart to it’s original state. The function allows you to set a custom axes range for the initial view of the chart.
-        /// Needs synchronous JavaScript to .NET interop, so it only runs in Blazor WebAssembly. In Blazor Server, and on the
-        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, the reset uses the original range
-        /// and a warning is written to the browser console once per chart.
+        /// Returning null resets to the original range.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
+        /// .NET MAUI cannot call .NET synchronously. There the function is not called, the reset uses the original range
+        /// and a warning is written to the browser console once per chart (earlier versions threw a <see cref="NotSupportedException"/>
+        /// when the chart rendered).
         /// </summary>
         /// <remarks>
         /// Links:
@@ -393,9 +399,10 @@ namespace ApexCharts
 
 
         /// <summary>
-        /// A custom function to execute for generating Y-axis labels. Only supported in Blazor WebAssembly!
-        /// Needs synchronous JavaScript to .NET interop, so it only runs in Blazor WebAssembly. In Blazor Server, and on the
-        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, the axis keeps its default label formatting
+        /// A custom function to execute for generating Y-axis labels.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
+        /// .NET MAUI cannot call .NET synchronously. There the function is not called, the axis keeps its default label formatting
         /// and a warning is written to the browser console once per chart.
         /// For labels that format the same in every render mode, use a JavaScript formatter string instead
         /// (<c>Labels.Formatter</c> on the axis options).
@@ -408,9 +415,10 @@ namespace ApexCharts
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
 
         /// <summary>
-        /// A custom function to execute for generating X-axis labels. Only supported in Blazor WebAssembly!
-        /// Needs synchronous JavaScript to .NET interop, so it only runs in Blazor WebAssembly. In Blazor Server, and on the
-        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, the axis keeps its default label formatting
+        /// A custom function to execute for generating X-axis labels.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
+        /// .NET MAUI cannot call .NET synchronously. There the function is not called, the axis keeps its default label formatting
         /// and a warning is written to the browser console once per chart.
         /// For labels that format the same in every render mode, use a JavaScript formatter string instead
         /// (<c>Labels.Formatter</c> on the axis options).
@@ -1341,7 +1349,7 @@ namespace ApexCharts
         /// <summary>
         /// True when JavaScript can call .NET synchronously, which the .NET label formatters and the
         /// before zoom callbacks need. Only the in-process (WebAssembly) runtime can. Blazor Server,
-        /// the server phase of InteractiveAuto and hybrid WebView hosts cannot, and calling
+        /// the server phase of InteractiveAuto and BlazorWebView hosts (.NET MAUI) cannot, and calling
         /// <c>invokeMethod</c> there throws inside the chart render. Without it the chart still renders:
         /// those callbacks are skipped and the script warns once per chart.
         /// </summary>

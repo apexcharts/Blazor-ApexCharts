@@ -26,32 +26,45 @@ window.blazor_apexchart = {
     },
 
     // Chart ids whose .NET side reported that JS cannot call .NET synchronously (Blazor Server,
-    // or InteractiveAuto before the WebAssembly runtime is cached). Set by renderChart.
+    // InteractiveAuto before the WebAssembly runtime is cached, or a BlazorWebView host such as
+    // .NET MAUI). Set by renderChart.
     noSyncInterop: new Set(),
 
     // "chartId|callback" keys already warned about, so a chart warns once rather than once per label.
     syncWarnings: new Set(),
 
-    warnSyncOnce(chartId, callbacks, error) {
+    warnSyncOnce(chartId, callbacks) {
         var key = chartId + '|' + callbacks.join(',');
         if (this.syncWarnings.has(key)) {
             return;
         }
         this.syncWarnings.add(key);
 
-        var reason = error !== undefined
-            ? 'the synchronous call to .NET failed (' + (error && error.message ? error.message : error) + ')'
-            : 'this render mode cannot call .NET synchronously (Blazor Server, or InteractiveAuto before the WebAssembly runtime is cached)';
+        var hasFormatter = callbacks.some(function (name) { return name.indexOf('Format') === 0; });
+        var advice = hasFormatter
+            ? 'For axis labels use a JavaScript formatter string (Labels.Formatter) instead. '
+            : '';
 
-        console.warn('Blazor-ApexCharts: chart "' + chartId + '" skipped ' + callbacks.join(', ') + ' because ' + reason + '. '
-            + 'For axis labels use a JavaScript formatter string (Labels.Formatter) instead, or render this chart with InteractiveWebAssembly. '
-            + 'See https://apexcharts.github.io/Blazor-ApexCharts/features/formatters');
+        console.warn('Blazor-ApexCharts: chart "' + chartId + '" skipped ' + callbacks.join(', ')
+            + ' because this host cannot call .NET synchronously (Blazor Server, InteractiveAuto before the WebAssembly runtime is cached, '
+            + 'or a BlazorWebView host such as .NET MAUI). '
+            + advice
+            + 'In a Blazor web app, rendering this chart with InteractiveWebAssembly runs these callbacks. '
+            + 'See https://apexcharts.github.io/Blazor-ApexCharts/' + (hasFormatter ? 'features/formatters' : 'events/before-zoom'));
     },
 
-    // Calls a synchronous .NET callback for a chart. Returns { ok: true, result } on success and
-    // { ok: false } when synchronous interop is unavailable or the call threw, so callers can fall back
-    // to the chart's default behavior instead of throwing out of the chart render.
-    invokeSync(chartId, dotNetRef, callback, method, arg) {
+    // True for the error Blazor throws when the host has no synchronous JS to .NET dispatcher.
+    isNoSyncDispatcherError(error) {
+        var message = error && error.message ? String(error.message) : String(error);
+        return message.indexOf('does not support synchronous calls') >= 0;
+    },
+
+    // Calls a synchronous .NET callback for a chart with exactly the given arguments, so a .NET method
+    // that takes one parameter always receives one (an undefined value is sent as null).
+    // Returns { ok: true, result } on success and { ok: false } when the host cannot call .NET
+    // synchronously, so callers fall back to the chart's default behavior instead of throwing out of
+    // the chart render. Any other error, such as an exception thrown by the user's callback, is rethrown.
+    invokeSync(chartId, dotNetRef, callback, method, args) {
         if (dotNetRef == null) {
             return { ok: false };
         }
@@ -62,10 +75,13 @@ window.blazor_apexchart = {
         }
 
         try {
-            var result = arg === undefined ? dotNetRef.invokeMethod(method) : dotNetRef.invokeMethod(method, arg);
+            var result = dotNetRef.invokeMethod.apply(dotNetRef, [method].concat(args));
             return { ok: true, result: result };
         } catch (error) {
-            this.warnSyncOnce(chartId, [callback], error);
+            if (!this.isNoSyncDispatcherError(error)) {
+                throw error;
+            }
+            this.warnSyncOnce(chartId, [callback]);
             return { ok: false };
         }
     },
@@ -77,7 +93,7 @@ window.blazor_apexchart = {
         }
 
         var chartId = this.getChartId(index, w);
-        var call = this.invokeSync(chartId, dotNetRef, callback, method, value);
+        var call = this.invokeSync(chartId, dotNetRef, callback, method, [value]);
         return call.ok ? call.result : value;
     },
 
@@ -698,7 +714,7 @@ window.blazor_apexchart = {
                 if (config.yaxis !== undefined || Array.isArray(config.yaxis))
                     config.yaxis = undefined;
 
-                var call = window.blazor_apexchart.invokeSync(options.chart.id, dotNetObject, 'OnBeforeZoom', 'JSBeforeZoom', config);
+                var call = window.blazor_apexchart.invokeSync(options.chart.id, dotNetObject, 'OnBeforeZoom', 'JSBeforeZoom', [config]);
                 var data = call.result;
                 if (!call.ok || data == null) {
                     return undefined; // keep the range the user selected
@@ -715,7 +731,7 @@ window.blazor_apexchart = {
 
         if (events.hasBeforeResetZoom === true) {
             options.chart.events.beforeResetZoom = function (chartContext, opts) {
-                var call = window.blazor_apexchart.invokeSync(options.chart.id, dotNetObject, 'OnBeforeResetZoom', 'JSBeforeResetZoom');
+                var call = window.blazor_apexchart.invokeSync(options.chart.id, dotNetObject, 'OnBeforeResetZoom', 'JSBeforeResetZoom', []);
                 var data = call.result;
                 if (!call.ok || data == null) {
                     return undefined; // reset to the original range

@@ -11,7 +11,7 @@
                 </div>
                 <div>
                     <h4 class="alert-title">Only supported in Blazor WebAssembly!</h4>
-                    <div class="text-muted">Event 'OnBeforeResetZoom' is only supported in web assembly. In Blazor Server, and in InteractiveAuto before the WebAssembly files are cached, the reset uses the original range without calling it and writes a warning to the browser console.</div>
+                    <div class="text-muted">Event 'OnBeforeResetZoom' is only supported in web assembly. In Blazor Server, in InteractiveAuto before the WebAssembly files are cached, and in BlazorWebView hosts such as .NET MAUI, the reset uses the original range without calling it and writes a warning to the browser console. Earlier versions threw a NotSupportedException there when the chart rendered.</div>
                 </div>
             </div>
         </Alert>
