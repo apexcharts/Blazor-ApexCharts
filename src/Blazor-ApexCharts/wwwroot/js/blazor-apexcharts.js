@@ -192,6 +192,83 @@ window.blazor_apexchart = {
             clearTimeout(pending.warnTimer);
             this.pendingBrushCharts.delete(id);
         }
+
+        this.releaseContainerHeight(id);
+    },
+
+    // Containers held at their height while their chart is rebuilt (issue 565), by chart id
+    heldContainers: new Map(),
+
+    // The height to hold a container at while its chart is rebuilt, or 0 for no hold: when the
+    // container is empty (a first render), or when the chart height is a percentage. apexcharts.js
+    // works a percentage height out from the container's parent, and a held container would make
+    // that parent as tall as the old chart, so the new chart would come out taller each time.
+    containerHeightToHold(container, options) {
+        if (!container || container.childElementCount === 0) {
+            return 0;
+        }
+
+        // The unit as apexcharts.js reads it (Core.setSVGDimensions)
+        var height = options && options.chart ? options.chart.height : undefined;
+        if (height !== undefined && height !== null && String(height).split(/[0-9]+/g).pop() === '%') {
+            return 0;
+        }
+
+        return container.offsetHeight;
+    },
+
+    // Destroying a chart empties its container, and apexcharts.js resets the min-height it gave it.
+    // Until the new chart has rendered, the container is shorter than before (empty, or sized by a
+    // min-height the new chart is still working out), the page gets shorter and the browser moves the
+    // scroll position. Pin the old height through the CSSOM, which a style-src without
+    // 'unsafe-inline' allows. It is a height, not a min-height, because apexcharts.js writes the
+    // container's min-height while it renders: a taller new chart still grows the container through
+    // that min-height, and nothing is left behind once the hold is released.
+    holdContainerHeight(id, container, height) {
+        if (!(height > 0)) {
+            return;
+        }
+
+        var style = container.style;
+        var hold = {
+            container: container,
+            value: height + 'px',
+            previous: style.getPropertyValue('height'),
+            previousPriority: style.getPropertyPriority('height')
+        };
+
+        style.setProperty('height', hold.value, 'important');
+
+        // The measured height includes padding and borders; a content-box container adds them again
+        var extra = container.offsetHeight - height;
+        if (extra > 0 && extra < height) {
+            hold.value = (height - extra) + 'px';
+            style.setProperty('height', hold.value, 'important');
+        }
+
+        this.heldContainers.set(id, hold);
+    },
+
+    // Ends the hold for a chart. With `hold`, only when that hold is still the current one.
+    releaseContainerHeight(id, hold) {
+        var current = this.heldContainers.get(id);
+        if (current === undefined || (hold !== undefined && hold !== current)) {
+            return;
+        }
+
+        this.heldContainers.delete(id);
+
+        // Leave a height that someone else has set since
+        var style = current.container.style;
+        if (style.getPropertyValue('height') !== current.value) {
+            return;
+        }
+
+        if (current.previous) {
+            style.setProperty('height', current.previous, current.previousPriority);
+        } else {
+            style.removeProperty('height');
+        }
     },
 
     // A brush chart waiting for its targets has no chart instance yet (issue 420). A call that
@@ -998,8 +1075,11 @@ window.blazor_apexchart = {
             };
         };
 
-        //Always destroy chart if it exists
+        //Always destroy chart if it exists. Keep the container at its height until the new chart has
+        //rendered, so the page does not shrink under the scroll position (issue 565).
+        var heldHeight = this.containerHeightToHold(container, options);
         this.destroyChart(options.chart.id, true);
+        this.holdContainerHeight(options.chart.id, container, heldHeight);
         this.dotNetRefs.set(options.chart.id, dotNetObject)
         this.hideTooltipSource(options.chart.id);
 
@@ -1018,6 +1098,7 @@ window.blazor_apexchart = {
         var missing = this.missingBrushTargets(options);
         if (missing.length > 0) {
             this.holdBrushChart(dotNetObject, container, options, missing);
+            this.releaseContainerHeight(options.chart.id); // no chart comes yet, so do not hold its place
             return 'waiting';
         }
 
@@ -1052,8 +1133,24 @@ window.blazor_apexchart = {
     },
 
     createChart(container, options) {
-        var chart = new ApexCharts(container, options);
-        var rendering = chart.render();
+        var id = options.chart.id;
+        var chart, rendering;
+        try {
+            chart = new ApexCharts(container, options);
+            rendering = chart.render();
+        } catch (error) {
+            this.releaseContainerHeight(id);
+            throw error;
+        }
+
+        // Release the held height once the chart has rendered, or failed to. This is a side branch:
+        // `rendering` stays the chart's own promise, and a failure is handled here as apexcharts.js
+        // handles it, so a failed render is no more reported than before.
+        var hold = this.heldContainers.get(id);
+        if (hold !== undefined) {
+            var release = () => this.releaseContainerHeight(id, hold);
+            Promise.resolve(rendering).then(release, release);
+        }
 
         if (options.debug == true) {
             console.log('Chart ' + options.chart.id + ' rendered');
