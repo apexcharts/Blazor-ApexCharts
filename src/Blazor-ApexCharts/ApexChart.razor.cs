@@ -248,6 +248,9 @@ namespace ApexCharts
 
         /// <summary>
         /// This function, if defined, runs just before zooming in/out of the chart allowing you to set a custom range for zooming in/out.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs in Blazor WebAssembly. In Blazor Server, and on the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, the chart zooms to the selected range
+        /// and a warning is written to the browser console once per chart.
         /// </summary>
         /// <remarks>
         /// Links:
@@ -258,6 +261,9 @@ namespace ApexCharts
 
         /// <summary>
         /// This function, if defined, runs just before the user hits the HOME button on the toolbar to reset the chart to it’s original state. The function allows you to set a custom axes range for the initial view of the chart.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs in Blazor WebAssembly. In Blazor Server, and on the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, the reset uses the original range
+        /// and a warning is written to the browser console once per chart.
         /// </summary>
         /// <remarks>
         /// Links:
@@ -388,6 +394,11 @@ namespace ApexCharts
 
         /// <summary>
         /// A custom function to execute for generating Y-axis labels. Only supported in Blazor WebAssembly!
+        /// Needs synchronous JavaScript to .NET interop, so it only runs in Blazor WebAssembly. In Blazor Server, and on the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, the axis keeps its default label formatting
+        /// and a warning is written to the browser console once per chart.
+        /// For labels that format the same in every render mode, use a JavaScript formatter string instead
+        /// (<c>Labels.Formatter</c> on the axis options).
         /// </summary>
         /// <remarks>
         /// Links:
@@ -398,6 +409,11 @@ namespace ApexCharts
 
         /// <summary>
         /// A custom function to execute for generating X-axis labels. Only supported in Blazor WebAssembly!
+        /// Needs synchronous JavaScript to .NET interop, so it only runs in Blazor WebAssembly. In Blazor Server, and on the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, the axis keeps its default label formatting
+        /// and a warning is written to the browser console once per chart.
+        /// For labels that format the same in every render mode, use a JavaScript formatter string instead
+        /// (<c>Labels.Formatter</c> on the axis options).
         /// </summary>
         /// <remarks>
         /// Links:
@@ -1307,7 +1323,6 @@ namespace ApexCharts
                 Options.Blazor.JavascriptPath ??= chartService.GlobalOptions.Blazor.JavascriptPath;
             }
 
-            CheckChart();
             SetSeries();
             SetSeriesColors();
             SetSeriesStroke();
@@ -1323,18 +1338,28 @@ namespace ApexCharts
 
         }
 
-        private void CheckChart()
-        {
-            var jsInProcess = jsRuntime is IJSInProcessRuntime;
-            if (OnBeforeZoom != null && !jsInProcess)
-            {
-                throw new NotSupportedException("Event 'OnBeforeZoom' is not suported in blazor server");
-            }
+        /// <summary>
+        /// True when JavaScript can call .NET synchronously, which the .NET label formatters and the
+        /// before zoom callbacks need. Only the in-process (WebAssembly) runtime can. Blazor Server,
+        /// the server phase of InteractiveAuto and hybrid WebView hosts cannot, and calling
+        /// <c>invokeMethod</c> there throws inside the chart render. Without it the chart still renders:
+        /// those callbacks are skipped and the script warns once per chart.
+        /// </summary>
+        private bool SyncInteropAvailable => jsRuntime is IJSInProcessRuntime;
 
-            if (OnBeforeResetZoom != null && !jsInProcess)
-            {
-                throw new NotSupportedException("Event 'OnBeforeResetZoom' is not suported in blazor server");
-            }
+        /// <summary>
+        /// Names of the synchronous .NET callbacks set on this chart that cannot run on the current runtime.
+        /// </summary>
+        private string[] UnsupportedSyncCallbacks()
+        {
+            if (SyncInteropAvailable) { return Array.Empty<string>(); }
+
+            var names = new List<string>();
+            if (FormatYAxisLabel != null) { names.Add(nameof(FormatYAxisLabel)); }
+            if (FormatXAxisLabel != null) { names.Add(nameof(FormatXAxisLabel)); }
+            if (OnBeforeZoom != null) { names.Add(nameof(OnBeforeZoom)); }
+            if (OnBeforeResetZoom != null) { names.Add(nameof(OnBeforeResetZoom)); }
+            return names.ToArray();
         }
 
         private void SetAnnotationPointEvents()
@@ -1454,8 +1479,10 @@ namespace ApexCharts
                 HasMouseLeave = OnMouseLeave.HasDelegate,
                 HasMouseMove = OnMouseMove.HasDelegate,
                 HasClick = OnClick.HasDelegate,
-                HasBeforeZoom = OnBeforeZoom != null,
-                HasBeforeResetZoom = OnBeforeResetZoom != null,
+                HasBeforeZoom = OnBeforeZoom != null && SyncInteropAvailable,
+                HasBeforeResetZoom = OnBeforeResetZoom != null && SyncInteropAvailable,
+                SyncInterop = SyncInteropAvailable,
+                UnsupportedSyncCallbacks = UnsupportedSyncCallbacks(),
                 HasScrolled = OnScrolled.HasDelegate,
                 HasAnnotationCreated = OnAnnotationCreated.HasDelegate,
                 HasAnnotationDragged = OnAnnotationDragged.HasDelegate,
@@ -1471,6 +1498,10 @@ namespace ApexCharts
 
         private void SetDotNetFormatters()
         {
+            // The .NET formatters are called synchronously from the chart's label pass. Without
+            // synchronous interop the axis keeps its default formatting instead of failing the render.
+            if (!SyncInteropAvailable) { return; }
+
             if (FormatYAxisLabel != null)
             {
                 if (Options.Yaxis == null) { Options.Yaxis = new List<YAxis>(); }
