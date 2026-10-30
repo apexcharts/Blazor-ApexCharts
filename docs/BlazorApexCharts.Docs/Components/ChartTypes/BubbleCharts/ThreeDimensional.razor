@@ -1,0 +1,33 @@
+﻿<DemoContainer>
+    <ApexChart TItem="SupportIncident"
+               Title="Support Incidents"
+    Options="@chartOptions">
+
+    @foreach (var data in incidents.GroupBy(e=> e.Source))
+   {
+         <ApexBubbleSeries TItem="SupportIncident"
+                    Items="data.ToList()"
+                    Name="@data.Key.ToString()"
+                     XValue="@(e => e.WeekName)"
+                    YAggregate="@(e => (decimal)e.Sum(e => e.LeadTime))"
+                    ZAggregate="@(e => (int)e.Average(e => e.Severity))" />
+   }
+    </ApexChart>
+</DemoContainer>
+
+@code 
+{
+    private List<SupportIncident> incidents { get; set; } = SampleData.GetSupportIncidents();
+
+    private ApexChartOptions<SupportIncident> chartOptions = new()
+    {
+        Fill = new()
+        {
+            Type = FillType.Gradient
+        },
+        Theme = new()
+        {
+            Palette = PaletteType.Palette2
+        }
+    };
+}

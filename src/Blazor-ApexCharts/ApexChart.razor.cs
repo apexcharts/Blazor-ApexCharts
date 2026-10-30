@@ -1521,7 +1521,12 @@ namespace ApexCharts
 
                 if (!isMixed)
                 {
-                    Options.Chart.Type = seriesChartType;
+                    // Funnel and pyramid are drawn from bar series, so keep the type the caller asked for.
+                    var isBarAlias = Options.Chart.Type is ChartType.Funnel or ChartType.Pyramid;
+                    if (!(isBarAlias && seriesChartType == ChartType.Bar))
+                    {
+                        Options.Chart.Type = seriesChartType;
+                    }
                 }
                 else
                 {

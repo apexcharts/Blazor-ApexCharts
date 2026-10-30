@@ -9,15 +9,15 @@
                          XValue="@(e => e.DiscountPercentage)"
                          YValue="@(e => e.GrossValue)"
                          OrderByDescending="e=>e.X" 
-                         PointColor="GetColor" />
+                         PointColor="GetColor"/>
 
        
     </ApexChart>
 </DemoContainer>
 
-@code {
+@code 
+{
     private List<Order> orders { get; set; } = SampleData.GetOrders();
-
 
     private string GetColor(Order order)
     {
@@ -25,10 +25,6 @@
         {
             return "#3633FF";
         }
-
         return "#E51C15";
-
-
     }
-
-    }
+}

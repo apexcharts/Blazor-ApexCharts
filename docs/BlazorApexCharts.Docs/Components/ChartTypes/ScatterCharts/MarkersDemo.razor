@@ -1,0 +1,60 @@
+﻿<DemoContainer>
+    <ApexChart TItem="TimeSeries"
+               Title="Markers"
+               XAxisType="XAxisType.Datetime"
+               Options="@chartOptions">
+
+        <ApexPointSeries TItem="TimeSeries"
+                         Items="diamonds"
+                         SeriesType="SeriesType.Scatter"
+                         Name="Diamonds"
+                         XValue="@(e => e.Date)"
+                         YValue="@(e => e.Value)" />
+
+        <ApexPointSeries TItem="TimeSeries"
+                         Items="crosses"
+                         SeriesType="SeriesType.Scatter"
+                         Name="Crosses"
+                         XValue="@(e => e.Date)"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</DemoContainer>
+
+@code 
+{
+    private List<TimeSeries> diamonds = new TimeSeriesGenerator(10).TimeSeries
+        .Concat(new TimeSeriesGenerator(10).TimeSeries)
+        .OrderBy(e => e.Date)
+        .ToList();
+
+    private List<TimeSeries> crosses = new TimeSeriesGenerator(5).TimeSeries
+    .Concat(new TimeSeriesGenerator(5).TimeSeries)
+    .OrderBy(e => e.Date)
+    .ToList();
+
+    private ApexChartOptions<TimeSeries> chartOptions = new()
+    {
+        Chart = new()
+        {
+            Zoom = new()
+            {
+                Type = AxisType.Xy
+            }
+        },
+        Markers = new()
+        {
+            Shape = [MarkerShape.Diamond, MarkerShape.Cross],
+            Size = 10,
+            FillOpacity = 0.8,
+            StrokeColors = "#333",
+            StrokeWidth = [1,2]
+        },
+        Legend = new()
+        {
+            Markers = new()
+            {
+                StrokeWidth = [1, 2]
+            }
+        }
+    };
+}
