@@ -40,11 +40,20 @@ export default async function (page, BASE) {
   await page.locator('#issue-658-chart .apexcharts-legend-series').first().waitFor({ timeout: 15000 });
 
   // Show the Razor tooltip once, so its copy into the chart tooltip also runs under the policy.
-  const bar = await page.locator('#issue-658-chart .apexcharts-bar-area').first().boundingBox();
-  await page.mouse.move(bar.x + bar.width / 2, bar.y + bar.height / 2);
+  // A single mouse move can land beside the bar when the page shifts after the bar was measured
+  // (a late font or the bar's entry animation), and the chart sees no further move, so measure and
+  // hover again until the tooltip shows or the time runs out.
   // Checked after the nonce assertions, which explain a failure better.
-  const tooltipShown = await page.locator('#issue-658-chart .apexcharts-tooltip #issue-658-tooltip').first()
-    .filter({ hasText: /\S/ }).waitFor({ timeout: 15000 }).then(() => true, () => false);
+  const tooltip = page.locator('#issue-658-chart .apexcharts-tooltip #issue-658-tooltip').first().filter({ hasText: /\S/ });
+  let tooltipShown = false;
+  for (const deadline = Date.now() + 15000; !tooltipShown && Date.now() < deadline;) {
+    const bar = await page.locator('#issue-658-chart .apexcharts-bar-area').first().boundingBox();
+    if (bar) {
+      await page.mouse.move(0, 0);
+      await page.mouse.move(bar.x + bar.width / 2, bar.y + bar.height / 2);
+    }
+    tooltipShown = await tooltip.waitFor({ timeout: 2000 }).then(() => true, () => false);
+  }
 
   const state = await page.evaluate(() => {
     const root = document.querySelector('#issue-658-chart');
