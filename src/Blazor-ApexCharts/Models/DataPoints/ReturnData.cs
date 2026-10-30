@@ -37,6 +37,12 @@ namespace ApexCharts
         /// The index of the data series being selected
         /// </summary>
         public int SeriesIndex { get; set; }
+
+        /// <summary>
+        /// What caused the selection: a click on the data point, a click on a legend item (pie, donut and polar area charts select the slice from the legend), or a call in code.
+        /// Always <see cref="DataPointSelectionSource.DataPoint"/> for <see cref="ApexChart{TItem}.OnMarkerClick"/>.
+        /// </summary>
+        public DataPointSelectionSource Source { get; set; }
     }
 
     /// <summary>

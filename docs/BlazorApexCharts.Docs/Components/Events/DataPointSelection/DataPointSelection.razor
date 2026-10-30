@@ -3,7 +3,8 @@
 <DocExamples Title="Data Point Selection">
 
     <Description>
-        Click on a datapoint to trigger the event
+        Click on a datapoint to trigger the event. On pie, donut and polar area charts a legend click also selects the slice,
+        and <code>SelectedData.Source</code> tells the two apart.
     </Description>
 
     <ChildContent>
@@ -13,7 +14,11 @@
             </Snippet>
         </CodeSnippet>
 
-       
+        <CodeSnippet Title="Pie: slice or legend" ClassName=@typeof(PieChart).ToString()>
+            <Snippet>
+                <PieChart />
+            </Snippet>
+        </CodeSnippet>
 
     </ChildContent>
 

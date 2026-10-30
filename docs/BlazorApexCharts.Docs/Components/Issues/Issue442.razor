@@ -1,0 +1,77 @@
+@page "/issues/442"
+
+@* Repro for issue 442, read by tests/e2e/specs/issue-442-pie-legend-vs-slice.mjs. A legend click on a pie
+   also selects the slice, so OnDataPointSelection runs for both; SelectedData.Source tells them apart. *@
+
+<div id="issue442-pie">
+    <ApexChart TItem="Slice"
+               @ref="chart"
+               Title="Issue 442: pie"
+               Options="options"
+               OnDataPointSelection="PointSelected"
+               OnLegendClicked="LegendClicked">
+
+        <ApexPointSeries TItem="Slice"
+                         Items="slices"
+                         Name="Value"
+                         SeriesType="SeriesType.Pie"
+                         XValue="@(e => e.Label)"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</div>
+
+<button id="issue442-toggle" @onclick="ToggleInCode">Toggle slice C in code</button>
+
+<p>Legend clicks: <span id="issue442-legend-count">@legendCount</span></p>
+<p>Selections: <span id="issue442-selection-count">@selectionCount</span></p>
+<ol id="issue442-log">
+    @foreach (var entry in log)
+    {
+        <li>@entry</li>
+    }
+</ol>
+
+@code {
+    private ApexChart<Slice> chart;
+
+    private readonly List<Slice> slices =
+    [
+        new Slice { Label = "A", Value = 10 },
+        new Slice { Label = "B", Value = 20 },
+        new Slice { Label = "C", Value = 30 },
+        new Slice { Label = "D", Value = 40 },
+    ];
+
+    private readonly ApexChartOptions<Slice> options = new()
+    {
+        Chart = new Chart { Animations = new Animations { Enabled = false } }
+    };
+
+    private readonly List<string> log = [];
+    private int legendCount;
+    private int selectionCount;
+
+    private void LegendClicked(LegendClicked<Slice> data)
+    {
+        legendCount++;
+        log.Add($"legend:{data.DataPoint?.X}");
+    }
+
+    private void PointSelected(SelectedData<Slice> data)
+    {
+        selectionCount++;
+        log.Add($"selection:{data.DataPoint?.X}:{data.Source}");
+    }
+
+    private async Task ToggleInCode()
+    {
+        // On a pie each slice is addressed by its index as the series index.
+        await chart.ToggleDataPointSelectionAsync(2, null);
+    }
+
+    private class Slice
+    {
+        public string Label { get; set; }
+        public decimal Value { get; set; }
+    }
+}

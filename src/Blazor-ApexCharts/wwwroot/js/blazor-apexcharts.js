@@ -537,12 +537,18 @@ window.blazor_apexchart = {
             }
         };
 
+        // On pie, donut and polar area charts a legend click also selects the slice, and apexcharts.js then
+        // calls dataPointSelection with a null event, as it does for toggleDataPointSelection. Its legendClick
+        // callback runs synchronously just before that, so this flag tells a legend selection from one made in code.
+        var legendClickInProgress = false;
+
         if (events.hasDataPointSelection === true) {
             options.chart.events.dataPointSelection = function (event, chartContext, config) {
                 var selection = {
                     dataPointIndex: config.dataPointIndex,
                     seriesIndex: config.seriesIndex,
-                    selectedDataPoints: config.selectedDataPoints
+                    selectedDataPoints: config.selectedDataPoints,
+                    source: event ? 'dataPoint' : (legendClickInProgress ? 'legend' : 'method')
                 };
 
                 dotNetObject.invokeMethodAsync('JSDataPointSelected', selection);
@@ -572,8 +578,13 @@ window.blazor_apexchart = {
             }
         };
 
-        if (events.hasLegendClick === true) {
+        if (events.hasLegendClick === true || events.hasDataPointSelection === true) {
             options.chart.events.legendClick = function (chartContext, seriesIndex, config) {
+                legendClickInProgress = true;
+                Promise.resolve().then(function () { legendClickInProgress = false; });
+
+                if (events.hasLegendClick !== true) { return; }
+
                 var legendClick = {
                     seriesIndex: seriesIndex,
                     collapsed: config.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1
