@@ -1,11 +1,15 @@
 // Issue #618: CSV export of a line chart with numeric X values (1..1600) and TickAmount = 40.
 //
 // The wrong categories in the default chart come from apexcharts.js (Exports.exportToCSV reads the
-// axis tick labels when a category axis has been turned numeric), so this spec does not fail on
-// them. It asserts the documented workaround, XAxisType.Numeric, exports every X value, and reports
-// whether the vendored bundle still has the upstream bug.
+// axis tick labels when a category axis has been turned numeric; repro in
+// tests/e2e/repros/csv-export-categories/). The spec asserts the documented workaround,
+// XAxisType.Numeric, exports every X value. For the default chart it asserts the bug is still
+// there: a canary that fails when a bundle update fixes it, with a message to turn it into a
+// regression guard.
 import fs from 'node:fs/promises';
 import { gotoChart, watchErrors, assert, assertNoErrors } from '../lib/helpers.mjs';
+
+const UPSTREAM_BUG = 'https://github.com/apexcharts/Blazor-ApexCharts/issues/618 (repro: tests/e2e/repros/csv-export-categories/)';
 
 async function downloadCsv(page, containerId) {
   const container = page.locator(`#${containerId}`);
@@ -39,10 +43,12 @@ export default async function (page, BASE) {
   const fallback = await downloadCsv(page, 'chart-default');
   assert(fallback.length - 1 === 1600, `default: expected 1600 data rows, got ${fallback.length - 1}`);
   const fallbackWrong = wrongRows(fallback);
-  console.log(
-    fallbackWrong.length
-      ? `   issue-618: default axis still exports ${fallbackWrong.length} tick labels as categories (apexcharts.js bug, see #618)`
-      : '   issue-618: default axis exports every X value (apexcharts.js fix is in the vendored bundle)',
+  console.log(`   issue-618: default axis exports ${fallbackWrong.length} rows with the wrong category, first ${JSON.stringify(fallbackWrong.slice(0, 3))}`);
+  // Canary: the default chart still exports tick labels in place of X values.
+  assert(
+    fallbackWrong.length > 0,
+    `apexcharts.js bug ${UPSTREAM_BUG} appears fixed: the default axis now exports every X value. ` +
+    'Flip this assertion into a regression guard: assert no default row has the wrong category, like the numeric chart above.',
   );
 
   assertNoErrors(realErrors, 'issue-618');
