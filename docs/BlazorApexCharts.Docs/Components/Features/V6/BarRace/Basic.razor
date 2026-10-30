@@ -1,8 +1,14 @@
 @implements IDisposable
+@using System.Threading
+@using Microsoft.JSInterop
 @*
     ApexCharts v6 bar-chart-race. On a horizontal bar chart, data labels ride to their bar's new
     position (Animate) and count up to the new value (CountUp) as bars re-rank. This demo advances
     automatically on a timer; the bars reorder and the labels count up on every frame.
+
+    The race is a PeriodicTimer loop started from the renderer, so every frame runs on the
+    component's dispatcher (no InvokeAsync, no async void timer callback), disposing the
+    component stops it, and no exception can escape it to crash a Blazor Server host.
 *@
 <div class="mb-2">
     <button class="btn btn-primary" @onclick="ToggleRun">@(running ? "Pause" : "Play")</button>
@@ -29,7 +35,7 @@
     private int frame;
     private bool running = true;
     private readonly Random rnd = new();
-    private System.Timers.Timer timer;
+    private readonly CancellationTokenSource raceCancellation = new();
 
     protected override void OnInitialized()
     {
@@ -64,44 +70,70 @@
     {
         if (firstRender)
         {
-            timer = new System.Timers.Timer(1400);
-            timer.Elapsed += async (_, _) => await Tick();
-            timer.AutoReset = true;
-            timer.Start();
+            // Not awaited: the loop runs until the component is disposed and handles its own errors.
+            _ = RunRaceAsync(raceCancellation.Token);
         }
     }
 
-    private async Task Tick()
+    private async Task RunRaceAsync(CancellationToken cancellationToken)
     {
-        if (!running || chart is null) { return; }
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1400));
 
-        await InvokeAsync(async () =>
+        try
         {
-            frame++;
-
-            // Every few frames, reshuffle from a fresh base so the race keeps re-ranking and
-            // values stay in a readable range instead of growing without bound.
-            if (frame % 8 == 0)
+            // The tick resumes on the dispatcher after any pending disposal, so the token is checked again.
+            while (await timer.WaitForNextTickAsync(cancellationToken) && !cancellationToken.IsCancellationRequested)
             {
-                foreach (var r in racers) { r.Value = rnd.Next(20, 100); }
-            }
-            else
-            {
-                foreach (var r in racers) { r.Value += rnd.Next(0, 40); }
-            }
+                if (!running) { continue; }
 
-            await chart.UpdateSeriesAsync(true);
-            StateHasChanged();
-        });
+                try
+                {
+                    await NextFrameAsync();
+                }
+                catch (TaskCanceledException) when (!cancellationToken.IsCancellationRequested)
+                {
+                    // The browser did not answer in time (a dropped connection in Blazor Server).
+                    // The race skips this frame; the next tick tries again.
+                }
+            }
+        }
+        catch (Exception) when (cancellationToken.IsCancellationRequested)
+        {
+            // Disposed: the race stopped, and whatever the last call ran into no longer matters.
+        }
+        catch (JSDisconnectedException)
+        {
+            // The page was closed: there is no chart left to update.
+        }
+        catch (Exception ex)
+        {
+            // Anything else is a real error: report it the way an event handler's error is reported.
+            await DispatchExceptionAsync(ex);
+        }
+    }
+
+    private async Task NextFrameAsync()
+    {
+        frame++;
+
+        // Every few frames, reshuffle from a fresh base so the race keeps re-ranking and
+        // values stay in a readable range instead of growing without bound.
+        if (frame % 8 == 0)
+        {
+            foreach (var r in racers) { r.Value = rnd.Next(20, 100); }
+        }
+        else
+        {
+            foreach (var r in racers) { r.Value += rnd.Next(0, 40); }
+        }
+
+        await chart.UpdateSeriesAsync(true);
+        StateHasChanged();
     }
 
     private void ToggleRun() => running = !running;
 
-    public void Dispose()
-    {
-        timer?.Stop();
-        timer?.Dispose();
-    }
+    public void Dispose() => raceCancellation.Cancel();
 
     private class Racer
     {

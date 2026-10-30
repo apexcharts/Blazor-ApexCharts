@@ -15,6 +15,7 @@ namespace BlazorApexCharts.Docs.Shared
         private bool showGlobalOptions;
         private ElementReference panelRef;
         private bool focusPending;
+        private bool disposed;
 
         protected override void OnInitialized()
         {
@@ -35,10 +36,24 @@ namespace BlazorApexCharts.Docs.Shared
             }
         }
 
+        // An event handler, so async void: whatever it throws goes to the circuit's error handler.
+        // A page closed during the delay must not, as expanding the menu no longer matters then.
         private async void OnLocationChanged(object sender, LocationChangedEventArgs e)
         {
-            await Task.Delay(100);
-            await JSRuntime.InvokeVoidAsync("docsInterop.expandActiveNavParents");
+            try
+            {
+                await Task.Delay(100);
+                if (disposed) { return; }
+                await JSRuntime.InvokeVoidAsync("docsInterop.expandActiveNavParents");
+            }
+            catch (JSDisconnectedException)
+            {
+                // The page was closed.
+            }
+            catch (TaskCanceledException)
+            {
+                // The browser did not answer in time (a dropped connection in Blazor Server).
+            }
         }
 
         public Task ShowGlobalOptions()
@@ -63,6 +78,7 @@ namespace BlazorApexCharts.Docs.Shared
 
         public void Dispose()
         {
+            disposed = true;
             NavManager.LocationChanged -= OnLocationChanged;
         }
     }

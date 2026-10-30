@@ -598,11 +598,26 @@ namespace ApexCharts
             {
                 return await blazor_apexchart.InvokeAsync<TValue>(identifier, args);
             }
-            catch (Exception ex) when (JSInteropErrors.IsBrowserGone(ex))
+            catch (Exception ex) when (IsIgnorableCallFailure(ex))
             {
                 return default;
             }
         }
+
+        /// <summary>
+        /// True for a failed chart call nobody can act on: the browser is gone, or the chart was disposed
+        /// while the call was in flight and the failure is one teardown causes (the call timed out, was
+        /// cancelled, or reached JavaScript after <c>destroyChart</c>).
+        /// </summary>
+        /// <remarks>
+        /// A timer or a background feed that calls <see cref="AppendDataAsync"/> or
+        /// <see cref="UpdateSeriesAsync"/> cannot tell the chart was disposed between starting the call
+        /// and its failure, so the chart ignores that failure itself. While the chart is alive only
+        /// <see cref="JSInteropErrors.IsBrowserGone"/> is ignored: a timeout or a JavaScript error then
+        /// reports a real problem and reaches the caller.
+        /// </remarks>
+        private bool IsIgnorableCallFailure(Exception ex) =>
+            JSInteropErrors.IsBrowserGone(ex) || (isDisposed && JSInteropErrors.IsExpectedDuringTeardown(ex));
 
         private async ValueTask InvokeVoidJsAsync(string identifier, params object[] args)
         {
@@ -619,7 +634,7 @@ namespace ApexCharts
                     await blazor_apexchart.InvokeVoidAsync(identifier, args);
                 }
             }
-            catch (Exception ex) when (JSInteropErrors.IsBrowserGone(ex))
+            catch (Exception ex) when (IsIgnorableCallFailure(ex))
             { }
         }
 
@@ -1553,7 +1568,9 @@ namespace ApexCharts
                 HasBeatChange = OnBeatChange.HasDelegate
             });
 
-            if (renderState != "waiting")
+            // Disposed while renderChart was in flight: a failure it then met was ignored, so the chart
+            // may never have drawn, and OnRendered is not raised for a chart that is gone.
+            if (renderState != "waiting" && !isDisposed)
             {
                 await OnRendered.InvokeAsync();
             }
