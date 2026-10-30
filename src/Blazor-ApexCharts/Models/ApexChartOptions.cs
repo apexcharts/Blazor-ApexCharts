@@ -3078,8 +3078,9 @@ namespace ApexCharts
         public double? Radius { get; set; }
 
         /// <summary>
-        /// Shape of the marker.
+        /// Shape of the marker. A single shape applies to every series, a list assigns shapes by series index.
         /// </summary>
+        /// <inheritdoc cref="ApexCharts.MarkerShapeSelections" path="/remarks"/>
         public MarkerShapeSelections Shape { get; set; }
 
         /// <summary>
