@@ -107,6 +107,58 @@ window.blazor_apexchart = {
         return null;
     },
 
+    // Formatter for FormatYAxisLabelForAxis. axisIndex is written into each y-axis
+    // formatter by the .NET side, since apexcharts.js does not pass it.
+    getYAxisLabelForAxis(value, index, w, axisIndex) {
+        var dotNetRef = this.getDotNetObjectReference(index, w);
+        if (dotNetRef == null) {
+            return value;
+        }
+
+        // invokeSync skips the call and warns once per chart when the host cannot call .NET
+        // synchronously (Blazor Server, InteractiveAuto on its server circuit, BlazorWebView hosts).
+        // Any other error came from the user's formatter: log it and keep the raw value.
+        try {
+            var chartId = this.getChartId(index, w);
+            var call = this.invokeSync(chartId, dotNetRef, 'FormatYAxisLabelForAxis', 'JSGetFormattedYAxisValueForAxis',
+                [value, this.getYAxisIndexForValue(index, axisIndex)]);
+            return call.ok ? call.result : value;
+        } catch (e) {
+            console.error("FormatYAxisLabelForAxis failed", e);
+            return value;
+        }
+    },
+
+    // A y-axis formatter is called for axis labels with the tick index as the second
+    // argument, and for tooltip values with { seriesIndex, dataPointIndex, w }. A tooltip
+    // looks the formatter up by series index (falling back to the first axis), so the
+    // index written into it is the wrong axis whenever series and axes are not one to
+    // one. For a value of a series, use the axis apexcharts.js plotted that series on.
+    getYAxisIndexForValue(index, axisIndex) {
+        if (index === null || typeof index !== 'object') {
+            return axisIndex;
+        }
+
+        // dataPointIndex is -1 when apexcharts.js measures the labels of the axis at seriesIndex.
+        if (typeof index.seriesIndex !== 'number' || typeof index.dataPointIndex !== 'number' || index.dataPointIndex < 0) {
+            return axisIndex;
+        }
+
+        var chart = index.w !== undefined ? index.w : index;
+        var globals = chart.globals;
+        // Horizontal bars format their category labels with the first y-axis formatter.
+        if (globals === undefined || !globals.axisCharts || globals.isBarHorizontal) {
+            return axisIndex;
+        }
+
+        var map = globals.seriesYAxisReverseMap;
+        if (!Array.isArray(map) || typeof map[index.seriesIndex] !== 'number') {
+            return axisIndex;
+        }
+
+        return map[index.seriesIndex];
+    },
+
     findChart(id) {
         if (Apex._chartInstances === undefined) {
             return undefined;

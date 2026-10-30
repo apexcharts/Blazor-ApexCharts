@@ -415,6 +415,30 @@ namespace ApexCharts
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
 
         /// <summary>
+        /// A custom function to execute for generating Y-axis labels on every Y axis, called with the value and
+        /// the index of the Y axis the label belongs to.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
+        /// .NET MAUI cannot call .NET synchronously. There the function is not called, the axes keep their default label formatting
+        /// and a warning is written to the browser console once per chart.
+        /// </summary>
+        /// <remarks>
+        /// The axis index is the position of the axis in <see cref="ApexChartBaseOptions.Yaxis"/> (0 for the first axis),
+        /// whichever series the axis is bound to through <see cref="YAxis.SeriesName"/>. When no Y axis is configured, a single
+        /// axis with index 0 is added. The formatter replaces any <see cref="YAxisLabels.Formatter"/> set on the Y axes, and
+        /// it takes precedence over <see cref="FormatYAxisLabel"/>, which only formats the first Y axis.
+        /// <para/>
+        /// Unless <see cref="TooltipY.Formatter"/> is set, the formatter also formats the values in the tooltip. A tooltip
+        /// value is passed the index of the Y axis its series is plotted on, so it is formatted like the labels of that
+        /// axis, also when one axis holds several series or the series are not in the same order as the axes.
+        /// <para/>
+        /// Links:
+        ///
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/features/formatters">Blazor Example</see>
+        /// </remarks>
+        [Parameter] public Func<decimal, int, string> FormatYAxisLabelForAxis { get; set; }
+
+        /// <summary>
         /// A custom function to execute for generating X-axis labels.
         /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
         /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
@@ -1375,6 +1399,7 @@ namespace ApexCharts
 
             var names = new List<string>();
             if (FormatYAxisLabel != null) { names.Add(nameof(FormatYAxisLabel)); }
+            if (FormatYAxisLabelForAxis != null) { names.Add(nameof(FormatYAxisLabelForAxis)); }
             if (FormatXAxisLabel != null) { names.Add(nameof(FormatXAxisLabel)); }
             if (OnBeforeZoom != null) { names.Add(nameof(OnBeforeZoom)); }
             if (OnBeforeResetZoom != null) { names.Add(nameof(OnBeforeResetZoom)); }
@@ -1536,6 +1561,27 @@ namespace ApexCharts
                 yAxis.Labels.Formatter = @"function (value, index, w) {
                                           return window.blazor_apexchart.getYAxisLabel(value, index, w);
                                          }";
+            }
+
+            if (FormatYAxisLabelForAxis != null)
+            {
+                if (Options.Yaxis == null) { Options.Yaxis = new List<YAxis>(); }
+                if (!Options.Yaxis.Any()) { Options.Yaxis.Add(new YAxis()); }
+
+                // apexcharts.js does not pass the axis index to a y-axis label formatter, so each
+                // axis gets its own formatter with its index written into it. For tooltip values,
+                // getYAxisLabelForAxis replaces it with the axis the series is plotted on.
+                for (var axisIndex = 0; axisIndex < Options.Yaxis.Count; axisIndex++)
+                {
+                    var yAxis = Options.Yaxis[axisIndex];
+                    if (yAxis == null) { continue; }
+
+                    yAxis.Labels ??= new YAxisLabels();
+
+                    yAxis.Labels.Formatter = @"function (value, index, w) {
+                                          return window.blazor_apexchart.getYAxisLabelForAxis(value, index, w, " + axisIndex.ToString(System.Globalization.CultureInfo.InvariantCulture) + @");
+                                         }";
+                }
             }
 
             if (FormatXAxisLabel != null)

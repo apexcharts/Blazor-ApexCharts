@@ -96,6 +96,33 @@
         </Snippet>
     </CodeSnippet>
 
+    <CodeSnippet Title="Use DotNet per Y Axis" ClassName=@typeof(UseDotNetMultipleYAxis).ToString()>
+        <Description>
+            <Alert BackgroundColor=TablerColor.Danger>
+
+                <div class="d-flex">
+                    <div class="me-2">
+                        <Icon TextColor=TablerColor.Danger IconType=@Icons.Alert_triangle Size=40 />
+                    </div>
+                    <div>
+                        <h4 class="alert-title">Only supported in Blazor WebAssembly!</h4>
+                        <div class="text-muted">Currently this is only supported in web assembly</div>
+                    </div>
+                </div>
+            </Alert>
+            <p class="mt-2">
+                <code>FormatYAxisLabelForAxis</code> formats the labels of every Y axis and receives the index of the axis
+                (its position in <code>Options.Yaxis</code>), so each axis can be formatted differently.
+                <code>FormatYAxisLabel</code> only formats the first Y axis.
+                Unless <code>Tooltip.Y.Formatter</code> is set, tooltip values are formatted too, each with the index of the
+                axis its series is plotted on.
+            </p>
+        </Description>
+        <Snippet>
+            <UseDotNetMultipleYAxis />
+        </Snippet>
+    </CodeSnippet>
+
 
 
 </DocExamples>

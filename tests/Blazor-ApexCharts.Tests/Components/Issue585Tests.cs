@@ -106,6 +106,16 @@ public class Issue585OutOfProcessTests : Issue585TestBase
     }
 
     [Fact]
+    public void Per_axis_y_formatter_is_not_installed()
+    {
+        // Issue 595 added FormatYAxisLabelForAxis, which is called synchronously like FormatYAxisLabel.
+        RenderLineChart(p => p.Add(c => c.FormatYAxisLabelForAxis, (v, axis) => axis + ":" + v));
+
+        Assert.Equal(new[] { "FormatYAxisLabelForAxis" }, Strings(RenderedEvents().Get("unsupportedSyncCallbacks")));
+        Assert.Null(RenderedOptions().Get("yaxis.0.labels.formatter"));
+    }
+
+    [Fact]
     public void Before_zoom_callbacks_do_not_throw_and_are_not_wired()
     {
         RenderLineChart(p => p
