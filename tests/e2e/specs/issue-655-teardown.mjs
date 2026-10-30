@@ -3,9 +3,11 @@
 // look the reference up in dotNetRefs) format with the raw value instead of calling a reference .NET
 // is about to release.
 //
-// This covers the JavaScript half only. The .NET half (Dispose() releases the reference only after
-// destroyChart) is pinned by Issue655DisposeTests: this demo runs on WebAssembly, where Blazor
-// disposes through DisposeAsync and destroyChart runs in process, so no browser run reaches it.
+// This covers the JavaScript half only. It runs on both hosts (the e2e job on WebAssembly, the
+// e2e-server job on Blazor Server), and on both it calls destroyChart from the page rather than
+// disposing a component, so the host makes no difference to it. The .NET half (Dispose() releases
+// the reference only after destroyChart) is pinned by Issue655DisposeTests, which holds destroyChart
+// open to fix the order; a browser run leaves that order to the timing of the round trip.
 import { gotoChart, watchErrors, assert, assertNoErrors } from '../lib/helpers.mjs';
 
 export default async function (page, BASE) {

@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1688,12 +1689,19 @@ namespace ApexCharts
         /// <remarks>
         /// Blazor calls this when the component is removed. Failures caused by the browser side being
         /// gone (a closed or refreshed page, a lost circuit) are ignored, so disposing never throws
-        /// for them. <see cref="Dispose()"/> is still called afterwards, so an override of it keeps running.
+        /// for them. <see cref="Dispose()"/> is still called afterwards, so an override of it keeps running,
+        /// and it is called even when <see cref="DisposeAsyncCore"/> throws, before that exception reaches the caller.
         /// </remarks>
         public async ValueTask DisposeAsync()
         {
-            await DisposeAsyncCore();
-            Dispose();
+            try
+            {
+                await DisposeAsyncCore();
+            }
+            finally
+            {
+                Dispose();
+            }
         }
 
         /// <summary>
@@ -1788,36 +1796,43 @@ namespace ApexCharts
         {
             if (module == null) { return; }
 
-            try
+            ExceptionDispatchInfo destroyFailure = null;
+            if (chartId != null)
             {
-                if (chartId != null)
-                {
-                    try
-                    {
-                        if (module is IJSInProcessObjectReference inProcessModule)
-                        {
-                            inProcessModule.InvokeVoid("blazor_apexchart.destroyChart", chartId);
-                        }
-                        else
-                        {
-                            await module.InvokeVoidAsync("blazor_apexchart.destroyChart", chartId);
-                        }
-                    }
-                    catch (Exception ex) when (JSInteropErrors.IsExpectedDuringTeardown(ex))
-                    { }
-                }
-            }
-            finally
-            {
-                // Released even when destroyChart failed in a way teardown does not expect: that
-                // failure still reaches the caller, but the module reference is not leaked.
                 try
                 {
-                    await module.DisposeAsync();
+                    if (module is IJSInProcessObjectReference inProcessModule)
+                    {
+                        inProcessModule.InvokeVoid("blazor_apexchart.destroyChart", chartId);
+                    }
+                    else
+                    {
+                        await module.InvokeVoidAsync("blazor_apexchart.destroyChart", chartId);
+                    }
                 }
                 catch (Exception ex) when (JSInteropErrors.IsExpectedDuringTeardown(ex))
                 { }
+                catch (Exception ex)
+                {
+                    // Reported once the module reference has been released, so the reference is not
+                    // leaked by a destroyChart failure that teardown does not expect.
+                    destroyFailure = ExceptionDispatchInfo.Capture(ex);
+                }
             }
+
+            try
+            {
+                await module.DisposeAsync();
+            }
+            catch (Exception ex) when (JSInteropErrors.IsExpectedDuringTeardown(ex))
+            { }
+            catch (Exception) when (destroyFailure != null)
+            {
+                // destroyChart failed first, and that is the failure the caller gets: a second one from
+                // releasing the reference would otherwise replace it.
+            }
+
+            destroyFailure?.Throw();
         }
 
         internal void UpdateTooltipData(HoverData<TItem> tooltipData)

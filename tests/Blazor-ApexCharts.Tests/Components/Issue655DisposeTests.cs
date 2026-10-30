@@ -361,6 +361,53 @@ public class Issue655DisposeTests : ApexChartsTestContext
     }
 
     [Fact]
+    public async Task DisposeAsync_with_an_unexpected_destroyChart_failure_still_calls_Dispose()
+    {
+        var cut = Render<TrackingChart>(p => p
+            .Add(c => c.Options, new ApexChartOptions<Sale>())
+            .AddChildContent<ApexPointSeries<Sale>>(s => s
+                .Add(x => x.Items, SampleData.Sales())
+                .Add(x => x.SeriesType, SeriesType.Bar)
+                .Add(x => x.XValue, e => e.Month)
+                .Add(x => x.YValue, e => e.Amount)));
+        cut.WaitForAssertion(() => Assert.Contains(JsIdentifiers.RenderChart, module.Calls));
+        var chart = cut.Instance;
+        module.Throw = () => new InvalidOperationException("unexpected interop failure");
+
+        // The failure still reaches the caller, after Dispose() (and the subclass override) has run.
+        await Assert.ThrowsAsync<InvalidOperationException>(() => cut.InvokeAsync(() => chart.DisposeAsync().AsTask()));
+
+        Assert.Equal(1, chart.DisposeCalls);
+    }
+
+    [Fact]
+    public async Task DisposeAsync_reports_the_destroyChart_failure_when_releasing_the_module_also_fails()
+    {
+        var cut = RenderBarChart();
+        module.Throw = () => new InvalidOperationException("destroyChart failed");
+        module.DisposeThrow = () => new ArgumentException("module release failed");
+
+        var disposable = Assert.IsAssignableFrom<IAsyncDisposable>(cut.Instance);
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => cut.InvokeAsync(() => disposable.DisposeAsync().AsTask()));
+
+        Assert.Equal("destroyChart failed", thrown.Message);
+        Assert.Equal(new[] { DestroyChart, ModuleDisposed }, module.Calls.Where(c => c is DestroyChart or ModuleDisposed));
+    }
+
+    [Fact]
+    public async Task DisposeAsync_reports_an_unexpected_failure_to_release_the_module()
+    {
+        // With no destroyChart failure to report, the release failure is the one the caller gets.
+        var cut = RenderBarChart();
+        module.DisposeThrow = () => new ArgumentException("module release failed");
+
+        var disposable = Assert.IsAssignableFrom<IAsyncDisposable>(cut.Instance);
+        var thrown = await Assert.ThrowsAsync<ArgumentException>(() => cut.InvokeAsync(() => disposable.DisposeAsync().AsTask()));
+
+        Assert.Equal("module release failed", thrown.Message);
+    }
+
+    [Fact]
     public async Task Calling_Dispose_while_DisposeAsync_awaits_destroyChart_keeps_the_dotnet_reference()
     {
         // A parent that holds the chart through @ref and disposes it while Blazor is already disposing it.
@@ -559,6 +606,9 @@ public class Issue655DisposeTests : ApexChartsTestContext
     {
         public ConcurrentQueue<string> Calls { get; } = new();
         public Func<Exception>? Throw { get; set; }
+
+        /// <summary>What releasing the reference throws. When null, it throws what <see cref="Throw"/> gives.</summary>
+        public Func<Exception>? DisposeThrow { get; set; }
         public ConcurrentDictionary<string, Task> Pending { get; } = new();
         public ConcurrentDictionary<string, object?[]?> LastArgs { get; } = new();
 
@@ -580,7 +630,8 @@ public class Issue655DisposeTests : ApexChartsTestContext
         public ValueTask DisposeAsync()
         {
             Calls.Enqueue(ModuleDisposed);
-            return Throw != null ? ValueTask.FromException(Throw()) : ValueTask.CompletedTask;
+            var failure = DisposeThrow ?? Throw;
+            return failure != null ? ValueTask.FromException(failure()) : ValueTask.CompletedTask;
         }
     }
 }
