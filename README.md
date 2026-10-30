@@ -45,9 +45,11 @@ services.AddApexCharts(e =>
             });
 ```
 
-These global options are the startup defaults. Each `IApexChartService` (one per DI scope, which on Blazor Server is one per user circuit) starts from its own copy of them, so a change made at runtime through `ChartService.GlobalOptions`, `SetGlobalOptionsAsync` or `SetLocaleAsync` only affects the current user.
+These global options are the startup defaults. Each `IApexChartService` (one per DI scope, which on Blazor Server is one per user circuit) starts from its own deep copy of them, so a change made at runtime through `ChartService.GlobalOptions`, `SetGlobalOptionsAsync` or `SetLocaleAsync` only affects the current user. Every option object is copied, including your own subclasses of the option classes (or your own `IApexChartBaseOptions` implementation), even when they also implement `IDisposable`. Strings, delegates and objects of other types that you place in the options (for example items bound to a series) are not copied and stay shared.
 
-To change the global options after startup, change `ChartService.GlobalOptions` and call `ChartService.SetGlobalOptionsAsync(true)`, or pass new options to `ChartService.SetGlobalOptionsAsync(options, true)`. Changing the object given to `AddApexCharts` (or the injected `ApexChartsServiceOptions.GlobalOptions`) after startup does not reach a chart service that already exists.
+To change the global options after startup, change `ChartService.GlobalOptions` and call `ChartService.SetGlobalOptionsAsync(true)`, or pass new options to `ChartService.SetGlobalOptionsAsync(options, true)`. Changing the object given to `AddApexCharts` (or the injected `ApexChartsServiceOptions.GlobalOptions`) after startup only reaches chart services created afterwards, never one that already exists. Earlier versions shared that object with every chart service, so code that relied on changing it at runtime to update every user now has to call `SetGlobalOptionsAsync` in each user's scope instead.
+
+Registering `ApexChartsServiceOptions` and `IApexChartService` as scoped by hand, instead of calling `AddApexCharts`, still works but is no longer needed to keep users apart.
 
 The same as above can be used for .NET MAUI, just make sure to use the method below to add the chart service.
 

@@ -113,8 +113,147 @@ public class Issue654CustomOptionTypesTests
     }
 }
 
+/// <summary>
+/// Issue #654, review follow-up: a consumer's option class that also implements IDisposable or
+/// IAsyncDisposable is still an option object. Only the library's own components, services and
+/// disposable resources are kept by reference.
+/// </summary>
+public class Issue654DisposableOptionTypesTests
+{
+    private sealed class DisposableGlobal : ApexChartBaseOptions, IDisposable
+    {
+        public bool Disposed { get; private set; }
+        public void Dispose() => Disposed = true;
+    }
+
+    private sealed class AsyncDisposableTheme : Theme, IAsyncDisposable
+    {
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+    }
+
+    private sealed class DisposableOwnOptions : IApexChartBaseOptions, IDisposable
+    {
+        public Annotations? Annotations { get; set; }
+        public ApexChartsBlazorOptions? Blazor { get; set; }
+        public Chart? Chart { get; set; }
+        public List<string>? Colors { get; set; }
+        public DataLabels? DataLabels { get; set; }
+        public bool? Debug { get; set; }
+        public Fill? Fill { get; set; }
+        public ForecastDataPoints? ForecastDataPoints { get; set; }
+        public Grid? Grid { get; set; }
+        public List<string>? Labels { get; set; }
+        public Legend? Legend { get; set; }
+        public Markers? Markers { get; set; }
+        public NoData? NoData { get; set; }
+        public PlotOptions? PlotOptions { get; set; }
+        public States? States { get; set; }
+        public Stroke? Stroke { get; set; }
+        public Subtitle? Subtitle { get; set; }
+        public Theme? Theme { get; set; }
+        public Title? Title { get; set; }
+        public Tooltip? Tooltip { get; set; }
+        public XAxis? Xaxis { get; set; }
+        public List<YAxis>? Yaxis { get; set; }
+        public void Dispose() { }
+    }
+
+    private sealed class UserItem
+    {
+        public int Value { get; set; }
+    }
+
+    private sealed class MyChart : ApexChart<UserItem> { }
+
+    [Fact]
+    public void A_disposable_subclass_of_ApexChartBaseOptions_is_not_shared_between_scopes()
+    {
+        using var provider = Issue654ScopedGlobalOptionsTests.BuildProvider(o => o.GlobalOptions = new DisposableGlobal
+        {
+            Theme = new Theme { Mode = Mode.Light },
+        });
+        using var userA = provider.CreateScope();
+        using var userB = provider.CreateScope();
+        var serviceA = userA.ServiceProvider.GetRequiredService<IApexChartService>();
+        var serviceB = userB.ServiceProvider.GetRequiredService<IApexChartService>();
+
+        serviceA.GlobalOptions.Theme.Mode = Mode.Dark;
+
+        Assert.NotSame(serviceA.GlobalOptions, serviceB.GlobalOptions);
+        Assert.IsType<DisposableGlobal>(serviceB.GlobalOptions);
+        Assert.Equal(Mode.Light, serviceB.GlobalOptions.Theme.Mode);
+        Assert.Equal(Mode.Light, provider.GetRequiredService<ApexChartsServiceOptions>().GlobalOptions.Theme.Mode);
+    }
+
+    [Fact]
+    public void An_async_disposable_subclass_of_Theme_is_not_shared_between_scopes()
+    {
+        using var provider = Issue654ScopedGlobalOptionsTests.BuildProvider(o => o.GlobalOptions = new ApexChartBaseOptions
+        {
+            Theme = new AsyncDisposableTheme { Mode = Mode.Light },
+        });
+        using var userA = provider.CreateScope();
+        using var userB = provider.CreateScope();
+        var serviceA = userA.ServiceProvider.GetRequiredService<IApexChartService>();
+        var serviceB = userB.ServiceProvider.GetRequiredService<IApexChartService>();
+
+        serviceA.GlobalOptions.Theme.Mode = Mode.Dark;
+
+        Assert.NotSame(serviceA.GlobalOptions.Theme, serviceB.GlobalOptions.Theme);
+        Assert.IsType<AsyncDisposableTheme>(serviceB.GlobalOptions.Theme);
+        Assert.Equal(Mode.Light, serviceB.GlobalOptions.Theme.Mode);
+    }
+
+    [Fact]
+    public void A_disposable_own_implementation_of_IApexChartBaseOptions_is_not_shared_between_scopes()
+    {
+        using var provider = Issue654ScopedGlobalOptionsTests.BuildProvider(o => o.GlobalOptions = new DisposableOwnOptions
+        {
+            Theme = new Theme { Mode = Mode.Light },
+        });
+        using var userA = provider.CreateScope();
+        using var userB = provider.CreateScope();
+        var serviceA = userA.ServiceProvider.GetRequiredService<IApexChartService>();
+        var serviceB = userB.ServiceProvider.GetRequiredService<IApexChartService>();
+
+        serviceA.GlobalOptions.Theme.Mode = Mode.Dark;
+
+        Assert.NotSame(serviceA.GlobalOptions, serviceB.GlobalOptions);
+        Assert.Equal(Mode.Light, serviceB.GlobalOptions.Theme.Mode);
+    }
+
+    [Fact]
+    public void Library_components_and_their_subclasses_are_kept_by_reference()
+    {
+        var chart = new ApexChart<UserItem>();
+        var myChart = new MyChart();
+        var source = new Chart { Events = new Dictionary<string, object> { ["chart"] = chart, ["myChart"] = myChart } };
+
+        var copy = OptionsCopier.DeepCopy(source);
+
+        Assert.NotSame(source.Events, copy.Events);
+        Assert.Same(chart, copy.Events["chart"]);
+        Assert.Same(myChart, copy.Events["myChart"]);
+    }
+}
+
 public class OptionsCopierCollectionTests
 {
+    /// <summary>
+    /// OptionsCopier is an implementation detail and not public API. The MAUI package, which ships from the
+    /// same release, reaches it through InternalsVisibleTo under its default assembly name.
+    /// </summary>
+    [Fact]
+    public void OptionsCopier_is_internal_and_visible_to_the_MAUI_package()
+    {
+        Assert.False(typeof(OptionsCopier).IsPublic);
+        var friends = typeof(OptionsCopier).Assembly
+            .GetCustomAttributes(typeof(System.Runtime.CompilerServices.InternalsVisibleToAttribute), false)
+            .Cast<System.Runtime.CompilerServices.InternalsVisibleToAttribute>()
+            .Select(a => a.AssemblyName);
+        Assert.Contains("Blazor-ApexCharts-MAUI", friends);
+    }
+
     [Fact]
     public void A_dictionary_keeps_its_comparer()
     {

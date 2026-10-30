@@ -140,6 +140,66 @@ public class Issue654ScopedGlobalOptionsTests
         Assert.Equal(Mode.Light, consumer.Options.GlobalOptions.Theme.Mode);
     }
 
+    /// <summary>
+    /// The registration the #654 reporter used as a workaround: the service options registered as scoped
+    /// by hand, with no call to AddApexCharts. It must keep working.
+    /// </summary>
+    [Fact]
+    public void The_reporters_hand_written_scoped_registration_still_works()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<NavigationManager, TestNavigationManager>();
+        services.AddScoped<IJSRuntime>(_ => new BunitJSInterop { Mode = JSRuntimeMode.Loose }.JSRuntime);
+        services
+            .AddScoped(_ => new ApexChartsServiceOptions
+            {
+                GlobalOptions = new ApexChartBaseOptions
+                {
+                    Theme = new()
+                    {
+                        Palette = PaletteType.Palette1,
+                        Mode = Mode.Light
+                    }
+                }
+            })
+            .AddScoped<IApexChartService, ApexChartService>()
+            .AddHttpClient<ApexChartService>();
+        using var provider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true });
+        using var userA = provider.CreateScope();
+        using var userB = provider.CreateScope();
+        var serviceA = userA.ServiceProvider.GetRequiredService<IApexChartService>();
+        var serviceB = userB.ServiceProvider.GetRequiredService<IApexChartService>();
+
+        Assert.Equal(Mode.Light, serviceA.GlobalOptions.Theme.Mode);
+        Assert.Equal(PaletteType.Palette1, serviceA.GlobalOptions.Theme.Palette);
+
+        serviceA.GlobalOptions.Theme.Mode = Mode.Dark;
+
+        Assert.Equal(Mode.Light, serviceB.GlobalOptions.Theme.Mode);
+        Assert.Same(serviceA, userA.ServiceProvider.GetRequiredService<IApexChartService>());
+        Assert.NotSame(
+            userA.ServiceProvider.GetRequiredService<ApexChartsServiceOptions>(),
+            userB.ServiceProvider.GetRequiredService<ApexChartsServiceOptions>());
+    }
+
+    /// <summary>
+    /// The behavior change that comes with the copies: the startup object is read once per chart service,
+    /// so changing it at runtime reaches chart services created afterwards, not the ones that exist.
+    /// </summary>
+    [Fact]
+    public void A_runtime_change_to_the_startup_options_only_reaches_scopes_created_afterwards()
+    {
+        using var provider = BuildProvider(LightTheme);
+        using var existing = provider.CreateScope();
+        var existingService = existing.ServiceProvider.GetRequiredService<IApexChartService>();
+
+        provider.GetRequiredService<ApexChartsServiceOptions>().GlobalOptions.Theme.Mode = Mode.Dark;
+
+        Assert.Equal(Mode.Light, existingService.GlobalOptions.Theme.Mode);
+        using var later = provider.CreateScope();
+        Assert.Equal(Mode.Dark, later.ServiceProvider.GetRequiredService<IApexChartService>().GlobalOptions.Theme.Mode);
+    }
+
     private sealed class SingletonConsumer(ApexChartsServiceOptions options)
     {
         public ApexChartsServiceOptions Options { get; } = options;
