@@ -2,9 +2,10 @@
 // in the same container; destroying empties the container and apexcharts.js resets its min-height,
 // so while the new chart rendered the container was shorter, the page got shorter and the browser
 // clamped the scroll position. /issues/565 puts a chart with a fixed height in pixels and, last, a
-// donut with no fixed height (its height is worked out while it renders) at the end of a long page,
-// and at the top three charts whose height comes out as 100%: their own height, a responsive entry,
-// and the global options.
+// donut with no fixed height (its height is worked out while it renders) at the end of a long page.
+// At the top are a chart with a height of 100%, one whose responsive entry makes its height 100%,
+// and one with no height of its own, which renders at its automatic height until the spec sets a
+// global height of 100%, and later a global responsive entry of 100% (setGlobalOptions).
 import { gotoChart, watchErrors, assert, assertNoErrors } from '../lib/helpers.mjs';
 
 const CHART = '#issue565-chart';
@@ -37,10 +38,58 @@ export default async function (page, BASE) {
   const renders = { [CHART]: 1, [FIXED_CHART]: 1 };
   await page.locator('#issue565-fixed-rendered', { hasText: '1' }).waitFor({ timeout: 20000 });
 
+  // Sets the viewport height and, when that changes the size, waits for the redraws it starts.
+  // apexcharts.js answers a window resize by redrawing every chart 150ms later (_windowResize), and
+  // a chart can redraw again when the redraw resizes its container's parent. While the 100% charts
+  // redraw the page is briefly shorter, which moves a scroll position at the page end, so a round
+  // has to start after them. Each chart is marked before the resize; the wait ends once every
+  // chart that redraws on a window resize has done so (resized again), finished (animationEnded),
+  // and has no redraw queued, for two frames in a row, as a parent resize is reported after the
+  // frame's animation callbacks.
+  const setViewportHeight = async height => {
+    const current = page.viewportSize();
+    if (current.width === viewport.width && current.height === height) {
+      return;
+    }
+
+    await page.evaluate(() => {
+      for (const { chart } of window.Apex._chartInstances || []) {
+        chart.w.globals.resized = false;
+        if (!chart.__issue565Watched) {
+          chart.__issue565Watched = true;
+          const windowResize = chart._windowResize;
+          chart._windowResize = function () {
+            this.__issue565Queued = true;
+            return windowResize.apply(this, arguments);
+          };
+          const update = chart.update;
+          chart.update = function () {
+            this.__issue565Queued = false;
+            return update.apply(this, arguments);
+          };
+        }
+      }
+    });
+
+    await page.setViewportSize({ width: viewport.width, height });
+
+    // Checked once a frame
+    await page.evaluate(() => { window.__issue565Quiet = 0; });
+    await page.waitForFunction(() => {
+      const settled = (window.Apex._chartInstances || []).every(({ chart }) => {
+        const g = chart.w.globals;
+        return !chart.w.config.chart.redrawOnWindowResize
+          || (g.resized && g.animationEnded && !chart.__issue565Queued);
+      });
+      window.__issue565Quiet = settled ? window.__issue565Quiet + 1 : 0;
+      return window.__issue565Quiet >= 2;
+    }, null, { polling: 'raf', timeout: 20000 });
+  };
+
   // Renders the chart in `sel` again with the page scrolled to its end, and checks the scroll
   // position never moves and the container is left with the chart's own min-height.
   const scrollRound = async (sel, button, counter, anchor, height, label) => {
-    await page.setViewportSize({ width: viewport.width, height });
+    await setViewportHeight(height);
     await page.evaluate(a => { document.documentElement.style.overflowAnchor = a; }, anchor);
 
     // Scroll to the end of the page, where a shorter page has to move the scroll position. The docs
@@ -116,7 +165,7 @@ export default async function (page, BASE) {
   // A chart whose height is in pixels, with a responsive entry in pixels too, is still held: the
   // checks for a percentage height below must not turn the hold off for it.
   await scrollRound(FIXED_CHART, '#issue565-fixed-render', '#issue565-fixed-rendered', 'none', viewport.height, 'fixed height');
-  await page.setViewportSize(viewport);
+  await setViewportHeight(viewport.height);
 
   // 2. A chart with a height of 100% keeps its height over renders. apexcharts.js works that height
   // out from the parent of the chart's container, here a card sized by its content (a min-height of
@@ -175,7 +224,26 @@ export default async function (page, BASE) {
 
     // A chart with a height of its own in pixels is still held while a global height of 100% is set.
     await scrollRound(FIXED_CHART, '#issue565-fixed-render', '#issue565-fixed-rendered', 'none', viewport.height, 'fixed height, global height of 100%');
-    await page.setViewportSize(viewport);
+    await setViewportHeight(viewport.height);
+
+    // A global responsive entry of 100% reaches the chart with no height and no responsive entries
+    // of its own, so it keeps its height over renders too.
+    await page.evaluate(() => {
+      window.blazor_apexchart.setGlobalOptions(JSON.stringify({
+        responsive: [{ breakpoint: 5000, options: { chart: { height: '100%' } } }]
+      }));
+    });
+    const globalResponsiveHeights = await heightsOverRenders('#issue565-global-card', '#issue565-global-render', '#issue565-global-rendered', false);
+    assert(globalResponsiveHeights[0] > 0 && globalResponsiveHeights[0] !== autoHeight
+      && globalResponsiveHeights.every(h => h === globalResponsiveHeights[0]),
+      `a chart with a global responsive height of 100% should keep its height over renders, got ${JSON.stringify(globalResponsiveHeights)}`);
+
+    // The fixed chart has a responsive list of its own, which apexcharts.js puts in place of the
+    // global one, so it keeps its 320px and its container is still held.
+    await scrollRound(FIXED_CHART, '#issue565-fixed-render', '#issue565-fixed-rendered', 'none', viewport.height, 'fixed height, global responsive height of 100%');
+    const fixedHeight = await svgHeight(FIXED_CHART);
+    assert(fixedHeight === 320,
+      `the fixed chart should keep the height of its own responsive entry under a global one of 100%, got ${fixedHeight}`);
   } finally {
     await page.evaluate(() => {
       window.__issue565Apex._chartInstances = window.Apex._chartInstances;

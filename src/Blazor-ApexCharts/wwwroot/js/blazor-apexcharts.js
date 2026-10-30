@@ -225,8 +225,11 @@ window.blazor_apexchart = {
     // A percentage can come from:
     // - the chart's own height or, when it has none, the global options (setGlobalOptions, read by
     //   apexcharts.js as window.Apex), as apexcharts.js merges them
-    // - any responsive entry of the chart or of the global options. The entry that applies depends on
-    //   the window width when the new chart renders, so any entry with a percentage counts.
+    // - any responsive entry of the chart or, when it has no responsive key of its own, of the global
+    //   options. apexcharts.js lays the chart's options over the global ones and replaces an array
+    //   whole, so a chart's own responsive list leaves every global entry out. The entry that
+    //   applies depends on the window width when the new chart renders, so any entry with a
+    //   percentage in the list that reaches the chart counts.
     // - the height apexcharts.js resolved for the chart being replaced, after the global options and
     //   the responsive entry it applied, which also covers a percentage set on that chart in a way
     //   not read here
@@ -239,14 +242,14 @@ window.blazor_apexchart = {
             ? opts.responsive.map(entry => chartHeight(entry ? entry.options : undefined))
             : [];
 
-        // apexcharts.js lays the chart's options over the global ones, so a height key in the chart's
-        // own options wins even when its value is empty
+        // apexcharts.js lays the chart's options over the global ones, so a height key or a responsive
+        // key in the chart's own options wins even when its value is empty
         var global = typeof window !== 'undefined' && window.Apex ? window.Apex : {};
+        var hasOwn = (opts, key) => !!opts && Object.prototype.hasOwnProperty.call(opts, key);
         var ownChart = options && options.chart;
-        var height = ownChart && Object.prototype.hasOwnProperty.call(ownChart, 'height')
-            ? ownChart.height
-            : chartHeight(global);
-        var heights = [height].concat(responsiveHeights(options), responsiveHeights(global));
+        var height = hasOwn(ownChart, 'height') ? ownChart.height : chartHeight(global);
+        var responsive = hasOwn(options, 'responsive') ? options : global;
+        var heights = [height].concat(responsiveHeights(responsive));
 
         if (chart && chart.w && chart.w.config) {
             heights.push(chartHeight(chart.w.config));

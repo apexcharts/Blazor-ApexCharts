@@ -10,14 +10,16 @@
     The chart at the top has Height="100%": apexcharts.js works its height out from the parent of
     the chart's container, a card sized by its content (a min-height and a heading). Its container
     must not be held at its height while it renders again, or the card, and so the chart, grows
-    by the heading's height on every render. The two cards below it reach the same 100% in the
-    other ways apexcharts.js allows: a responsive entry that overrides a height of 350, and a
-    chart with no height of its own, which the spec renders after setting a global height of
-    100% (setGlobalOptions).
+    by the heading's height on every render. The two cards below it reach the same 100% in two
+    other ways: a responsive entry that overrides a height of 350, and a chart with no height of
+    its own, which renders at its automatic height until the spec sets a global height of 100%,
+    and then a global responsive entry of 100% (setGlobalOptions).
 
     The chart above the donut has a height of 350 and a responsive entry with a height of 320,
-    both in pixels: its container is still held while it renders again, with a global height of
-    100% set or not. The donut stays last, so that a short viewport shows only the donut.
+    both in pixels: its container is still held while it renders again, with no global options,
+    with a global height of 100%, and with a global responsive entry of 100%, which its own
+    responsive entries replace. The donut stays last, so that a short viewport shows only the
+    donut.
 *@
 
 <h3>Issue 565: RenderAsync keeps the scroll position</h3>
