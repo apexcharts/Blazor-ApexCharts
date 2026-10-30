@@ -291,6 +291,11 @@ namespace ApexCharts
         /// <summary>
         /// Fires when <see cref="RenderAsync"/> completes
         /// </summary>
+        /// <remarks>
+        /// A brush chart (<see cref="Chart.Brush"/>) is drawn only once every chart it targets has rendered.
+        /// When a target has not rendered yet, <see cref="RenderAsync"/> completes without drawing the brush
+        /// chart, and this event fires later, when the brush chart has rendered.
+        /// </remarks>
         [Parameter] public EventCallback OnRendered { get; set; }
 
         /// <summary>
@@ -1508,7 +1513,10 @@ namespace ApexCharts
             forceRender = false;
             PrepareChart();
 
-            await InvokeVoidJsAsync("blazor_apexchart.renderChart", JSHandler.ObjectReference, ChartContainer, JsonSerializer.Serialize(Options, ChartSerializer.GetOptions<TItem>()), new JSEvents()
+            // The script holds a brush chart back until its target charts have rendered and then returns
+            // "waiting"; it calls JSHandler.JSRendered once the chart renders (issue 420). A string, not a
+            // bool, so a copy of the script that returns nothing (JavascriptPath, a cached file) still works.
+            var renderState = await InvokeJsAsync<string>("blazor_apexchart.renderChart", JSHandler.ObjectReference, ChartContainer, JsonSerializer.Serialize(Options, ChartSerializer.GetOptions<TItem>()), new JSEvents()
             {
                 HasDataPointSelection = OnDataPointSelection.HasDelegate,
                 HasDataPointEnter = OnDataPointEnter.HasDelegate || ApexPointTooltip != null,
@@ -1540,7 +1548,10 @@ namespace ApexCharts
                 HasBeatChange = OnBeatChange.HasDelegate
             });
 
-            await OnRendered.InvokeAsync();
+            if (renderState != "waiting")
+            {
+                await OnRendered.InvokeAsync();
+            }
         }
 
         private void SetDotNetFormatters()

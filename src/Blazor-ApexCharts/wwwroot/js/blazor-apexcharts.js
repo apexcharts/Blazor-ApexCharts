@@ -159,7 +159,16 @@ window.blazor_apexchart = {
         return map[index.seriesIndex];
     },
 
-    findChart(id) {
+    // method: the calling method's name, given by calls that do nothing while a brush chart waits
+    // for its targets, so the skipped call is logged in debug mode
+    findChart(id, method) {
+        if (method !== undefined) {
+            var pending = this.pendingBrushCharts.get(id);
+            if (pending !== undefined && pending.options.debug == true) {
+                console.log('Chart ' + id + ' waits for brush targets, ' + method + ' is skipped');
+            }
+        }
+
         if (Apex._chartInstances === undefined) {
             return undefined;
         }
@@ -173,9 +182,32 @@ window.blazor_apexchart = {
             chart.destroy();
         }
 
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending !== undefined) {
+            clearTimeout(pending.warnTimer);
+            this.pendingBrushCharts.delete(id);
+        }
+
         this.dotNetRefs.delete(id);
         this.noSyncInterop.delete(id);
 
+    },
+
+    // A brush chart waiting for its targets has no chart instance yet (issue 420). A call that
+    // changes it is kept and made once the chart has rendered, in the order the calls came in.
+    // Returns false when the chart is not waiting.
+    deferBrushChartCall(id, method, args) {
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending === undefined) {
+            return false;
+        }
+
+        pending.calls.push({ method: method, args: Array.prototype.slice.call(args) });
+
+        if (pending.options.debug == true) {
+            console.log('Chart ' + id + ' waits for brush targets, ' + method + ' runs once it renders');
+        }
+        return true;
     },
 
     LogMethodCall(chart, method, data) {
@@ -270,74 +302,75 @@ window.blazor_apexchart = {
     // ===== v6 premium feature methods =====
 
     undo(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'undo');
         if (chart !== undefined) { chart.history.undo(); }
     },
 
     redo(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'redo');
         if (chart !== undefined) { chart.history.redo(); }
     },
 
     jumpHistory(id, historyId) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'jumpHistory');
         if (chart !== undefined) { chart.history.jump(historyId); }
     },
 
     startMeasure(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'startMeasure');
         if (chart !== undefined) { chart.startMeasure(); }
     },
 
     stopMeasure(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'stopMeasure');
         if (chart !== undefined) { chart.stopMeasure(); }
     },
 
     clearMeasures(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'clearMeasures');
         if (chart !== undefined) { chart.clearMeasures(); }
     },
 
     refreshTokens(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'refreshTokens');
         if (chart !== undefined) { chart.refreshTokens(); }
     },
 
     getActiveRenderer(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'getActiveRenderer');
         return chart !== undefined ? chart.getActiveRenderer() : null;
     },
 
     capturePerspective(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'capturePerspective');
         return chart !== undefined ? JSON.stringify(chart.perspectives.capture()) : null;
     },
 
     applyPerspective(id, token, animate) {
+        if (this.deferBrushChartCall(id, 'applyPerspective', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) { chart.perspectives.apply(JSON.parse(token), { animate: animate }); }
     },
 
     perspectiveToUrl(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'perspectiveToUrl');
         return chart !== undefined ? chart.perspectives.toURL() : null;
     },
 
     savePerspective(id, name) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'savePerspective');
         if (chart !== undefined) { chart.perspectives.save(name); }
     },
 
     listPerspectives(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'listPerspectives');
         return chart !== undefined ? JSON.stringify(chart.perspectives.list()) : null;
     },
 
     // Restore a perspective encoded in the current page URL (#apex=<token>). Returns true if a
     // token was present and applied, so a shared link reopens the exact captured view.
     applyPerspectiveFromUrl(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'applyPerspectiveFromUrl');
         if (chart === undefined) { return false; }
         var token = ApexCharts.perspectives.fromURL(window.location.href);
         if (!token) { return false; }
@@ -362,27 +395,53 @@ window.blazor_apexchart = {
     },
 
     storyboardBind(id, options) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'storyboardBind');
         return chart !== undefined ? chart.storyboard.bind(this.parseOptions(options)) : null;
     },
 
     storyboardGoTo(id, beat, animate) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'storyboardGoTo');
         if (chart !== undefined) { chart.storyboard.goTo(beat, { animate: animate }); }
     },
 
     storyboardCurrent(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'storyboardCurrent');
         return chart !== undefined ? JSON.stringify(chart.storyboard.current()) : null;
     },
 
     storyboardUnbind(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'storyboardUnbind');
         if (chart !== undefined) { chart.storyboard.unbind(); }
     },
 
     updateOptions(id, options, redrawPaths, animate, updateSyncedCharts, zoom) {
         var options = this.parseOptions(options);
+
+        // A brush chart waiting for its targets renders with these options instead. The component
+        // always sends all its options, so they replace the waiting ones; the events wired up in
+        // renderChart are kept.
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending !== undefined) {
+            options.chart = options.chart || {};
+            options.chart.events = pending.options.chart.events;
+            if (options.tooltip != undefined && options.tooltip.customTooltip == true && pending.options.tooltip != undefined) {
+                options.tooltip.custom = pending.options.tooltip.custom;
+            }
+            pending.options = options;
+
+            if (zoom !== null && zoom !== undefined) {
+                this.deferBrushChartCall(id, 'zoomX', [id, zoom.start, zoom.end]);
+            }
+
+            if (options.debug == true) {
+                console.log('Chart ' + id + ' waits for brush targets, updateOptions applies when it renders');
+            }
+
+            // The new options may name targets that have rendered already
+            this.renderReadyBrushCharts();
+            return;
+        }
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "updateOptions", options);
@@ -397,6 +456,20 @@ window.blazor_apexchart = {
 
     appendData(id, data) {
         var newData = JSON.parse(data);
+
+        // A brush chart waiting for its targets renders with the data appended, by series index
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending !== undefined && Array.isArray(newData) && Array.isArray(pending.options.series)) {
+            newData.forEach((append, index) => {
+                var series = pending.options.series[index];
+                if (series != null && Array.isArray(series.data) && append != null && Array.isArray(append.data)) {
+                    series.data = series.data.concat(append.data);
+                }
+            });
+            return;
+        }
+        if (this.deferBrushChartCall(id, 'appendData', arguments)) { return; }
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "appendDate", newData);
@@ -405,6 +478,7 @@ window.blazor_apexchart = {
     },
 
     toggleDataPointSelection(id, seriesIndex, dataPointIndex) {
+        if (this.deferBrushChartCall(id, 'toggleDataPointSelection', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "toggleDataPointSelection [" + seriesIndex + '] [' + dataPointIndex + ']');
@@ -418,6 +492,7 @@ window.blazor_apexchart = {
     },
 
     zoomX(id, start, end) {
+        if (this.deferBrushChartCall(id, 'zoomX', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'zoomX ' + start + ", " + end);
@@ -426,6 +501,7 @@ window.blazor_apexchart = {
     },
 
     resetSeries(id, shouldUpdateChart, shouldResetZoom) {
+        if (this.deferBrushChartCall(id, 'resetSeries', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'resetSeries ' + shouldUpdateChart + ", " + shouldResetZoom);
@@ -434,6 +510,7 @@ window.blazor_apexchart = {
     },
 
     setLocale(id, name) {
+        if (this.deferBrushChartCall(id, 'setLocale', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'setLocale ' + name);
@@ -444,7 +521,7 @@ window.blazor_apexchart = {
 
     dataUri(id, options) {
         var opt = JSON.parse(options);
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'dataUri');
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'dataUri', options);
             return chart.dataURI(opt);
@@ -454,7 +531,7 @@ window.blazor_apexchart = {
     },
 
    async getSvgStringAsync(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'getSvgStringAsync');
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'getSvgString');
             const svgString = await chart.getSvgString();
@@ -465,6 +542,14 @@ window.blazor_apexchart = {
 
     appendSeries(id, series, animate, overwriteInitialSeries) {
         var data = JSON.parse(series);
+
+        // A brush chart waiting for its targets renders with the series added
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending !== undefined) {
+            pending.options.series = (Array.isArray(pending.options.series) ? pending.options.series : []).concat([data]);
+            return;
+        }
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'appendSeries', series);
@@ -474,6 +559,14 @@ window.blazor_apexchart = {
 
     updateSeries(id, series, animate) {
         var data = JSON.parse(series);
+
+        // A brush chart waiting for its targets renders with these series instead
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending !== undefined) {
+            pending.options.series = data;
+            return;
+        }
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'updateSeries', series);
@@ -482,6 +575,7 @@ window.blazor_apexchart = {
     },
 
     addPointAnnotation(id, annotation, pushToMemory) {
+        if (this.deferBrushChartCall(id, 'addPointAnnotation', arguments)) { return; }
         var data = JSON.parse(annotation);
         var chart = this.findChart(id);
         if (chart !== undefined) {
@@ -491,6 +585,7 @@ window.blazor_apexchart = {
     },
 
     addXaxisAnnotation(id, annotation, pushToMemory) {
+        if (this.deferBrushChartCall(id, 'addXaxisAnnotation', arguments)) { return; }
         var data = JSON.parse(annotation);
         var chart = this.findChart(id);
         if (chart !== undefined) {
@@ -500,6 +595,7 @@ window.blazor_apexchart = {
     },
 
     addYaxisAnnotation(id, annotation, pushToMemory) {
+        if (this.deferBrushChartCall(id, 'addYaxisAnnotation', arguments)) { return; }
         var data = JSON.parse(annotation);
         var chart = this.findChart(id);
         if (chart !== undefined) {
@@ -509,6 +605,7 @@ window.blazor_apexchart = {
     },
 
     clearAnnotations(id) {
+        if (this.deferBrushChartCall(id, 'clearAnnotations', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'clearAnnotations');
@@ -517,6 +614,7 @@ window.blazor_apexchart = {
     },
 
     removeAnnotation(chartid, id) {
+        if (this.deferBrushChartCall(chartid, 'removeAnnotation', arguments)) { return; }
         var chart = this.findChart(chartid);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'removeAnnotation', id);
@@ -525,6 +623,7 @@ window.blazor_apexchart = {
     },
 
     toggleSeries(id, seriesName) {
+        if (this.deferBrushChartCall(id, 'toggleSeries', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'toggleSeries', seriesName);
@@ -533,6 +632,7 @@ window.blazor_apexchart = {
     },
 
     showSeries(id, seriesName) {
+        if (this.deferBrushChartCall(id, 'showSeries', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'showSeries', seriesName);
@@ -541,6 +641,7 @@ window.blazor_apexchart = {
     },
 
     hideSeries(id, seriesName) {
+        if (this.deferBrushChartCall(id, 'hideSeries', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'hideSeries', seriesName);
@@ -549,6 +650,7 @@ window.blazor_apexchart = {
     },
 
     highlightSeries(id, seriesName) {
+        if (this.deferBrushChartCall(id, 'highlightSeries', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'highlightSeries', seriesName);
@@ -906,12 +1008,101 @@ window.blazor_apexchart = {
             this.warnSyncOnce(options.chart.id, events.unsupportedSyncCallbacks);
         }
 
+        // apexcharts.js looks up a brush chart's targets while the brush chart renders and fails if
+        // one is not there yet. Each chart renders on its own, so the order is not fixed: hold the
+        // brush chart back until all its targets have rendered (issue 420). Returns 'waiting' when the
+        // chart is held back; the component then raises OnRendered once it renders (JSRendered).
+        var missing = this.missingBrushTargets(options);
+        if (missing.length > 0) {
+            this.holdBrushChart(dotNetObject, container, options, missing);
+            return 'waiting';
+        }
+
+        this.createChart(container, options);
+        return 'rendered';
+    },
+
+    // Brush charts waiting for their targets, by chart id
+    pendingBrushCharts: new Map(),
+
+    // How long a brush chart waits before a console warning names the targets it still needs
+    brushTargetWarnDelay: 10000,
+
+    holdBrushChart(dotNetObject, container, options, missing) {
+        var id = options.chart.id;
+        var pending = { dotNetObject: dotNetObject, container: container, options: options, calls: [] };
+
+        // A target id with a typo leaves the brush chart empty for good, so say once what it waits for.
+        // A target that is meant to render later (behind a tab or a toggle) renders the brush chart then.
+        pending.warnTimer = setTimeout(() => {
+            if (this.pendingBrushCharts.get(id) === pending) {
+                console.warn('Brush chart ' + id + ' is not rendered yet: it waits for its target chart(s) '
+                    + this.missingBrushTargets(pending.options).join(', ') + ' to render. Check Chart.Brush.Target or Targets if they never will.');
+            }
+        }, this.brushTargetWarnDelay);
+
+        this.pendingBrushCharts.set(id, pending);
+
+        if (options.debug == true) {
+            console.log('Chart ' + id + ' waits for brush targets ' + missing.join(', '));
+        }
+    },
+
+    createChart(container, options) {
         var chart = new ApexCharts(container, options);
-        chart.render();
+        var rendering = chart.render();
 
         if (options.debug == true) {
             console.log('Chart ' + options.chart.id + ' rendered');
         }
+
+        // This chart may be the last target a waiting brush chart needs
+        this.renderReadyBrushCharts();
+
+        return { chart: chart, rendering: rendering };
+    },
+
+    // Renders the waiting brush charts whose targets have all rendered
+    renderReadyBrushCharts() {
+        for (const [id, pending] of this.pendingBrushCharts) {
+            if (this.missingBrushTargets(pending.options).length > 0) {
+                continue;
+            }
+
+            this.pendingBrushCharts.delete(id);
+            clearTimeout(pending.warnTimer);
+            const created = this.createChart(pending.container, pending.options);
+
+            // Once it has rendered, make the calls it received while it waited, then tell the
+            // component, which raises OnRendered
+            Promise.resolve(created.rendering).then(() => {
+                if (this.findChart(id) !== created.chart) {
+                    return;
+                }
+
+                pending.calls.forEach(call => {
+                    try {
+                        this[call.method].apply(this, call.args);
+                    } catch (error) {
+                        console.error('Chart ' + id + ': ' + call.method + ' failed', error);
+                    }
+                });
+
+                // The component may have been disposed in the meantime
+                pending.dotNetObject.invokeMethodAsync('JSRendered').catch(() => { });
+            });
+        }
+    },
+
+    // The brush targets apexcharts.js will look up when this chart renders and that are not rendered yet
+    missingBrushTargets(options) {
+        var brush = options.chart.brush;
+        if (!brush || brush.enabled !== true || typeof options.chart.events.selection === 'function') {
+            return [];
+        }
+
+        var targets = Array.isArray(brush.targets) ? brush.targets : [brush.target];
+        return targets.filter(target => target != null && target !== options.chart.id && this.findChart(target) === undefined);
     },
 
     parseOptions(options) {

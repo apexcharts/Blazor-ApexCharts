@@ -1669,11 +1669,31 @@ namespace ApexCharts
         /// <summary>
         /// Chart ID of the target chart to sync the brush chart and the target chart. If you have an array of multiple chart IDs, use <see cref="Targets"/> property instead.
         /// </summary>
+        /// <remarks>
+        /// The brush chart is drawn once every target chart has rendered, so the charts can be declared in any order
+        /// and a target can render later, for example behind a tab or a toggle. Until then the brush chart stays empty,
+        /// <see cref="ApexChart{TItem}.OnRendered"/> has not fired (use it, not the render call, to know when the brush chart exists),
+        /// and calls that change it, such as <see cref="ApexChart{TItem}.UpdateSeriesAsync(bool)"/>, <see cref="ApexChart{TItem}.UpdateOptionsAsync(bool, bool, bool, ZoomOptions)"/>,
+        /// <see cref="ApexChart{TItem}.AppendDataAsync(IEnumerable{TItem})"/>, the annotation methods or the series visibility methods, are applied when it renders.
+        /// Calls that read it, such as <see cref="ApexChart{TItem}.GetDataUriAsync(DataUriOptions)"/>, return an empty result meanwhile, and the history, measure,
+        /// perspective and storyboard calls other than <see cref="ApexChart{TItem}.ApplyPerspectiveAsync(string, bool)"/> do nothing.
+        /// An id that matches no chart keeps the brush chart empty; after 10 seconds a warning naming the missing ids is written to the browser console.
+        /// </remarks>
         public string Target { get; set; }
 
         /// <summary>
         /// Chart IDs of the target charts to sync the brush chart and the target charts. If you have a single chart ID, use <see cref="Target"/> property instead.
         /// </summary>
+        /// <remarks>
+        /// The brush chart is drawn once every target chart has rendered, so the charts can be declared in any order
+        /// and a target can render later, for example behind a tab or a toggle. Until then the brush chart stays empty,
+        /// <see cref="ApexChart{TItem}.OnRendered"/> has not fired (use it, not the render call, to know when the brush chart exists),
+        /// and calls that change it, such as <see cref="ApexChart{TItem}.UpdateSeriesAsync(bool)"/>, <see cref="ApexChart{TItem}.UpdateOptionsAsync(bool, bool, bool, ZoomOptions)"/>,
+        /// <see cref="ApexChart{TItem}.AppendDataAsync(IEnumerable{TItem})"/>, the annotation methods or the series visibility methods, are applied when it renders.
+        /// Calls that read it, such as <see cref="ApexChart{TItem}.GetDataUriAsync(DataUriOptions)"/>, return an empty result meanwhile, and the history, measure,
+        /// perspective and storyboard calls other than <see cref="ApexChart{TItem}.ApplyPerspectiveAsync(string, bool)"/> do nothing.
+        /// An id that matches no chart keeps the brush chart empty; after 10 seconds a warning naming the missing ids is written to the browser console.
+        /// </remarks>
         public List<string> Targets { get; set; }
     }
 

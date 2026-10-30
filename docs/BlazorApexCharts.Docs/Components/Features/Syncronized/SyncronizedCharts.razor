@@ -8,6 +8,14 @@
     </CodeSnippet>
 
     <CodeSnippet Title="Brush" ClassName=@typeof(Brush).ToString()>
+        <Description>
+            <p>
+                A brush chart is drawn once every chart named in <code>Chart.Brush.Target</code> or <code>Chart.Brush.Targets</code> has rendered,
+                so the charts can be declared in any order and a target can appear later, for example on another tab.
+                Until then the brush chart stays empty and <code>OnRendered</code> has not fired. A target id that matches no chart
+                keeps it empty, and a warning naming the missing ids is written to the browser console.
+            </p>
+        </Description>
         <Snippet>
             <Brush />
         </Snippet>

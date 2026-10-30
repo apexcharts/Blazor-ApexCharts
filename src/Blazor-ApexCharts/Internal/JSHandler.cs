@@ -427,6 +427,18 @@ namespace ApexCharts.Internal
         }
 
         /// <summary>
+        /// Callback from JavaScript when a brush chart that waited for its target charts has rendered
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnRendered"/>
+        /// </remarks>
+        [JSInvokable]
+        public Task JSRendered()
+        {
+            return ChartReference.OnRendered.InvokeAsync();
+        }
+
+        /// <summary>
         /// Callback from JavaScript on updated
         /// </summary>
         /// <remarks>
