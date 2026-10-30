@@ -1,0 +1,66 @@
+@page "/issues/619"
+
+@*
+    Repro for issue #619: with Markers.Shape set to a single shape, only the first series kept its
+    marker shape in the chart and the tooltip. One shape was sent as a one-item array, which
+    apexcharts.js reads as one shape per series index. Used by
+    tests/e2e/specs/issue-619-marker-shape-tooltip.mjs.
+*@
+
+<h3>Issue 619: marker shapes and tooltip colors for every series</h3>
+
+<div style="max-width: 600px;">
+    <div id="issue619-single">
+        <ApexChart TItem="ChartItem" Title="One shape for every series" Options="singleOptions">
+            @foreach (var item in series)
+            {
+                <ApexPointSeries TItem="ChartItem" Items="item.Items" Name="@item.Name"
+                                 SeriesType="SeriesType.Line" XValue="@(e => e.X)" YValue="@(e => e.Y)" />
+            }
+        </ApexChart>
+    </div>
+
+    <div id="issue619-list">
+        <ApexChart TItem="ChartItem" Title="One shape per series index" Options="listOptions">
+            @foreach (var item in series)
+            {
+                <ApexPointSeries TItem="ChartItem" Items="item.Items" Name="@item.Name"
+                                 SeriesType="SeriesType.Line" XValue="@(e => e.X)" YValue="@(e => e.Y)" />
+            }
+        </ApexChart>
+    </div>
+</div>
+
+@code {
+    private static readonly List<string> colors = ["#008FFB", "#00E396", "#FEB019"];
+
+    private readonly List<ChartSeries> series =
+    [
+        new("Alpha", [new(1, 10), new(2, 14), new(3, 12), new(4, 18)]),
+        new("Beta", [new(1, 6), new(2, 9), new(3, 7), new(4, 11)]),
+        new("Gamma", [new(1, 3), new(2, 4), new(3, 5), new(4, 4)]),
+    ];
+
+    private readonly ApexChartOptions<ChartItem> singleOptions = CreateOptions(MarkerShape.Square);
+
+    // Series 0 diamonds, series 1 crosses, series 2 triangles.
+    private readonly ApexChartOptions<ChartItem> listOptions =
+        CreateOptions(new MarkerShapeSelections(MarkerShape.Diamond, MarkerShape.Cross, MarkerShape.Triangle));
+
+    private static ApexChartOptions<ChartItem> CreateOptions(MarkerShapeSelections shape) => new()
+    {
+        Chart = new Chart
+        {
+            Toolbar = new Toolbar { Show = false },
+            Zoom = new Zoom { Enabled = false },
+            Animations = new Animations { Enabled = false }
+        },
+        Colors = colors,
+        Markers = new Markers { Shape = shape, Size = 6 },
+        Tooltip = new Tooltip { Shared = true, Intersect = false }
+    };
+
+    private record ChartSeries(string Name, List<ChartItem> Items);
+
+    private record ChartItem(double X, decimal Y);
+}
