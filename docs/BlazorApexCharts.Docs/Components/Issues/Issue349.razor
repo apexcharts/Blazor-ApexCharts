@@ -1,0 +1,63 @@
+@page "/issues/349"
+
+@using ApexCharts
+
+<h3>Issue 349: annotation label positions</h3>
+
+<p>
+    An x-axis annotation label sits at the top, center or bottom of the plot. A y-axis annotation label
+    sits at the left, center or right of the plot.
+</p>
+
+<div id="issue349-chart">
+    <ApexChart TItem="Sale" Title="Label positions" Height="400" Options="options">
+        <ApexPointSeries TItem="Sale"
+                         Items="sales"
+                         Name="Amount"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Month)"
+                         YValue="@(e => e.Amount)" />
+    </ApexChart>
+</div>
+
+@code {
+    private readonly List<Sale> sales = new()
+    {
+        new Sale { Month = "Jan", Amount = 10 },
+        new Sale { Month = "Feb", Amount = 40 },
+        new Sale { Month = "Mar", Amount = 30 },
+        new Sale { Month = "Apr", Amount = 70 },
+        new Sale { Month = "May", Amount = 50 },
+    };
+
+    private ApexChartOptions<Sale> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Sale>
+        {
+            Chart = new Chart { Animations = new Animations { Enabled = false } },
+            Annotations = new Annotations
+            {
+                Xaxis = new List<AnnotationsXAxis>
+                {
+                    new AnnotationsXAxis { Id = "issue349-top", X = "Feb", BorderColor = "#e53935", Label = new Label { Text = "Top", Position = LabelPosition.Top } },
+                    new AnnotationsXAxis { Id = "issue349-center", X = "Mar", BorderColor = "#8e24aa", Label = new Label { Text = "Center", Position = LabelPosition.Center } },
+                    new AnnotationsXAxis { Id = "issue349-bottom", X = "Apr", BorderColor = "#1e88e5", Label = new Label { Text = "Bottom", Position = LabelPosition.Bottom } },
+                },
+                Yaxis = new List<AnnotationsYAxis>
+                {
+                    new AnnotationsYAxis { Id = "issue349-left", Y = 20, BorderColor = "#43a047", Label = new Label { Text = "Left", Position = LabelPosition.Left, TextAnchor = TextAnchor.Start } },
+                    new AnnotationsYAxis { Id = "issue349-ycenter", Y = 45, BorderColor = "#fb8c00", Label = new Label { Text = "Center", Position = LabelPosition.Center, TextAnchor = TextAnchor.Middle } },
+                    new AnnotationsYAxis { Id = "issue349-right", Y = 60, BorderColor = "#00897b", Label = new Label { Text = "Right", Position = LabelPosition.Right } },
+                }
+            }
+        };
+    }
+
+    private class Sale
+    {
+        public string Month { get; set; }
+        public decimal Amount { get; set; }
+    }
+}

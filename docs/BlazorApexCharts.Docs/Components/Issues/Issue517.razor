@@ -1,0 +1,68 @@
+@page "/issues/517"
+
+@using ApexCharts
+
+<h3>Issue 517: point annotation on a horizontal rangeBar</h3>
+
+<p>
+    On a horizontal rangeBar the categories run along the y-axis, so a point annotation names its row
+    with a string <code>Y</code> and its time with a Unix millisecond <code>X</code>. Each marker below
+    should sit on the row it names, at 04:00.
+</p>
+
+<div id="issue517-chart">
+    <ApexChart TItem="Shift" Title="Machine shifts" Height="360" XAxisType="XAxisType.Datetime" Options="options">
+        <ApexRangeSeries TItem="Shift"
+                         Items="shifts"
+                         Name="Running"
+                         XValue="@(e => e.Machine)"
+                         YMinValue="@(e => e.Start.ToUnixTimeMilliseconds())"
+                         YMaxValue="@(e => e.End.ToUnixTimeMilliseconds())" />
+    </ApexChart>
+</div>
+
+@code {
+    private static readonly DateTime Day = new(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+    private readonly List<Shift> shifts = new()
+    {
+        new Shift { Machine = "Alpha", Start = Day.AddHours(1), End = Day.AddHours(5) },
+        new Shift { Machine = "Beta", Start = Day.AddHours(3), End = Day.AddHours(9) },
+        new Shift { Machine = "Gamma", Start = Day.AddHours(2), End = Day.AddHours(7) },
+    };
+
+    private ApexChartOptions<Shift> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Shift>
+        {
+            Chart = new Chart { Animations = new Animations { Enabled = false } },
+            PlotOptions = new PlotOptions { Bar = new PlotOptionsBar { Horizontal = true } },
+            Annotations = new Annotations
+            {
+                Points = new List<AnnotationsPoint>
+                {
+                    Marker("issue517-beta", "Beta", "#e53935"),
+                    Marker("issue517-gamma", "Gamma", "#1e88e5"),
+                }
+            }
+        };
+    }
+
+    private static AnnotationsPoint Marker(string id, string machine, string color) => new()
+    {
+        Id = id,
+        X = Day.AddHours(4).ToUnixTimeMilliseconds(),
+        Y = machine,
+        Marker = new AnnotationMarker { Size = 7, FillColor = color, StrokeColor = "#fff" },
+        Label = new Label { Text = machine, Style = new Style { Background = color, Color = "#fff" } }
+    };
+
+    private class Shift
+    {
+        public string Machine { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+    }
+}

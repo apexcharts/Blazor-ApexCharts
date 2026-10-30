@@ -376,7 +376,12 @@ namespace ApexCharts
         /// <summary>
         /// Y Value on which the annotation will be drawn
         /// </summary>
-        public double? Y { get; set; }
+        /// <remarks>
+        /// Accepts a number (12.5) for a value axis, or a string category (for example the row name
+        /// on a horizontal bar or rangeBar chart, where the categories run along the y-axis).
+        /// A string ending in px, such as "40px", is taken as a pixel offset from the top of the plot area.
+        /// </remarks>
+        public object Y { get; set; }
 
         /// <summary>
         /// When there are multiple y-axis, setting this options will put the point annotation for that particular y-axis' y value
@@ -491,6 +496,13 @@ namespace ApexCharts
         /// <summary>
         /// Where to place the label
         /// </summary>
+        /// <remarks>
+        /// An x-axis annotation (<see cref="AnnotationsXAxis"/>) reads <see cref="LabelPosition.Top"/> (the default),
+        /// <see cref="LabelPosition.Center"/> or <see cref="LabelPosition.Bottom"/>.
+        /// A y-axis annotation (<see cref="AnnotationsYAxis"/>) reads <see cref="LabelPosition.Left"/>,
+        /// <see cref="LabelPosition.Center"/> or <see cref="LabelPosition.Right"/> (the default).
+        /// A point annotation (<see cref="AnnotationsPoint"/>) ignores it.
+        /// </remarks>
         public LabelPosition? Position { get; set; }
 
         /// <inheritdoc cref="ApexCharts.Style" />
@@ -871,7 +883,12 @@ namespace ApexCharts
         /// <summary>
         /// Sets the width for annotation line
         /// </summary>
-        public double? Width { get; set; }
+        /// <remarks>
+        /// Accepts a string with a CSS unit, either a share of the plot width ("50%", the default is "100%")
+        /// or pixels ("200px"). A number is taken as pixels and sent as a px string, so 200 and "200px" draw the same line.
+        /// </remarks>
+        [JsonConverter(typeof(CssLengthConverter))]
+        public object Width { get; set; }
 
         /// <summary>
         /// Value on which the annotation will be drawn
@@ -6842,12 +6859,34 @@ namespace ApexCharts
     };
 
     /// <summary>
-    /// A list of sides to place the labels for data point annotations
+    /// Where to place the label of an x-axis or y-axis annotation (see <see cref="Label.Position"/>)
     /// </summary>
     public enum LabelPosition
     {
+        /// <summary>
+        /// Left edge of the plot area. Applies to y-axis annotations.
+        /// </summary>
         Left,
-        Right
+
+        /// <summary>
+        /// Right edge of the plot area. Applies to y-axis annotations.
+        /// </summary>
+        Right,
+
+        /// <summary>
+        /// Top of the plot area. Applies to x-axis annotations.
+        /// </summary>
+        Top,
+
+        /// <summary>
+        /// Middle of the plot area. Applies to x-axis and y-axis annotations.
+        /// </summary>
+        Center,
+
+        /// <summary>
+        /// Bottom of the plot area. Applies to x-axis annotations.
+        /// </summary>
+        Bottom
     };
 
     /// <summary>
