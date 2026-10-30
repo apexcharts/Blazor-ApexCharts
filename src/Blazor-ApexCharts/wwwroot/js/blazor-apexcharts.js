@@ -30,15 +30,21 @@ window.blazor_apexchart = {
     // .NET MAUI). Set by renderChart.
     noSyncInterop: new Set(),
 
-    // "chartId|callback" keys already warned about, so a chart warns once rather than once per label.
-    syncWarnings: new Set(),
+    // Callback names already warned about, by chart id, so a chart warns once per callback rather
+    // than once per label or per re-render. destroyChart drops a chart's entry when it is disposed.
+    syncWarnings: new Map(),
 
-    warnSyncOnce(chartId, callbacks) {
-        var key = chartId + '|' + callbacks.join(',');
-        if (this.syncWarnings.has(key)) {
+    warnSyncOnce(chartId, names) {
+        var warned = this.syncWarnings.get(chartId);
+        if (warned === undefined) {
+            warned = new Set();
+            this.syncWarnings.set(chartId, warned);
+        }
+        var callbacks = names.filter(function (name) { return !warned.has(name); });
+        if (callbacks.length === 0) {
             return;
         }
-        this.syncWarnings.add(key);
+        callbacks.forEach(function (name) { warned.add(name); });
 
         var hasFormatter = callbacks.some(function (name) { return name.indexOf('Format') === 0; });
         var advice = hasFormatter
@@ -86,14 +92,17 @@ window.blazor_apexchart = {
         }
     },
 
-    invokeSyncFormatter(callback, method, value, index, w) {
+    // The shared path of the .NET label formatters. extraArgs are sent to .NET after the value.
+    // Returns the raw value when the chart has no .NET reference or the host cannot call .NET
+    // synchronously; an exception thrown by the user's formatter is rethrown (see invokeSync).
+    invokeSyncFormatter(callback, method, value, index, w, extraArgs) {
         var dotNetRef = this.getDotNetObjectReference(index, w);
         if (dotNetRef == null) {
             return value;
         }
 
         var chartId = this.getChartId(index, w);
-        var call = this.invokeSync(chartId, dotNetRef, callback, method, [value]);
+        var call = this.invokeSync(chartId, dotNetRef, callback, method, [value].concat(extraArgs || []));
         return call.ok ? call.result : value;
     },
 
@@ -110,23 +119,8 @@ window.blazor_apexchart = {
     // Formatter for FormatYAxisLabelForAxis. axisIndex is written into each y-axis
     // formatter by the .NET side, since apexcharts.js does not pass it.
     getYAxisLabelForAxis(value, index, w, axisIndex) {
-        var dotNetRef = this.getDotNetObjectReference(index, w);
-        if (dotNetRef == null) {
-            return value;
-        }
-
-        // invokeSync skips the call and warns once per chart when the host cannot call .NET
-        // synchronously (Blazor Server, InteractiveAuto on its server circuit, BlazorWebView hosts).
-        // Any other error came from the user's formatter: log it and keep the raw value.
-        try {
-            var chartId = this.getChartId(index, w);
-            var call = this.invokeSync(chartId, dotNetRef, 'FormatYAxisLabelForAxis', 'JSGetFormattedYAxisValueForAxis',
-                [value, this.getYAxisIndexForValue(index, axisIndex)]);
-            return call.ok ? call.result : value;
-        } catch (e) {
-            console.error("FormatYAxisLabelForAxis failed", e);
-            return value;
-        }
+        return this.invokeSyncFormatter('FormatYAxisLabelForAxis', 'JSGetFormattedYAxisValueForAxis', value, index, w,
+            [this.getYAxisIndexForValue(index, axisIndex)]);
     },
 
     // A y-axis formatter is called for axis labels with the tick index as the second
@@ -176,7 +170,9 @@ window.blazor_apexchart = {
 
     },
 
-    destroyChart(id) {
+    // rerender: true when renderChart replaces the chart under the same id, which keeps the record
+    // of sync interop warnings so a re-render does not warn again.
+    destroyChart(id, rerender) {
         var chart = this.findChart(id);
         if (chart !== undefined) {
             chart.destroy();
@@ -190,6 +186,9 @@ window.blazor_apexchart = {
 
         this.dotNetRefs.delete(id);
         this.noSyncInterop.delete(id);
+        if (rerender !== true) {
+            this.syncWarnings.delete(id);
+        }
 
     },
 
@@ -996,7 +995,7 @@ window.blazor_apexchart = {
         };
 
         //Always destroy chart if it exists
-        this.destroyChart(options.chart.id);
+        this.destroyChart(options.chart.id, true);
         this.dotNetRefs.set(options.chart.id, dotNetObject)
         this.hideTooltipSource(options.chart.id);
 

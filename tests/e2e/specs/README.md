@@ -31,6 +31,15 @@ export default async function (page, BASE) {
 Helpers in `../lib/helpers.mjs`: `gotoChart(page, BASE, route, selector?)`, `watchErrors(page)`,
 `assert(cond, msg)`, `assertNoErrors(realErrors, label)`, `isIgnorableError(text)`.
 
+## Blazor Server
+
+The specs run against the WebAssembly demo by default. A spec whose outcome depends on the host
+(anything that needs synchronous JS to .NET calls, such as the .NET label formatters) asks
+`await blazorHost(page)`, which returns `'wasm'` or `'server'` from the Blazor script the page loaded,
+and checks the documented behavior of that host. Set `E2E_HOST=wasm` or `E2E_HOST=server` to override
+the detection. `recordSyncWarnings(page)` (before navigating) and `syncWarnings(page)` collect the
+console warnings the library writes when a host cannot call .NET synchronously.
+
 ## A demo page for the spec
 
 When no existing docs page reproduces the issue, add one as its own file at

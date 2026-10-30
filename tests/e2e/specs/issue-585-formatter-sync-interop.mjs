@@ -3,9 +3,13 @@
 // WebAssembly runtime is cached, DotNetObjectReference.invokeMethod throws. The .NET formatters and
 // the before zoom callbacks used it unguarded, so the exception escaped the chart render.
 //
-// The demo runs on WebAssembly, so the server dispatcher is simulated with a dotnet ref whose
-// invokeMethod throws that same error, passed to the real renderChart in the page.
-import { gotoChart, watchErrors, assert, assertNoErrors } from '../lib/helpers.mjs';
+// The checks that call the script directly simulate the server dispatcher with a dotnet ref whose
+// invokeMethod throws that same error, passed to the real renderChart in the page, so they run on
+// any host. The checks against the demo's own charts depend on the host: on WebAssembly the .NET
+// formatters run; on Blazor Server the charts keep their default labels and warn once per callback.
+import {
+  gotoChart, watchErrors, assert, assertNoErrors, blazorHost, recordSyncWarnings, syncWarnings
+} from '../lib/helpers.mjs';
 
 const DISPATCHER_ERROR = 'The current dispatcher does not support synchronous calls from JS to .NET. Use invokeDotNetMethodAsync instead.';
 
@@ -14,20 +18,27 @@ export default async function (page, BASE) {
 
   // Collect the library's warnings from the first chart render on, so a false warning on the real
   // WebAssembly path is caught too.
-  await page.addInitScript(() => {
-    window.__issue585Warnings = [];
-    const warn = console.warn.bind(console);
-    console.warn = (...args) => {
-      if (String(args[0]).startsWith('Blazor-ApexCharts:')) window.__issue585Warnings.push(String(args[0]));
-      warn(...args);
-    };
-  });
+  await recordSyncWarnings(page);
 
   await gotoChart(page, BASE, 'features/formatters');
   await page.waitForFunction(() => window.blazor_apexchart && window.blazor_apexchart.dotNetRefs.size > 0, null, { timeout: 30000 });
 
-  // 1. The real WebAssembly path still formats through .NET: one chart on the page uses
-  //    FormatYAxisLabel="$" + N0.
+  const host = await blazorHost(page);
+  const demoWarnings = host === 'server' ? await checkServerDemo(page) : await checkWasmDemo(page);
+
+  await checkDirectCalls(page);
+
+  // The calls above, made against charts the spec created, did not add warnings for the demo's charts.
+  const demoAfter = (await syncWarnings(page)).filter(w => !String(w.chartId).startsWith('issue585-'));
+  assert(JSON.stringify(demoAfter) === JSON.stringify(demoWarnings),
+    `the demo charts warned again: ${JSON.stringify(demoAfter)}`);
+
+  assertNoErrors(realErrors, 'issue-585');
+}
+
+// 1. On WebAssembly the real path formats through .NET and none of the demo's charts warn.
+async function checkWasmDemo(page) {
+  // One chart on the page uses FormatYAxisLabel="$" + N0.
   const formatted = await page.evaluate(() => {
     const api = window.blazor_apexchart;
     return [...api.dotNetRefs.keys()].map(id => api.getYAxisLabel(1234, 0, { config: { chart: { id } } }));
@@ -48,9 +59,77 @@ export default async function (page, BASE) {
     `expected "" for an undefined value on WebAssembly, got ${JSON.stringify(empty)}`);
 
   // WebAssembly can call .NET synchronously, so none of the real charts may warn.
-  const wasmWarnings = await page.evaluate(() => window.__issue585Warnings.slice());
+  const wasmWarnings = await syncWarnings(page);
   assert(wasmWarnings.length === 0, `the WebAssembly demo logged sync interop warnings: ${JSON.stringify(wasmWarnings)}`);
+  return wasmWarnings;
+}
 
+// The .NET formatters the formatters page sets, one entry per chart: FormatYAxisLabel ("Use DotNet"),
+// FormatYAxisLabel and FormatXAxisLabel ("Use DotNet for X Axis"), FormatYAxisLabelForAxis ("Use
+// DotNet per Y Axis").
+const SERVER_EXPECTED = [
+  ['FormatXAxisLabel', 'FormatYAxisLabel'],
+  ['FormatYAxisLabel'],
+  ['FormatYAxisLabelForAxis'],
+];
+
+// The name of the script function behind each .NET formatter.
+const FORMATTER_FUNCTIONS = {
+  FormatYAxisLabel: 'getYAxisLabel',
+  FormatXAxisLabel: 'getXAxisLabel',
+  FormatYAxisLabelForAxis: 'getYAxisLabelForAxis',
+};
+
+// 1. On Blazor Server the .NET formatters cannot run: each chart that sets one renders with its
+//    default labels and warns exactly once per callback, and calling the formatter functions for it
+//    returns the raw value without trying .NET or warning again.
+async function checkServerDemo(page) {
+  await page.waitForFunction(n => (window.__apexSyncWarnings || []).length >= n, SERVER_EXPECTED.length, { timeout: 30000 });
+  const warnings = await syncWarnings(page);
+
+  const byChart = new Map();
+  for (const w of warnings) {
+    assert(w.chartId, `unexpected warning: ${w.message}`);
+    byChart.set(w.chartId, [...(byChart.get(w.chartId) || []), ...w.callbacks]);
+  }
+  const perChart = [...byChart.values()].map(names => names.slice().sort());
+  for (const names of perChart) {
+    assert(new Set(names).size === names.length, `a chart warned twice for one callback: ${JSON.stringify(warnings)}`);
+  }
+  const sorted = list => list.map(names => names.join(',')).sort();
+  assert(JSON.stringify(sorted(perChart)) === JSON.stringify(sorted(SERVER_EXPECTED)),
+    `expected one warning per chart per .NET formatter (${JSON.stringify(SERVER_EXPECTED)}), got ${JSON.stringify(warnings)}`);
+  assert(warnings.every(w => w.message.includes('Labels.Formatter')), `a formatter warning is not actionable: ${JSON.stringify(warnings)}`);
+
+  const result = await page.evaluate(({ charts, functions }) => {
+    const api = window.blazor_apexchart;
+    const before = window.__apexSyncWarnings.length;
+    const out = { labels: {}, values: [], error: null };
+    try {
+      for (const [id, names] of charts) {
+        const w = { config: { chart: { id } } };
+        for (const name of names) out.values.push(api[functions[name]](1234, 0, w, 0));
+        const chart = window.ApexCharts.getChartByID(id);
+        out.labels[id] = chart ? Array.from(chart.el.querySelectorAll('.apexcharts-yaxis-label')).map(e => e.textContent) : null;
+      }
+    } catch (e) {
+      out.error = e.message;
+    }
+    out.newWarnings = window.__apexSyncWarnings.slice(before);
+    return out;
+  }, { charts: [...byChart.entries()], functions: FORMATTER_FUNCTIONS });
+
+  assert(result.error === null, `a formatter function threw on Blazor Server: ${result.error}`);
+  assert(result.values.length > 0 && result.values.every(v => v === 1234), `expected the raw value back, got ${JSON.stringify(result.values)}`);
+  assert(result.newWarnings.length === 0, `calling the formatters warned again: ${JSON.stringify(result.newWarnings)}`);
+  for (const [id, labels] of Object.entries(result.labels)) {
+    assert(Array.isArray(labels) && labels.length > 0, `chart ${id} did not render y-axis labels: ${JSON.stringify(labels)}`);
+    assert(labels.every(t => !/[$%_]/.test(t)), `chart ${id} shows .NET formatted labels on Blazor Server: ${JSON.stringify(labels)}`);
+  }
+  return warnings;
+}
+
+async function checkDirectCalls(page) {
   // 2. getYAxisLabel / getXAxisLabel never throw when invokeMethod throws, return the raw value,
   //    and warn once per chart rather than once per label.
   const direct = await page.evaluate((message) => {
@@ -67,7 +146,7 @@ export default async function (page, BASE) {
       out.error = e.message;
     }
     api.dotNetRefs.delete(id);
-    out.warnings = window.__issue585Warnings.filter(m => m.includes(id));
+    out.warnings = window.__apexSyncWarnings.filter(m => m.includes(id));
     return out;
   }, DISPATCHER_ERROR);
   assert(direct.error === null, `getYAxisLabel threw: ${direct.error}`);
@@ -102,7 +181,7 @@ export default async function (page, BASE) {
       out.error = e.message;
     }
     api.dotNetRefs.delete(id);
-    out.warnings = window.__issue585Warnings.filter(m => m.includes(id));
+    out.warnings = window.__apexSyncWarnings.filter(m => m.includes(id));
     return out;
   });
   assert(userError.undefinedValue === 'ok', `undefined value did not reach .NET: ${JSON.stringify(userError)}`);
@@ -143,7 +222,7 @@ export default async function (page, BASE) {
   }, render);
   assert(zoom === null, `zoomX threw through beforeZoom: ${zoom}`);
 
-  const zoomWarnings = await page.evaluate((id) => window.__issue585Warnings.filter(m => m.includes(id) && m.includes('OnBeforeZoom')), render);
+  const zoomWarnings = await page.evaluate((id) => window.__apexSyncWarnings.filter(m => m.includes(id) && m.includes('OnBeforeZoom')), render);
   assert(zoomWarnings.length === 1, `expected one OnBeforeZoom warning, got ${JSON.stringify(zoomWarnings)}`);
   assert(!zoomWarnings[0].includes('Labels.Formatter'), `the zoom warning points at axis label formatters: ${zoomWarnings[0]}`);
 
@@ -164,25 +243,50 @@ export default async function (page, BASE) {
       series: [{ name: 'a', data: [10, 20, 30] }],
       yaxis: [{ labels: { formatter: { '@eval': 'function (value, index, w) { return window.blazor_apexchart.getYAxisLabel(value, index, w); }' } } }]
     };
-    const events = { syncInterop: false, unsupportedSyncCallbacks: ['FormatYAxisLabel'] };
+    const events = { syncInterop: false, unsupportedSyncCallbacks: ['FormatYAxisLabel', 'OnBeforeZoom'] };
     api.renderChart(ref, host, JSON.stringify(options), events);
     api.renderChart(ref, host, JSON.stringify(options), events); // a re-render must not warn again
     return id;
   });
 
   await page.locator('#issue585-flagged-host .apexcharts-yaxis-label').first().waitFor({ timeout: 15000 });
+  // The chart's own label pass and a direct call both go through getYAxisLabel, which the render
+  // warning already named, so neither adds a warning.
   const flaggedState = await page.evaluate((id) => ({
-    warnings: window.__issue585Warnings.filter(m => m.includes(id)),
+    direct: window.blazor_apexchart.getYAxisLabel(5, 0, { config: { chart: { id } } }),
+    warnings: window.__apexSyncWarnings.filter(m => m.includes(id)),
     syncCalls: window.__issue585SyncCalls
   }), flagged);
+  assert(flaggedState.direct === 5, `expected the raw value from the flagged chart, got ${JSON.stringify(flaggedState.direct)}`);
   assert(flaggedState.syncCalls === 0, `invokeMethod was called ${flaggedState.syncCalls} times although .NET reported no sync interop`);
   assert(flaggedState.warnings.length === 1, `expected exactly one warning for the flagged chart, got ${JSON.stringify(flaggedState.warnings)}`);
-  assert(flaggedState.warnings[0].includes('FormatYAxisLabel'), `warning does not name the skipped callback: ${flaggedState.warnings[0]}`);
+  assert(flaggedState.warnings[0].includes('FormatYAxisLabel') && flaggedState.warnings[0].includes('OnBeforeZoom'),
+    `warning does not name the skipped callbacks: ${flaggedState.warnings[0]}`);
 
-  await page.evaluate(() => {
-    window.blazor_apexchart.destroyChart('issue585-render');
-    window.blazor_apexchart.destroyChart('issue585-flagged');
+  // 5. Disposing a chart (destroyChart from the component, not the re-render inside renderChart)
+  //    forgets its warnings: nothing about the chart is kept, and a new chart under the same id warns
+  //    again.
+  const pruned = await page.evaluate(() => {
+    const api = window.blazor_apexchart;
+    const id = 'issue585-flagged';
+    const remembered = () => [...api.syncWarnings.keys()].some(k => String(k).includes(id));
+    const out = { before: remembered() };
+    api.destroyChart(id);
+    out.afterDestroy = remembered();
+
+    const ref = { invokeMethod() { return 'x'; }, invokeMethodAsync() { return Promise.resolve(); } };
+    const options = { chart: { id, type: 'line', animations: { enabled: false } }, series: [{ name: 'a', data: [1, 2, 3] }] };
+    api.renderChart(ref, document.getElementById('issue585-flagged-host'), JSON.stringify(options),
+      { syncInterop: false, unsupportedSyncCallbacks: ['FormatYAxisLabel'] });
+    out.warnings = window.__apexSyncWarnings.filter(m => m.includes(id)).length;
+
+    api.destroyChart('issue585-render');
+    api.destroyChart(id);
+    out.leftOver = [...api.syncWarnings.keys()].filter(k => ['issue585-render', id].some(x => String(k).includes(x)));
+    return out;
   });
-
-  assertNoErrors(realErrors, 'issue-585');
+  assert(pruned.before === true, `the flagged chart's warning was not recorded: ${JSON.stringify(pruned)}`);
+  assert(pruned.afterDestroy === false, `destroyChart kept the chart's warnings: ${JSON.stringify(pruned)}`);
+  assert(pruned.warnings === 2, `a new chart under a disposed chart's id should warn again, got ${pruned.warnings} warnings in all`);
+  assert(pruned.leftOver.length === 0, `warnings kept after destroy: ${JSON.stringify(pruned.leftOver)}`);
 }

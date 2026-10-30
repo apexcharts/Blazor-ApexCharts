@@ -37,3 +37,43 @@ export function assertNoErrors(realErrors, label = '') {
   const errs = realErrors();
   if (errs.length) throw new Error(`${label ? `[${label}] ` : ''}console/page errors: ${JSON.stringify(errs)}`);
 }
+
+// The Blazor host the demo runs on: 'wasm' (WebAssembly, the default demo) or 'server' (Blazor
+// Server). Behavior that needs synchronous JS to .NET interop, such as the .NET label formatters,
+// differs between the two, so a spec that checks it asks which one it is on.
+// E2E_HOST=wasm|server in the environment wins; otherwise the Blazor script the page loaded decides.
+// Call after the page has navigated to the demo.
+export async function blazorHost(page) {
+  const forced = (process.env.E2E_HOST || '').toLowerCase();
+  if (forced === 'wasm' || forced === 'server') return forced;
+  if (forced !== '') throw new Error(`E2E_HOST must be "wasm" or "server", got "${process.env.E2E_HOST}"`);
+
+  const scripts = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('script[src]')).map(s => s.getAttribute('src')));
+  if (scripts.some(src => /blazor\.server(\.min)?\.js/.test(src))) return 'server';
+  if (scripts.some(src => /blazor\.webassembly(\.min)?\.js/.test(src))) return 'wasm';
+  throw new Error(`cannot tell the Blazor host from the page scripts ${JSON.stringify(scripts)}; set E2E_HOST=wasm|server`);
+}
+
+// Starts collecting the "Blazor-ApexCharts:" console warnings the library writes when a host cannot
+// call .NET synchronously, from the first script on. Call before navigating. Read them with
+// syncWarnings(page).
+export async function recordSyncWarnings(page) {
+  await page.addInitScript(() => {
+    window.__apexSyncWarnings = [];
+    const warn = console.warn.bind(console);
+    console.warn = (...args) => {
+      if (String(args[0]).startsWith('Blazor-ApexCharts:')) window.__apexSyncWarnings.push(String(args[0]));
+      warn(...args);
+    };
+  });
+}
+
+// The warnings recorded by recordSyncWarnings, each as { chartId, callbacks, message }.
+export async function syncWarnings(page) {
+  const messages = await page.evaluate(() => (window.__apexSyncWarnings || []).slice());
+  return messages.map(message => {
+    const m = /chart "([^"]*)" skipped (.+?) because/.exec(message);
+    return { chartId: m ? m[1] : null, callbacks: m ? m[2].split(', ') : [], message };
+  });
+}

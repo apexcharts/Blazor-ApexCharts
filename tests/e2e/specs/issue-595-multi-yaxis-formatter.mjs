@@ -2,7 +2,12 @@
 // into its formatter. The repro page labels axis 0 with "A0:" and axis 1 with "A1:".
 // The second chart puts two series on axis 0 and one on axis 1, so a tooltip value has to be
 // formatted with the axis its series is plotted on, not with the axis that has the series' index.
-import { gotoChart, watchErrors, assert, assertNoErrors } from '../lib/helpers.mjs';
+//
+// The formatter needs synchronous JS to .NET interop, so on Blazor Server it does not run: there
+// the spec checks that both charts render with their default labels and warn once each instead.
+import {
+  gotoChart, watchErrors, assert, assertNoErrors, blazorHost, recordSyncWarnings, syncWarnings
+} from '../lib/helpers.mjs';
 
 const axisLabels = (page, rel) =>
   page.locator(`#issue595-chart .apexcharts-yaxis[rel='${rel}'] .apexcharts-yaxis-label tspan`).allTextContents();
@@ -78,53 +83,104 @@ async function checkIndexResolver(page) {
     `getYAxisIndexForValue: expected ${JSON.stringify(expected)}, got ${JSON.stringify(result)}`);
 }
 
-// An exception from the user's formatter is reported as such, every time, and only the Blazor
-// Server "no synchronous interop" error gets the once-per-page WebAssembly warning.
+// FormatYAxisLabelForAxis follows the same error policy as FormatYAxisLabel and FormatXAxisLabel:
+// an exception from the user's formatter is rethrown, every time, and is not reported as a host
+// limitation; the "no synchronous interop" error of Blazor Server leaves the raw value and gives one
+// warning for the chart. The formatter gets exactly the value and the axis index.
 async function checkErrorReporting(page) {
   const result = await page.evaluate(() => {
     const api = window.blazor_apexchart;
     const logged = [];
     const { warn, error } = console;
     const id = 'issue595-throwing-chart';
+    const calls = [];
     let failure;
-    api.yAxisForAxisWarned = false;
-    api.dotNetRefs.set(id, { invokeMethod: () => { throw failure; } });
+    api.dotNetRefs.set(id, { invokeMethod: (...args) => { calls.push(args); throw failure; } });
     console.warn = m => logged.push(['warn', String(m)]);
     console.error = m => logged.push(['error', String(m)]);
+    const call = (value, index) => {
+      try {
+        return { returned: api.getYAxisLabelForAxis(value, index, { config: { chart: { id } } }, 1) };
+      } catch (e) {
+        return { thrown: e.message };
+      }
+    };
     try {
-      const w = { config: { chart: { id } } };
       failure = new Error('System.InvalidOperationException: formatter bug');
-      const returned = api.getYAxisLabelForAxis(7, 0, w, 0);
-      api.getYAxisLabelForAxis(8, 1, w, 0);
+      const userErrors = [call(7, 0), call(8, 1)];
       failure = new Error('The current dispatcher does not support synchronous calls from JS to .NET. Use invokeMethodAsync instead.');
-      api.getYAxisLabelForAxis(9, 2, w, 0);
-      api.getYAxisLabelForAxis(10, 3, w, 0);
-      return { returned, logged };
+      const noSync = [call(9, 2), call(10, 3)];
+      return { userErrors, noSync, logged, calls };
     } finally {
       console.warn = warn;
       console.error = error;
       api.dotNetRefs.delete(id);
+      api.destroyChart(id);
     }
   });
 
-  assert(result.returned === 7, `a failing formatter should leave the raw value, got ${JSON.stringify(result.returned)}`);
+  assert(result.userErrors.every(r => r.thrown === 'System.InvalidOperationException: formatter bug'),
+    `an exception from the formatter should be rethrown each time, got ${JSON.stringify(result.userErrors)}`);
+  assert(result.noSync.every((r, i) => r.returned === 9 + i),
+    `without synchronous interop the raw value should be kept, got ${JSON.stringify(result.noSync)}`);
+  assert(JSON.stringify(result.calls[0]) === JSON.stringify(['JSGetFormattedYAxisValueForAxis', 7, 1]),
+    `the formatter should get the value and the axis index, got ${JSON.stringify(result.calls)}`);
+
   const errors = result.logged.filter(([kind]) => kind === 'error');
   const warnings = result.logged.filter(([kind]) => kind === 'warn');
-  assert(errors.length === 2 && errors.every(([, m]) => /FormatYAxisLabelForAxis failed/.test(m)),
-    `each exception from the formatter should be logged as a failure, got ${JSON.stringify(result.logged)}`);
-  assert(warnings.length === 1 && warnings.every(([, m]) => /WebAssembly/.test(m)),
-    `the synchronous interop error should give exactly one WebAssembly warning, got ${JSON.stringify(result.logged)}`);
-  assert(!errors.some(([, m]) => /WebAssembly/.test(m)),
-    `a formatter exception must not be reported as a WebAssembly limitation, got ${JSON.stringify(result.logged)}`);
+  assert(errors.length === 0, `a formatter exception is rethrown, not logged: ${JSON.stringify(result.logged)}`);
+  assert(warnings.length === 1 && /FormatYAxisLabelForAxis/.test(warnings[0][1]) && /cannot call \.NET synchronously/.test(warnings[0][1]),
+    `the synchronous interop error should give exactly one warning naming FormatYAxisLabelForAxis, got ${JSON.stringify(result.logged)}`);
+}
+
+// On Blazor Server the .NET formatter never runs: both charts render both axes with the default
+// labels and default tooltip values, and each chart warns once, naming FormatYAxisLabelForAxis.
+async function checkServerDefaults(page) {
+  await page.waitForFunction(() => (window.__apexSyncWarnings || []).length >= 2, null, { timeout: 30000 });
+  await page.waitForSelector('#issue595-tooltip-chart .apexcharts-yaxis[rel="1"] .apexcharts-yaxis-label', { timeout: 30000 });
+
+  const charts = await page.evaluate(() => ['#issue595-chart', '#issue595-tooltip-chart'].map(sel => {
+    const instance = (window.Apex._chartInstances || []).find(c => document.querySelector(sel).contains(c.chart.el));
+    const labels = rel => Array.from(document.querySelectorAll(`${sel} .apexcharts-yaxis[rel='${rel}'] .apexcharts-yaxis-label`))
+      .map(e => e.textContent);
+    return { sel, id: instance ? instance.id : null, axis0: labels(0), axis1: labels(1) };
+  }));
+  for (const c of charts) {
+    assert(c.id, `no chart instance in ${c.sel}`);
+    assert(c.axis0.length > 0 && c.axis1.length > 0, `${c.sel} should render labels on both axes, got ${JSON.stringify(c)}`);
+    assert([...c.axis0, ...c.axis1].every(t => !/^A\d:/.test(t)), `${c.sel} shows .NET formatted labels on Blazor Server: ${JSON.stringify(c)}`);
+  }
+
+  const warnings = await syncWarnings(page);
+  for (const c of charts) {
+    const mine = warnings.filter(w => w.chartId === c.id);
+    assert(mine.length === 1 && JSON.stringify(mine[0].callbacks) === '["FormatYAxisLabelForAxis"]',
+      `${c.sel} should warn exactly once, naming FormatYAxisLabelForAxis, got ${JSON.stringify(warnings)}`);
+  }
+  assert(warnings.length === charts.length, `unexpected warnings: ${JSON.stringify(warnings)}`);
+
+  const chart = '#issue595-tooltip-chart';
+  await page.locator(chart).scrollIntoViewIfNeeded();
+  const grid = await page.locator(`${chart} .apexcharts-grid`).first().boundingBox();
+  assert(grid, 'the tooltip chart has no grid to hover');
+  await page.mouse.move(grid.x + grid.width * 0.375, grid.y + grid.height / 2);
+  await page.waitForFunction(sel => Array.from(document.querySelectorAll(`${sel} .apexcharts-tooltip .apexcharts-tooltip-text-y-value`))
+    .map(e => e.textContent.trim()).filter(t => /^\d/.test(t)).length >= 3, chart, { timeout: 15000 });
 }
 
 export default async function (page, BASE) {
   const realErrors = watchErrors(page);
 
+  await recordSyncWarnings(page);
   await gotoChart(page, BASE, 'issues/595', '#issue595-chart .apexcharts-yaxis[rel="1"] .apexcharts-yaxis-label');
 
-  await checkAxisLabels(page);
-  await checkTooltipValues(page);
+  if (await blazorHost(page) === 'server') {
+    await checkServerDefaults(page);
+  } else {
+    await checkAxisLabels(page);
+    await checkTooltipValues(page);
+    assert((await syncWarnings(page)).length === 0, 'the WebAssembly demo logged sync interop warnings');
+  }
   await checkIndexResolver(page);
   await checkErrorReporting(page);
 
