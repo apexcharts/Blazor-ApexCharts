@@ -17,6 +17,8 @@ public class Issue442Tests : ApexChartsTestContext
 
     private SelectedData<Sale>? selected;
     private SelectedData<Sale>? markerClicked;
+    private SelectedData<Sale>? clicked;
+    private SelectedData<Sale>? mouseMoved;
 
     private JSHandler<Sale> RenderPieChart()
     {
@@ -24,6 +26,8 @@ public class Issue442Tests : ApexChartsTestContext
             .Add(c => c.Options, new ApexChartOptions<Sale>())
             .Add(c => c.OnDataPointSelection, (SelectedData<Sale> data) => selected = data)
             .Add(c => c.OnMarkerClick, (SelectedData<Sale> data) => markerClicked = data)
+            .Add(c => c.OnClick, (SelectedData<Sale> data) => clicked = data)
+            .Add(c => c.OnMouseMove, (SelectedData<Sale> data) => mouseMoved = data)
             .AddChildContent<ApexPointSeries<Sale>>(s => s
                 .Add(x => x.Name, "Amount")
                 .Add(x => x.Items, SampleData.Sales())
@@ -69,5 +73,20 @@ public class Issue442Tests : ApexChartsTestContext
 
         Assert.NotNull(markerClicked);
         Assert.Equal(DataPointSelectionSource.DataPoint, markerClicked.Source);
+    }
+
+    [Fact]
+    public void Click_and_mouse_move_are_always_a_data_point_source()
+    {
+        var handler = RenderPieChart();
+
+        // Even a payload that carries a source does not change what these events report.
+        handler.JSClick(Payload("legend"));
+        handler.JSMouseMove(Payload("method"));
+
+        Assert.NotNull(clicked);
+        Assert.Equal(DataPointSelectionSource.DataPoint, clicked.Source);
+        Assert.NotNull(mouseMoved);
+        Assert.Equal(DataPointSelectionSource.DataPoint, mouseMoved.Source);
     }
 }

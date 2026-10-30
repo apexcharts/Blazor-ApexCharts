@@ -22,6 +22,31 @@
 
 <button id="issue442-toggle" @onclick="ToggleInCode">Toggle slice C in code</button>
 
+<div id="issue442-chain">
+    <ApexChart TItem="Slice"
+               @ref="chainChart"
+               Title="Issue 442: legend handler selects in code"
+               Options="chainOptions"
+               OnDataPointSelection="ChainPointSelected"
+               OnLegendClicked="ChainLegendClicked">
+
+        <ApexPointSeries TItem="Slice"
+                         Items="slices"
+                         Name="Value"
+                         SeriesType="SeriesType.Pie"
+                         XValue="@(e => e.Label)"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</div>
+
+<p>Chain selections: <span id="issue442-chain-count">@chainCount</span></p>
+<ol id="issue442-chain-log">
+    @foreach (var entry in chainLog)
+    {
+        <li>@entry</li>
+    }
+</ol>
+
 <p>Legend clicks: <span id="issue442-legend-count">@legendCount</span></p>
 <p>Selections: <span id="issue442-selection-count">@selectionCount</span></p>
 <ol id="issue442-log">
@@ -47,6 +72,16 @@
         Chart = new Chart { Animations = new Animations { Enabled = false } }
     };
 
+    private ApexChart<Slice> chainChart;
+
+    private readonly ApexChartOptions<Slice> chainOptions = new()
+    {
+        Chart = new Chart { Animations = new Animations { Enabled = false } }
+    };
+
+    private readonly List<string> chainLog = [];
+    private int chainCount;
+
     private readonly List<string> log = [];
     private int legendCount;
     private int selectionCount;
@@ -61,6 +96,22 @@
     {
         selectionCount++;
         log.Add($"selection:{data.DataPoint?.X}:{data.Source}");
+    }
+
+    // A legend click on A selects slice D in code. On WebAssembly this runs synchronously inside the
+    // legend click, before the chart selects A, and D must still be reported as Method.
+    private async Task ChainLegendClicked(LegendClicked<Slice> data)
+    {
+        if (data.DataPoint?.X?.ToString() == "A")
+        {
+            await chainChart.ToggleDataPointSelectionAsync(3, null);
+        }
+    }
+
+    private void ChainPointSelected(SelectedData<Slice> data)
+    {
+        chainCount++;
+        chainLog.Add($"{data.DataPoint?.X}:{data.Source}");
     }
 
     private async Task ToggleInCode()
