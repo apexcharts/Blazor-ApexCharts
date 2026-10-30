@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Intersecting points click repro (#534)</title>
+  <style>body { font-family: sans-serif; } #chart { width: 900px; } pre { background: #f4f4f4; padding: 8px; }</style>
+</head>
+<body>
+  <!--
+    Plain apexcharts.js repro for Blazor-ApexCharts #534 (upstream apexcharts.js #4778).
+    Serve the repository root (python3 -m http.server 5309) and open
+    /tests/e2e/repros/intersecting-points-click/index.html
+    Hover or click the July point, where all four series have the value 15.
+    The options below are the ones the Blazor wrapper sends for a line chart that
+    has a dataPointSelection handler: markers.size 5, tooltip.intersect true,
+    tooltip.shared false.
+  -->
+  <div id="chart"></div>
+  <pre id="log"></pre>
+  <script type="module">
+    import ApexCharts from '../../../../src/Blazor-ApexCharts/wwwroot/js/apexcharts.esm.js';
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const values = [
+      [10, 20, 30, 40, 40, 20, 15, 40, 55, 44, 33, 11],
+      [20, 20, 20, 30, 30, 15, 15, 20, 30, 20, 44, 22],
+      [40, 30, 20, 10, 10, 20, 15, 35, 35, 35, 25, 55],
+      [50, 40, 30, 30, 20, 20, 15, 30, 44, 55, 44, 33]
+    ];
+    const log = [];
+    const push = (name, cfg) => {
+      log.push({ event: name, seriesIndex: cfg.seriesIndex, dataPointIndex: Number(cfg.dataPointIndex) });
+      document.getElementById('log').textContent = JSON.stringify(log, null, 1);
+    };
+    window.__events = log;
+
+    const chart = new ApexCharts(document.getElementById('chart'), {
+      chart: {
+        type: 'line',
+        height: 400,
+        animations: { enabled: false },
+        events: {
+          dataPointSelection: (e, ctx, cfg) => push('dataPointSelection', cfg),
+          markerClick: (e, ctx, cfg) => push('markerClick', cfg),
+          click: (e, ctx, cfg) => push('click', cfg)
+        }
+      },
+      series: values.map((v, i) => ({ name: 'Series ' + (i + 1), data: v.map((y, j) => ({ x: months[j], y })) })),
+      markers: { size: 5 },
+      tooltip: { intersect: true, shared: false }
+    });
+    chart.render().then(() => { window.__ready = true; });
+  </script>
+</body>
+</html>
