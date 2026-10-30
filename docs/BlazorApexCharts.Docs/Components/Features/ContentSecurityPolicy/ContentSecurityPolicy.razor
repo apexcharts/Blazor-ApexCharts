@@ -1,0 +1,80 @@
+@page "/features/content-security-policy"
+
+<DocExamples Title="Content Security Policy">
+
+    <Description>
+        <p>
+            A Content Security Policy (CSP) tells the browser which styles and scripts a page may run. This page lists
+            what Blazor-ApexCharts needs from a strict policy, one that does not allow <code>'unsafe-inline'</code> styles.
+        </p>
+
+        <h4>Styles: set <code>Chart.Nonce</code></h4>
+        <p>
+            ApexCharts adds its stylesheet to the page as a <code>&lt;style&gt;</code> element, and each legend adds one
+            too. A <code>style-src</code> without <code>'unsafe-inline'</code> blocks both, and the chart renders
+            unstyled. Allow them with a nonce: put <code>'nonce-&lt;value&gt;'</code> in <code>style-src</code> and the
+            same value in <code>Chart.Nonce</code>. ApexCharts copies it onto every <code>&lt;style&gt;</code> element it adds.
+        </p>
+        <ul>
+            <li>
+                The stylesheet is shared by every chart on the page and is added by the first chart that renders, so
+                set the nonce on every chart, or once in the global options
+                (<code>AddApexCharts(o =&gt; o.GlobalOptions = ...)</code> or <code>IApexChartService.SetGlobalOptionsAsync</code>).
+            </li>
+            <li>
+                A nonce protects only while it is unpredictable, so generate a fresh one for each request on the server,
+                send it in the CSP header, and pass the same value to your charts, for example from <code>App.razor</code>,
+                where the <code>HttpContext</code> is available. A Blazor app keeps the policy of the page it loaded with,
+                so one nonce per page load is enough.
+            </li>
+            <li>
+                A page served as a static file cannot vary a nonce per request. There, a hash source works instead:
+                the browser console names the <code>'sha256-...'</code> value of each blocked <code>&lt;style&gt;</code>
+                element. The hash changes when the stylesheet does, so update it when you upgrade the package.
+            </li>
+        </ul>
+
+        <h4>Inline style attributes</h4>
+        <p>
+            The Blazor components add no <code>&lt;style&gt;</code> elements and no <code>style</code> attributes of their
+            own. A few tooltips that ApexCharts builds as HTML (the range bar tooltip and bar goal markers) color their
+            markers with a <code>style</code> attribute. A strict policy blocks those, and the markers lose their
+            color. If that matters, allow attributes alone with <code>style-src-attr 'unsafe-inline'</code>, which
+            leaves <code>&lt;style&gt;</code> elements under the nonce. Styles in your own Razor tooltip templates follow
+            the same rules as the rest of your markup.
+        </p>
+
+        <h4>Scripts: JavaScript functions need <code>'unsafe-eval'</code></h4>
+        <p>
+            Options that take a JavaScript function as a string (formatters, <code>CustomFunction</code> and similar) are
+            turned into functions in the browser with <code>eval</code>, which <code>script-src</code> allows only with
+            <code>'unsafe-eval'</code>. Without it, rendering a chart that uses one fails with an <code>EvalError</code>.
+            The component also writes such a function for you when you use:
+        </p>
+        <ul>
+            <li>the <code>FormatXAxisLabel</code> or <code>FormatYAxisLabel</code> parameters,</li>
+            <li>a toolbar custom icon with <code>OnClick</code>,</li>
+            <li><code>OnClick</code>, <code>OnMouseEnter</code> or <code>OnMouseLeave</code> on an annotation or its label.</li>
+        </ul>
+        <p>
+            Charts that use none of these, including the chart events (<code>OnDataPointSelection</code> and the like)
+            and Razor tooltips (<code>ApexPointTooltip</code>), need no <code>'unsafe-eval'</code>.
+            Blazor WebAssembly itself needs <code>'wasm-unsafe-eval'</code>, which is a separate keyword.
+        </p>
+    </Description>
+
+    <ChildContent>
+        <CodeSnippet Title="Chart nonce" ClassName=@typeof(NonceChart).ToString()>
+            <Description>
+                <Alert>
+                    With a header such as <code>Content-Security-Policy: style-src 'self' 'nonce-r4nd0m'</code>, set
+                    <code>Chart.Nonce = "r4nd0m"</code>. Use a new random value for each request in a real app.
+                </Alert>
+            </Description>
+            <Snippet>
+                <NonceChart />
+            </Snippet>
+        </CodeSnippet>
+    </ChildContent>
+
+</DocExamples>
