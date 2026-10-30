@@ -6,9 +6,28 @@
     the browser moved the scroll position up. The donut has no fixed height, so apexcharts.js
     works its height out while it renders. It sits at the bottom of a long page so that the page
     is scrolled to its end. Used by tests/e2e/specs/issue-565-render-scroll-jump.mjs.
+
+    The chart at the top has Height="100%": apexcharts.js works its height out from the parent of
+    the chart's container, a card sized by its content (a min-height and a heading). Its container
+    must not be held at its height while it renders again, or the card, and so the chart, grows
+    by the heading's height on every render.
 *@
 
 <h3>Issue 565: RenderAsync keeps the scroll position</h3>
+
+<div id="issue565-percent-card" style="min-height: 300px; max-width: 700px;">
+    <div style="height: 30px;">Chart with a height of 100%</div>
+    <ApexChart @ref="percentChart" TItem="Order" Title="Issue 565, 100% height" Height="@("100%")" OnRendered="() => percentRendered++">
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</div>
+<button id="issue565-percent-render" class="btn btn-primary m-2" @onclick="RenderPercentAgain">Render the 100% chart again</button>
+<span id="issue565-percent-rendered">@percentRendered</span>
 
 <div id="issue565-spacer" style="height: 1600px;">Scroll down to the chart.</div>
 
@@ -30,7 +49,9 @@
 
 @code {
     private ApexChart<Order> chart;
+    private ApexChart<Order> percentChart;
     private int rendered;
+    private int percentRendered;
 
     private readonly List<Order> orders =
     [
@@ -40,6 +61,11 @@
     private async Task RenderAgain()
     {
         await chart.RenderAsync();
+    }
+
+    private async Task RenderPercentAgain()
+    {
+        await percentChart.RenderAsync();
     }
 
     private record Order(string Country, decimal Value);

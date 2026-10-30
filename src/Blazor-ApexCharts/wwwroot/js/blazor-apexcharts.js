@@ -197,9 +197,22 @@ window.blazor_apexchart = {
     // Containers held at their height while their chart is rebuilt (issue 565), by chart id
     heldContainers: new Map(),
 
-    // The height of a container that shows a chart, or 0 when it is empty (a first render)
-    containerHeightToHold(container) {
-        return container && container.childElementCount > 0 ? container.offsetHeight : 0;
+    // The height to hold a container at while its chart is rebuilt, or 0 for no hold: when the
+    // container is empty (a first render), or when the chart height is a percentage. apexcharts.js
+    // works a percentage height out from the container's parent, and a held container would make
+    // that parent as tall as the old chart, so the new chart would come out taller each time.
+    containerHeightToHold(container, options) {
+        if (!container || container.childElementCount === 0) {
+            return 0;
+        }
+
+        // The unit as apexcharts.js reads it (Core.setSVGDimensions)
+        var height = options && options.chart ? options.chart.height : undefined;
+        if (height !== undefined && height !== null && String(height).split(/[0-9]+/g).pop() === '%') {
+            return 0;
+        }
+
+        return container.offsetHeight;
     },
 
     // Destroying a chart empties its container, and apexcharts.js resets the min-height it gave it.
@@ -1060,7 +1073,7 @@ window.blazor_apexchart = {
 
         //Always destroy chart if it exists. Keep the container at its height until the new chart has
         //rendered, so the page does not shrink under the scroll position (issue 565).
-        var heldHeight = this.containerHeightToHold(container);
+        var heldHeight = this.containerHeightToHold(container, options);
         this.destroyChart(options.chart.id);
         this.holdContainerHeight(options.chart.id, container, heldHeight);
         this.dotNetRefs.set(options.chart.id, dotNetObject)
@@ -1126,13 +1139,13 @@ window.blazor_apexchart = {
             throw error;
         }
 
-        // Release the held height once the chart has rendered, or failed to. A failure stays unhandled
-        // here, so it is still reported as before.
+        // Release the held height once the chart has rendered, or failed to. This is a side branch:
+        // `rendering` stays the chart's own promise, and a failure is handled here as apexcharts.js
+        // handles it, so a failed render is no more reported than before.
         var hold = this.heldContainers.get(id);
         if (hold !== undefined) {
-            rendering = Promise.resolve(rendering).then(
-                value => { this.releaseContainerHeight(id, hold); return value; },
-                error => { this.releaseContainerHeight(id, hold); throw error; });
+            var release = () => this.releaseContainerHeight(id, hold);
+            Promise.resolve(rendering).then(release, release);
         }
 
         if (options.debug == true) {
