@@ -1,10 +1,20 @@
 ﻿@* Event handlers inside ApexPointTooltip work, but apexcharts sets pointer-events: none on its tooltip and
-   hides it once the pointer leaves the data point. The CSS below lets the pointer reach the tooltip and
-   keeps it visible while it is hovered. Scope it to your chart so other charts keep the default. *@
+   hides it (drops apexcharts-active) as soon as the pointer leaves the data point, before it can reach the
+   tooltip. The CSS below lets the pointer reach the tooltip and keeps it visible while it is hovered.
+   A hidden tooltip stays where it was, so it must also stop taking the pointer, or it sits invisible over
+   the plot and blocks the points beneath it. The second rule does that: once the tooltip is neither active
+   nor hovered it lingers for 0.3s, fades, and then turns visibility: hidden, which takes it out of hit
+   testing. The 0.3s is the time the pointer has to travel from the point to the tooltip; lengthen it if
+   your tooltip sits further away. Scope the CSS to your chart so other charts keep the default. *@
 <style>
     .interactive-tooltip .apexcharts-tooltip {
         pointer-events: auto;
     }
+
+        .interactive-tooltip .apexcharts-tooltip:not(.apexcharts-active):not(:hover) {
+            visibility: hidden;
+            transition: opacity .12s ease .3s, visibility 0s linear .42s;
+        }
 
         .interactive-tooltip .apexcharts-tooltip:hover {
             opacity: 1;

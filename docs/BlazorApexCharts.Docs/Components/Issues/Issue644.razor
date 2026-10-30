@@ -2,12 +2,19 @@
 
 @* Repro for #644: @onclick inside an ApexPointTooltip never fired, because the tooltip showed a copy of
    the rendered markup instead of the live nodes Blazor attaches its handlers to. The CSS below lets the
-   pointer reach the tooltip and keeps it visible while hovered, which is what an interactive tooltip needs. *@
+   pointer reach the tooltip and keeps it visible while hovered, which is what an interactive tooltip needs.
+   Its second rule takes the tooltip out of hit testing a moment after it is hidden, so it does not stay
+   over the plot as an invisible layer that blocks the bars (see Features/TooltipsDotNet/Interactive.razor). *@
 
 <style>
     #issue644 .apexcharts-tooltip {
         pointer-events: auto;
     }
+
+        #issue644 .apexcharts-tooltip:not(.apexcharts-active):not(:hover) {
+            visibility: hidden;
+            transition: opacity .12s ease .3s, visibility 0s linear .42s;
+        }
 
         #issue644 .apexcharts-tooltip:hover {
             opacity: 1;

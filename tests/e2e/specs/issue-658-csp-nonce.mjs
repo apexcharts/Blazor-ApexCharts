@@ -2,7 +2,7 @@
 // nonce and survive a strict CSP. The page is served with a real Content-Security-Policy header whose
 // style-src allows external stylesheets and the nonce, but not 'unsafe-inline'. Scripts are left
 // unrestricted so the docs host and the Blazor runtime boot as usual.
-import { gotoChart, assert, detectHost, isIgnorableError } from '../lib/helpers.mjs';
+import { gotoChart, assert, isIgnorableError } from '../lib/helpers.mjs';
 
 const NONCE = 'issue658e2enonce'; // Issue658.razor CspNonce
 const CSP = `style-src 'self' https: 'nonce-${NONCE}'`;
@@ -32,11 +32,10 @@ export default async function (page, BASE) {
 
   // A document answered through route.fulfill loses the local address space Chromium recorded for it,
   // so Local Network Access treats the page as public and blocks its connections back to localhost.
-  // The WASM host needs none after boot; a Blazor Server host needs its SignalR WebSocket, so grant the
-  // permission there (and on a host that could be either).
-  if (await detectHost(page, BASE) !== 'wasm') {
-    await page.context().grantPermissions(['local-network-access']);
-  }
+  // A Blazor Server host needs its SignalR WebSocket back to localhost, so grant the permission. It has
+  // to be granted before the page loads, and the WASM host, which makes no such connection after boot,
+  // is unaffected by it, so the spec grants it on every host instead of detecting which one it runs on.
+  await page.context().grantPermissions(['local-network-access']);
 
   // Add the CSP header to the HTML document only.
   await page.route(`${BASE}/issues/658`, async route => {

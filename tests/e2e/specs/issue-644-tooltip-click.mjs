@@ -2,7 +2,8 @@
 // an innerHTML copy of the rendered fragment, which carries none of Blazor's event handlers. The fix
 // moves the live element into the chart tooltip; apexcharts inserts a clone of it on every hover, which
 // the live element replaces at once. Besides clicking, this spec checks that the page never holds two
-// copies of the tooltip ids at any moment, and that disposing the chart leaves nothing behind.
+// copies of the tooltip ids at any moment, that the hidden tooltip stops taking the pointer once the
+// pointer has left the chart, and that disposing the chart leaves nothing behind.
 import { gotoChart, watchErrors, assert, assertNoErrors } from '../lib/helpers.mjs';
 
 async function hoverAndClick(page, pointIndex, category, expectedClicks) {
@@ -22,6 +23,40 @@ async function hoverAndClick(page, pointIndex, category, expectedClicks) {
 
   await page.locator('#issue644-message', { hasText: `Clicked ${category}` }).waitFor({ timeout: 10000 });
   await page.locator('#issue644-clicks', { hasText: String(expectedClicks) }).waitFor({ timeout: 10000 });
+}
+
+// Moves the pointer from the tooltip off the chart. The page lets the tooltip take the pointer so its
+// button can be clicked, and once apexcharts hides the tooltip it stays where it was, so it must also
+// stop taking the pointer, or it sits invisible over the plot and blocks the bars beneath it.
+async function leaveWithoutGhost(page) {
+  const box = await page.locator('#issue644 .apexcharts-tooltip').boundingBox();
+  assert(box, 'chart tooltip not found');
+  const spot = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  await page.mouse.move(0, 0);
+
+  // Polled: the tooltip may keep the pointer for a short grace period, so it can be reached from the bar.
+  const left = await page.waitForFunction(({ x, y }) => {
+    const tooltip = document.querySelector('#issue644 .apexcharts-tooltip');
+    const hit = document.elementFromPoint(x, y);
+    return !tooltip.classList.contains('apexcharts-active') && !(hit && tooltip.contains(hit));
+  }, spot, { timeout: 5000 }).then(() => true, () => false);
+  const state = await page.evaluate(({ x, y }) => {
+    const tooltip = document.querySelector('#issue644 .apexcharts-tooltip');
+    const hit = document.elementFromPoint(x, y);
+    return { active: tooltip.classList.contains('apexcharts-active'), hitTooltip: !!hit && tooltip.contains(hit),
+      visibility: getComputedStyle(tooltip).visibility, opacity: getComputedStyle(tooltip).opacity };
+  }, spot);
+  assert(left, `after the pointer left the chart, the hidden tooltip still takes the pointer at its last spot: ${JSON.stringify(state)}`);
+
+  // Pointing at that spot again must reach the plot beneath, not bring the stale tooltip back.
+  await page.mouse.move(spot.x, spot.y);
+  const back = await page.evaluate(({ x, y }) => {
+    const tooltip = document.querySelector('#issue644 .apexcharts-tooltip');
+    const hit = document.elementFromPoint(x, y);
+    return { hit: !!hit && tooltip.contains(hit), hovered: tooltip.matches(':hover') };
+  }, spot);
+  assert(!back.hit && !back.hovered, `the hidden tooltip came back under the pointer: ${JSON.stringify(back)}`);
+  await page.mouse.move(0, 0);
 }
 
 // Sweeps the pointer across every bar of both series in a few quick moves, with no wait for .NET between.
@@ -72,8 +107,9 @@ export default async function (page, BASE) {
   await hoverAndClick(page, 2, 'Mar', 1);
   // A second point: the tooltip keeps updating after the first click, and the handler sees the new point.
   await hoverAndClick(page, 0, 'Jan', 2);
-  // The same point again, after the pointer left it.
-  await page.mouse.move(0, 0);
+  // The same point again, after the pointer left the chart from the tooltip, which must not stay behind
+  // as an invisible layer that takes the pointer.
+  await leaveWithoutGhost(page);
   await hoverAndClick(page, 0, 'Jan', 3);
 
   // Fast moves across all points queue many .NET renders; the tooltip must settle on the last point
