@@ -597,7 +597,7 @@ namespace ApexCharts
             {
                 return await blazor_apexchart.InvokeAsync<TValue>(identifier, args);
             }
-            catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+            catch (Exception ex) when (JSInteropErrors.IsBrowserGone(ex))
             {
                 return default;
             }
@@ -618,7 +618,7 @@ namespace ApexCharts
                     await blazor_apexchart.InvokeVoidAsync(identifier, args);
                 }
             }
-            catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+            catch (Exception ex) when (JSInteropErrors.IsBrowserGone(ex))
             { }
         }
 
@@ -1694,8 +1694,8 @@ namespace ApexCharts
 
         /// <summary>
         /// Releases the browser side of the chart: awaits <c>destroyChart</c>, then disposes the
-        /// JavaScript module reference. Override it to add asynchronous cleanup and call the base
-        /// implementation.
+        /// JavaScript module reference and the .NET object reference the chart events call back into.
+        /// Override it to add asynchronous cleanup and call the base implementation.
         /// </summary>
         /// <returns>A task that completes when the browser side has been released.</returns>
         protected virtual async ValueTask DisposeAsyncCore()
@@ -1706,7 +1706,19 @@ namespace ApexCharts
             var module = blazor_apexchart;
             blazor_apexchart = null;
 
-            await ReleaseJsAsync(module, isReady ? Options?.Chart?.Id : null);
+            // Taken here rather than left to Dispose(), so a Dispose() call made while destroyChart is
+            // still pending finds nothing to release and cannot release the reference early.
+            var handler = JSHandler;
+            JSHandler = null;
+
+            try
+            {
+                await ReleaseJsAsync(module, isReady ? Options?.Chart?.Id : null);
+            }
+            finally
+            {
+                handler?.Dispose();
+            }
         }
 
         private void UnRegister()
@@ -1733,15 +1745,26 @@ namespace ApexCharts
             var module = blazor_apexchart;
             blazor_apexchart = null;
 
+            // Taken once, so a second Dispose() cannot release it while the first is still destroying the chart.
+            var handler = JSHandler;
+            JSHandler = null;
+
             if (module != null)
             {
-                _ = ReleaseJsInBackgroundAsync(module, isReady ? Options?.Chart?.Id : null);
+                // Released only after destroyChart. Where JS calls .NET asynchronously (Blazor Server,
+                // a BlazorWebView host such as .NET MAUI) destroyChart is a round trip, and until it
+                // lands the chart's event handlers (mouse move, data point enter, animation end and the
+                // like) still call .NET through this reference. Released first, each of those calls
+                // fails in the browser with a rejected promise.
+                _ = ReleaseJsInBackgroundAsync(module, isReady ? Options?.Chart?.Id : null, handler);
             }
-
-            JSHandler?.Dispose();
+            else
+            {
+                handler?.Dispose();
+            }
         }
 
-        private static async Task ReleaseJsInBackgroundAsync(IJSObjectReference module, string chartId)
+        private static async Task ReleaseJsInBackgroundAsync(IJSObjectReference module, string chartId, JSHandler<TItem> handler)
         {
             // Nothing awaits this task, so an exception left in it would only reach
             // TaskScheduler.UnobservedTaskException. Keep every failure inside.
@@ -1751,43 +1774,47 @@ namespace ApexCharts
             }
             catch (Exception)
             { }
+            finally
+            {
+                handler?.Dispose();
+            }
         }
 
         private static async Task ReleaseJsAsync(IJSObjectReference module, string chartId)
         {
             if (module == null) { return; }
 
-            if (chartId != null)
-            {
-                try
-                {
-                    if (module is IJSInProcessObjectReference inProcessModule)
-                    {
-                        inProcessModule.InvokeVoid("blazor_apexchart.destroyChart", chartId);
-                    }
-                    else
-                    {
-                        await module.InvokeVoidAsync("blazor_apexchart.destroyChart", chartId);
-                    }
-                }
-                catch (Exception ex) when (IsBrowserGone(ex))
-                { }
-            }
-
             try
             {
-                await module.DisposeAsync();
+                if (chartId != null)
+                {
+                    try
+                    {
+                        if (module is IJSInProcessObjectReference inProcessModule)
+                        {
+                            inProcessModule.InvokeVoid("blazor_apexchart.destroyChart", chartId);
+                        }
+                        else
+                        {
+                            await module.InvokeVoidAsync("blazor_apexchart.destroyChart", chartId);
+                        }
+                    }
+                    catch (Exception ex) when (JSInteropErrors.IsExpectedDuringTeardown(ex))
+                    { }
+                }
             }
-            catch (Exception ex) when (IsBrowserGone(ex))
-            { }
+            finally
+            {
+                // Released even when destroyChart failed in a way teardown does not expect: that
+                // failure still reaches the caller, but the module reference is not leaked.
+                try
+                {
+                    await module.DisposeAsync();
+                }
+                catch (Exception ex) when (JSInteropErrors.IsExpectedDuringTeardown(ex))
+                { }
+            }
         }
-
-        /// <summary>
-        /// Failures expected while a chart is torn down: the circuit is gone, the reference is already
-        /// released, the call was cancelled or timed out, or the chart's element is already gone.
-        /// </summary>
-        private static bool IsBrowserGone(Exception ex) =>
-            ex is JSDisconnectedException || ex is ObjectDisposedException || ex is OperationCanceledException || ex is JSException;
 
         internal void UpdateTooltipData(HoverData<TItem> tooltipData)
         {

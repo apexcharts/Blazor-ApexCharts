@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using ApexCharts.Internal;
 using ApexCharts.Tests.TestHelpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -284,6 +285,165 @@ public class Issue655DisposeTests : ApexChartsTestContext
         Assert.Contains(first, service.Charts);
     }
 
+    /// <summary>The reference renderChart handed to the browser, which the chart's formatters and events call back through.</summary>
+    private DotNetObjectReference<JSHandler<Sale>> RenderedReference() =>
+        Assert.IsType<DotNetObjectReference<JSHandler<Sale>>>(module.LastArgs[JsIdentifiers.RenderChart]![0]);
+
+    private static bool IsReleased<T>(DotNetObjectReference<T> reference) where T : class
+    {
+        try
+        {
+            _ = reference.Value;
+            return false;
+        }
+        catch (ObjectDisposedException)
+        {
+            return true;
+        }
+    }
+
+    [Fact]
+    public async Task Calling_Dispose_directly_keeps_the_dotnet_reference_until_destroyChart_has_run()
+    {
+        // On Blazor Server and BlazorWebView hosts destroyChart is a round trip, and until it lands the
+        // chart's event handlers still call .NET through this reference. Released first, each of those
+        // calls fails in the browser with a rejected promise.
+        var cut = RenderBarChart();
+        var reference = RenderedReference();
+        var destroy = new TaskCompletionSource();
+        module.Pending[DestroyChart] = destroy.Task;
+
+        await cut.InvokeAsync(() => cut.Instance.Dispose());
+        // A second call while the first is still destroying the chart must not release it either.
+        await cut.InvokeAsync(() => cut.Instance.Dispose());
+
+        Assert.Contains(DestroyChart, module.Calls);
+        Assert.False(IsReleased(reference), "The reference was released before destroyChart completed.");
+
+        destroy.SetResult();
+        await WaitUntil(() => IsReleased(reference));
+        Assert.Single(module.Calls, DestroyChart);
+    }
+
+    // "disconnected" is swallowed inside the teardown; "unexpected" escapes it, into the catch that keeps
+    // the background release from leaving an unobserved task exception.
+    [Theory]
+    [InlineData("disconnected")]
+    [InlineData("unexpected")]
+    public async Task Calling_Dispose_directly_releases_the_dotnet_reference_when_destroyChart_fails(string failure)
+    {
+        var cut = RenderBarChart();
+        var reference = RenderedReference();
+        module.Throw = failure == "unexpected"
+            ? () => new InvalidOperationException("unexpected interop failure")
+            : () => new JSDisconnectedException("circuit gone");
+
+        await cut.InvokeAsync(() => cut.Instance.Dispose());
+
+        await WaitUntil(() => IsReleased(reference));
+        // The module reference is released too, after destroyChart.
+        Assert.Equal(new[] { DestroyChart, ModuleDisposed }, module.Calls.Where(c => c is DestroyChart or ModuleDisposed));
+    }
+
+    [Fact]
+    public async Task DisposeAsync_with_an_unexpected_destroyChart_failure_still_releases_both_references()
+    {
+        var cut = RenderBarChart();
+        var reference = RenderedReference();
+        module.Throw = () => new InvalidOperationException("unexpected interop failure");
+
+        var disposable = Assert.IsAssignableFrom<IAsyncDisposable>(cut.Instance);
+        // Not a teardown failure, so it still reaches the caller.
+        await Assert.ThrowsAsync<InvalidOperationException>(() => cut.InvokeAsync(() => disposable.DisposeAsync().AsTask()));
+
+        Assert.True(IsReleased(reference));
+        Assert.Contains(ModuleDisposed, module.Calls);
+    }
+
+    [Fact]
+    public async Task Calling_Dispose_while_DisposeAsync_awaits_destroyChart_keeps_the_dotnet_reference()
+    {
+        // A parent that holds the chart through @ref and disposes it while Blazor is already disposing it.
+        var cut = RenderBarChart();
+        var chart = cut.Instance;
+        var reference = RenderedReference();
+        var destroy = new TaskCompletionSource();
+        module.Pending[DestroyChart] = destroy.Task;
+
+        var disposing = DisposeComponentsAsync();
+        await cut.InvokeAsync(() => chart.Dispose());
+
+        Assert.False(IsReleased(reference), "Dispose() released the reference before destroyChart completed.");
+
+        destroy.SetResult();
+        await disposing;
+
+        Assert.True(IsReleased(reference));
+        Assert.Single(module.Calls, DestroyChart);
+        Assert.Single(module.Calls, ModuleDisposed);
+    }
+
+    [Fact]
+    public async Task DisposeAsync_keeps_the_dotnet_reference_until_destroyChart_has_run()
+    {
+        RenderBarChart();
+        var reference = RenderedReference();
+        var destroy = new TaskCompletionSource();
+        module.Pending[DestroyChart] = destroy.Task;
+
+        var disposing = DisposeComponentsAsync();
+        Assert.False(IsReleased(reference), "The reference was released before destroyChart completed.");
+
+        destroy.SetResult();
+        await disposing;
+
+        Assert.True(IsReleased(reference));
+    }
+
+    [Fact]
+    public async Task A_DisposeAsyncCore_override_in_a_subclass_runs_once_with_the_base_teardown()
+    {
+        var cut = Render<AsyncTrackingChart>(p => p
+            .Add(c => c.Options, new ApexChartOptions<Sale>())
+            .AddChildContent<ApexPointSeries<Sale>>(s => s
+                .Add(x => x.Items, SampleData.Sales())
+                .Add(x => x.SeriesType, SeriesType.Bar)
+                .Add(x => x.XValue, e => e.Month)
+                .Add(x => x.YValue, e => e.Amount)));
+        cut.WaitForAssertion(() => Assert.Contains(JsIdentifiers.RenderChart, module.Calls));
+        var chart = cut.Instance;
+        chart.ModuleReleased = () => module.Calls.Contains(ModuleDisposed);
+
+        await DisposeComponentsAsync();
+
+        Assert.Equal(1, chart.DisposeAsyncCoreCalls);
+        Assert.True(chart.SawModuleReleased, "The override ran before the base teardown had finished.");
+        Assert.Equal(new[] { DestroyChart, ModuleDisposed }, module.Calls.Where(c => c is DestroyChart or ModuleDisposed));
+    }
+
+    [Fact]
+    public async Task A_JavaScript_error_outside_teardown_still_reaches_the_caller()
+    {
+        // Only teardown ignores a JSException: on a live chart it reports a real failure.
+        var cut = RenderBarChart();
+        module.Throw = () => new JSException("chart error");
+
+        await Assert.ThrowsAsync<JSException>(() => cut.InvokeAsync(() => cut.Instance.ClearAnnotationsAsync()));
+        await Assert.ThrowsAsync<JSException>(() => cut.InvokeAsync(() => cut.Instance.GetSvgStringAsync()));
+    }
+
+    [Theory]
+    [InlineData("disconnected")]
+    [InlineData("disposed")]
+    public async Task A_call_on_a_chart_whose_browser_is_gone_does_not_throw(string failure)
+    {
+        var cut = RenderBarChart();
+        module.Throw = Failure(failure, "browser gone");
+
+        await cut.InvokeAsync(() => cut.Instance.ClearAnnotationsAsync());
+        Assert.Null(await cut.InvokeAsync(() => cut.Instance.GetSvgStringAsync()));
+    }
+
     private static async Task WaitUntil(Func<bool> condition)
     {
         var deadline = DateTime.UtcNow.AddSeconds(5);
@@ -303,6 +463,26 @@ public class Issue655DisposeTests : ApexChartsTestContext
         {
             DisposeCalls++;
             base.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// A subclass that adds asynchronous cleanup through the standard pattern: it overrides
+    /// <see cref="ApexChart{TItem}.DisposeAsyncCore"/> and calls the base implementation first.
+    /// </summary>
+    public class AsyncTrackingChart : ApexChart<Sale>
+    {
+        public int DisposeAsyncCoreCalls { get; private set; }
+        public bool SawModuleReleased { get; private set; }
+
+        /// <summary>Reports whether the test's module reference has been released.</summary>
+        public Func<bool> ModuleReleased { get; set; } = () => false;
+
+        protected override async ValueTask DisposeAsyncCore()
+        {
+            DisposeAsyncCoreCalls++;
+            await base.DisposeAsyncCore();
+            SawModuleReleased = ModuleReleased();
         }
     }
 
@@ -380,6 +560,7 @@ public class Issue655DisposeTests : ApexChartsTestContext
         public ConcurrentQueue<string> Calls { get; } = new();
         public Func<Exception>? Throw { get; set; }
         public ConcurrentDictionary<string, Task> Pending { get; } = new();
+        public ConcurrentDictionary<string, object?[]?> LastArgs { get; } = new();
 
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args) =>
             InvokeAsync<TValue>(identifier, CancellationToken.None, args);
@@ -387,6 +568,7 @@ public class Issue655DisposeTests : ApexChartsTestContext
         public ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args)
         {
             Calls.Enqueue(identifier);
+            LastArgs[identifier] = args;
             if (Throw != null) { return ValueTask.FromException<TValue>(Throw()); }
             if (Pending.TryGetValue(identifier, out var pending))
             {
@@ -400,5 +582,34 @@ public class Issue655DisposeTests : ApexChartsTestContext
             Calls.Enqueue(ModuleDisposed);
             return Throw != null ? ValueTask.FromException(Throw()) : ValueTask.CompletedTask;
         }
+    }
+}
+
+/// <summary>
+/// Issue #655: every call site that ignores interop failures classifies them through
+/// <see cref="JSInteropErrors"/>. A gone browser is ignorable anywhere; a JSException, a cancelled call
+/// or a timeout only while the chart is torn down.
+/// </summary>
+public class Issue655InteropErrorTests
+{
+    public static TheoryData<Exception, bool, bool> Failures => new()
+    {
+        // exception, IsBrowserGone, IsExpectedDuringTeardown
+        { new JSDisconnectedException("circuit gone"), true, true },
+        { new ObjectDisposedException("reference"), true, true },
+        { new JSException("chart element gone"), false, true },
+        { new OperationCanceledException(), false, true },
+        { new TaskCanceledException("interop timeout"), false, true },
+        { new InvalidOperationException("prerendering"), false, false },
+        { new ArgumentException("bad argument"), false, false },
+        { new NullReferenceException(), false, false },
+    };
+
+    [Theory]
+    [MemberData(nameof(Failures))]
+    public void Classifies_interop_failures(Exception failure, bool browserGone, bool expectedDuringTeardown)
+    {
+        Assert.Equal(browserGone, JSInteropErrors.IsBrowserGone(failure));
+        Assert.Equal(expectedDuringTeardown, JSInteropErrors.IsExpectedDuringTeardown(failure));
     }
 }
