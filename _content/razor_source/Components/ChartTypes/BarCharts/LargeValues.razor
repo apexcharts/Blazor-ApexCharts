@@ -1,0 +1,38 @@
+﻿<DemoContainer>
+    <ApexChart TItem="MarkedCap"
+           Title="Order Net Value"
+    Options="@chartOptions">
+
+        <ApexPointSeries TItem="MarkedCap"
+                         Items="Data"
+                Name="Gross Value"
+                XValue="@(e => e.Name)"
+                YValue="@(e => e.Value)"
+                SeriesType="SeriesType.Bar"/>
+</ApexChart>
+</DemoContainer>
+
+@code {
+    private ApexChartOptions<MarkedCap> chartOptions = new ApexChartOptions<MarkedCap>()
+    {
+        Yaxis = new List<YAxis>()
+        {
+            new YAxis()
+            {
+                Min = 3_300_000_000_000,
+                Max = 3_500_000_000_000,
+                // Labels = new YAxisLabels()
+                // {
+                //     Formatter = "function (value) { return value / 1000000000000 + 'T'; }"
+                // }
+            }
+        }
+    };
+
+    private record MarkedCap(string Name, decimal Value);
+
+    private List<MarkedCap> Data { get; set; } = [
+    new MarkedCap("Microsoft", 3_450_000_000_000),
+    new MarkedCap("Nvidia", 3_380_000_000_000),
+    ];
+}

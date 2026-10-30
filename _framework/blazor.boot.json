@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "BlazorApexCharts.Docs.Wasm",
   "resources": {
-    "hash": "sha256-WCxK/vP0/rJx/sovzANZkcI1th2giVMdWOMSOgHjsIM=",
+    "hash": "sha256-IJSvnN7SzrmMP7wKrXJWlXP6j6Chm0l0DkEAt+yQgqE=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-1DK+nm58uZjvv7U2c/UlUp1zFjeBZnqXHFHBX/W1igo="
     },
@@ -49,7 +49,7 @@
       "System.Diagnostics.DiagnosticSource.wasm": "sha256-h6LP9s7LYYTRhrbwK+wxpEzepEC30i2npAk33qU35WU=",
       "System.Linq.Expressions.wasm": "sha256-GDeOKrDjUKkgxNchiI6W8sukLlWsMamQlmHkhB1gRNY=",
       "System.Linq.Queryable.wasm": "sha256-JNxNTtmAG73yVLzM4AXlpK3avRkaJWg2gpR7xEGy6iM=",
-      "System.Linq.wasm": "sha256-fVhibXsMEXeZtH4x1jfjOQbKiiGRvz7oXzZmDOKn8xY=",
+      "System.Linq.wasm": "sha256-nnerlZ0mNqdq5tCUGEbG5C6jRcxQ7xlkwfcR6q20wHU=",
       "System.Memory.wasm": "sha256-XmWsCeufZ6iqsCO5xFtFADuivD4iuRyei5EERpbOqeY=",
       "System.Net.Http.Json.wasm": "sha256-lrcBWFyjx8Y+gjtjfz3Be4HEVIwAM+jxantXr0xjTxw=",
       "System.Net.Http.wasm": "sha256-lWOswZ3/Y7P7f8JNoisUqlmN0MsXuKrGLOJ+zFFA1kU=",
@@ -70,10 +70,10 @@
       "System.Threading.wasm": "sha256-xfyFLhaFVbJtQIwUu6OYxEO1UuJIqu8QPPbwtDoPioM=",
       "System.wasm": "sha256-Qn4+fnaxYta+ZDrPpGuLEzp1NrXF8cdG2BVS4LK0OIc=",
       "netstandard.wasm": "sha256-g51t34vqwpp2IQy3lplndNI9VhshfEdd1AEiBbPC2u0=",
-      "System.Private.CoreLib.wasm": "sha256-ZBwY2uAxhXOS302z0oB7uS9uT1YdEiHsT2ewmN6mtp4=",
-      "Blazor-ApexCharts.wasm": "sha256-4p6P96XaKDu7AvsGTyhTOA0/XVrHoqxY41g/YAe5nAQ=",
-      "BlazorApexCharts.Docs.wasm": "sha256-DgoW/8B1sEPhk83u+Xl1XBLCW2SbhmfSxFwfbslml5Y=",
-      "BlazorApexCharts.Docs.Wasm.wasm": "sha256-tk2l4WJ8fZ+WfpmMOl/Ne0C2Yofd9KMou4OXmgwhrcE="
+      "System.Private.CoreLib.wasm": "sha256-yKQgExlQy2RZZU6/fek9sQMaO0Sz/Xaf3lrx6XJW7yk=",
+      "Blazor-ApexCharts.wasm": "sha256-q7Nod7NepjwvIV7xhPY/DsMXgbftYTyxWYCKpG7nUG8=",
+      "BlazorApexCharts.Docs.wasm": "sha256-XNNitqHrlUza+zsolJg5jk/1oBw6AYPkV3yWLf4Mljk=",
+      "BlazorApexCharts.Docs.Wasm.wasm": "sha256-kXHXFMHNRZH/MvPMI66whgwpId0nFD7I6d+otLZDQJw="
     }
   },
   "cacheBootResources": true,

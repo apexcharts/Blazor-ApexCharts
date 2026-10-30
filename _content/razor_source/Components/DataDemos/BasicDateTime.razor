@@ -1,0 +1,29 @@
+﻿<DemoContainer>
+    <ApexChart TItem="DataPoint"
+               Title="Order Net Value"
+                XAxisType="XAxisType.Datetime">
+
+        <ApexPointSeries TItem="DataPoint"
+                         Items="DataPoints"
+                         Name="Data"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Timestamp)"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</DemoContainer>
+
+@code 
+{
+    private record DataPoint(DateTimeOffset Timestamp, decimal Value);
+
+    // The source should be ordered by value of X, otherwise the line will be zig-zagging. This is a requirement of ApexCharts.
+    private List<DataPoint> DataPoints { get; set; } = new List<DataPoint>
+    {
+        new DataPoint(DateTimeOffset.Now.AddDays(-5), 100),
+        new DataPoint(DateTimeOffset.Now.AddDays(-4), 150),
+        new DataPoint(DateTimeOffset.Now.AddDays(-3), 120),
+        new DataPoint(DateTimeOffset.Now.AddDays(-2), 180),
+        new DataPoint(DateTimeOffset.Now.AddDays(-1), 130),
+        new DataPoint(DateTimeOffset.Now, 170)
+    };
+}

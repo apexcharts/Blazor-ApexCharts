@@ -12,7 +12,8 @@
     </ApexChart>
 </DemoContainer>
 
-@code {
+@code 
+{
     private List<TimeSeries> timeSeries = new TimeSeriesGenerator(20).TimeSeries
         .Concat(new TimeSeriesGenerator(20).TimeSeries)
         .OrderBy(e => e.Date)

@@ -1,0 +1,31 @@
+﻿<DemoContainer>
+    <ApexChart TItem="DataPoint"
+               Title="Order Net Value"
+                XAxisType="XAxisType.Datetime">
+
+        <ApexPointSeries TItem="DataPoint"
+                         Items="DataPoints"
+                         Name="Data"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Timestamp)"
+                         YValue="@(e => e.SensorDataList.Average(n => n.Value))" />
+    </ApexChart>
+</DemoContainer>
+
+@code 
+{
+    private record SensorData(string SensorId, decimal Value);
+
+    private record DataPoint(DateTimeOffset Timestamp, List<SensorData> SensorDataList);
+
+    // The source should be ordered by value of X, otherwise the line will be zig-zagging. This is a requirement of ApexCharts.
+    private List<DataPoint> DataPoints { get; set; } = new List<DataPoint>
+    {
+        new DataPoint(DateTimeOffset.Now.AddDays(-5), [new ("Sensor 1", 110), new ("Sensor 2", 120)]),
+        new DataPoint(DateTimeOffset.Now.AddDays(-4), [new ("Sensor 1", 120), new ("Sensor 2", 110)]),
+        new DataPoint(DateTimeOffset.Now.AddDays(-3), [new ("Sensor 1", 140), new ("Sensor 2", 130)]),
+        new DataPoint(DateTimeOffset.Now.AddDays(-2), [new ("Sensor 1", 120), new ("Sensor 2", 150)]),
+        new DataPoint(DateTimeOffset.Now.AddDays(-1), [new ("Sensor 1", 170), new ("Sensor 2", 180)]),
+        new DataPoint(DateTimeOffset.Now, [new ("Sensor 1", 110), new ("Sensor 2", 120)])
+    };
+}

@@ -1,0 +1,32 @@
+﻿<DemoContainer>
+    <ApexChart TItem="DataPoint"
+           Title="Missing / Null Values"
+    XAxisType="XAxisType.Datetime">
+
+        <ApexPointSeries TItem="DataPoint"
+                Items="dataPoints"
+                 SeriesType="@SeriesType.Area"
+                Name="Gross Value"
+                XValue="@(e => e.Date)"
+                YValue="@(e => e.Value)" />
+
+</ApexChart>
+</DemoContainer>
+
+@code {
+    private record DataPoint(DateTimeOffset Date, decimal? Value);
+
+    private List<DataPoint> dataPoints = new List<DataPoint>
+    {
+        new DataPoint(new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero), 100),
+        new DataPoint(new DateTimeOffset(2024, 1, 2, 0, 0, 0, TimeSpan.Zero), 90),
+        new DataPoint(new DateTimeOffset(2024, 1, 3, 0, 0, 0, TimeSpan.Zero), null), // Missing value
+        new DataPoint(new DateTimeOffset(2024, 1, 4, 0, 0, 0, TimeSpan.Zero), 150),
+        new DataPoint(new DateTimeOffset(2024, 1, 5, 0, 0, 0, TimeSpan.Zero), null), // Missing value
+        new DataPoint(new DateTimeOffset(2024, 1, 6, 0, 0, 0, TimeSpan.Zero), 200),
+        new DataPoint(new DateTimeOffset(2024, 1, 7, 0, 0, 0, TimeSpan.Zero), 220),
+        new DataPoint(new DateTimeOffset(2024, 1, 8, 0, 0, 0, TimeSpan.Zero), 200),
+
+    };
+
+}
