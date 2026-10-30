@@ -261,11 +261,27 @@ namespace ApexCharts.Internal
                     DataPoint = hoverData.DataPoint,
                     IsSelected = selectedDataPoints.SelectedDataPoints?.Any(e => e != null && e.Any(e => e != null && e.HasValue)) ?? false,
                     DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
+                    SeriesIndex = selectedDataPoints.SeriesIndex,
+                    Source = GetSelectionSource(selectedDataPoints.Source)
                 };
 
                 ChartReference.OnDataPointSelection.InvokeAsync(selection);
             }
+        }
+
+        /// <summary>
+        /// Maps the source string sent by blazor-apexcharts.js to <see cref="DataPointSelectionSource"/>
+        /// </summary>
+        /// <param name="source">"dataPoint", "legend" or "method"</param>
+        /// <returns>The matching value, or <see cref="DataPointSelectionSource.DataPoint"/> when the source is missing or unknown</returns>
+        internal static DataPointSelectionSource GetSelectionSource(string source)
+        {
+            return source switch
+            {
+                "legend" => DataPointSelectionSource.Legend,
+                "method" => DataPointSelectionSource.Method,
+                _ => DataPointSelectionSource.DataPoint
+            };
         }
 
         /// <summary>

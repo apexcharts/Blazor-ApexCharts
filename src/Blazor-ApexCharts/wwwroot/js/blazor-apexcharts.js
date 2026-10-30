@@ -596,13 +596,29 @@ window.blazor_apexchart = {
             }
         };
 
+        // On pie, donut and polar area charts a legend click also selects the slice, and apexcharts.js then
+        // calls dataPointSelection with a null event, as it does for toggleDataPointSelection. Its legendClick
+        // callback runs synchronously just before that, so the callback records which slice the click is about
+        // to select. Only a null-event selection of that slice is reported as a legend selection, once.
+        var pendingLegendIndex = null;
+
         if (events.hasDataPointSelection === true) {
             options.chart.events.dataPointSelection = function (event, chartContext, config) {
                 var selection = {
                     dataPointIndex: config.dataPointIndex,
                     seriesIndex: config.seriesIndex,
-                    selectedDataPoints: config.selectedDataPoints
+                    selectedDataPoints: config.selectedDataPoints,
+                    source: 'dataPoint'
                 };
+
+                if (!event) {
+                    if (pendingLegendIndex !== null && pendingLegendIndex === config.dataPointIndex) {
+                        selection.source = 'legend';
+                        pendingLegendIndex = null;
+                    } else {
+                        selection.source = 'method';
+                    }
+                }
 
                 dotNetObject.invokeMethodAsync('JSDataPointSelected', selection);
             }
@@ -631,14 +647,24 @@ window.blazor_apexchart = {
             }
         };
 
-        if (events.hasLegendClick === true) {
+        if (events.hasLegendClick === true || events.hasDataPointSelection === true) {
             options.chart.events.legendClick = function (chartContext, seriesIndex, config) {
-                var legendClick = {
-                    seriesIndex: seriesIndex,
-                    collapsed: config.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1
-                };
+                pendingLegendIndex = null;
 
-                dotNetObject.invokeMethodAsync('JSLegendClicked', legendClick);
+                if (events.hasLegendClick === true) {
+                    var legendClick = {
+                        seriesIndex: seriesIndex,
+                        collapsed: config.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1
+                    };
+
+                    dotNetObject.invokeMethodAsync('JSLegendClicked', legendClick);
+                }
+
+                // Set only after the .NET call: on Blazor WebAssembly an OnLegendClicked handler runs synchronously
+                // inside invokeMethodAsync up to its first real await, so a selection it makes in code happens
+                // before this line and is reported as 'method'. The microtask clears an index the legend never used.
+                pendingLegendIndex = seriesIndex;
+                Promise.resolve().then(function () { pendingLegendIndex = null; });
             }
         };
 

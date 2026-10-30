@@ -22,5 +22,10 @@ namespace ApexCharts.Internal
         /// </summary>
         public int SeriesIndex { get; set; }
 
+        /// <summary>
+        /// What caused a data point selection: "dataPoint", "legend" or "method". Only set for dataPointSelection.
+        /// </summary>
+        public string Source { get; set; }
+
     }
 }
