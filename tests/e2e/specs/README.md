@@ -31,6 +31,30 @@ export default async function (page, BASE) {
 Helpers in `../lib/helpers.mjs`: `gotoChart(page, BASE, route, selector?)`, `watchErrors(page)`,
 `assert(cond, msg)`, `assertNoErrors(realErrors, label)`, `isIgnorableError(text)`.
 
+## Both hosting models
+
+The suite runs against the WASM docs host and against the Blazor Server docs host
+(`docs/BlazorApexCharts.Docs.Server`). `HOST` tells the run which one is behind `BASE_URL`: `wasm` (the default) or `server`. `run.mjs` reads the boot
+script of the page it warms up and stops when it is the other model, so a spec never runs against
+the wrong host.
+
+- `blazorHost()` returns `'wasm'` or `'server'`; `isServerHost()` is the boolean form. Use them
+  when the expected outcome differs by host (a Server circuit adds latency to every interop call,
+  for example), and keep asserting on both.
+- `skipOnHost(host, reason)` ends the spec as skipped on that host. Use it only for a spec that
+  cannot mean anything there, and say why: `run.mjs` prints `SKIP` with the reason and lists every
+  skip in its summary.
+- `detectBlazorHost(page)` reads the model from a loaded page (`'server'`, `'wasm'` or `null`).
+
+```js
+import { skipOnHost } from '../lib/helpers.mjs';
+
+export default async function (page, BASE) {
+  skipOnHost('server', 'measures the WASM download, which a Server circuit does not have');
+  // ...
+}
+```
+
 ## A demo page for the spec
 
 When no existing docs page reproduces the issue, add one as its own file at
@@ -48,4 +72,12 @@ cd tests/e2e
 npm install && npx playwright install chromium   # once
 BASE_URL=http://localhost:5184 node run.mjs                     # smoke + all specs
 BASE_URL=http://localhost:5184 SKIP_SMOKE=1 node run.mjs 123    # only specs whose name contains "123"
+```
+
+Against the Blazor Server host:
+
+```sh
+dotnet run --project docs/BlazorApexCharts.Docs.Server/BlazorApexCharts.Docs.Server.csproj -c Debug --urls http://localhost:5185 &
+cd tests/e2e
+HOST=server BASE_URL=http://localhost:5185 node run.mjs
 ```
