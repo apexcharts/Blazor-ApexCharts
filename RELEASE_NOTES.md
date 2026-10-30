@@ -1,5 +1,31 @@
 # Release notes
 
+## v7.1.0
+
+### ⚠️ Property type changes
+
+Code that assigns these properties keeps compiling. Code that reads them back as their old type needs a change.
+
+- `PlotOptionsBar.DumbbellColors`: `List<string>` → `DumbbellColorList`. Each entry is a single color for both dots
+  or a start/end pair, e.g. `DumbbellColors = [["#008FFB", "#00E396"]]`. Assigning a `List<string>` or
+  `List<List<string>>` still compiles; reading the value as `List<string>` does not (#676).
+- `LegendMarkers.StrokeWidth`: `double?` → `Size`, so it accepts one width per series. Assigning a number still
+  compiles; reading the value as `double?` does not (#676).
+
+### ✨ New
+
+- `ChartType.Funnel` and `ChartType.Pyramid`, drawn from bar series (#663, #676).
+- `PlotOptions.Funnel` { `Shape` = `Rectangle`/`Trapezoid`, `LastShape` = `Flat`/`Taper` } (#663, #676).
+- `Animations.RespectReducedMotion`: set `false` to keep animations when the OS requests reduced motion (#674,
+  fixes #672).
+- Azerbaijani (`az`) locale, listed in `IApexChartService.LocaleResources` (#671, #675).
+- Docs: an Examples gallery at `/blazor-chart-demos` and new demos for most chart types (#663, thanks @PeerConradi).
+
+### 🐛 Fixes
+
+- Chart events and `ApexPointTooltip` no longer throw after the host passes a new `Options` instance (#673, fixes
+  #487).
+
 ## v7.0.0 (proposed): ApexCharts.js 6.5.0 upgrade + premium licensing
 
 > The package version is set from the git tag at release time (`dotnet pack -p:Version=<tag>`). `7.0.0` is the
