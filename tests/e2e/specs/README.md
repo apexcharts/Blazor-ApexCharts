@@ -69,7 +69,7 @@ dotnet build docs/BlazorApexCharts.Docs.Wasm/BlazorApexCharts.Docs.Wasm.csproj -
 dotnet run --project docs/BlazorApexCharts.Docs.Wasm/BlazorApexCharts.Docs.Wasm.csproj -c Debug --no-build --urls http://localhost:5184 &
 
 cd tests/e2e
-npm install && npx playwright install chromium   # once
+npm install && npx playwright install chromium   # once (or symlink node_modules, see below)
 BASE_URL=http://localhost:5184 node run.mjs                     # smoke + all specs
 BASE_URL=http://localhost:5184 SKIP_SMOKE=1 node run.mjs 123    # only specs whose name contains "123"
 ```
@@ -80,4 +80,13 @@ Against the Blazor Server host:
 dotnet run --project docs/BlazorApexCharts.Docs.Server/BlazorApexCharts.Docs.Server.csproj -c Debug --urls http://localhost:5185 &
 cd tests/e2e
 HOST=server BASE_URL=http://localhost:5185 node run.mjs
+```
+
+To reuse a Playwright install from another checkout or worktree, symlink it instead of running
+`npm install`, and keep the link out of git through `.git/info/exclude` (the repository's
+`.gitignore` files list `node_modules/`, which matches a directory but not a symlink):
+
+```sh
+ln -s /path/to/other/checkout/tests/e2e/node_modules tests/e2e/node_modules
+echo 'tests/e2e/node_modules' >> "$(git rev-parse --git-common-dir)/info/exclude"
 ```
