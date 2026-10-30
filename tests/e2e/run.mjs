@@ -5,7 +5,7 @@
 //   BASE_URL=http://localhost:5184 node run.mjs issue-123    # smoke + specs whose file name contains "issue-123"
 //   SKIP_SMOKE=1 node run.mjs issue-123                      # only the matching specs
 //   PW_CHANNEL=chrome node run.mjs                           # drive an installed Chrome
-//   HOST=server BASE_URL=http://localhost:5000 node run.mjs   # against the Blazor Server docs host
+//   HOST=server BASE_URL=http://localhost:5185 node run.mjs   # against the Blazor Server docs host
 //
 // HOST names the hosting model behind BASE_URL ('wasm', the default, or 'server'); specs read it
 // through blazorHost() in lib/helpers.mjs. The run stops if the page served at BASE_URL is the

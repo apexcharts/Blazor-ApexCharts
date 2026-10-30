@@ -1230,6 +1230,41 @@ window.blazor_apexchart = {
                 continue;
             }
 
+            // apexcharts.js registers the chart under its id at the start of render(), before it
+            // creates and mounts it. A render that fails before that point leaves nothing registered.
+            const registered = this.findChart(id) === created.chart;
+
+            // A render that fails after it registered the chart leaves that broken chart under the id,
+            // where findChart (and every call through it) would find it. Tear it down, and take it out
+            // of the registry even if destroy() fails on a chart that never mounted.
+            const discard = () => {
+                try {
+                    created.chart.destroy();
+                } catch (error) { }
+
+                const instances = Apex._chartInstances;
+                if (Array.isArray(instances)) {
+                    for (let i = instances.length - 1; i >= 0; i--) {
+                        if (instances[i].chart === created.chart) {
+                            instances.splice(i, 1);
+                        }
+                    }
+                }
+            };
+
+            // The chart may have been destroyed or rendered again before this render failed. Then the
+            // failure belongs to a chart that is gone: report nothing and leave the id's chart alone.
+            const failedRendering = error => {
+                if (this.findChart(id) !== (registered ? created.chart : undefined) || this.pendingBrushCharts.has(id)) {
+                    return;
+                }
+
+                if (registered) {
+                    discard();
+                }
+                failed(error);
+            };
+
             // Once it has rendered, make the calls it received while it waited, then tell the
             // component, which raises OnRendered
             Promise.resolve(created.rendering).then(() => {
@@ -1251,7 +1286,7 @@ window.blazor_apexchart = {
 
                 // The component may have been disposed in the meantime
                 pending.dotNetObject.invokeMethodAsync('JSRendered').catch(() => { });
-            }, failed);
+            }, failedRendering);
         }
     },
 

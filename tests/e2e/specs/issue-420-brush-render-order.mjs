@@ -133,9 +133,89 @@ export default async function (page, BASE) {
   assert(!d.pending && !d.chart && d.calls.length === 0,
     `D brush should be dropped without reporting itself rendered, got ${JSON.stringify(d)}`);
 
+  // F: a brush chart whose render fails after apexcharts.js registered it (here its mount rejects) is
+  // logged and taken out of the registry, so a lookup by its id no longer finds the broken chart.
+  // G: a brush chart whose render fails only after it was destroyed and rendered again: the late
+  // failure belongs to the chart that is gone, so nothing is logged and the new chart stays.
+  // H: as G, but the chart is destroyed and not rendered again: nothing is logged for it either.
+  const fLogged = page.waitForEvent('console', {
+    predicate: m => m.type() === 'error' && m.text().includes('issue420-f-brush') && m.text().includes('failed to render'),
+    timeout: 20000,
+  });
+  fLogged.catch(() => { });
+
   await page.evaluate(() => {
     const api = window.blazor_apexchart;
-    ['issue420-d-brush', 'issue420-d-target', 'issue420-e-brush', 'issue420-e-target'].forEach(id => {
+    const AC = window.ApexCharts;
+    const fake = name => {
+      const calls = [];
+      window[name] = calls;
+      return { invokeMethodAsync: method => { calls.push(method); return Promise.resolve(); } };
+    };
+    const brush = (id, target) => JSON.stringify({
+      chart: { id, type: 'area', height: 100, brush: { enabled: true, target }, selection: { enabled: true } },
+      series: [{ name: 'Value', data: [1, 2, 3] }],
+    });
+    const target = id => JSON.stringify({ chart: { id, type: 'line', height: 100 }, series: [{ name: 'Value', data: [1, 2, 3] }] });
+    const host = id => { const el = document.createElement('div'); el.id = id; document.body.appendChild(el); return el; };
+
+    // The first mount of each of these charts rejects, as a failure inside apexcharts.js would
+    const failOnce = new Set(['issue420-f-brush', 'issue420-g-brush', 'issue420-h-brush']);
+    window.issue420Mount = AC.prototype.mount;
+    AC.prototype.mount = function (graphData) {
+      const id = this.w.config.chart.id;
+      if (failOnce.delete(id)) {
+        return Promise.reject(new Error(id + ' mount'));
+      }
+      return window.issue420Mount.call(this, graphData);
+    };
+
+    // F: held back, then its render fails once the target is there
+    api.renderChart(fake('issue420FBrushCalls'), host('issue420-f-brush-host'), brush('issue420-f-brush', 'issue420-f-target'), {});
+    api.renderChart(fake('issue420FTargetCalls'), host('issue420-f-target-host'), target('issue420-f-target'), {});
+
+    // G: its render fails, and before that failure is reported the component renders it again
+    const gHost = host('issue420-g-brush-host');
+    api.renderChart(fake('issue420GBrushCalls'), gHost, brush('issue420-g-brush', 'issue420-g-target'), {});
+    api.renderChart(fake('issue420GTargetCalls'), host('issue420-g-target-host'), target('issue420-g-target'), {});
+    window.issue420GFailed = AC.getChartByID('issue420-g-brush');
+    api.renderChart(fake('issue420GBrushCalls2'), gHost, brush('issue420-g-brush', 'issue420-g-target'), {});
+
+    // H: its render fails, and before that failure is reported the component is disposed
+    api.renderChart(fake('issue420HBrushCalls'), host('issue420-h-brush-host'), brush('issue420-h-brush', 'issue420-h-target'), {});
+    api.renderChart(fake('issue420HTargetCalls'), host('issue420-h-target-host'), target('issue420-h-target'), {});
+    api.destroyChart('issue420-h-brush');
+  });
+
+  await fLogged;
+  // The failures are reported in the task that started these renders, long before G's second chart
+  // has mounted, so its selection rectangle in the host means all of them have been handled.
+  await page.waitForSelector('#issue420-g-brush-host .apexcharts-selection-rect', { state: 'attached', timeout: 20000 });
+  const fg = await page.evaluate(() => {
+    const AC = window.ApexCharts;
+    const g = AC.getChartByID('issue420-g-brush');
+    return {
+      f: AC.getChartByID('issue420-f-brush') !== undefined,
+      fRendered: window.issue420FBrushCalls.includes('JSRendered'),
+      gReplaced: g !== undefined && g !== window.issue420GFailed && !!g.el.querySelector('.apexcharts-selection-rect'),
+      h: AC.getChartByID('issue420-h-brush') !== undefined,
+      hRendered: window.issue420HBrushCalls.includes('JSRendered'),
+    };
+  });
+  assert(!fg.f && !fg.fRendered, `F brush should be unregistered without reporting itself rendered, got ${JSON.stringify(fg)}`);
+  assert(fg.gReplaced, `G brush should be the chart rendered again, got ${JSON.stringify(fg)}`);
+  assert(!fg.h && !fg.hRendered, `H brush should stay destroyed without reporting itself rendered, got ${JSON.stringify(fg)}`);
+  assert(!realErrors().some(e => e.includes('issue420-g-brush')), 'G brush failure is stale and should not be logged');
+  assert(!realErrors().some(e => e.includes('issue420-h-brush')), 'H brush failure is stale and should not be logged');
+
+  await page.evaluate(() => {
+    const api = window.blazor_apexchart;
+    window.ApexCharts.prototype.mount = window.issue420Mount;
+    delete window.issue420Mount;
+    delete window.issue420GFailed;
+    ['issue420-d-brush', 'issue420-d-target', 'issue420-e-brush', 'issue420-e-target',
+      'issue420-f-brush', 'issue420-f-target', 'issue420-g-brush', 'issue420-g-target',
+      'issue420-h-brush', 'issue420-h-target'].forEach(id => {
       api.destroyChart(id);
       const el = document.getElementById(id + '-host');
       if (el) { el.remove(); }
@@ -147,6 +227,7 @@ export default async function (page, BASE) {
   await warned;
   assert(await page.locator('#issue420-c-brush-host .apexcharts-canvas').count() === 0, 'C brush should not render');
 
-  // The errors D and E log on purpose are expected; anything else (an uncaught rejection included) is not.
-  assertNoErrors(() => realErrors().filter(e => !e.includes('issue420-d-brush failed to render') && !e.includes('issue420ReplayRejects failed')), 'issue-420');
+  // The errors D, E and F log on purpose are expected; anything else (an uncaught rejection included) is not.
+  const expected = ['issue420-d-brush failed to render', 'issue420ReplayRejects failed', 'issue420-f-brush failed to render'];
+  assertNoErrors(() => realErrors().filter(e => !expected.some(x => e.includes(x))), 'issue-420');
 }

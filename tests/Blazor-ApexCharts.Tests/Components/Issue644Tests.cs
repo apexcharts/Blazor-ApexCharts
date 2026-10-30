@@ -8,8 +8,10 @@ namespace ApexCharts.Tests.Components;
 /// <summary>
 /// #644: event handlers inside an ApexPointTooltip. blazor-apexcharts.js now moves the live
 /// <c>tooltip_source_{id}</c> element into the chart tooltip instead of copying its innerHTML, and finds it
-/// again through its hidden <c>tooltip_home_{id}</c> parent. These tests pin that markup contract; the
-/// browser behaviour is covered by tests/e2e/specs/issue-644-tooltip-click.mjs.
+/// again through its hidden <c>tooltip_home_{id}</c> parent. The two markup tests pin that contract. The
+/// other two are rendering sanity checks that held before the fix as well: bUnit runs no JavaScript, so
+/// nothing is moved into a chart tooltip here. Whether a handler still works once the element has been
+/// moved is covered by tests/e2e/specs/issue-644-tooltip-click.mjs.
 /// </summary>
 public class Issue644Tests : ApexChartsTestContext
 {
@@ -79,8 +81,13 @@ public class Issue644Tests : ApexChartsTestContext
             Assert.Contains(InvocationsOf("blazor_apexchart.copyTooltipContent"), i => (string?)i.Arguments[0] == id));
     }
 
+    /// <summary>
+    /// A rendering sanity check, not a guard for #644: the click reaches the handler in the rendered
+    /// fragment, where the element sits in its hidden home. It passed before the fix too, because the
+    /// failure #644 describes only happens in the browser, after the element is shown inside the tooltip.
+    /// </summary>
     [Fact]
-    public void Click_handler_in_the_tooltip_fragment_is_wired()
+    public void Click_handler_in_the_rendered_tooltip_fragment_runs()
     {
         var cut = RenderWithTooltip();
         var id = cut.Instance.ChartId;

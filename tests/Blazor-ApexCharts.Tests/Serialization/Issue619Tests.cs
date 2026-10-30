@@ -46,6 +46,31 @@ public class Issue619Tests
     }
 
     [Fact]
+    public void Marker_shape_list_with_one_entry_is_sent_as_a_string_so_it_applies_to_every_series()
+    {
+        // The documented rule: a one-entry list is not "first series only". Like every ValueOrList type it
+        // is written as the single value, which the chart applies to every series. A list of two, such as
+        // [Square, Circle], is how a chart gives only the first series a different shape.
+        var oneEntry = new ApexChartOptions<Sale>
+        {
+            Markers = new Markers { Shape = new List<MarkerShape> { MarkerShape.Square } }
+        };
+        var firstOnly = new ApexChartOptions<Sale>
+        {
+            Markers = new Markers { Shape = new MarkerShapeSelections(MarkerShape.Square, MarkerShape.Circle) }
+        };
+
+        var oneEntryJson = ChartJson.ToElement<Sale>(oneEntry);
+        var firstOnlyJson = ChartJson.ToElement<Sale>(firstOnly);
+
+        Assert.Equal(JsonValueKind.String, oneEntryJson.Get("markers.shape")?.ValueKind);
+        Assert.Equal("square", oneEntryJson.Get("markers.shape")?.GetString());
+        Assert.Equal(JsonValueKind.Array, firstOnlyJson.Get("markers.shape")?.ValueKind);
+        Assert.Equal("square", firstOnlyJson.Get("markers.shape.0")?.GetString());
+        Assert.Equal("circle", firstOnlyJson.Get("markers.shape.1")?.GetString());
+    }
+
+    [Fact]
     public void Single_marker_shape_is_a_string_in_global_options()
     {
         var options = new ApexChartBaseOptions { Markers = new Markers { Shape = MarkerShape.Square } };
