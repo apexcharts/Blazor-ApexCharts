@@ -1,7 +1,7 @@
 # E2E specs
 
 `tests/e2e/run.mjs` runs `smoke.mjs` and then every `*.mjs` file in this folder against the docs
-demo (`docs/BlazorApexCharts.Docs.Wasm`) in headless Chromium. `npm test` and the E2E Smoke workflow
+demo (`docs/BlazorApexCharts.Docs.Wasm`, or the Server host, see below) in headless Chromium. `npm test` and the E2E Smoke workflow
 both go through `run.mjs`, so a spec added here runs in CI with no other change.
 
 ## The contract
@@ -34,9 +34,10 @@ Helpers in `../lib/helpers.mjs`: `gotoChart(page, BASE, route, selector?)`, `wat
 ## Both hosting models
 
 The suite runs against the WASM docs host and against the Blazor Server docs host
-(`docs/BlazorApexCharts.Docs.Server`). `HOST` tells the run which one is behind `BASE_URL`: `wasm` (the default) or `server`. `run.mjs` reads the boot
-script of the page it warms up and stops when it is the other model, so a spec never runs against
-the wrong host.
+(`docs/BlazorApexCharts.Docs.Server`): the E2E Smoke workflow runs it in the `e2e` and
+`e2e-server` jobs, so a spec added here runs on both. `HOST` tells the run which one is behind
+`BASE_URL`: `wasm` (the default) or `server`. `run.mjs` reads the boot script of the page it warms
+up and stops when it is the other model, so a spec never runs against the wrong host.
 
 - `blazorHost()` returns `'wasm'` or `'server'`; `isServerHost()` is the boolean form. Use them
   when the expected outcome differs by host (a Server circuit adds latency to every interop call,
