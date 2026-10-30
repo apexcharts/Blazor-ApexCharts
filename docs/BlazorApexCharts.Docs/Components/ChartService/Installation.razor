@@ -17,6 +17,9 @@ Or, optional add global options
 The global options given here are the startup defaults. Each IApexChartService (one per DI scope, which on
 Blazor Server is one per user circuit) starts from its own copy of them, so a change made at runtime through
 ChartService.GlobalOptions, SetGlobalOptionsAsync or SetLocaleAsync only affects the current user.
+To change them after startup, change ChartService.GlobalOptions and call SetGlobalOptionsAsync(true), or pass
+new options to SetGlobalOptionsAsync. Changing the object given to AddApexCharts after startup does not reach
+a chart service that already exists.
 </p>
 
 

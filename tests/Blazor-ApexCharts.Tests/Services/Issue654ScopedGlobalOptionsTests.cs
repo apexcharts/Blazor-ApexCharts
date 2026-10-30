@@ -22,7 +22,7 @@ public class Issue654ScopedGlobalOptionsTests
     /// The same container a Blazor Server app builds, with scope validation on so that a captive
     /// dependency would throw.
     /// </summary>
-    private static ServiceProvider BuildProvider(Action<ApexChartsServiceOptions>? configure = null)
+    internal static ServiceProvider BuildProvider(Action<ApexChartsServiceOptions>? configure = null)
     {
         var services = new ServiceCollection();
         services.AddSingleton<NavigationManager, TestNavigationManager>();

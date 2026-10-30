@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace ApexCharts.Internal;
@@ -19,18 +20,26 @@ public static class OptionsCopier
     private static readonly Assembly modelAssembly = typeof(ApexChartBaseOptions).Assembly;
     private static readonly MethodInfo memberwiseClone = typeof(object).GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic);
 
+    // The DynamicDependency attributes on DeepCopy keep the List<T> and Dictionary<TKey, TValue>
+    // constructors and the Dictionary<TKey, TValue>.Comparer property when the app is trimmed,
+    // because the collection copies reach them through reflection.
+
     /// <summary>
     /// Returns a deep copy of <paramref name="source"/>, or null when it is null.
     /// </summary>
     /// <remarks>
-    /// Option classes of this library are copied member by member, including private fields, and so are
-    /// the lists, dictionaries and arrays they hold. Strings, value types, delegates, components and
-    /// objects of other assemblies (for example the items bound to a series) are immutable or not owned
-    /// by the options, and are kept as the same reference. An object referenced twice in the source is
-    /// copied once, so shared references and cycles are preserved.
+    /// Option objects are copied member by member, including private fields, and so are the lists,
+    /// dictionaries and arrays they hold. An option object is an instance of a class of this library, of a
+    /// class derived from one (for example your own subclass of <see cref="ApexChartBaseOptions"/> or of
+    /// <see cref="Theme"/>), or of your own implementation of <see cref="IApexChartBaseOptions"/>.
+    /// Strings, value types, delegates, components and any other object (for example the items bound to a
+    /// series) are immutable or not owned by the options, and are kept as the same reference. An object
+    /// referenced twice in the source is copied once, so shared references and cycles are preserved.
     /// </remarks>
     /// <typeparam name="T">The type of the options</typeparam>
     /// <param name="source">The options to copy</param>
+    [DynamicDependency(DynamicallyAccessedMemberTypes.PublicConstructors, typeof(List<>))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties, typeof(Dictionary<,>))]
     public static T DeepCopy<T>(T source) where T : class
     {
         if (source == null) { return null; }
@@ -47,12 +56,14 @@ public static class OptionsCopier
 
         if (type.IsArray)
         {
-            var array = (Array)source;
-            var arrayCopy = Array.CreateInstance(type.GetElementType(), array.Length);
+            // Clone keeps the exact array type without creating one through reflection.
+            var arrayCopy = (Array)((Array)source).Clone();
             copies[source] = arrayCopy;
-            for (var i = 0; i < array.Length; i++)
+            var elementType = type.GetElementType();
+            if (elementType.IsValueType || elementType == typeof(string)) { return arrayCopy; }
+            for (var i = 0; i < arrayCopy.Length; i++)
             {
-                arrayCopy.SetValue(Copy(array.GetValue(i), copies), i);
+                arrayCopy.SetValue(Copy(arrayCopy.GetValue(i), copies), i);
             }
             return arrayCopy;
         }
@@ -60,7 +71,7 @@ public static class OptionsCopier
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
         {
             var list = (IList)source;
-            var listCopy = (IList)Activator.CreateInstance(type, list.Count);
+            var listCopy = (IList)Activator.CreateInstance(type);
             copies[source] = listCopy;
             foreach (var item in list)
             {
@@ -72,8 +83,10 @@ public static class OptionsCopier
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
         {
             var dictionary = (IDictionary)source;
-            var comparer = type.GetProperty(nameof(Dictionary<object, object>.Comparer)).GetValue(source);
-            var dictionaryCopy = (IDictionary)Activator.CreateInstance(type, comparer);
+            // Keep a custom comparer (for example one that ignores case). Fall back to the default
+            // comparer if the property cannot be read.
+            var comparer = type.GetProperty(nameof(Dictionary<object, object>.Comparer))?.GetValue(source);
+            var dictionaryCopy = (IDictionary)(comparer == null ? Activator.CreateInstance(type) : Activator.CreateInstance(type, comparer));
             copies[source] = dictionaryCopy;
             foreach (DictionaryEntry entry in dictionary)
             {
@@ -109,10 +122,25 @@ public static class OptionsCopier
             if (definition == typeof(List<>) || definition == typeof(Dictionary<,>)) { return true; }
         }
 
-        return type.Assembly == modelAssembly
+        return IsOptionType(type)
             && !typeof(IComponent).IsAssignableFrom(type)
             && !typeof(IApexChartService).IsAssignableFrom(type)
             && !typeof(IDisposable).IsAssignableFrom(type)
             && !typeof(IAsyncDisposable).IsAssignableFrom(type);
+    }
+
+    /// <summary>
+    /// A class of this library, a class derived from one (declared in any assembly), or an implementation of
+    /// <see cref="IApexChartBaseOptions"/>. A consumer may configure the global options with a subclass, and
+    /// sharing that object between scopes would bring back the leak these copies exist to prevent.
+    /// </summary>
+    private static bool IsOptionType(Type type)
+    {
+        if (typeof(IApexChartBaseOptions).IsAssignableFrom(type)) { return true; }
+        for (var current = type; current != null && current != typeof(object); current = current.BaseType)
+        {
+            if (current.Assembly == modelAssembly) { return true; }
+        }
+        return false;
     }
 }

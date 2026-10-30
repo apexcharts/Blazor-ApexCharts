@@ -25,6 +25,15 @@
 		<ProjectReference Include="..\..\src\Blazor-ApexCharts\Blazor-ApexCharts.csproj" />
 	</ItemGroup>
 
+	<!--
+		The MAUI package needs the MAUI workload to build. Its chart service and DI extension have no other
+		MAUI dependency than FileSystem, so compile them into the tests (Maui/MauiStubs.cs stands in for it).
+	-->
+	<ItemGroup>
+		<Compile Include="..\..\src\Blazor-ApexCharts-MAUI\ChartService\ApexChartServiceMaui.cs" Link="Maui\Linked\ApexChartServiceMaui.cs" />
+		<Compile Include="..\..\src\Blazor-ApexCharts-MAUI\Extensions\ApexChartsMauiExtensions.cs" Link="Maui\Linked\ApexChartsMauiExtensions.cs" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<Using Include="Xunit" />
 		<Using Include="Bunit" />

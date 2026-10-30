@@ -47,6 +47,8 @@ services.AddApexCharts(e =>
 
 These global options are the startup defaults. Each `IApexChartService` (one per DI scope, which on Blazor Server is one per user circuit) starts from its own copy of them, so a change made at runtime through `ChartService.GlobalOptions`, `SetGlobalOptionsAsync` or `SetLocaleAsync` only affects the current user.
 
+To change the global options after startup, change `ChartService.GlobalOptions` and call `ChartService.SetGlobalOptionsAsync(true)`, or pass new options to `ChartService.SetGlobalOptionsAsync(options, true)`. Changing the object given to `AddApexCharts` (or the injected `ApexChartsServiceOptions.GlobalOptions`) after startup does not reach a chart service that already exists.
+
 The same as above can be used for .NET MAUI, just make sure to use the method below to add the chart service.
 
 ```razor
