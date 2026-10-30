@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApexCharts.Docs.Wasm"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor-ApexCharts-MAUI", "src\Blazor-ApexCharts-MAUI\Blazor-ApexCharts-MAUI.csproj", "{F770B22E-9E05-41DD-9AEC-1CCE3D883E68}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor-ApexCharts.Tests", "tests\Blazor-ApexCharts.Tests\Blazor-ApexCharts.Tests.csproj", "{BA6425B4-12F2-4624-BDEE-8F85BD8442D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +45,10 @@ Global
 		{F770B22E-9E05-41DD-9AEC-1CCE3D883E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F770B22E-9E05-41DD-9AEC-1CCE3D883E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F770B22E-9E05-41DD-9AEC-1CCE3D883E68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA6425B4-12F2-4624-BDEE-8F85BD8442D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA6425B4-12F2-4624-BDEE-8F85BD8442D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA6425B4-12F2-4624-BDEE-8F85BD8442D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA6425B4-12F2-4624-BDEE-8F85BD8442D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +57,7 @@ Global
 		{49430D54-CF3A-4BC5-8DD0-537794757E9B} = {7975A7BE-CE73-49D9-8ED3-FF3585EA21EE}
 		{BF31D068-076F-48BC-9E68-8C12826114CA} = {7975A7BE-CE73-49D9-8ED3-FF3585EA21EE}
 		{0D192E1C-8DBE-42C0-B025-22249168C66D} = {7975A7BE-CE73-49D9-8ED3-FF3585EA21EE}
+		{BA6425B4-12F2-4624-BDEE-8F85BD8442D6} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1C7AB450-7E79-495C-BEA4-60D6DC9482FC}

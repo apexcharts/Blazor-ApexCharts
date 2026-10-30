@@ -37,6 +37,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Blazor-ApexCharts.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="..\..\LICENSE">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>

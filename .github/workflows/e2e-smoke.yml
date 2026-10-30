@@ -6,7 +6,7 @@ name: E2E Smoke (browser render + interaction)
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
   workflow_dispatch:
 
@@ -50,7 +50,7 @@ jobs:
             sleep 2
           done
 
-      - name: Run smoke test
+      - name: Run smoke test and specs
         working-directory: tests/e2e
         env:
           BASE_URL: http://localhost:5184
