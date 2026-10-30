@@ -13,6 +13,12 @@ For Blazor projects running in a MAUI application.
 Or, optional add global options
 <CodeFormatter Code="@codeGlobalOptions" />
 
+<p>
+The global options given here are the startup defaults. Each IApexChartService (one per DI scope, which on
+Blazor Server is one per user circuit) starts from its own copy of them, so a change made at runtime through
+ChartService.GlobalOptions, SetGlobalOptionsAsync or SetLocaleAsync only affects the current user.
+</p>
+
 
 
 
@@ -20,7 +26,7 @@ Or, optional add global options
 
     [Inject] public IApexChartService ChartService { get; set; }
     private string codeMinimal = @"services.AddApexCharts();";
-    private string codeMinimalMaui = @"services.AddApexCharts();";
+    private string codeMinimalMaui = @"services.AddApexChartsMaui();";
     private string codeGlobalOptions = @"services.AddApexCharts(e =>
             {
                 e.GlobalOptions = new ApexChartBaseOptions
