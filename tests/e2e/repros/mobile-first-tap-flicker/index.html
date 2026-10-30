@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobile tap and redraw repro</title>
+<style>
+  body { font-family: sans-serif; margin: 0 16px; }
+  #chart { max-width: 600px; }
+  #spacer { height: 1600px; }
+  button { font-size: 18px; padding: 12px 20px; }
+  #readout { position: fixed; left: 0; right: 0; bottom: 0; margin: 0; padding: 6px 16px;
+    font: 12px/1.4 monospace; background: rgba(255, 255, 255, .92); border-top: 1px solid #ccc;
+    white-space: pre-wrap; max-height: 40vh; overflow: hidden; pointer-events: none; }
+</style>
+</head>
+<body>
+<!--
+  Plain-JS repro for Blazor-ApexCharts #412 (first tap after scrolling ignored, Chrome on iPhone,
+  bar chart) and #405 (charts flicker or duplicate, Chrome on some Android phones). It loads the
+  vendored bundle directly, so nothing of the Blazor wrapper is involved.
+
+  Serve the repository root (python3 -m http.server 5315) and open
+    /tests/e2e/repros/mobile-first-tap-flicker/index.html?type=bar
+  Query parameters:
+    type=bar|area                  chart type (#412 reports bar fails and area works)
+    redrawOnWindowResize=false     A/B switch for #405: skips the redraw on window "resize"
+    vhParent=1                     gives the chart's parent (#wrap) min-height: 60vh, like a
+                                   full-height layout, so its size follows the URL bar too
+
+  On a real phone the fixed readout at the bottom shows what happened. For #412: scroll down
+  (start the drag on the chart), tap "Tap me" once, and read the "button events" line. A
+  swallowed first tap shows touchend and mouse events but no click. For #405: scroll up and down
+  so the URL bar hides and shows, and watch "chart redraws" and "max svgs".
+
+  window.__probe holds the same numbers for probe.mjs.
+-->
+<script>
+  (function () {
+    const probe = window.__probe = {
+      listeners: [], preventDefault: [], updated: 0, mounted: 0, svgReplaced: 0, maxSvgs: 0,
+      clicks: 0, windowResizes: 0, buttonEvents: [], chartMutationsDuringTap: 0
+    };
+    const origAdd = EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener = function (type, fn, opts) {
+      if (/^(touch|pointer|mouse|click|resize|wheel)/.test(type)) {
+        const target = this === window ? 'window' : this === document ? 'document'
+          : (this.nodeName || '?') + (this.classList && this.classList.length ? '.' + [...this.classList].join('.') : '');
+        const passive = typeof opts === 'object' && opts ? opts.passive : undefined;
+        probe.listeners.push({ type, target, passive: passive === undefined ? null : passive,
+          capture: typeof opts === 'boolean' ? opts : !!(opts && opts.capture) });
+      }
+      return origAdd.call(this, type, fn, opts);
+    };
+    const origPd = Event.prototype.preventDefault;
+    Event.prototype.preventDefault = function () {
+      probe.preventDefault.push({ type: this.type, target: this.target && this.target.nodeName, cancelable: this.cancelable });
+      return origPd.call(this);
+    };
+    window.addEventListener('resize', () => { probe.windowResizes++; probe.lastInner = innerWidth + 'x' + innerHeight; });
+  })();
+</script>
+
+<h3 id="title">Chart</h3>
+<div id="wrap"><div id="chart"></div></div>
+<div id="spacer"></div>
+<button id="below" type="button">Tap me</button>
+<p id="clicks">Clicks: 0</p>
+<div style="height: 45vh"></div>
+<pre id="readout"></pre>
+
+<script type="module">
+  import ApexCharts from '../../../../src/Blazor-ApexCharts/wwwroot/js/apexcharts.esm.js';
+  const probe = window.__probe;
+  const params = new URLSearchParams(location.search);
+  const type = params.get('type') || 'bar';
+  const redrawOnWindowResize = params.get('redrawOnWindowResize') !== 'false';
+  // apexcharts.js observes the container's PARENT for redrawOnParentResize.
+  if (params.get('vhParent') === '1') document.getElementById('wrap').style.minHeight = '60vh';
+  document.getElementById('title').textContent = type + ' chart';
+
+  const container = document.getElementById('chart');
+  const button = document.getElementById('below');
+
+  // Record every event the button receives, so a real device shows whether a tap produced a click.
+  let tapStart = 0;
+  for (const t of ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'mouseover', 'mousemove', 'mousedown', 'mouseup', 'click']) {
+    button.addEventListener(t, () => {
+      if (t === 'touchstart') { probe.buttonEvents = []; tapStart = performance.now(); probe.chartMutationsDuringTap = 0; }
+      probe.buttonEvents.push(t);
+    }, { passive: true });
+  }
+  button.addEventListener('click', () => {
+    probe.clicks++;
+    tapStart = 0;
+    document.getElementById('clicks').textContent = 'Clicks: ' + probe.clicks;
+  });
+
+  // Chart DOM changes between the button's touchstart and its click (or 1 s later) are what a
+  // touch browser's hover emulation could treat as "the tap revealed content".
+  new MutationObserver(muts => {
+    if (tapStart && performance.now() - tapStart < 1000) probe.chartMutationsDuringTap += muts.length;
+  }).observe(container, { attributes: true, childList: true, subtree: true });
+
+  new MutationObserver(muts => {
+    for (const m of muts) {
+      for (const n of m.addedNodes) {
+        if (n.nodeType === 1 && (n.matches('svg.apexcharts-svg') || n.querySelector?.('svg.apexcharts-svg'))) probe.svgReplaced++;
+      }
+    }
+    probe.maxSvgs = Math.max(probe.maxSvgs, container.querySelectorAll('svg.apexcharts-svg').length);
+  }).observe(container, { childList: true, subtree: true });
+
+  const chart = new ApexCharts(container, {
+    chart: {
+      id: 'repro', type, height: 350, redrawOnWindowResize,
+      events: {
+        mounted: () => { probe.mounted++; },
+        updated: () => { probe.updated++; }
+      }
+    },
+    series: [
+      { name: 'Gross', data: [44, 55, 41, 67, 22, 43, 21, 49] },
+      { name: 'Net', data: [13, 23, 20, 8, 13, 27, 33, 12] }
+    ],
+    xaxis: { categories: ['SE', 'NO', 'DK', 'FI', 'DE', 'FR', 'ES', 'IT'] }
+  });
+
+  // Count painted frames in which the chart has no drawn series (a visible blank, i.e. flicker).
+  probe.frames = 0; probe.blankFrames = 0;
+  const readout = document.getElementById('readout');
+  const sample = () => {
+    if (document.body.dataset.rendered) {
+      probe.frames++;
+      if (!container.querySelector('.apexcharts-series path, .apexcharts-series rect')) probe.blankFrames++;
+    }
+    if (probe.frames % 10 === 0) {
+      readout.textContent =
+        `${type}, redrawOnWindowResize=${redrawOnWindowResize}, vhParent=${params.get('vhParent') === '1'}, viewport ${innerWidth}x${innerHeight}, dpr ${devicePixelRatio}\n` +
+        `window resizes: ${probe.windowResizes}  chart redraws: ${probe.updated}  max svgs: ${probe.maxSvgs}  blank frames: ${probe.blankFrames}\n` +
+        `clicks: ${probe.clicks}  button events (last tap): ${probe.buttonEvents.join(' ')}\n` +
+        `chart DOM mutations during last tap: ${probe.chartMutationsDuringTap}  preventDefault calls: ${probe.preventDefault.length}`;
+    }
+    requestAnimationFrame(sample);
+  };
+  requestAnimationFrame(sample);
+  chart.render().then(() => { document.body.dataset.rendered = '1'; });
+  window.__chart = chart;
+</script>
+</body>
+</html>
