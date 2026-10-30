@@ -1,0 +1,60 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Label Position and Width"
+               Options=options>
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         OrderByDescending="e=>e.Y" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options = new ApexChartOptions<Order>();
+
+    protected override void OnInitialized()
+    {
+        var countries = orders.GroupBy(e => e.Country)
+                              .OrderByDescending(g => g.Sum(e => e.GrossValue))
+                              .Select(g => g.Key)
+                              .ToList();
+        var average = orders.GroupBy(e => e.Country).Average(g => g.Sum(e => e.GrossValue));
+
+        options.Annotations = new Annotations
+            {
+                // X-axis labels go at the top (default), center or bottom of the plot
+                Xaxis = new List<AnnotationsXAxis>
+                {
+                    new AnnotationsXAxis
+                    {
+                        X = countries.First(),
+                        BorderColor = "#e53935",
+                        Label = new Label { Text = "Top", Position = LabelPosition.Top, Style = new Style { Background = "#e53935", Color = "#fff" } }
+                    },
+                    new AnnotationsXAxis
+                    {
+                        X = countries.Last(),
+                        BorderColor = "#1e88e5",
+                        Label = new Label { Text = "Bottom", Position = LabelPosition.Bottom, Style = new Style { Background = "#1e88e5", Color = "#fff" } }
+                    }
+                },
+                // Y-axis labels go at the left, center or right (default) of the plot.
+                // Width takes a CSS length: "50%" of the plot, or pixels ("200px" or a number)
+                Yaxis = new List<AnnotationsYAxis>
+                {
+                    new AnnotationsYAxis
+                    {
+                        Y = average,
+                        Width = "50%",
+                        BorderColor = "#43a047",
+                        Label = new Label { Text = "Average (left, 50%)", Position = LabelPosition.Left, TextAnchor = TextAnchor.Start, Style = new Style { Background = "#43a047", Color = "#fff" } }
+                    }
+                }
+            };
+    }
+}

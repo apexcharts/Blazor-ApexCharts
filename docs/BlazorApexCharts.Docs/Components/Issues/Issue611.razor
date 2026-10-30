@@ -1,0 +1,60 @@
+@page "/issues/611"
+
+@using ApexCharts
+
+<h3>Issue 611: Y-axis annotation width</h3>
+
+<p>
+    Four y-axis annotation lines. apexcharts.js reads <code>width</code> as a CSS length string and threw
+    when it received a number. A number is now sent as pixels, so <code>Width = 100</code> and
+    <code>Width = "200px"</code> draw lines of that length, <code>Width = "50%"</code> covers half of the
+    plot and an unset width covers all of it.
+</p>
+
+<div id="issue611-chart">
+    <ApexChart TItem="Sale" Title="Y-axis annotation widths" Height="360" Options="options">
+        <ApexPointSeries TItem="Sale"
+                         Items="sales"
+                         Name="Amount"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Month)"
+                         YValue="@(e => e.Amount)" />
+    </ApexChart>
+</div>
+
+@code {
+    private readonly List<Sale> sales = new()
+    {
+        new Sale { Month = "Jan", Amount = 10 },
+        new Sale { Month = "Feb", Amount = 40 },
+        new Sale { Month = "Mar", Amount = 30 },
+        new Sale { Month = "Apr", Amount = 70 },
+        new Sale { Month = "May", Amount = 50 },
+    };
+
+    private ApexChartOptions<Sale> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Sale>
+        {
+            Chart = new Chart { Animations = new Animations { Enabled = false } },
+            Annotations = new Annotations
+            {
+                Yaxis = new List<AnnotationsYAxis>
+                {
+                    new AnnotationsYAxis { Id = "issue611-number", Y = 20, Width = 100, BorderColor = "#e53935", Label = new Label { Text = "Width = 100", Position = LabelPosition.Left, TextAnchor = TextAnchor.Start } },
+                    new AnnotationsYAxis { Id = "issue611-px", Y = 35, Width = "200px", BorderColor = "#8e24aa", Label = new Label { Text = "Width = \"200px\"", Position = LabelPosition.Left, TextAnchor = TextAnchor.Start } },
+                    new AnnotationsYAxis { Id = "issue611-percent", Y = 50, Width = "50%", BorderColor = "#1e88e5", Label = new Label { Text = "Width = \"50%\"", Position = LabelPosition.Left, TextAnchor = TextAnchor.Start } },
+                    new AnnotationsYAxis { Id = "issue611-default", Y = 65, BorderColor = "#43a047", Label = new Label { Text = "Width unset" } },
+                }
+            }
+        };
+    }
+
+    private class Sale
+    {
+        public string Month { get; set; }
+        public decimal Amount { get; set; }
+    }
+}
