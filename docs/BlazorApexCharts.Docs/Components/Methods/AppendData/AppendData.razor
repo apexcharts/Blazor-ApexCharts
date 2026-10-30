@@ -1,6 +1,17 @@
 ﻿@page "/methods/append-data"
 
 <DocExamples Title="Append Data">
+    <Description>
+        <Alert BackgroundColor=TablerColor.Info>
+            <p class="mb-0">
+                For real-time data, use a <code>DateTime</code> or <code>DateTimeOffset</code> X value with <code>XAxisType="XAxisType.Datetime"</code>
+                rather than a formatted time string. Two events in the same second produce the same string, and a line or area chart with
+                repeated string X values currently stops drawing its line. If you do need string X values, make sure every appended X value
+                is new, for example by merging the events of the same second into one point before appending it.
+            </p>
+        </Alert>
+    </Description>
+
     <ChildContent>
         <CodeSnippet Title=Basic ClassName=@typeof(Basic).ToString()>
             <Snippet>
