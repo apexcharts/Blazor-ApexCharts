@@ -182,6 +182,8 @@ window.blazor_apexchart = {
             this.syncWarnings.delete(id);
         }
 
+        this.restoreTooltipSource(id);
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             chart.destroy();
@@ -738,33 +740,68 @@ window.blazor_apexchart = {
         }
     },
 
-    // The Razor tooltip source sits in a <span hidden> next to the chart. A page rule such as
-    // ".card span { display: inline-block }" beats the [hidden] rule of the browser, so pin
-    // display:none on the element. A CSSOM write, unlike a style attribute in the markup, is
-    // allowed by a style-src without 'unsafe-inline', and !important on the element beats any page rule.
+    // The Razor tooltip renders into a <span id="tooltip_home_{id}" hidden> next to the chart. A page rule such
+    // as ".card span { display: inline-block }" beats the [hidden] rule of the browser, so pin display:none
+    // on the element. A CSSOM write, unlike a style attribute in the markup, is allowed by a style-src
+    // without 'unsafe-inline', and !important on the element beats any page rule.
     hideTooltipSource(chartId) {
-        var sourceElement = document.getElementById("tooltip_source_" + chartId);
-        var wrapper = sourceElement ? sourceElement.parentElement : null;
+        var home = document.getElementById("tooltip_home_" + chartId);
 
-        if (wrapper && wrapper.hasAttribute("hidden")) {
-            wrapper.style.setProperty("display", "none", "important");
+        if (home !== null && home.hasAttribute("hidden")) {
+            home.style.setProperty("display", "none", "important");
         }
+    },
+
+    // The live element Blazor renders the .NET tooltip into, per chart id. It is moved into the
+    // apexcharts tooltip rather than copied, so Blazor event handlers (@onclick etc.) keep working.
+    // Once moved it can no longer be found through its home: apexcharts clones the element returned
+    // from tooltip.custom, so a copy with the same id appears while the live one sits detached.
+    tooltipSources: new Map(),
+
+    getTooltipSource(chartId) {
+        var home = document.getElementById("tooltip_home_" + chartId);
+        if (home === null) {
+            this.tooltipSources.delete(chartId);
+            return null;
+        }
+
+        // While the live element is still in its hidden home it is the home's only child.
+        var source = home.firstElementChild;
+        if (source !== null) {
+            this.tooltipSources.set(chartId, source);
+            return source;
+        }
+
+        return this.tooltipSources.get(chartId) || null;
     },
 
     copyTooltipContent(chartId) {
 
-        var sourceId = "tooltip_source_" + chartId;
-        var targetId = "tooltip_target_" + chartId;
+        var targetElement = document.getElementById("tooltip_target_" + chartId);
+        var sourceElement = this.getTooltipSource(chartId);
 
         this.hideTooltipSource(chartId);
 
-        var sourceElement = document.getElementById(sourceId);
-        var targetElement = document.getElementById(targetId);
-
-        if (sourceElement && targetElement) {
-            targetElement.innerHTML = sourceElement.innerHTML;
+        if (sourceElement && targetElement && sourceElement.parentNode !== targetElement) {
+            // Lay the content out as direct children of the tooltip, as the old innerHTML copy did, also
+            // under a page rule that sets display on every span. Set through the CSSOM, which a Content
+            // Security Policy does not block; the copies apexcharts clones from it are exempt as well.
+            sourceElement.style.setProperty("display", "contents", "important");
+            // Replaces the clone apexcharts inserted, so the page never holds two elements with this id.
+            targetElement.replaceChildren(sourceElement);
         }
 
+    },
+
+    restoreTooltipSource(chartId) {
+        var home = document.getElementById("tooltip_home_" + chartId);
+        var source = this.tooltipSources.get(chartId);
+
+        if (home !== null && source && source.parentNode !== home) {
+            home.appendChild(source);
+        }
+
+        this.tooltipSources.delete(chartId);
     },
 
     dotNetRefs: new Map(),
@@ -801,6 +838,11 @@ window.blazor_apexchart = {
                 }
 
                 dotNetObject.invokeMethodAsync('RazorTooltip', selection);
+
+                // apexcharts shows a clone of el, which has no Blazor event handlers. Swap the live
+                // element back in as soon as the clone is in place; the .NET render then updates it.
+                var chartId = w.globals.chartID;
+                queueMicrotask(function () { window.blazor_apexchart.copyTooltipContent(chartId); });
 
                 return el;
 
