@@ -994,6 +994,10 @@ namespace ApexCharts
         /// The dataURI() method is used to get base64 dataURI. Then this dataURI can be used to generate PDF using jsPDF
         /// </summary>
         /// <param name="dataUriOptions">The options object accepts scale or width property which allows to adjust the size of the exported graphic. scale/width both accepts a number.</param>
+        /// <returns>
+        /// The base64 data URI of the chart image, or an empty string when there is no chart in the browser to read:
+        /// it has not rendered yet (a brush chart waiting for its targets, see <see cref="Brush.Target"/>) or it has been disposed.
+        /// </returns>
         /// <remarks>
         /// Links:
         /// 
@@ -1004,7 +1008,7 @@ namespace ApexCharts
         {
             var json = Serialize(dataUriOptions);
             var result = await InvokeJsAsync<DataUriResult>("blazor_apexchart.dataUri", Options.Chart.Id, json);
-            return result.ImgURI;
+            return result?.ImgURI ?? string.Empty;
         }
 
         /// <summary>
@@ -1296,11 +1300,11 @@ namespace ApexCharts
         /// Bind prose sections to saved chart views for scroll-driven storytelling (ApexCharts v6.0). Requires the storyboard feature.
         /// </summary>
         /// <param name="options">Beats configuration.</param>
-        /// <returns>The number of bound beats.</returns>
+        /// <returns>The number of bound beats, or 0 when there is no chart in the browser to bind (not rendered yet, or disposed).</returns>
         public virtual async Task<int> StoryboardBindAsync(StoryboardOptions options)
         {
             var json = Serialize(options);
-            return await InvokeJsAsync<int>("blazor_apexchart.storyboardBind", Options.Chart.Id, json);
+            return await InvokeJsAsync<int?>("blazor_apexchart.storyboardBind", Options.Chart.Id, json) ?? 0;
         }
 
         /// <summary>
