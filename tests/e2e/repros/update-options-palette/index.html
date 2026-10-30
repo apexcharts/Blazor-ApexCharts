@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>updateOptions palette repro (#605)</title>
+</head>
+<body>
+  <!--
+    Plain apexcharts.js repro for Blazor-ApexCharts #605, no Blazor involved.
+    Serve the repository root and open
+    /tests/e2e/repros/update-options-palette/index.html
+    Optional query: ?mode=dark&palette=palette1 (the defaults).
+    The page renders a chart with that theme, then calls
+    chart.updateOptions with the same theme, and writes the first series
+    colour and theme.palette before and after into #result as JSON.
+  -->
+  <div id="chart" style="width: 600px"></div>
+  <pre id="result"></pre>
+  <script type="module">
+    import ApexCharts from '../../../../src/Blazor-ApexCharts/wwwroot/js/apexcharts.esm.js';
+
+    const q = new URLSearchParams(location.search);
+    const theme = { mode: q.get('mode') || 'dark', palette: q.get('palette') || 'palette1' };
+    const chart = new ApexCharts(document.getElementById('chart'), {
+      chart: { type: 'bar', animations: { enabled: false } },
+      theme: { ...theme },
+      series: [{ name: 'Sales', data: [10, 20, 30] }],
+      xaxis: { categories: ['Jan', 'Feb', 'Mar'] }
+    });
+
+    const snapshot = () => ({
+      palette: chart.w.config.theme.palette,
+      color: chart.w.globals.colors[0],
+      foreColor: chart.w.config.chart.foreColor,
+      tooltipTheme: chart.w.config.tooltip.theme
+    });
+
+    await chart.render();
+    const afterRender = snapshot();
+    await chart.updateOptions({ theme: { ...theme } }, false, false, false);
+    const afterUpdate = snapshot();
+
+    document.getElementById('result').textContent =
+      JSON.stringify({ afterRender, afterUpdate }, null, 2);
+  </script>
+</body>
+</html>
