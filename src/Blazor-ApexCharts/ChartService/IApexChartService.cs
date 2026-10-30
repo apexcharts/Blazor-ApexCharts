@@ -22,6 +22,11 @@ namespace ApexCharts
         /// <summary>
         /// Current global options
         /// </summary>
+        /// <remarks>
+        /// The service is scoped, and this object belongs to the current scope (one Blazor Server circuit).
+        /// It starts as a copy of <see cref="ApexChartsServiceOptions.GlobalOptions"/>, so changing it does
+        /// not affect other users.
+        /// </remarks>
         IApexChartBaseOptions GlobalOptions { get; }
 
         /// <summary>

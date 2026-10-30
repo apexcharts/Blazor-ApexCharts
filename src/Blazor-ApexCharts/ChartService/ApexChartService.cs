@@ -33,7 +33,9 @@ public class ApexChartService : IApexChartService
        
         httpClient.BaseAddress = new Uri(navManager.BaseUri + "_content/Blazor-ApexCharts/");
         PopulateBuiltInLocales();
-        globalOptions = serviceOptions.GlobalOptions;
+        // ApexChartsServiceOptions is a singleton shared by every scope (every Blazor Server circuit).
+        // Work on a copy so that changing the global options here never reaches other users.
+        globalOptions = OptionsCopier.DeepCopy(serviceOptions.GlobalOptions);
 
         if (globalOptions != null)
         {

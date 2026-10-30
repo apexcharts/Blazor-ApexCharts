@@ -18,7 +18,9 @@ internal class ApexChartServiceMaui : IApexChartService
 		this.jSRuntime = jSRuntime;
 
 		PopulateBuiltInLocales();
-		globalOptions = serviceOptions.GlobalOptions;
+		// ApexChartsServiceOptions is a singleton shared by every scope.
+		// Work on a copy so that changing the global options here never reaches another scope.
+		globalOptions = OptionsCopier.DeepCopy(serviceOptions.GlobalOptions);
 
 		if (globalOptions != null)
 		{
