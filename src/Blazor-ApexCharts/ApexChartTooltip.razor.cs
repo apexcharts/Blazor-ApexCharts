@@ -34,7 +34,7 @@ namespace ApexCharts.Internal
                     await JsApexchart.InvokeVoidAsync("blazor_apexchart.copyTooltipContent", ChartId);
                 }
                 // The chart is being disposed or the circuit is gone: there is no tooltip left to fill.
-                catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+                catch (Exception ex) when (JSInteropErrors.IsBrowserGone(ex))
                 { }
             }
         }

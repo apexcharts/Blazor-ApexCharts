@@ -177,6 +177,12 @@ window.blazor_apexchart = {
     },
 
     destroyChart(id) {
+        // First, so the formatters stop calling .NET for this chart (they look the reference up
+        // here) even when chart.destroy() below throws. The event handlers and the zoom callbacks
+        // hold the reference renderChart was given, so only a successful chart.destroy() stops them.
+        this.dotNetRefs.delete(id);
+        this.noSyncInterop.delete(id);
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             chart.destroy();
@@ -187,10 +193,6 @@ window.blazor_apexchart = {
             clearTimeout(pending.warnTimer);
             this.pendingBrushCharts.delete(id);
         }
-
-        this.dotNetRefs.delete(id);
-        this.noSyncInterop.delete(id);
-
     },
 
     // A brush chart waiting for its targets has no chart instance yet (issue 420). A call that
