@@ -39,21 +39,45 @@ export default async function (page, BASE) {
   await gotoChart(page, BASE, 'issues/658', '#issue-658-chart .apexcharts-canvas svg');
   await page.locator('#issue-658-chart .apexcharts-legend-series').first().waitFor({ timeout: 15000 });
 
-  // Show the Razor tooltip once, so its copy into the chart tooltip also runs under the policy.
-  // A single mouse move can land beside the bar when the page shifts after the bar was measured
-  // (a late font or the bar's entry animation), and the chart sees no further move, so measure and
-  // hover again until the tooltip shows or the time runs out.
+  // Before any hover, the live tooltip source sits in its hidden home next to the chart.
+  const beforeHover = await page.evaluate(() => {
+    const root = document.querySelector('#issue-658-chart');
+    const home = root.querySelector('[id^="tooltip_home_"]');
+    const source = root.querySelector('[id^="tooltip_source_"]');
+    return {
+      homeHidden: home ? home.hasAttribute('hidden') && !home.checkVisibility() : null,
+      sourceInHome: !!home && !!source && source.parentElement === home,
+      sourceVisible: source ? source.checkVisibility() : null,
+    };
+  });
+
+  // Show the Razor tooltip on one bar and then on another, so the live source is moved into the chart
+  // tooltip, and the copy apexcharts clones from it (styles set from JS included) is inserted, under
+  // the policy. A single mouse move can land beside the bar when the page shifts after the bar was
+  // measured (a late font or the bar's entry animation), and the chart sees no further move, so
+  // measure and hover again until the tooltip shows the bar or the time runs out.
   // Checked after the nonce assertions, which explain a failure better.
-  const tooltip = page.locator('#issue-658-chart .apexcharts-tooltip #issue-658-tooltip').first().filter({ hasText: /\S/ });
-  let tooltipShown = false;
-  for (const deadline = Date.now() + 15000; !tooltipShown && Date.now() < deadline;) {
-    const bar = await page.locator('#issue-658-chart .apexcharts-bar-area').first().boundingBox();
-    if (bar) {
-      await page.mouse.move(0, 0);
-      await page.mouse.move(bar.x + bar.width / 2, bar.y + bar.height / 2);
+  const bar = j => page.locator(`#issue-658-chart .apexcharts-series[data\\:realIndex="0"] path[j="${j}"]`);
+  // Resolves to the tooltip text once it is non-empty and differs from `previous`, or null at the deadline.
+  async function hoverUntil(j, previous) {
+    for (const deadline = Date.now() + 15000; Date.now() < deadline;) {
+      const box = await bar(j).boundingBox();
+      if (box) {
+        await page.mouse.move(0, 0);
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      }
+      const text = await page.waitForFunction(prev => {
+        const el = document.querySelector('#issue-658-chart .apexcharts-tooltip #issue-658-tooltip');
+        const t = el ? el.textContent.trim() : '';
+        return t !== '' && t !== prev ? t : null;
+      }, previous, { timeout: 2000 }).then(h => h.jsonValue(), () => null);
+      if (text !== null) return text;
     }
-    tooltipShown = await tooltip.waitFor({ timeout: 2000 }).then(() => true, () => false);
+    return null;
   }
+  const firstText = await hoverUntil(0, null);
+  const secondText = firstText === null ? null : await hoverUntil(1, firstText);
+  const tooltipShown = firstText !== null && secondText !== null;
 
   const state = await page.evaluate(() => {
     const root = document.querySelector('#issue-658-chart');
@@ -63,7 +87,11 @@ export default async function (page, BASE) {
     const legendSheets = [...root.querySelectorAll('style')]
       .filter(s => s.textContent.includes('apexcharts-legend'))
       .map(s => s.nonce);
-    const tooltipSource = root.querySelector('[id^="tooltip_source_"]');
+    const home = root.querySelector('[id^="tooltip_home_"]');
+    const sources = [...document.querySelectorAll('[id^="tooltip_source_"]')];
+    // The tooltip fragment anywhere on the page but in the chart tooltip.
+    const offTooltip = [...document.querySelectorAll('#issue-658-tooltip')]
+      .filter(e => !e.closest('.apexcharts-tooltip') && e.checkVisibility());
     // A plain <span hidden> under the same rule, to show the rule really overrides [hidden].
     const probe = document.createElement('span');
     probe.hidden = true;
@@ -78,7 +106,11 @@ export default async function (page, BASE) {
       focusColor: getComputedStyle(canvas).getPropertyValue('--apexcharts-focus-color').trim(),
       legendDisplay: getComputedStyle(root.querySelector('.apexcharts-legend')).display,
       probeVisible,
-      tooltipSourceVisible: tooltipSource ? tooltipSource.parentElement.checkVisibility() : null,
+      homeHidden: home ? home.hasAttribute('hidden') && !home.checkVisibility() : null,
+      // While the tooltip shows, the one live source sits in it: no second copy, no duplicate id.
+      sourceCount: sources.length,
+      sourceInTooltip: sources.length === 1 && !!sources[0].closest('.apexcharts-tooltip'),
+      visibleOffTooltip: offTooltip.length,
       // Violations that hit a <style> element or anything the chart component rendered.
       violations: window.__cspViolations
         .filter(v => v.target instanceof Element && (v.target.tagName === 'STYLE' || root.contains(v.target)))
@@ -86,7 +118,7 @@ export default async function (page, BASE) {
     };
   });
 
-  const details = JSON.stringify(state);
+  const details = JSON.stringify({ beforeHover, firstText, secondText, ...state });
 
   assert(state.sheetNonce === NONCE, `#apexcharts-css should carry the nonce: ${details}`);
   assert(state.legendSheets.length > 0 && state.legendSheets.every(n => n === NONCE),
@@ -94,9 +126,14 @@ export default async function (page, BASE) {
   assert(state.focusColor.toLowerCase() === '#008ffb', `the apexcharts stylesheet was not applied: ${details}`);
   assert(state.legendDisplay === 'flex', `the legend stylesheet was not applied: ${details}`);
   assert(state.probeVisible === true, `the page rule should override [hidden] on a plain span: ${details}`);
-  assert(state.tooltipSourceVisible === false, `the source of the Razor tooltip should stay hidden: ${details}`);
+  assert(beforeHover.homeHidden === true && beforeHover.sourceInHome && beforeHover.sourceVisible === false,
+    `before a hover the source of the Razor tooltip should sit hidden in its home: ${details}`);
+  assert(state.homeHidden === true, `the home of the Razor tooltip source should stay hidden: ${details}`);
+  assert(state.visibleOffTooltip === 0, `the Razor tooltip content should show only in the chart tooltip: ${details}`);
   assert(state.violations.length === 0, `CSP blocked styles of the chart: ${details}`);
-  assert(tooltipShown, `the Razor tooltip did not show on hover: ${details}`);
+  assert(tooltipShown, `the Razor tooltip did not show on hover of two bars: ${details}`);
+  assert(state.sourceCount === 1 && state.sourceInTooltip,
+    `the live Razor tooltip source should be the only one and sit in the chart tooltip: ${details}`);
 
   const realErrors = errors.filter(e => !isIgnorableError(e) && !/Content Security Policy/.test(e));
   assert(realErrors.length === 0, `console/page errors: ${JSON.stringify(realErrors)}`);

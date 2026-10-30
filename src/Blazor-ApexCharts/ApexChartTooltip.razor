@@ -5,8 +5,10 @@
 {
     @* "hidden" rather than an inline style attribute, which a strict Content Security Policy blocks. Page CSS
        can override [hidden], so blazor-apexcharts.js (hideTooltipSource) also sets display:none !important
-       through the CSSOM, which the policy allows. *@
-    <span hidden>
+       through the CSSOM, which the policy allows. While a tooltip shows, blazor-apexcharts.js moves the
+       tooltip_source span (not a copy) into the chart tooltip, so event handlers in the fragment keep working,
+       and finds it again through this tooltip_home span. *@
+    <span id="tooltip_home_@ChartId" hidden>
         <span id="tooltip_source_@ChartId">
             @if (Data != null)
             {

@@ -1,0 +1,50 @@
+﻿@* Event handlers inside ApexPointTooltip work, but apexcharts sets pointer-events: none on its tooltip and
+   hides it once the pointer leaves the data point. The CSS below lets the pointer reach the tooltip and
+   keeps it visible while it is hovered. Scope it to your chart so other charts keep the default. *@
+<style>
+    .interactive-tooltip .apexcharts-tooltip {
+        pointer-events: auto;
+    }
+
+        .interactive-tooltip .apexcharts-tooltip:hover {
+            opacity: 1;
+        }
+</style>
+
+<DemoContainer>
+    <p>Selected: <strong>@(selected ?? "none")</strong></p>
+
+    <div class="interactive-tooltip">
+        <ApexChart TItem="Order"
+                   Title="Order Gross Value">
+
+            <ApexPointTooltip>
+                <div class="p-2">
+                    <h3>@context.DataPoint.X</h3>
+                    <p>@context.DataPoint.Items.Sum(e => e.GrossValue).ToString("n0")</p>
+                    <Button Size=ButtonSize.Small BackgroundColor=TablerColor.Primary OnClick="() => Select(context.DataPoint.X?.ToString())">Select</Button>
+                </div>
+            </ApexPointTooltip>
+
+            <ChildContent>
+                <ApexPointSeries TItem="Order"
+                                 Items="Orders"
+                                 Name="Gross Value"
+                                 SeriesType="SeriesType.Bar"
+                                 XValue="@(e => e.Country)"
+                                 YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                                 OrderByDescending="e => e.Y" />
+            </ChildContent>
+        </ApexChart>
+    </div>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private string selected;
+
+    private void Select(string country)
+    {
+        selected = country;
+    }
+}
