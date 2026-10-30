@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSV export categories (#618)</title>
+</head>
+<body>
+  <!--
+    Plain apexcharts.js reproduction of issue #618, no Blazor involved.
+    Serve the repository root (python3 -m http.server 5307) and open
+    http://localhost:5307/tests/e2e/repros/csv-export-categories/
+    Add ?type=numeric to see the workaround, ?tick=0 to drop xaxis.tickAmount.
+
+    A line chart with numeric x values on the default category axis is turned numeric by
+    apexcharts.js (xaxis.convertedCatToNumeric). Exports.exportToCSV then reads
+    w.labelData.labels, which holds one label per axis tick, as if it held one category per data
+    point, so the first rows get the tick labels (1, 40, 80, ...) and only the rows past the last
+    tick fall back to the real x values.
+  -->
+  <div id="chart"></div>
+  <pre id="csv"></pre>
+  <script type="module">
+    import ApexCharts from '../../../../src/Blazor-ApexCharts/wwwroot/js/apexcharts.esm.js';
+
+    const params = new URLSearchParams(location.search);
+    const tick = Number(params.get('tick') ?? 40);
+    const xaxis = tick ? { tickAmount: tick } : {};
+    if (params.get('type')) xaxis.type = params.get('type');
+
+    const data = Array.from({ length: 1600 }, (_, i) => ({ x: i + 1, y: (i + 1) % 97 }));
+    const chart = new ApexCharts(document.querySelector('#chart'), {
+      chart: { type: 'line', height: 350, animations: { enabled: false } },
+      series: [{ name: 'Value', data }],
+      xaxis,
+    });
+    await chart.render();
+
+    // Capture the CSV instead of downloading it.
+    chart.ctx.exports.triggerDownload = href => {
+      const lines = decodeURIComponent(href.slice(href.indexOf(',') + 1)).replace('﻿', '').split('\n');
+      const wrong = lines.slice(1).filter((line, i) => Number(line.split(',')[0]) !== i + 1).length;
+      document.querySelector('#csv').textContent =
+        `rows with a wrong category: ${wrong}\n\n` + lines.slice(0, 6).join('\n') + '\n...\n' + lines.slice(40, 44).join('\n');
+    };
+    chart.exportToCSV();
+  </script>
+</body>
+</html>
