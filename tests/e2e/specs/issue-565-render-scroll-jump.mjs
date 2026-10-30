@@ -5,7 +5,8 @@
 // donut with no fixed height (its height is worked out while it renders) at the end of a long page.
 // At the top are a chart with a height of 100%, one whose responsive entry makes its height 100%,
 // and one with no height of its own, which renders at its automatic height until the spec sets a
-// global height of 100%, and later a global responsive entry of 100% (setGlobalOptions).
+// global height of 100%, and later a global responsive entry of 100% (setGlobalOptions). A chart
+// the spec renders itself has a height of 350 and then brings a responsive entry of 100% of its own.
 import { gotoChart, watchErrors, assert, assertNoErrors } from '../lib/helpers.mjs';
 
 const CHART = '#issue565-chart';
@@ -171,17 +172,17 @@ export default async function (page, BASE) {
   // out from the parent of the chart's container, here a card sized by its content (a min-height of
   // 300px and a 30px heading). A container held at its old height would make the card taller while
   // the new chart measures it, and the chart would grow by the heading on every render.
-  // Renders the chart in `card` again four times (RenderAsync) and returns the height of each svg,
-  // led by the height of the chart there before them unless `skipFirst`.
+  // Renders the chart in `card` again `renders` times (RenderAsync, four by default) and returns the
+  // height of each svg, led by the height of the chart there before them unless `skipFirst`.
   const svgHeight = card => page.evaluate(sel => {
     const svg = document.querySelector(sel + ' .apexcharts-canvas svg');
     return svg ? Number(svg.getAttribute('height')) : null;
   }, card);
 
-  const heightsOverRenders = async (card, button, counter, skipFirst) => {
+  const heightsOverRenders = async (card, button, counter, skipFirst, renders = 4) => {
     let count = Number(await page.locator(counter).textContent());
     const heights = skipFirst ? [] : [await svgHeight(card)];
-    for (let render = 1; render <= 4; render++) {
+    for (let render = 1; render <= renders; render++) {
       await page.evaluate(sel => {
         document.querySelector(sel + ' .apexcharts-canvas svg').setAttribute('data-issue565-old', '');
       }, card);
@@ -213,6 +214,11 @@ export default async function (page, BASE) {
   // global options are put back afterwards, as the rest of the page was rendered with them.
   await page.locator('#issue565-global-rendered', { hasText: '1' }).waitFor({ timeout: 20000 });
   const autoHeight = await svgHeight('#issue565-global-card');
+  // Puts back the global options the page was rendered with, keeping the charts rendered since
+  const restoreGlobalOptions = () => page.evaluate(() => {
+    window.__issue565Apex._chartInstances = window.Apex._chartInstances;
+    window.Apex = window.__issue565Apex;
+  });
   await page.evaluate(() => {
     window.__issue565Apex = window.Apex;
     window.blazor_apexchart.setGlobalOptions(JSON.stringify({ chart: { height: '100%' } }));
@@ -227,16 +233,25 @@ export default async function (page, BASE) {
     await setViewportHeight(viewport.height);
 
     // A global responsive entry of 100% reaches the chart with no height and no responsive entries
-    // of its own, so it keeps its height over renders too.
+    // of its own, so it keeps its height over renders too. The chart there before the first of these
+    // renders must not have a height of 100% already: apexcharts.js resolved that height for the old
+    // chart, and the hold is left off when it is a percentage, whatever the global options say now.
+    // So the global options go back first and the chart renders once at its automatic height. The
+    // first render after the global responsive entry is set then depends on that entry alone.
+    await restoreGlobalOptions();
+    const backToAuto = await heightsOverRenders('#issue565-global-card', '#issue565-global-render', '#issue565-global-rendered', true, 1);
+    assert(backToAuto[0] === autoHeight,
+      `with the page's global options back, the chart with no height should render at its automatic height ${autoHeight}, got ${JSON.stringify(backToAuto)}`);
+
     await page.evaluate(() => {
       window.blazor_apexchart.setGlobalOptions(JSON.stringify({
         responsive: [{ breakpoint: 5000, options: { chart: { height: '100%' } } }]
       }));
     });
-    const globalResponsiveHeights = await heightsOverRenders('#issue565-global-card', '#issue565-global-render', '#issue565-global-rendered', false);
+    const globalResponsiveHeights = await heightsOverRenders('#issue565-global-card', '#issue565-global-render', '#issue565-global-rendered', true);
     assert(globalResponsiveHeights[0] > 0 && globalResponsiveHeights[0] !== autoHeight
       && globalResponsiveHeights.every(h => h === globalResponsiveHeights[0]),
-      `a chart with a global responsive height of 100% should keep its height over renders, got ${JSON.stringify(globalResponsiveHeights)}`);
+      `a chart with a global responsive height of 100% should keep its height over renders, from the first one after its automatic height ${autoHeight}, got ${JSON.stringify(globalResponsiveHeights)}`);
 
     // The fixed chart has a responsive list of its own, which apexcharts.js puts in place of the
     // global one, so it keeps its 320px and its container is still held.
@@ -245,11 +260,69 @@ export default async function (page, BASE) {
     assert(fixedHeight === 320,
       `the fixed chart should keep the height of its own responsive entry under a global one of 100%, got ${fixedHeight}`);
   } finally {
+    await restoreGlobalOptions();
+  }
+
+  // The chart there before has a height in pixels, and the options the chart renders from now bring
+  // a responsive entry of 100% of their own. Only those incoming options tell that the new chart's
+  // height is a percentage: the height apexcharts.js resolved for the old chart is 350. Drives the
+  // real renderChart in a card like the ones above (a min-height of 300px and a 30px heading),
+  // first with no responsive entry and then twice with one.
+  await page.evaluate(() => {
+    const card = document.createElement('div');
+    card.id = 'issue565-own-responsive-card';
+    card.style.setProperty('min-height', '300px');
+    card.style.setProperty('max-width', '700px');
+    const heading = document.createElement('div');
+    heading.style.setProperty('height', '30px');
+    heading.textContent = 'Chart that brings a responsive height of 100% to its next render';
+    const el = document.createElement('div');
+    el.id = 'issue565-own-responsive';
+    card.append(heading, el);
+    document.body.appendChild(card);
+    window.__issue565OwnResponsiveOptions = responsive => JSON.stringify({
+      chart: { id: 'issue565-own-responsive', type: 'bar', height: 350, animations: { enabled: false } },
+      series: [{ name: 'a', data: [1, 2, 3] }],
+      xaxis: { categories: ['a', 'b', 'c'] },
+      ...(responsive ? { responsive: [{ breakpoint: 5000, options: { chart: { height: '100%' } } }] } : {})
+    });
+  });
+
+  const OWN_RESPONSIVE = '#issue565-own-responsive';
+  const ownResponsive = [];
+  try {
+    for (const responsive of [false, true, true]) {
+      const resolvedBefore = await page.evaluate(([sel, responsive]) => {
+        const lib = window.blazor_apexchart;
+        const el = document.querySelector(sel);
+        const old = el.querySelector('.apexcharts-canvas svg');
+        if (old) {
+          old.setAttribute('data-issue565-old', '');
+        }
+        const chart = lib.findChart('issue565-own-responsive');
+        const resolved = chart ? chart.w.config.chart.height : null;
+        lib.renderChart({ invokeMethodAsync: () => Promise.resolve() }, el, window.__issue565OwnResponsiveOptions(responsive), {});
+        return resolved;
+      }, [OWN_RESPONSIVE, responsive]);
+      await page.waitForFunction(sel => {
+        const svg = document.querySelector(sel + ' .apexcharts-canvas svg');
+        return !!svg && !svg.hasAttribute('data-issue565-old') && !!svg.querySelector('.apexcharts-series')
+          && !window.blazor_apexchart.heldContainers.has('issue565-own-responsive');
+      }, OWN_RESPONSIVE, { timeout: 20000 });
+      ownResponsive.push({ resolvedBefore, height: await svgHeight(OWN_RESPONSIVE) });
+    }
+  } finally {
     await page.evaluate(() => {
-      window.__issue565Apex._chartInstances = window.Apex._chartInstances;
-      window.Apex = window.__issue565Apex;
+      window.blazor_apexchart.destroyChart('issue565-own-responsive');
+      document.getElementById('issue565-own-responsive-card').remove();
     });
   }
+
+  const ownHeights = ownResponsive.map(r => r.height);
+  assert(ownResponsive[1].resolvedBefore === 350 && ownHeights[0] === 350,
+    `the chart before the first render with a responsive entry should have a height of 350px (else this check proves nothing), got ${JSON.stringify(ownResponsive)}`);
+  assert(ownHeights[1] > 0 && ownHeights[1] !== 350 && ownHeights[1] === ownHeights[2],
+    `a chart whose options bring their own responsive height of 100% should keep that height from the first render, got ${JSON.stringify(ownHeights)}`);
 
   // 3. A re-render that fails releases the hold and is handled as before: apexcharts.js handles its
   // own render promise, so a failed render raises no unhandled rejection. Drives the real
