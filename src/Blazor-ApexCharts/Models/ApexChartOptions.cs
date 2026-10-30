@@ -805,11 +805,18 @@ namespace ApexCharts
         /// <summary>
         /// Value on which the annotation will be drawn
         /// </summary>
+        /// <remarks>
+        /// On a datetime axis (<see cref="XAxisType.Datetime"/>) pass Unix milliseconds, for example
+        /// <c>date.ToUnixTimeMilliseconds()</c>, and plot the series the same way. A <see cref="System.DateTime"/>
+        /// value is sent as a string, which apexcharts.js places as a category label and loses when
+        /// the chart is zoomed so that the label is out of view.
+        /// </remarks>
         public object X { get; set; }
 
         /// <summary>
         /// If you provide this additional x2 value, a region will be drawn from x to x2.
         /// </summary>
+        /// <remarks>Use the same kind of value as <see cref="X"/>.</remarks>
         public object X2 { get; set; }
     }
 
