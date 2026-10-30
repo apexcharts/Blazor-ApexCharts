@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Duplicate category line repro</title>
+<style>
+  body { font: 14px system-ui, sans-serif; margin: 16px; }
+  .row { display: flex; flex-wrap: wrap; gap: 16px; }
+  .cell { flex: 1 1 360px; }
+  pre { background: #f4f4f4; padding: 8px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<!--
+  Plain-JS repro for Blazor-ApexCharts issue #509 (no Blazor involved).
+
+  A line chart whose {x, y} points use string x values loses its whole line as soon as two points
+  share the same x string. Markers, tooltips and the data are still there. Real-time charts hit it
+  when two events land in the same second and the x value is a "h:mm:ss" string.
+
+  Run from the repository root so the relative import of the vendored bundle resolves:
+    python3 -m http.server 5311
+    open http://localhost:5311/tests/e2e/repros/realtime-lines-vanish/
+  #result reports one line per case; a case marked BUG has data but no drawn line.
+-->
+<div class="row">
+  <div class="cell"><h4>Unique x strings</h4><div id="unique"></div></div>
+  <div class="cell"><h4>Last two points share x "10:00:01"</h4><div id="duplicate"></div></div>
+  <div class="cell"><h4>Same data via appendData</h4><div id="append"></div></div>
+  <div class="cell"><h4>Same timestamps on a datetime axis</h4><div id="datetime"></div></div>
+</div>
+<pre id="result">running</pre>
+<script type="module">
+import ApexCharts from '../../../../src/Blazor-ApexCharts/wwwroot/js/apexcharts.esm.js';
+
+const base = {
+  chart: { type: 'line', height: 260, animations: { enabled: false } },
+  stroke: { curve: 'straight' }
+};
+const dup = [{ x: '10:00:00', y: 5 }, { x: '10:00:01', y: 6 }, { x: '10:00:01', y: 9 }];
+const t0 = Date.UTC(2024, 0, 1, 10, 0, 0);
+
+async function make(el, extra) {
+  const chart = new ApexCharts(document.getElementById(el), Object.assign({}, base, extra));
+  await chart.render();
+  return chart;
+}
+
+function report(el, chart) {
+  const path = document.querySelector(`#${el} path.apexcharts-line`);
+  const points = chart.w.config.series[0].data.length;
+  return `${path ? 'ok ' : 'BUG'} ${el}: ${points} points, line ${path ? 'drawn' : 'missing'}, ` +
+    `series ${JSON.stringify(chart.w.seriesData.series[0])}, seriesX ${JSON.stringify(chart.w.seriesData.seriesX[0])}`;
+}
+
+const unique = await make('unique', { series: [{ name: 's', data: [{ x: 'a', y: 5 }, { x: 'b', y: 6 }, { x: 'c', y: 9 }] }] });
+const duplicate = await make('duplicate', { series: [{ name: 's', data: dup }] });
+const append = await make('append', { series: [{ name: 's', data: dup.slice(0, 2) }] });
+await append.appendData([{ data: [dup[2]] }]);
+const datetime = await make('datetime', {
+  xaxis: { type: 'datetime' },
+  series: [{ name: 's', data: [{ x: t0, y: 5 }, { x: t0 + 1000, y: 6 }, { x: t0 + 1000, y: 9 }] }]
+});
+
+document.getElementById('result').textContent = [
+  report('unique', unique), report('duplicate', duplicate), report('append', append), report('datetime', datetime)
+].join('\n');
+</script>
+</body>
+</html>
