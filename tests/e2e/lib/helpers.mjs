@@ -56,8 +56,8 @@ export const isServerHost = () => blazorHost() === 'server';
 export async function detectBlazorHost(page) {
   return page.evaluate(() => {
     const srcs = Array.from(document.scripts, s => s.src || '');
-    if (srcs.some(s => /\/blazor\.server\.js(\?|$)/.test(s))) return 'server';
-    if (srcs.some(s => /\/blazor\.webassembly\.js(\?|$)/.test(s))) return 'wasm';
+    if (srcs.some(s => /\/blazor\.server(\.min)?\.js(\?|$)/.test(s))) return 'server';
+    if (srcs.some(s => /\/blazor\.webassembly(\.min)?\.js(\?|$)/.test(s))) return 'wasm';
     return null;
   });
 }
@@ -81,4 +81,27 @@ export function skipOnHost(host, reason) {
   if (host !== 'wasm' && host !== 'server') throw new Error(`skipOnHost: unknown host ${JSON.stringify(host)}`);
   if (!reason) throw new Error('skipOnHost: a reason is required');
   if (blazorHost() === host) throw new SpecSkipped(host, reason);
+}
+
+// Starts collecting the "Blazor-ApexCharts:" console warnings the library writes when a host cannot
+// call .NET synchronously, from the first script on. Call before navigating. Read them with
+// syncWarnings(page).
+export async function recordSyncWarnings(page) {
+  await page.addInitScript(() => {
+    window.__apexSyncWarnings = [];
+    const warn = console.warn.bind(console);
+    console.warn = (...args) => {
+      if (String(args[0]).startsWith('Blazor-ApexCharts:')) window.__apexSyncWarnings.push(String(args[0]));
+      warn(...args);
+    };
+  });
+}
+
+// The warnings recorded by recordSyncWarnings, each as { chartId, callbacks, message }.
+export async function syncWarnings(page) {
+  const messages = await page.evaluate(() => (window.__apexSyncWarnings || []).slice());
+  return messages.map(message => {
+    const m = /chart "([^"]*)" skipped (.+?) because/.exec(message);
+    return { chartId: m ? m[1] : null, callbacks: m ? m[2].split(', ') : [], message };
+  });
 }

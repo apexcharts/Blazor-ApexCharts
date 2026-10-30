@@ -46,6 +46,9 @@ up and stops when it is the other model, so a spec never runs against the wrong 
   cannot mean anything there, and say why: `run.mjs` prints `SKIP` with the reason and lists every
   skip in its summary.
 - `detectBlazorHost(page)` reads the model from a loaded page (`'server'`, `'wasm'` or `null`).
+- `recordSyncWarnings(page)` (call it before navigating) and `syncWarnings(page)` collect the
+  console warnings the library writes when a host cannot call .NET synchronously, such as the .NET
+  label formatters on Blazor Server.
 
 ```js
 import { skipOnHost } from '../lib/helpers.mjs';
