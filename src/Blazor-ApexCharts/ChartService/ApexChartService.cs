@@ -277,7 +277,8 @@ public class ApexChartService : IApexChartService
     /// <param name="apexChart"></param>
     public void UnRegisterChart(IApexChartBase apexChart)
     {
-        charts.TryRemove(apexChart.ChartId, out _);
+        // Remove the entry only if it belongs to this chart, never another chart that uses the same id.
+        charts.TryRemove(new KeyValuePair<string, IApexChartBase>(apexChart.ChartId, apexChart));
     }
 
 

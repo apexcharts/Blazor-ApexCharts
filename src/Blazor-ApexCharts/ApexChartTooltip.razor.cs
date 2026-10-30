@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System;
 using System.Threading.Tasks;
 
 namespace ApexCharts.Internal
@@ -28,7 +29,13 @@ namespace ApexCharts.Internal
         {
             if (JsApexchart != null)
             {
-                await JsApexchart.InvokeVoidAsync("blazor_apexchart.copyTooltipContent", ChartId);
+                try
+                {
+                    await JsApexchart.InvokeVoidAsync("blazor_apexchart.copyTooltipContent", ChartId);
+                }
+                // The chart is being disposed or the circuit is gone: there is no tooltip left to fill.
+                catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+                { }
             }
         }
     }
