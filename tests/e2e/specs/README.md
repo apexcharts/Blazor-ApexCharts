@@ -29,7 +29,8 @@ export default async function (page, BASE) {
   (`locator.waitFor`, `page.waitForSelector`, `page.waitForFunction`), not on fixed delays.
 
 Helpers in `../lib/helpers.mjs`: `gotoChart(page, BASE, route, selector?)`, `watchErrors(page)`,
-`assert(cond, msg)`, `assertNoErrors(realErrors, label)`, `isIgnorableError(text)`.
+`assert(cond, msg)`, `assertNoErrors(realErrors, label)`, `isIgnorableError(text)`,
+`detectHost(page, BASE)` (`'wasm'`, `'server'` or `'unknown'`, for a spec that has to treat the hosts differently).
 
 ## A demo page for the spec
 

@@ -65,8 +65,9 @@ export default async function (page, BASE) {
   await gotoChart(page, BASE, 'issues/644', '#issue644 .apexcharts-canvas svg');
   await page.locator('#issue644 .apexcharts-bar-area').first().waitFor({ timeout: 30000 });
 
-  const chartId = await page.locator('#issue644 [id^="tooltip_home_"]')
-    .evaluate(e => e.id.slice('tooltip_home_'.length));
+  const home = page.locator('#issue644 [id^="tooltip_home_"]');
+  assert(await home.count() === 1, 'the .NET tooltip should render into one tooltip_home span next to the chart');
+  const chartId = await home.evaluate(e => e.id.slice('tooltip_home_'.length));
 
   await hoverAndClick(page, 2, 'Mar', 1);
   // A second point: the tooltip keeps updating after the first click, and the handler sees the new point.

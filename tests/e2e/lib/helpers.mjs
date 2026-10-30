@@ -27,6 +27,20 @@ export async function gotoChart(page, BASE, route, selector = '.apexcharts-canva
   await page.waitForSelector(selector, { timeout });
 }
 
+// Which docs host serves BASE: 'wasm' (blazor.webassembly.js), 'server' (blazor.server.js, a SignalR
+// WebSocket) or 'unknown' (blazor.web.js picks its mode per component, or the page could not be read).
+// Reads the host page over HTTP, so it can run before the spec navigates or routes anything.
+export async function detectHost(page, BASE) {
+  try {
+    const html = await (await page.request.get(`${BASE}/`)).text();
+    if (/_framework\/blazor\.webassembly\.js/.test(html)) return 'wasm';
+    if (/_framework\/blazor\.server\.js/.test(html)) return 'server';
+  } catch {
+    // Fall through: the caller decides what an unknown host needs.
+  }
+  return 'unknown';
+}
+
 // Throws with `message` unless `condition` is truthy.
 export function assert(condition, message) {
   if (!condition) throw new Error(message);
