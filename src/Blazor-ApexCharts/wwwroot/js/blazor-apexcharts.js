@@ -460,10 +460,25 @@ window.blazor_apexchart = {
         }
     },
 
+    // The Razor tooltip source sits in a <span hidden> next to the chart. A page rule such as
+    // ".card span { display: inline-block }" beats the [hidden] rule of the browser, so pin
+    // display:none on the element. A CSSOM write, unlike a style attribute in the markup, is
+    // allowed by a style-src without 'unsafe-inline', and !important on the element beats any page rule.
+    hideTooltipSource(chartId) {
+        var sourceElement = document.getElementById("tooltip_source_" + chartId);
+        var wrapper = sourceElement ? sourceElement.parentElement : null;
+
+        if (wrapper && wrapper.hasAttribute("hidden")) {
+            wrapper.style.setProperty("display", "none", "important");
+        }
+    },
+
     copyTooltipContent(chartId) {
 
         var sourceId = "tooltip_source_" + chartId;
         var targetId = "tooltip_target_" + chartId;
+
+        this.hideTooltipSource(chartId);
 
         var sourceElement = document.getElementById(sourceId);
         var targetElement = document.getElementById(targetId);
@@ -751,6 +766,7 @@ window.blazor_apexchart = {
         //Always destroy chart if it exists
         this.destroyChart(options.chart.id);
         this.dotNetRefs.set(options.chart.id, dotNetObject)
+        this.hideTooltipSource(options.chart.id);
 
         var chart = new ApexCharts(container, options);
         chart.render();

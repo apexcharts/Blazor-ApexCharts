@@ -20,6 +20,14 @@ export default async function (page, BASE) {
     document.addEventListener('securitypolicyviolation', e => {
       window.__cspViolations.push({ directive: e.effectiveDirective, target: e.target });
     });
+    // A page rule that shows every span in the chart's container, as ".card span { display: inline-block }"
+    // would in an app without a CSS framework. Such a rule beats the browser's [hidden] rule, so the tooltip
+    // source must not rely on that alone. The docs site's CSS framework already declares
+    // [hidden] { display: none !important }, so this rule needs !important to override it here. A constructed
+    // stylesheet is CSSOM, which the policy does not block.
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync('#issue-658-chart span { display: inline-block !important; }');
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
   });
 
   // Add the CSP header to the HTML document only.
@@ -47,12 +55,20 @@ export default async function (page, BASE) {
       .filter(s => s.textContent.includes('apexcharts-legend'))
       .map(s => s.nonce);
     const tooltipSource = root.querySelector('[id^="tooltip_source_"]');
+    // A plain <span hidden> under the same rule, to show the rule really overrides [hidden].
+    const probe = document.createElement('span');
+    probe.hidden = true;
+    probe.textContent = 'probe';
+    root.appendChild(probe);
+    const probeVisible = probe.checkVisibility();
+    probe.remove();
     return {
       sheetNonce: sheet ? sheet.nonce : null,
       legendSheets,
       // Declared only in the injected apexcharts stylesheet, so it is set only when that sheet applied.
       focusColor: getComputedStyle(canvas).getPropertyValue('--apexcharts-focus-color').trim(),
       legendDisplay: getComputedStyle(root.querySelector('.apexcharts-legend')).display,
+      probeVisible,
       tooltipSourceVisible: tooltipSource ? tooltipSource.parentElement.checkVisibility() : null,
       // Violations that hit a <style> element or anything the chart component rendered.
       violations: window.__cspViolations
@@ -68,6 +84,7 @@ export default async function (page, BASE) {
     `the legend <style> should carry the nonce: ${details}`);
   assert(state.focusColor.toLowerCase() === '#008ffb', `the apexcharts stylesheet was not applied: ${details}`);
   assert(state.legendDisplay === 'flex', `the legend stylesheet was not applied: ${details}`);
+  assert(state.probeVisible === true, `the page rule should override [hidden] on a plain span: ${details}`);
   assert(state.tooltipSourceVisible === false, `the source of the Razor tooltip should stay hidden: ${details}`);
   assert(state.violations.length === 0, `CSP blocked styles of the chart: ${details}`);
   assert(tooltipShown, `the Razor tooltip did not show on hover: ${details}`);

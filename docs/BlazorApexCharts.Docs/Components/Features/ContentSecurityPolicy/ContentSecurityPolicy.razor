@@ -17,15 +17,33 @@
         </p>
         <ul>
             <li>
-                The stylesheet is shared by every chart on the page and is added by the first chart that renders, so
-                set the nonce on every chart, or once in the global options
-                (<code>AddApexCharts(o =&gt; o.GlobalOptions = ...)</code> or <code>IApexChartService.SetGlobalOptionsAsync</code>).
+                A nonce protects only while it is unpredictable, so generate a fresh one for each request on the server
+                and send it in the CSP header. Then pass the same value to your charts, for example from
+                <code>App.razor</code>, where the <code>HttpContext</code> is available, as a parameter of your
+                <code>Routes</code> component that you cascade to the pages with charts.
             </li>
             <li>
-                A nonce protects only while it is unpredictable, so generate a fresh one for each request on the server,
-                send it in the CSP header, and pass the same value to your charts, for example from <code>App.razor</code>,
-                where the <code>HttpContext</code> is available. A Blazor app keeps the policy of the page it loaded with,
-                so one nonce per page load is enough.
+                The stylesheet is shared by every chart on the page and is added by the first chart that renders, so
+                the nonce has to be in place before any chart renders. With a per-request nonce, either set
+                <code>Chart.Nonce</code> on every chart, or put it in a new <code>ApexChartBaseOptions</code> passed to
+                <code>IApexChartService.SetGlobalOptionsAsync(options, false)</code>, and render your charts only after
+                that call completes. <code>IApexChartService</code> is scoped, so the value stays with one user.
+            </li>
+            <li>
+                Do not put a per-request nonce in <code>AddApexCharts(o =&gt; o.GlobalOptions = ...)</code>, and do not
+                write it into the <code>GlobalOptions</code> object that came from there. Those options are built once at
+                startup and shared by every user and every circuit. They fit only a value that never changes, and a nonce
+                that never changes gives none of a nonce's protection: use a hash source instead (below).
+            </li>
+            <li>
+                The nonce must match the policy of the document the charts render in, for as long as that document
+                lives. The browser keeps enforcing the policy the page first loaded with. With global interactivity (a
+                render mode on <code>Routes</code> in <code>App.razor</code>), navigation stays in the browser and one
+                nonce per page load is enough. With per-page interactivity or static server rendering, enhanced
+                navigation, the default in a Blazor Web App, fetches each new page from the server, so
+                <code>App.razor</code> generates a new nonce that the policy in force does not allow, and the charts on
+                that page lose their styles. Use global interactivity, or make links to pages with charts full page loads
+                with <code>data-enhance-nav="false"</code>, so each one arrives with a matching header.
             </li>
             <li>
                 A page served as a static file cannot vary a nonce per request. There, a hash source works instead:
@@ -36,8 +54,8 @@
 
         <h4>Inline style attributes</h4>
         <p>
-            The Blazor components add no <code>&lt;style&gt;</code> elements and no <code>style</code> attributes of their
-            own. A few tooltips that ApexCharts builds as HTML (the range bar tooltip and bar goal markers) color their
+            The Blazor components add no <code>&lt;style&gt;</code> elements and no <code>style</code> attributes to
+            their markup. A few tooltips that ApexCharts builds as HTML (the range bar tooltip and bar goal markers) color their
             markers with a <code>style</code> attribute. A strict policy blocks those, and the markers lose their
             color. If that matters, allow attributes alone with <code>style-src-attr 'unsafe-inline'</code>, which
             leaves <code>&lt;style&gt;</code> elements under the nonce. Styles in your own Razor tooltip templates follow

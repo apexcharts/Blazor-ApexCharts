@@ -3,7 +3,9 @@
 
 @if (ApexTooltip != null)
 {
-    @* "hidden" rather than an inline style attribute, which a strict Content Security Policy blocks *@
+    @* "hidden" rather than an inline style attribute, which a strict Content Security Policy blocks. Page CSS
+       can override [hidden], so blazor-apexcharts.js (hideTooltipSource) also sets display:none !important
+       through the CSSOM, which the policy allows. *@
     <span hidden>
         <span id="tooltip_source_@ChartId">
             @if (Data != null)

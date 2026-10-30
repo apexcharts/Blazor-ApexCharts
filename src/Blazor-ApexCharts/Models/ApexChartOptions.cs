@@ -989,9 +989,12 @@ namespace ApexCharts
         /// A Content Security Policy (CSP) nonce that ApexCharts copies onto the <c>&lt;style&gt;</c> elements it injects
         /// (the shared <c>apexcharts-css</c> stylesheet and the legend styles). Set it when your page sends a CSP whose
         /// <c>style-src</c> lists <c>'nonce-...'</c> instead of <c>'unsafe-inline'</c>, otherwise the browser blocks those
-        /// styles and the chart renders without them. Use the same per-request value that appears in your CSP header.
+        /// styles and the chart renders without them. Use the value from the CSP header the current page loaded with.
         /// The stylesheet is shared by every chart on the page and is created by the first chart that renders, so that
-        /// chart must carry the nonce; setting it on <see cref="ApexChartsServiceOptions.GlobalOptions"/> covers every chart.
+        /// chart must carry the nonce. A nonce generated per request belongs on each chart, or in options passed to the
+        /// scoped <see cref="IApexChartService.SetGlobalOptionsAsync(IApexChartBaseOptions, bool)"/> before the first
+        /// chart renders. <see cref="ApexChartsServiceOptions.GlobalOptions"/> is configured once at startup and shared
+        /// by every user, so use it only for a value that never changes.
         /// Defaults to no nonce.
         /// </summary>
         public string Nonce { get; set; }
