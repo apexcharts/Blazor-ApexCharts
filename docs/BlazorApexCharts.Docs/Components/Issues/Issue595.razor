@@ -28,6 +28,40 @@
     </ApexChart>
 </div>
 
+<p>
+    Tooltip values use the formatter of the axis their series is plotted on: axis 0 holds Alpha and Beta,
+    axis 1 holds Gamma. Alpha and Beta start with "A0:" and Gamma with "A1:".
+</p>
+
+<div id="issue595-tooltip-chart">
+    <ApexChart TItem="Point"
+               Height="400"
+               Options="tooltipOptions"
+               FormatYAxisLabelForAxis="FormatAxis">
+
+        <ApexPointSeries TItem="Point"
+                         Items="Points"
+                         Name="Alpha"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Revenue)" />
+
+        <ApexPointSeries TItem="Point"
+                         Items="Points"
+                         Name="Beta"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Revenue + 500)" />
+
+        <ApexPointSeries TItem="Point"
+                         Items="Points"
+                         Name="Gamma"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Margin)" />
+    </ApexChart>
+</div>
+
 @code {
     private class Point
     {
@@ -51,6 +85,17 @@
             new YAxis { SeriesName = "Revenue" },
             new YAxis { SeriesName = "Margin", Opposite = true }
         }
+    };
+
+    // One axis holds two series, so series 1 (Beta) is on axis 0 and series 2 (Gamma) on axis 1.
+    private readonly ApexChartOptions<Point> tooltipOptions = new()
+    {
+        Yaxis = new List<YAxis>
+        {
+            new YAxis { SeriesName = new SeriesName("Alpha", "Beta") },
+            new YAxis { SeriesName = new SeriesName("Gamma"), Opposite = true }
+        },
+        Tooltip = new Tooltip { Shared = true, Intersect = false }
     };
 
     private string FormatAxis(decimal value, int axisIndex)

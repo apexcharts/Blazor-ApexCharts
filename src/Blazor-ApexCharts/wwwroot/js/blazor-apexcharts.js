@@ -73,15 +73,50 @@ window.blazor_apexchart = {
         }
 
         try {
-            return dotNetRef.invokeMethod('JSGetFormattedYAxisValueForAxis', value, axisIndex);
+            return dotNetRef.invokeMethod('JSGetFormattedYAxisValueForAxis', value, this.getYAxisIndexForValue(index, axisIndex));
         } catch (e) {
-            // Synchronous interop is only available in Blazor WebAssembly.
-            if (!this.yAxisForAxisWarned) {
-                this.yAxisForAxisWarned = true;
-                console.warn("FormatYAxisLabelForAxis is only supported in Blazor WebAssembly", e);
+            var message = e && e.message ? String(e.message) : String(e);
+            if (message.indexOf('synchronous') !== -1) {
+                // Blazor Server rejects synchronous interop. Warn once, not once per label.
+                if (!this.yAxisForAxisWarned) {
+                    this.yAxisForAxisWarned = true;
+                    console.warn("FormatYAxisLabelForAxis needs synchronous interop, which only Blazor WebAssembly supports", e);
+                }
+            } else {
+                console.error("FormatYAxisLabelForAxis failed", e);
             }
             return value;
         }
+    },
+
+    // A y-axis formatter is called for axis labels with the tick index as the second
+    // argument, and for tooltip values with { seriesIndex, dataPointIndex, w }. A tooltip
+    // looks the formatter up by series index (falling back to the first axis), so the
+    // index written into it is the wrong axis whenever series and axes are not one to
+    // one. For a value of a series, use the axis apexcharts.js plotted that series on.
+    getYAxisIndexForValue(index, axisIndex) {
+        if (index === null || typeof index !== 'object') {
+            return axisIndex;
+        }
+
+        // dataPointIndex is -1 when apexcharts.js measures the labels of the axis at seriesIndex.
+        if (typeof index.seriesIndex !== 'number' || typeof index.dataPointIndex !== 'number' || index.dataPointIndex < 0) {
+            return axisIndex;
+        }
+
+        var chart = index.w !== undefined ? index.w : index;
+        var globals = chart.globals;
+        // Horizontal bars format their category labels with the first y-axis formatter.
+        if (globals === undefined || !globals.axisCharts || globals.isBarHorizontal) {
+            return axisIndex;
+        }
+
+        var map = globals.seriesYAxisReverseMap;
+        if (!Array.isArray(map) || typeof map[index.seriesIndex] !== 'number') {
+            return axisIndex;
+        }
+
+        return map[index.seriesIndex];
     },
 
     findChart(id) {

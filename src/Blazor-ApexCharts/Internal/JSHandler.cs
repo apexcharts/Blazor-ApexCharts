@@ -56,7 +56,7 @@ namespace ApexCharts.Internal
         /// Callback from JavaScript to get a formatted value for the Y axis at <paramref name="axisIndex"/>
         /// </summary>
         /// <param name="value">Details from JavaScript</param>
-        /// <param name="axisIndex">Index of the Y axis in <see cref="ApexChartOptions{TItem}.Yaxis"/>, written into the formatter by the chart</param>
+        /// <param name="axisIndex">Index of the Y axis in <see cref="ApexChartBaseOptions.Yaxis"/>: the axis the label belongs to, or for a tooltip value the axis its series is plotted on</param>
         /// <remarks>
         /// Will execute <see cref="ApexChart{TItem}.FormatYAxisLabelForAxis"/>
         /// </remarks>
