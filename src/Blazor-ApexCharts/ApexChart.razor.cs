@@ -425,6 +425,7 @@ namespace ApexCharts
         private List<IApexSeries<TItem>> apexSeries = new();
         private bool isReady;
         private bool isDisposed;
+        private bool isUnregistered;
         private bool forceRender = true;
         private string chartId;
         private HoverData<TItem> tooltipData;
@@ -1443,6 +1444,8 @@ namespace ApexCharts
             }
 
             await Task.Yield();
+
+            // Disposed during the yield (a RenderAsync call, then the page navigates away): nothing to draw, and no OnRendered.
             if (isDisposed) { return; }
             forceRender = false;
             PrepareChart();
@@ -1602,12 +1605,22 @@ namespace ApexCharts
         protected virtual async ValueTask DisposeAsyncCore()
         {
             isDisposed = true;
-            chartService?.UnRegisterChart(this);
+            UnRegister();
 
             var module = blazor_apexchart;
             blazor_apexchart = null;
 
             await ReleaseJsAsync(module, isReady ? Options?.Chart?.Id : null);
+        }
+
+        private void UnRegister()
+        {
+            // Only once: DisposeAsync calls Dispose() after awaiting the browser, and by then a new chart
+            // with the same id may have registered. A second call would remove that chart's entry.
+            if (isUnregistered) { return; }
+            isUnregistered = true;
+
+            chartService?.UnRegisterChart(this);
         }
 
         /// <summary>
@@ -1619,7 +1632,7 @@ namespace ApexCharts
             GC.SuppressFinalize(this);
             isDisposed = true;
 
-            chartService?.UnRegisterChart(this);
+            UnRegister();
 
             var module = blazor_apexchart;
             blazor_apexchart = null;
