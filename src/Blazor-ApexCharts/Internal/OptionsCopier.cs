@@ -13,9 +13,10 @@ namespace ApexCharts.Internal;
 /// <remarks>
 /// Makes deep copies of option objects, so that a copy can be changed without changing the original.
 /// The chart services use it to give every DI scope (every Blazor Server circuit) its own copy of the
-/// global options configured with <see cref="ApexChartsExtensions.AddApexCharts"/>.
+/// global options configured with <see cref="ApexChartsExtensions.AddApexCharts"/>. It is internal, and
+/// the MAUI package reaches it through InternalsVisibleTo (both packages ship from the same release).
 /// </remarks>
-public static class OptionsCopier
+internal static class OptionsCopier
 {
     private static readonly Assembly modelAssembly = typeof(ApexChartBaseOptions).Assembly;
     private static readonly MethodInfo memberwiseClone = typeof(object).GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -31,7 +32,9 @@ public static class OptionsCopier
     /// Option objects are copied member by member, including private fields, and so are the lists,
     /// dictionaries and arrays they hold. An option object is an instance of a class of this library, of a
     /// class derived from one (for example your own subclass of <see cref="ApexChartBaseOptions"/> or of
-    /// <see cref="Theme"/>), or of your own implementation of <see cref="IApexChartBaseOptions"/>.
+    /// <see cref="Theme"/>), or of your own implementation of <see cref="IApexChartBaseOptions"/>, also when
+    /// that class implements <see cref="IDisposable"/> or <see cref="IAsyncDisposable"/>. The library's own
+    /// components, chart services and disposable resources, and classes derived from them, are not options.
     /// Strings, value types, delegates, components and any other object (for example the items bound to a
     /// series) are immutable or not owned by the options, and are kept as the same reference. An object
     /// referenced twice in the source is copied once, so shared references and cycles are preserved.
@@ -122,25 +125,38 @@ public static class OptionsCopier
             if (definition == typeof(List<>) || definition == typeof(Dictionary<,>)) { return true; }
         }
 
-        return IsOptionType(type)
-            && !typeof(IComponent).IsAssignableFrom(type)
-            && !typeof(IApexChartService).IsAssignableFrom(type)
-            && !typeof(IDisposable).IsAssignableFrom(type)
-            && !typeof(IAsyncDisposable).IsAssignableFrom(type);
+        return IsOptionType(type);
     }
 
     /// <summary>
-    /// A class of this library, a class derived from one (declared in any assembly), or an implementation of
-    /// <see cref="IApexChartBaseOptions"/>. A consumer may configure the global options with a subclass, and
-    /// sharing that object between scopes would bring back the leak these copies exist to prevent.
+    /// An implementation of <see cref="IApexChartBaseOptions"/>, or a class of this library that is not a
+    /// component, a chart service or a disposable resource, or a class derived from one (declared in any
+    /// assembly). A consumer may configure the global options with a subclass, and sharing that object between
+    /// scopes would bring back the leak these copies exist to prevent.
     /// </summary>
+    /// <remarks>
+    /// Only the library class decides whether a type is excluded, never what a subclass adds: a consumer's
+    /// subclass of <see cref="ApexChartBaseOptions"/> or <see cref="Theme"/> that also implements
+    /// <see cref="IDisposable"/> is still an option object and is still copied.
+    /// </remarks>
     private static bool IsOptionType(Type type)
     {
         if (typeof(IApexChartBaseOptions).IsAssignableFrom(type)) { return true; }
         for (var current = type; current != null && current != typeof(object); current = current.BaseType)
         {
-            if (current.Assembly == modelAssembly) { return true; }
+            if (current.Assembly == modelAssembly) { return !IsResource(current); }
         }
         return false;
+    }
+
+    /// <summary>
+    /// The library classes that are not options: components, chart services and disposable resources.
+    /// </summary>
+    private static bool IsResource(Type libraryType)
+    {
+        return typeof(IComponent).IsAssignableFrom(libraryType)
+            || typeof(IApexChartService).IsAssignableFrom(libraryType)
+            || typeof(IDisposable).IsAssignableFrom(libraryType)
+            || typeof(IAsyncDisposable).IsAssignableFrom(libraryType);
     }
 }
