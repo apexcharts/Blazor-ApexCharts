@@ -5719,6 +5719,12 @@ namespace ApexCharts
         /// <summary>
         /// Categories are labels which are displayed on the x-axis.
         /// </summary>
+        /// <remarks>
+        /// On a category axis the points of every series are placed by position, not by their X value:
+        /// the first point of each series is drawn at the first category, the second at the second, and so on.
+        /// When a series skips a category, or lists its points in a different order, its points move onto the wrong labels.
+        /// To keep them aligned, give every series one point per category in category order, with a <c>null</c> Y value for an empty category.
+        /// </remarks>
         public object Categories { get; set; }
 
         /// <summary>
