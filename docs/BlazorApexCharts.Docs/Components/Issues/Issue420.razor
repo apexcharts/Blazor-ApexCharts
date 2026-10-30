@@ -20,12 +20,18 @@
     </div>
 </div>
 
-<h5>Target added later</h5>
+<h5>Target added later, brush updated while it waits</h5>
+<button id="issue420-update-brush" class="btn btn-secondary mb-2" @onclick="UpdateBrushB">Update brush</button>
 <button id="issue420-show-target" class="btn btn-primary mb-2" @onclick="() => showTargetB = true">Show target</button>
+<p>
+    Brush OnRendered count: <span id="issue420-b-brush-rendered">@brushBRendered</span>,
+    updates: <span id="issue420-b-updated">@(brushBUpdated ? "sent" : "none")</span>
+</p>
 <div id="issue420-b">
     <div id="issue420-b-brush-host">
-        <ApexChart TItem="Point" Title="Brush" Options="brushB" Height="130" XAxisType="XAxisType.Datetime">
-            <ApexPointSeries TItem="Point" Items="data" Name="Value" SeriesType="SeriesType.Area"
+        <ApexChart TItem="Point" @ref="brushBChart" Title="Brush" Options="brushB" Height="130" XAxisType="XAxisType.Datetime"
+                   OnRendered="() => brushBRendered++">
+            <ApexPointSeries TItem="Point" Items="brushDataB" Name="Value" SeriesType="SeriesType.Area"
                              XValue="@(e => e.Date)" YValue="@(e => e.Value)" OrderBy="e => e.X" />
         </ApexChart>
     </div>
@@ -40,6 +46,14 @@
     }
 </div>
 
+<h5>Target id that matches no chart</h5>
+<div id="issue420-c-brush-host">
+    <ApexChart TItem="Point" Title="Brush" Options="brushC" Height="130" XAxisType="XAxisType.Datetime">
+        <ApexPointSeries TItem="Point" Items="data" Name="Value" SeriesType="SeriesType.Area"
+                         XValue="@(e => e.Date)" YValue="@(e => e.Value)" OrderBy="e => e.X" />
+    </ApexChart>
+</div>
+
 @code {
     public class Point
     {
@@ -47,13 +61,23 @@
         public decimal Value { get; set; }
     }
 
+    public const string UpdatedColor = "#E51C15";
+    public const decimal UpdatedValue = 99;
+    public const string NoteText = "issue420-note";
+
     private static readonly DateTimeOffset start = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
-    private readonly List<Point> data = Enumerable.Range(0, 100)
+    private static List<Point> MakeData() => Enumerable.Range(0, 100)
         .Select(i => new Point { Date = start.AddDays(i), Value = 20 + (i * 37 % 60) })
         .ToList();
 
+    private readonly List<Point> data = MakeData();
+    private readonly List<Point> brushDataB = MakeData();
+
     private bool showTargetB;
-    private ApexChartOptions<Point> brushA, targetA, brushB, targetB;
+    private bool brushBUpdated;
+    private int brushBRendered;
+    private ApexChart<Point> brushBChart;
+    private ApexChartOptions<Point> brushA, targetA, brushB, targetB, brushC;
 
     protected override void OnInitialized()
     {
@@ -61,6 +85,25 @@
         brushA = Brush("issue420-a-brush", "issue420-a-target");
         targetB = Target("issue420-b-target");
         brushB = Brush("issue420-b-brush", "issue420-b-target");
+        brushC = Brush("issue420-c-brush", "issue420-c-missing");
+    }
+
+    // Each call reaches the brush chart while it still waits for its target
+    private async Task UpdateBrushB()
+    {
+        brushB.Colors = new List<string> { UpdatedColor };
+        await brushBChart.UpdateOptionsAsync(true, false, false);
+
+        foreach (var point in brushDataB) { point.Value = UpdatedValue; }
+        await brushBChart.UpdateSeriesAsync(false);
+
+        await brushBChart.AddXAxisAnnotationAsync(new AnnotationsXAxis
+        {
+            X = start.AddDays(50).ToUnixTimeMilliseconds(),
+            Label = new Label { Text = NoteText }
+        }, true);
+
+        brushBUpdated = true;
     }
 
     private static ApexChartOptions<Point> Target(string id) => new()
