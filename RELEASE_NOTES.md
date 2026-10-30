@@ -1,6 +1,6 @@
 # Release notes
 
-## Unreleased
+## v7.1.0
 
 ### ⚠️ Property type changes
 
