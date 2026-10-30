@@ -1,8 +1,14 @@
 @implements IDisposable
+@using System.Threading
+@using Microsoft.JSInterop
 @*
     ApexCharts v6 streaming. A rolling window bounded to MaxPoints trims old points as new
     data arrives so long-running feeds do not grow memory without bound. This demo appends a
     point automatically on a timer; once past the window size it scrolls at constant velocity.
+
+    The feed is a PeriodicTimer loop started from the renderer, so every tick runs on the
+    component's dispatcher (no InvokeAsync, no async void timer callback), disposing the
+    component stops it, and no exception can escape it to crash a Blazor Server host.
 *@
 <div class="mb-2">
     <button class="btn btn-primary" @onclick="ToggleFeed">@(running ? "Pause feed" : "Resume feed")</button>
@@ -28,7 +34,7 @@
     private int nextX;
     private bool running = true;
     private readonly Random rnd = new();
-    private System.Timers.Timer timer;
+    private readonly CancellationTokenSource feedCancellation = new();
 
     protected override void OnInitialized()
     {
@@ -52,40 +58,66 @@
     {
         if (firstRender)
         {
-            timer = new System.Timers.Timer(900);
-            timer.Elapsed += async (_, _) => await Tick();
-            timer.AutoReset = true;
-            timer.Start();
+            // Not awaited: the loop runs until the component is disposed and handles its own errors.
+            _ = RunFeedAsync(feedCancellation.Token);
         }
     }
 
-    private async Task Tick()
+    private async Task RunFeedAsync(CancellationToken cancellationToken)
     {
-        if (!running || chart is null) { return; }
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(900));
 
-        await InvokeAsync(async () =>
+        try
         {
-            var added = new List<Pt> { new(nextX++, rnd.Next(10, 90)) };
-            points.Add(added[0]);
-
-            // Keep the C# backing list bounded too; the core trims the rendered window itself.
-            if (points.Count > 50)
+            // The tick resumes on the dispatcher after any pending disposal, so the token is checked again.
+            while (await timer.WaitForNextTickAsync(cancellationToken) && !cancellationToken.IsCancellationRequested)
             {
-                points.RemoveRange(0, points.Count - 50);
-            }
+                if (!running) { continue; }
 
-            await chart.AppendDataAsync(added);
-            StateHasChanged();
-        });
+                try
+                {
+                    await AppendPointAsync();
+                }
+                catch (TaskCanceledException) when (!cancellationToken.IsCancellationRequested)
+                {
+                    // The browser did not answer in time (a dropped connection in Blazor Server).
+                    // A live feed loses this one point; the next tick tries again.
+                }
+            }
+        }
+        catch (Exception) when (cancellationToken.IsCancellationRequested)
+        {
+            // Disposed: the feed stopped, and whatever the last call ran into no longer matters.
+        }
+        catch (JSDisconnectedException)
+        {
+            // The page was closed: there is no chart left to update.
+        }
+        catch (Exception ex)
+        {
+            // Anything else is a real error: report it the way an event handler's error is reported.
+            await DispatchExceptionAsync(ex);
+        }
+    }
+
+    private async Task AppendPointAsync()
+    {
+        var added = new List<Pt> { new(nextX++, rnd.Next(10, 90)) };
+        points.Add(added[0]);
+
+        // Keep the C# backing list bounded too; the core trims the rendered window itself.
+        if (points.Count > 50)
+        {
+            points.RemoveRange(0, points.Count - 50);
+        }
+
+        await chart.AppendDataAsync(added);
+        StateHasChanged();
     }
 
     private void ToggleFeed() => running = !running;
 
-    public void Dispose()
-    {
-        timer?.Stop();
-        timer?.Dispose();
-    }
+    public void Dispose() => feedCancellation.Cancel();
 
     private record Pt(int X, decimal Y);
 }

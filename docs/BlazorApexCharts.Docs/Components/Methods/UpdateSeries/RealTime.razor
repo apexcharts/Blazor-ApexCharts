@@ -1,4 +1,5 @@
-﻿@using System.Timers
+﻿@using System.Threading
+@using Microsoft.JSInterop
 @implements IDisposable
 
 <DemoContainer>
@@ -21,8 +22,7 @@
     private ApexChart<TimeSeries> chart;
     private ApexChartOptions<TimeSeries> options;
     private TimeSeriesGenerator generator = new TimeSeriesGenerator(20);
-    private bool timerInitialized;
-    private Timer timer;
+    private readonly CancellationTokenSource updatesCancellation = new();
     private DateTimeOffset maxDate;
     private int counter;
 
@@ -66,18 +66,52 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender && !timerInitialized)
+        if (firstRender)
         {
-            timerInitialized = true;
-            timer = new Timer(1000);
-            timer.Elapsed += async delegate { await UpdateChartSeries(); };
-            timer.Enabled = true;
+            // A PeriodicTimer loop started here runs every update on the component's dispatcher,
+            // so no InvokeAsync and no async void timer callback. Not awaited: it runs until the
+            // component is disposed and handles its own errors.
+            _ = RunUpdatesAsync(updatesCancellation.Token);
+        }
+    }
+
+    private async Task RunUpdatesAsync(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+        try
+        {
+            // The tick resumes on the dispatcher after any pending disposal, so the token is checked again.
+            while (await timer.WaitForNextTickAsync(cancellationToken) && !cancellationToken.IsCancellationRequested)
+            {
+                try
+                {
+                    await UpdateChartSeries();
+                }
+                catch (TaskCanceledException) when (!cancellationToken.IsCancellationRequested)
+                {
+                    // The browser did not answer in time (a dropped connection in Blazor Server).
+                    // This update is lost; the next tick tries again.
+                }
+            }
+        }
+        catch (Exception) when (cancellationToken.IsCancellationRequested)
+        {
+            // Disposed: the updates stopped, and whatever the last call ran into no longer matters.
+        }
+        catch (JSDisconnectedException)
+        {
+            // The page was closed: there is no chart left to update.
+        }
+        catch (Exception ex)
+        {
+            // Anything else is a real error: report it the way an event handler's error is reported.
+            await DispatchExceptionAsync(ex);
         }
     }
 
     private async Task UpdateChartSeries()
     {
-
         if (counter > 100) //Reset the chart
         {
             await chart.UpdateSeriesAsync(true);
@@ -94,14 +128,7 @@
         maxDate = maxDate.AddDays(1);
         await chart.AppendDataAsync(new List<TimeSeries> { generator.GenerateNewPoint(maxDate) });
         counter++;
-
     }
 
-    public void Dispose()
-    {
-        timer?.Stop();
-        timer = null;
-    }
-
-
-    }
+    public void Dispose() => updatesCancellation.Cancel();
+}
