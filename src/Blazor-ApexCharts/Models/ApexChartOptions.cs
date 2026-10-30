@@ -1682,8 +1682,14 @@ namespace ApexCharts
         /// <see cref="ApexChart{TItem}.OnRendered"/> has not fired (use it, not the render call, to know when the brush chart exists),
         /// and calls that change it, such as <see cref="ApexChart{TItem}.UpdateSeriesAsync(bool)"/>, <see cref="ApexChart{TItem}.UpdateOptionsAsync(bool, bool, bool, ZoomOptions)"/>,
         /// <see cref="ApexChart{TItem}.AppendDataAsync(IEnumerable{TItem})"/>, the annotation methods or the series visibility methods, are applied when it renders.
-        /// Calls that read it, such as <see cref="ApexChart{TItem}.GetDataUriAsync(DataUriOptions)"/>, return an empty result meanwhile, and the history, measure,
-        /// perspective and storyboard calls other than <see cref="ApexChart{TItem}.ApplyPerspectiveAsync(string, bool)"/> do nothing.
+        /// Calls that read it return an empty result meanwhile, without an error: <see cref="ApexChart{TItem}.GetDataUriAsync(DataUriOptions)"/> and
+        /// <see cref="ApexChart{TItem}.GetSvgStringAsync"/> return an empty string, <see cref="ApexChart{TItem}.CapturePerspectiveAsync"/>,
+        /// <see cref="ApexChart{TItem}.PerspectiveToUrlAsync"/>, <see cref="ApexChart{TItem}.ListPerspectivesAsync"/>, <see cref="ApexChart{TItem}.StoryboardCurrentAsync"/>
+        /// and <see cref="ApexChart{TItem}.GetActiveRendererAsync"/> return null, <see cref="ApexChart{TItem}.ApplyPerspectiveFromUrlAsync"/> returns false and
+        /// <see cref="ApexChart{TItem}.StoryboardBindAsync(StoryboardOptions)"/> returns 0. The other history, measure, perspective and storyboard calls,
+        /// except <see cref="ApexChart{TItem}.ApplyPerspectiveAsync(string, bool)"/>, do nothing.
+        /// If the brush chart fails to render once its targets are there (its container was removed from the page, for example), the error and the
+        /// chart id are written to the browser console, the calls it kept are dropped and <see cref="ApexChart{TItem}.OnRendered"/> does not fire.
         /// An id that matches no chart keeps the brush chart empty; after 10 seconds a warning naming the missing ids is written to the browser console.
         /// </remarks>
         public string Target { get; set; }
@@ -1697,8 +1703,14 @@ namespace ApexCharts
         /// <see cref="ApexChart{TItem}.OnRendered"/> has not fired (use it, not the render call, to know when the brush chart exists),
         /// and calls that change it, such as <see cref="ApexChart{TItem}.UpdateSeriesAsync(bool)"/>, <see cref="ApexChart{TItem}.UpdateOptionsAsync(bool, bool, bool, ZoomOptions)"/>,
         /// <see cref="ApexChart{TItem}.AppendDataAsync(IEnumerable{TItem})"/>, the annotation methods or the series visibility methods, are applied when it renders.
-        /// Calls that read it, such as <see cref="ApexChart{TItem}.GetDataUriAsync(DataUriOptions)"/>, return an empty result meanwhile, and the history, measure,
-        /// perspective and storyboard calls other than <see cref="ApexChart{TItem}.ApplyPerspectiveAsync(string, bool)"/> do nothing.
+        /// Calls that read it return an empty result meanwhile, without an error: <see cref="ApexChart{TItem}.GetDataUriAsync(DataUriOptions)"/> and
+        /// <see cref="ApexChart{TItem}.GetSvgStringAsync"/> return an empty string, <see cref="ApexChart{TItem}.CapturePerspectiveAsync"/>,
+        /// <see cref="ApexChart{TItem}.PerspectiveToUrlAsync"/>, <see cref="ApexChart{TItem}.ListPerspectivesAsync"/>, <see cref="ApexChart{TItem}.StoryboardCurrentAsync"/>
+        /// and <see cref="ApexChart{TItem}.GetActiveRendererAsync"/> return null, <see cref="ApexChart{TItem}.ApplyPerspectiveFromUrlAsync"/> returns false and
+        /// <see cref="ApexChart{TItem}.StoryboardBindAsync(StoryboardOptions)"/> returns 0. The other history, measure, perspective and storyboard calls,
+        /// except <see cref="ApexChart{TItem}.ApplyPerspectiveAsync(string, bool)"/>, do nothing.
+        /// If the brush chart fails to render once its targets are there (its container was removed from the page, for example), the error and the
+        /// chart id are written to the browser console, the calls it kept are dropped and <see cref="ApexChart{TItem}.OnRendered"/> does not fire.
         /// An id that matches no chart keeps the brush chart empty; after 10 seconds a warning naming the missing ids is written to the browser console.
         /// </remarks>
         public List<string> Targets { get; set; }

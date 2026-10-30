@@ -528,7 +528,9 @@ window.blazor_apexchart = {
             return chart.dataURI(opt);
         }
 
-        return '';
+        // No chart: not rendered yet (a brush chart waiting for its targets) or destroyed.
+        // GetDataUriAsync returns an empty string for null.
+        return null;
     },
 
    async getSvgStringAsync(id) {
@@ -1072,7 +1074,22 @@ window.blazor_apexchart = {
 
             this.pendingBrushCharts.delete(id);
             clearTimeout(pending.warnTimer);
-            const created = this.createChart(pending.container, pending.options);
+
+            // This runs inside the render of the target chart that was the last one missing, so a
+            // brush chart that fails to render must not fail the target or the other waiting charts.
+            // The calls it kept are dropped and OnRendered does not fire for a chart that is not there.
+            const failed = error => {
+                pending.calls = [];
+                console.error('Brush chart ' + id + ' failed to render, the calls made while it waited for its targets are dropped', error);
+            };
+
+            let created;
+            try {
+                created = this.createChart(pending.container, pending.options);
+            } catch (error) {
+                failed(error);
+                continue;
+            }
 
             // Once it has rendered, make the calls it received while it waited, then tell the
             // component, which raises OnRendered
@@ -1082,16 +1099,20 @@ window.blazor_apexchart = {
                 }
 
                 pending.calls.forEach(call => {
+                    const callFailed = error => console.error('Chart ' + id + ': ' + call.method + ' failed', error);
                     try {
-                        this[call.method].apply(this, call.args);
+                        const result = this[call.method].apply(this, call.args);
+                        if (result != null && typeof result.then === 'function') {
+                            result.then(undefined, callFailed);
+                        }
                     } catch (error) {
-                        console.error('Chart ' + id + ': ' + call.method + ' failed', error);
+                        callFailed(error);
                     }
                 });
 
                 // The component may have been disposed in the meantime
                 pending.dotNetObject.invokeMethodAsync('JSRendered').catch(() => { });
-            });
+            }, failed);
         }
     },
 

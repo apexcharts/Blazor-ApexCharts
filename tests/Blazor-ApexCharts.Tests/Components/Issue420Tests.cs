@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ApexCharts.Internal;
 using ApexCharts.Tests.TestHelpers;
 using Microsoft.JSInterop;
@@ -63,5 +64,47 @@ public class Issue420Tests : ApexChartsTestContext
         await cut.InvokeAsync(() => handler.Value.JSRendered());
 
         Assert.Equal(1, renderedCount);
+    }
+
+    [Fact]
+    public async Task Get_data_uri_returns_an_empty_string_while_the_brush_chart_waits()
+    {
+        // While the brush chart waits there is no chart in the browser, and dataUri returns null
+        JSInterop.Setup<string>(JsIdentifiers.RenderChart, _ => true).SetResult("waiting");
+        JSInterop.Setup<DataUriResult>("blazor_apexchart.dataUri", _ => true).SetResult(null!);
+
+        var cut = RenderBrushChart();
+
+        var uri = await cut.InvokeAsync(() => cut.Instance.GetDataUriAsync(new DataUriOptions()));
+
+        Assert.Equal(string.Empty, uri);
+    }
+
+    [Fact]
+    public async Task Get_data_uri_returns_the_image_once_the_chart_exists()
+    {
+        const string image = "data:image/png;base64,iVBORw0KGgo=";
+        JSInterop.Setup<DataUriResult>("blazor_apexchart.dataUri", _ => true).SetResult(new DataUriResult { ImgURI = image });
+
+        var cut = RenderBrushChart();
+
+        var uri = await cut.InvokeAsync(() => cut.Instance.GetDataUriAsync(new DataUriOptions()));
+
+        Assert.Equal(image, uri);
+    }
+
+    [Fact]
+    public async Task Storyboard_bind_returns_zero_while_the_brush_chart_waits()
+    {
+        // storyboardBind returns null when there is no chart. Read as an int, the runtime throws.
+        JSInterop.Setup<string>(JsIdentifiers.RenderChart, _ => true).SetResult("waiting");
+        JSInterop.Setup<int>("blazor_apexchart.storyboardBind", _ => true).SetException(new JsonException("The JSON value could not be converted to System.Int32."));
+        JSInterop.Setup<int?>("blazor_apexchart.storyboardBind", _ => true).SetResult(null);
+
+        var cut = RenderBrushChart();
+
+        var beats = await cut.InvokeAsync(() => cut.Instance.StoryboardBindAsync(new StoryboardOptions()));
+
+        Assert.Equal(0, beats);
     }
 }

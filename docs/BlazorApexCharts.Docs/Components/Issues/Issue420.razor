@@ -23,9 +23,11 @@
 <h5>Target added later, brush updated while it waits</h5>
 <button id="issue420-update-brush" class="btn btn-secondary mb-2" @onclick="UpdateBrushB">Update brush</button>
 <button id="issue420-show-target" class="btn btn-primary mb-2" @onclick="() => showTargetB = true">Show target</button>
+<button id="issue420-read-image" class="btn btn-secondary mb-2" @onclick="ReadBrushImageB">Read brush image</button>
 <p>
     Brush OnRendered count: <span id="issue420-b-brush-rendered">@brushBRendered</span>,
-    updates: <span id="issue420-b-updated">@(brushBUpdated ? "sent" : "none")</span>
+    updates: <span id="issue420-b-updated">@(brushBUpdated ? "sent" : "none")</span>,
+    image reads: <span id="issue420-b-image">@brushBImage</span>
 </p>
 <div id="issue420-b">
     <div id="issue420-b-brush-host">
@@ -76,6 +78,8 @@
     private bool showTargetB;
     private bool brushBUpdated;
     private int brushBRendered;
+    private string brushBImage = "none";
+    private int brushBImageReads;
     private ApexChart<Point> brushBChart;
     private ApexChartOptions<Point> brushA, targetA, brushB, targetB, brushC;
 
@@ -104,6 +108,14 @@
         }, true);
 
         brushBUpdated = true;
+    }
+
+    // A read while the brush chart waits returns an empty string, after it renders the image
+    private async Task ReadBrushImageB()
+    {
+        var uri = await brushBChart.GetDataUriAsync(new DataUriOptions());
+        brushBImageReads++;
+        brushBImage = brushBImageReads + ": " + (string.IsNullOrEmpty(uri) ? "empty" : "image");
     }
 
     private static ApexChartOptions<Point> Target(string id) => new()
