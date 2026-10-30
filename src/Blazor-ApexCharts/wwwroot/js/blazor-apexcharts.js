@@ -78,6 +78,7 @@ window.blazor_apexchart = {
             chart.destroy();
         }
 
+        this.pendingBrushCharts.delete(id);
         this.dotNetRefs.delete(id);
 
     },
@@ -752,12 +753,50 @@ window.blazor_apexchart = {
         this.destroyChart(options.chart.id);
         this.dotNetRefs.set(options.chart.id, dotNetObject)
 
+        // apexcharts.js looks up a brush chart's targets while the brush chart renders and fails if
+        // one is not there yet. Each chart renders on its own, so the order is not fixed: hold the
+        // brush chart back until all its targets have rendered (issue 420).
+        if (this.missingBrushTargets(options).length > 0) {
+            this.pendingBrushCharts.set(options.chart.id, { container: container, options: options });
+
+            if (options.debug == true) {
+                console.log('Chart ' + options.chart.id + ' waits for brush targets ' + this.missingBrushTargets(options).join(', '));
+            }
+            return;
+        }
+
+        this.createChart(container, options);
+    },
+
+    // Brush charts waiting for their targets, by chart id
+    pendingBrushCharts: new Map(),
+
+    createChart(container, options) {
         var chart = new ApexCharts(container, options);
         chart.render();
 
         if (options.debug == true) {
             console.log('Chart ' + options.chart.id + ' rendered');
         }
+
+        // This chart may be the last target a waiting brush chart needs
+        for (const [id, pending] of this.pendingBrushCharts) {
+            if (this.missingBrushTargets(pending.options).length === 0) {
+                this.pendingBrushCharts.delete(id);
+                this.createChart(pending.container, pending.options);
+            }
+        }
+    },
+
+    // The brush targets apexcharts.js will look up when this chart renders and that are not rendered yet
+    missingBrushTargets(options) {
+        var brush = options.chart.brush;
+        if (!brush || brush.enabled !== true || typeof options.chart.events.selection === 'function') {
+            return [];
+        }
+
+        var targets = Array.isArray(brush.targets) ? brush.targets : [brush.target];
+        return targets.filter(target => target != null && target !== options.chart.id && this.findChart(target) === undefined);
     },
 
     parseOptions(options) {

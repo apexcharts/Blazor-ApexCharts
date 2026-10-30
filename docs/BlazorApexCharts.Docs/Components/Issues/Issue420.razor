@@ -1,0 +1,88 @@
+@page "/issues/420"
+
+@* Repro for issue 420: a brush chart must not fail when it renders before the chart it targets. *@
+
+<h3>Issue 420: brush chart rendered before its target</h3>
+
+<h5>Brush declared before its target</h5>
+<div id="issue420-a">
+    <div id="issue420-a-brush-host">
+        <ApexChart TItem="Point" Title="Brush" Options="brushA" Height="130" XAxisType="XAxisType.Datetime">
+            <ApexPointSeries TItem="Point" Items="data" Name="Value" SeriesType="SeriesType.Area"
+                             XValue="@(e => e.Date)" YValue="@(e => e.Value)" OrderBy="e => e.X" />
+        </ApexChart>
+    </div>
+    <div id="issue420-a-target-host">
+        <ApexChart TItem="Point" Title="Target" Options="targetA" Height="200" XAxisType="XAxisType.Datetime">
+            <ApexPointSeries TItem="Point" Items="data" Name="Value" SeriesType="SeriesType.Line"
+                             XValue="@(e => e.Date)" YValue="@(e => e.Value)" OrderBy="e => e.X" />
+        </ApexChart>
+    </div>
+</div>
+
+<h5>Target added later</h5>
+<button id="issue420-show-target" class="btn btn-primary mb-2" @onclick="() => showTargetB = true">Show target</button>
+<div id="issue420-b">
+    <div id="issue420-b-brush-host">
+        <ApexChart TItem="Point" Title="Brush" Options="brushB" Height="130" XAxisType="XAxisType.Datetime">
+            <ApexPointSeries TItem="Point" Items="data" Name="Value" SeriesType="SeriesType.Area"
+                             XValue="@(e => e.Date)" YValue="@(e => e.Value)" OrderBy="e => e.X" />
+        </ApexChart>
+    </div>
+    @if (showTargetB)
+    {
+        <div id="issue420-b-target-host">
+            <ApexChart TItem="Point" Title="Target" Options="targetB" Height="200" XAxisType="XAxisType.Datetime">
+                <ApexPointSeries TItem="Point" Items="data" Name="Value" SeriesType="SeriesType.Line"
+                                 XValue="@(e => e.Date)" YValue="@(e => e.Value)" OrderBy="e => e.X" />
+            </ApexChart>
+        </div>
+    }
+</div>
+
+@code {
+    public class Point
+    {
+        public DateTimeOffset Date { get; set; }
+        public decimal Value { get; set; }
+    }
+
+    private static readonly DateTimeOffset start = new(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
+    private readonly List<Point> data = Enumerable.Range(0, 100)
+        .Select(i => new Point { Date = start.AddDays(i), Value = 20 + (i * 37 % 60) })
+        .ToList();
+
+    private bool showTargetB;
+    private ApexChartOptions<Point> brushA, targetA, brushB, targetB;
+
+    protected override void OnInitialized()
+    {
+        targetA = Target("issue420-a-target");
+        brushA = Brush("issue420-a-brush", "issue420-a-target");
+        targetB = Target("issue420-b-target");
+        brushB = Brush("issue420-b-brush", "issue420-b-target");
+    }
+
+    private static ApexChartOptions<Point> Target(string id) => new()
+    {
+        Chart = new Chart { Id = id, Toolbar = new Toolbar { AutoSelected = AutoSelected.Pan, Show = false } }
+    };
+
+    private static ApexChartOptions<Point> Brush(string id, string target) => new()
+    {
+        Chart = new Chart
+        {
+            Id = id,
+            Brush = new ApexCharts.Brush { Enabled = true, Target = target },
+            Selection = new Selection
+            {
+                Enabled = true,
+                Xaxis = new SelectionXaxis
+                {
+                    Min = start.AddDays(30).ToUnixTimeMilliseconds(),
+                    Max = start.AddDays(70).ToUnixTimeMilliseconds()
+                }
+            }
+        }
+    };
+}
