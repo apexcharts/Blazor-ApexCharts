@@ -53,6 +53,28 @@ namespace ApexCharts.Internal
         }
 
         /// <summary>
+        /// Callback from JavaScript to get a formatted value for the Y axis at <paramref name="axisIndex"/>
+        /// </summary>
+        /// <param name="value">Details from JavaScript</param>
+        /// <param name="axisIndex">Index of the Y axis in <see cref="ApexChartOptions{TItem}.Yaxis"/>, written into the formatter by the chart</param>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.FormatYAxisLabelForAxis"/>
+        /// </remarks>
+        [JSInvokable]
+        public string JSGetFormattedYAxisValueForAxis(JsonElement value, int axisIndex)
+        {
+            if (ChartReference.FormatYAxisLabelForAxis == null) { return JSGetFormattedYAxisValue(value); }
+            if (value.ValueKind == JsonValueKind.Null) { return ""; }
+
+            if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var decimalValue))
+            {
+                return ChartReference.FormatYAxisLabelForAxis.Invoke(decimalValue, axisIndex);
+            }
+
+            return value.ToString();
+        }
+
+        /// <summary>
         /// Callback from JavaScript to get a formatted X-axis value
         /// </summary>
         /// <param name="value">Details from JavaScript</param>

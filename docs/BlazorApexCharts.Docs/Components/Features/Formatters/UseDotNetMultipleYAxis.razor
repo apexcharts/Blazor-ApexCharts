@@ -1,0 +1,46 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Value and Discount"
+               Options="options"
+               FormatYAxisLabelForAxis="GetYAxisLabel">
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Value"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                         SeriesType="SeriesType.Bar" />
+
+        <ApexPointSeries TItem="Order"
+                         Items="Orders"
+                         Name="Discount"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Average(e => e.DiscountPercentage))"
+                         SeriesType="SeriesType.Line" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private ApexChartOptions<Order> options { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        options.Yaxis = new List<YAxis>
+        {
+            new YAxis { SeriesName = "Value", Title = new AxisTitle { Text = "Value" } },
+            new YAxis { SeriesName = "Discount", Title = new AxisTitle { Text = "Discount" }, Opposite = true }
+        };
+    }
+
+    // axisIndex is the position of the axis in options.Yaxis
+    private string GetYAxisLabel(decimal value, int axisIndex)
+    {
+        return axisIndex switch
+        {
+            0 => "$" + value.ToString("N0"),
+            1 => value.ToString("N0") + "%",
+            _ => value.ToString()
+        };
+    }
+}

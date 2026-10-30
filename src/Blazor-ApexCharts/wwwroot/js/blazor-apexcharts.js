@@ -64,6 +64,26 @@ window.blazor_apexchart = {
 
     },
 
+    // Formatter for FormatYAxisLabelForAxis. axisIndex is written into each y-axis
+    // formatter by the .NET side, since apexcharts.js does not pass it.
+    getYAxisLabelForAxis(value, index, w, axisIndex) {
+        var dotNetRef = this.getDotNetObjectReference(index, w);
+        if (dotNetRef == null) {
+            return value;
+        }
+
+        try {
+            return dotNetRef.invokeMethod('JSGetFormattedYAxisValueForAxis', value, axisIndex);
+        } catch (e) {
+            // Synchronous interop is only available in Blazor WebAssembly.
+            if (!this.yAxisForAxisWarned) {
+                this.yAxisForAxisWarned = true;
+                console.warn("FormatYAxisLabelForAxis is only supported in Blazor WebAssembly", e);
+            }
+            return value;
+        }
+    },
+
     findChart(id) {
         if (Apex._chartInstances === undefined) {
             return undefined;

@@ -397,6 +397,25 @@ namespace ApexCharts
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
 
         /// <summary>
+        /// A custom function to execute for generating Y-axis labels on every Y axis, called with the value and
+        /// the index of the Y axis the label belongs to. Only supported in Blazor WebAssembly!
+        /// </summary>
+        /// <remarks>
+        /// The axis index is the position of the axis in <see cref="ApexChartOptions{TItem}.Yaxis"/> (0 for the first axis),
+        /// whichever series the axis is bound to through <see cref="YAxis.SeriesName"/>. When no Y axis is configured, a single
+        /// axis with index 0 is added. The formatter replaces any <see cref="YAxisLabels.Formatter"/> set on the Y axes, and
+        /// it takes precedence over <see cref="FormatYAxisLabel"/>, which only formats the first Y axis.
+        /// <para/>
+        /// apexcharts.js also uses a Y axis label formatter for the tooltip value of the series with the same index, unless a
+        /// tooltip formatter is configured.
+        /// <para/>
+        /// Links:
+        ///
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/features/formatters">Blazor Example</see>
+        /// </remarks>
+        [Parameter] public Func<decimal, int, string> FormatYAxisLabelForAxis { get; set; }
+
+        /// <summary>
         /// A custom function to execute for generating X-axis labels. Only supported in Blazor WebAssembly!
         /// </summary>
         /// <remarks>
@@ -1483,6 +1502,26 @@ namespace ApexCharts
                 yAxis.Labels.Formatter = @"function (value, index, w) {
                                           return window.blazor_apexchart.getYAxisLabel(value, index, w);
                                          }";
+            }
+
+            if (FormatYAxisLabelForAxis != null)
+            {
+                if (Options.Yaxis == null) { Options.Yaxis = new List<YAxis>(); }
+                if (!Options.Yaxis.Any()) { Options.Yaxis.Add(new YAxis()); }
+
+                // apexcharts.js does not pass the axis index to a y-axis label formatter, so each
+                // axis gets its own formatter with its index written into it.
+                for (var axisIndex = 0; axisIndex < Options.Yaxis.Count; axisIndex++)
+                {
+                    var yAxis = Options.Yaxis[axisIndex];
+                    if (yAxis == null) { continue; }
+
+                    yAxis.Labels ??= new YAxisLabels();
+
+                    yAxis.Labels.Formatter = @"function (value, index, w) {
+                                          return window.blazor_apexchart.getYAxisLabelForAxis(value, index, w, " + axisIndex.ToString(System.Globalization.CultureInfo.InvariantCulture) + @");
+                                         }";
+                }
             }
 
             if (FormatXAxisLabel != null)
