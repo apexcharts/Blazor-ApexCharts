@@ -9,23 +9,7 @@ export function get_apexcharts() {
 window.blazor_apexchart = {
 
     getDotNetObjectReference(index, w) {
-        var chartId = null;
-
-        if (w !== undefined && w.config !== undefined) {
-            chartId = w.config.chart.id;
-        }
-
-        if (w !== undefined && w.w !== undefined && w.w.config !== undefined) {
-            chartId = w.w.config.chart.id;
-        }
-
-        if (index !== undefined && index.w !== undefined && index.w.config !== undefined) {
-            chartId = index.w.config.chart.id;
-        }
-
-        if (index !== undefined && index.config !== undefined) {
-            chartId = index.config.chart.id;
-        }
+        var chartId = this.getChartId(index, w);
 
         if (chartId != null) {
             return this.dotNetRefs.get(chartId);
@@ -34,34 +18,93 @@ window.blazor_apexchart = {
     },
 
     getXAxisLabel(value, index, w) {
-
-        if (window.wasmBinaryFile === undefined && window.WebAssembly === undefined) {
-            console.warn("XAxis labels is only supported in Blazor WASM");
-            return value;
-        }
-
-        var dotNetRef = this.getDotNetObjectReference(index, w);
-        if (dotNetRef != null) {
-            return dotNetRef.invokeMethod('JSGetFormattedXAxisValue', value);
-        }
-
-        return value;
+        return this.invokeSyncFormatter('FormatXAxisLabel', 'JSGetFormattedXAxisValue', value, index, w);
     },
 
     getYAxisLabel(value, index, w) {
+        return this.invokeSyncFormatter('FormatYAxisLabel', 'JSGetFormattedYAxisValue', value, index, w);
+    },
 
-        if (window.wasmBinaryFile === undefined && window.WebAssembly === undefined) {
-            console.warn("YAxis labels is only supported in Blazor WASM");
+    // Chart ids whose .NET side reported that JS cannot call .NET synchronously (Blazor Server,
+    // InteractiveAuto before the WebAssembly runtime is cached, or a BlazorWebView host such as
+    // .NET MAUI). Set by renderChart.
+    noSyncInterop: new Set(),
+
+    // "chartId|callback" keys already warned about, so a chart warns once rather than once per label.
+    syncWarnings: new Set(),
+
+    warnSyncOnce(chartId, callbacks) {
+        var key = chartId + '|' + callbacks.join(',');
+        if (this.syncWarnings.has(key)) {
+            return;
+        }
+        this.syncWarnings.add(key);
+
+        var hasFormatter = callbacks.some(function (name) { return name.indexOf('Format') === 0; });
+        var advice = hasFormatter
+            ? 'For axis labels use a JavaScript formatter string (Labels.Formatter) instead. '
+            : '';
+
+        console.warn('Blazor-ApexCharts: chart "' + chartId + '" skipped ' + callbacks.join(', ')
+            + ' because this host cannot call .NET synchronously (Blazor Server, InteractiveAuto before the WebAssembly runtime is cached, '
+            + 'or a BlazorWebView host such as .NET MAUI). '
+            + advice
+            + 'In a Blazor web app, rendering this chart with InteractiveWebAssembly runs these callbacks. '
+            + 'See https://apexcharts.github.io/Blazor-ApexCharts/' + (hasFormatter ? 'features/formatters' : 'events/before-zoom'));
+    },
+
+    // True for the error Blazor throws when the host has no synchronous JS to .NET dispatcher.
+    isNoSyncDispatcherError(error) {
+        var message = error && error.message ? String(error.message) : String(error);
+        return message.indexOf('does not support synchronous calls') >= 0;
+    },
+
+    // Calls a synchronous .NET callback for a chart with exactly the given arguments, so a .NET method
+    // that takes one parameter always receives one (an undefined value is sent as null).
+    // Returns { ok: true, result } on success and { ok: false } when the host cannot call .NET
+    // synchronously, so callers fall back to the chart's default behavior instead of throwing out of
+    // the chart render. Any other error, such as an exception thrown by the user's callback, is rethrown.
+    invokeSync(chartId, dotNetRef, callback, method, args) {
+        if (dotNetRef == null) {
+            return { ok: false };
+        }
+
+        if (this.noSyncInterop.has(chartId)) {
+            this.warnSyncOnce(chartId, [callback]);
+            return { ok: false };
+        }
+
+        try {
+            var result = dotNetRef.invokeMethod.apply(dotNetRef, [method].concat(args));
+            return { ok: true, result: result };
+        } catch (error) {
+            if (!this.isNoSyncDispatcherError(error)) {
+                throw error;
+            }
+            this.warnSyncOnce(chartId, [callback]);
+            return { ok: false };
+        }
+    },
+
+    invokeSyncFormatter(callback, method, value, index, w) {
+        var dotNetRef = this.getDotNetObjectReference(index, w);
+        if (dotNetRef == null) {
             return value;
         }
 
-        var dotNetRef = this.getDotNetObjectReference(index, w);
-        if (dotNetRef != null) {
-            return dotNetRef.invokeMethod('JSGetFormattedYAxisValue', value);
-        }
+        var chartId = this.getChartId(index, w);
+        var call = this.invokeSync(chartId, dotNetRef, callback, method, [value]);
+        return call.ok ? call.result : value;
+    },
 
-        return value;
-
+    // The chart id from the arguments the chart passes to a formatter. The (index, w) shape varies
+    // by formatter, so the most specific source wins.
+    getChartId(index, w) {
+        if (index != null && index.config !== undefined) { return index.config.chart.id; }
+        if (index != null && index.w !== undefined && index.w.config !== undefined) { return index.w.config.chart.id; }
+        if (w != null && w.w !== undefined && w.w.config !== undefined) { return w.w.config.chart.id; }
+        if (w != null && w.config !== undefined) { return w.config.chart.id; }
+        return null;
     },
 
     findChart(id) {
@@ -79,6 +122,7 @@ window.blazor_apexchart = {
         }
 
         this.dotNetRefs.delete(id);
+        this.noSyncInterop.delete(id);
 
     },
 
@@ -670,7 +714,11 @@ window.blazor_apexchart = {
                 if (config.yaxis !== undefined || Array.isArray(config.yaxis))
                     config.yaxis = undefined;
 
-                var data = dotNetObject.invokeMethod('JSBeforeZoom', config);
+                var call = window.blazor_apexchart.invokeSync(options.chart.id, dotNetObject, 'OnBeforeZoom', 'JSBeforeZoom', [config]);
+                var data = call.result;
+                if (!call.ok || data == null) {
+                    return undefined; // keep the range the user selected
+                }
 
                 return {
                     xaxis: {
@@ -683,7 +731,11 @@ window.blazor_apexchart = {
 
         if (events.hasBeforeResetZoom === true) {
             options.chart.events.beforeResetZoom = function (chartContext, opts) {
-                var data = dotNetObject.invokeMethod('JSBeforeResetZoom');
+                var call = window.blazor_apexchart.invokeSync(options.chart.id, dotNetObject, 'OnBeforeResetZoom', 'JSBeforeResetZoom', []);
+                var data = call.result;
+                if (!call.ok || data == null) {
+                    return undefined; // reset to the original range
+                }
 
                 return {
                     xaxis: {
@@ -751,6 +803,14 @@ window.blazor_apexchart = {
         //Always destroy chart if it exists
         this.destroyChart(options.chart.id);
         this.dotNetRefs.set(options.chart.id, dotNetObject)
+
+        if (events.syncInterop === false) {
+            this.noSyncInterop.add(options.chart.id);
+        }
+
+        if (Array.isArray(events.unsupportedSyncCallbacks) && events.unsupportedSyncCallbacks.length > 0) {
+            this.warnSyncOnce(options.chart.id, events.unsupportedSyncCallbacks);
+        }
 
         var chart = new ApexCharts(container, options);
         chart.render();

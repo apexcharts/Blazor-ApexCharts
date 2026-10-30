@@ -10,7 +10,7 @@
                 </div>
                 <div>
                     <h4 class="alert-title">Only supported in Blazor WebAssembly!</h4>
-                    <div class="text-muted">Event 'OnBeforeZoom' is only supported in web assembly</div>
+                    <div class="text-muted">Event 'OnBeforeZoom' is only supported in web assembly. In Blazor Server, in InteractiveAuto before the WebAssembly files are cached, and in BlazorWebView hosts such as .NET MAUI, the chart zooms to the selected range without calling it and writes a warning to the browser console. Earlier versions threw a NotSupportedException there when the chart rendered.</div>
                 </div>
             </div>
         </Alert>
