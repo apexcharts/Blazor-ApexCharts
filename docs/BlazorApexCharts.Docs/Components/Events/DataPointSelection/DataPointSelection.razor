@@ -3,8 +3,20 @@
 <DocExamples Title="Data Point Selection">
 
     <Description>
-        Click on a datapoint to trigger the event. On pie, donut and polar area charts a legend click also selects the slice,
-        and <code>SelectedData.Source</code> tells the two apart.
+        <p>
+            Click on a datapoint to trigger the event. On pie, donut and polar area charts a legend click also selects the slice,
+            and <code>SelectedData.Source</code> tells the two apart.
+        </p>
+        <p>
+            On line, area and radar charts the click has to land on a marker, so when <code>OnDataPointSelection</code> or <code>OnDataPointEnter</code> is set
+            the chart shows markers (size 5 when none is set) and switches the tooltip to <code>Intersect = true</code>, <code>Shared = false</code>.
+            In that mode the tooltip and the event describe one series: the marker under the cursor. When several series have the same value at the same point,
+            only the marker drawn on top is reported.
+        </p>
+        <p>
+            If you need every series at the clicked point, use <code>OnMarkerClick</code> or <code>OnClick</code> instead. They keep the shared tooltip, which lists
+            all series, and <code>DataPointIndex</code> tells you which x value was clicked, so you can read each series' data point at that index.
+        </p>
     </Description>
 
     <ChildContent>
