@@ -61,6 +61,6 @@ public class Issue605Tests : ApexChartsTestContext
 
         var updated = LastJsonArgument(JsIdentifiers.UpdateOptions, 1);
         Assert.Equal("dark", updated.Get("theme.mode")?.GetString());
-        Assert.Equal(colors, updated.Get("colors")!.Value.EnumerateArray().Select(c => c.GetString()).ToList());
+        Assert.Equal(colors, updated.Get("colors")!.Value.EnumerateArray().Select(c => c.GetString()!).ToList());
     }
 }

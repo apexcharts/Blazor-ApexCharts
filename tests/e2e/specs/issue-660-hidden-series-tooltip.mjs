@@ -10,14 +10,29 @@ const visibleTooltipRows = page => page.$$eval('#issue660-chart .apexcharts-tool
   els.filter(e => getComputedStyle(e).display !== 'none')
     .map(e => (e.querySelector('.apexcharts-tooltip-text-y-label')?.textContent || '').replace(/:\s*$/, '').trim()));
 
-// Hovers the plot at a few x positions and returns the visible rows seen at each.
+// Hover positions across the plot (fraction of its width) and the x value each one snaps to: the
+// demo's points sit at x = 1, 2, 3 and 4.
+const HOVERS = [[0.05, 1], [0.35, 2], [0.65, 3], [0.95, 4]];
+
+// Hovers the plot at each position and returns the visible rows seen at each. The tooltip stays
+// in the DOM with the class apexcharts-active from one position to the next, so after each move
+// this waits for the header to show the x value of the new position: two consecutive positions
+// never share it (the last of one call is x = 4, the first of the next x = 1), so the rows read
+// afterwards are the ones drawn for this hover, not stale ones from the previous position.
 async function hoverRows(page) {
   const box = await page.locator('#issue660-chart .apexcharts-grid').first().boundingBox();
   assert(box, 'plot grid not found');
   const seen = [];
-  for (const fx of [0.05, 0.35, 0.65, 0.95]) {
+  for (const [fx, x] of HOVERS) {
     await page.mouse.move(box.x + box.width * fx, box.y + box.height / 2);
-    await page.locator('#issue660-chart .apexcharts-tooltip.apexcharts-active').waitFor({ timeout: 5000 });
+    await page.waitForFunction(x => {
+      const tip = document.querySelector('#issue660-chart .apexcharts-tooltip.apexcharts-active');
+      const title = tip && tip.querySelector('.apexcharts-tooltip-title');
+      return !!title && Number(title.textContent) === x;
+    }, x, { timeout: 5000 }).catch(async () => {
+      const title = await page.$eval('#issue660-chart .apexcharts-tooltip', e => e.querySelector('.apexcharts-tooltip-title')?.textContent).catch(() => null);
+      throw new Error(`hovering at ${fx} of the plot width did not show the tooltip for x = ${x} (header ${JSON.stringify(title)})`);
+    });
     seen.push(await visibleTooltipRows(page));
   }
   await page.mouse.move(0, 0);

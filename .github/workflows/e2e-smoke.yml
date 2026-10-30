@@ -1,8 +1,12 @@
 name: E2E Smoke (browser render + interaction)
 
-# Drives the docs demo WASM app in a real headless browser to catch interop-only regressions:
-# a chart that builds and serializes fine but fails to render or wire up events in the browser.
-# Runs on every push/PR, and especially matters when the vendored apexcharts core is bumped.
+# Drives the docs demo in a real headless browser to catch interop-only regressions: a chart that
+# builds and serializes fine but fails to render or wire up events in the browser. Runs on every
+# push/PR, and especially matters when the vendored apexcharts core is bumped.
+#
+# Two jobs run the same suite (tests/e2e/run.mjs): `e2e` against the WASM docs host and
+# `e2e-server` against the Blazor Server docs host, where every interop call crosses a SignalR
+# circuit (#585, #654, #655 only showed up there). HOST tells the specs which one they run on.
 
 on:
   push:
@@ -61,5 +65,57 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: demo-log
+          path: demo.log
+          if-no-files-found: ignore
+
+  e2e-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build docs demo (Blazor Server)
+        run: dotnet build docs/BlazorApexCharts.Docs.Server/BlazorApexCharts.Docs.Server.csproj -c Debug
+
+      - name: Install Playwright (chromium)
+        working-directory: tests/e2e
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Run docs demo (background)
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
+        run: |
+          nohup dotnet run --project docs/BlazorApexCharts.Docs.Server/BlazorApexCharts.Docs.Server.csproj -c Debug --no-build --urls http://localhost:5185 > demo.log 2>&1 &
+          echo "Waiting for demo to come up..."
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5185/ || true)
+            if [ "$code" = "200" ]; then echo "Demo up after ${i}s"; break; fi
+            sleep 2
+          done
+
+      - name: Run smoke test and specs
+        working-directory: tests/e2e
+        env:
+          BASE_URL: http://localhost:5185
+          HOST: server
+        run: npm test
+
+      - name: Upload demo log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-log-server
           path: demo.log
           if-no-files-found: ignore

@@ -37,3 +37,48 @@ export function assertNoErrors(realErrors, label = '') {
   const errs = realErrors();
   if (errs.length) throw new Error(`${label ? `[${label}] ` : ''}console/page errors: ${JSON.stringify(errs)}`);
 }
+
+// The Blazor hosting model the suite runs against: 'wasm' (docs/BlazorApexCharts.Docs.Wasm, the
+// default) or 'server' (docs/BlazorApexCharts.Docs.Server). Chosen with the HOST environment
+// variable, HOST=server or HOST=wasm, case-insensitive. Any other value, a machine name some shells
+// and CI images export as HOST for instance, is not a hosting model and means the default. run.mjs
+// checks the page it warms up against this value and stops the run when they disagree.
+export function blazorHost() {
+  return String(process.env.HOST || '').trim().toLowerCase() === 'server' ? 'server' : 'wasm';
+}
+
+// True when the suite runs against the Blazor Server docs host.
+export const isServerHost = () => blazorHost() === 'server';
+
+// Reads which hosting model the page actually loaded, from the Blazor boot script: 'server',
+// 'wasm', or null when the page has no Blazor script (or has the unified blazor.web.js, which can
+// be either). Call it after navigating.
+export async function detectBlazorHost(page) {
+  return page.evaluate(() => {
+    const srcs = Array.from(document.scripts, s => s.src || '');
+    if (srcs.some(s => /\/blazor\.server\.js(\?|$)/.test(s))) return 'server';
+    if (srcs.some(s => /\/blazor\.webassembly\.js(\?|$)/.test(s))) return 'wasm';
+    return null;
+  });
+}
+
+// Thrown by skipOnHost. run.mjs reports a spec that throws it as SKIP, not FAIL, and lists it in
+// the summary, so a skip is never silent.
+export class SpecSkipped extends Error {
+  constructor(host, reason) {
+    super(`skipped on the ${host} host: ${reason}`);
+    this.name = 'SpecSkipped';
+    this.host = host;
+    this.reason = reason;
+  }
+}
+
+// Ends the calling spec as skipped when the suite runs on `host` ('wasm' or 'server'). For specs
+// that are inherently tied to one hosting model; `reason` says why, and run.mjs prints it.
+//
+//   skipOnHost('server', 'measures WASM startup, which a Server circuit does not have');
+export function skipOnHost(host, reason) {
+  if (host !== 'wasm' && host !== 'server') throw new Error(`skipOnHost: unknown host ${JSON.stringify(host)}`);
+  if (!reason) throw new Error('skipOnHost: a reason is required');
+  if (blazorHost() === host) throw new SpecSkipped(host, reason);
+}
