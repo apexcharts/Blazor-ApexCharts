@@ -1,12 +1,15 @@
 // Issue #565: RenderAsync scrolled the page up. renderChart destroys the chart and builds a new one
 // in the same container; destroying empties the container and apexcharts.js resets its min-height,
 // so while the new chart rendered the container was shorter, the page got shorter and the browser
-// clamped the scroll position. /issues/565 puts a donut with no fixed height (its height is worked
-// out while it renders) at the end of a long page, and a chart with a height of 100% at the top.
+// clamped the scroll position. /issues/565 puts a chart with a fixed height in pixels and, last, a
+// donut with no fixed height (its height is worked out while it renders) at the end of a long page,
+// and at the top three charts whose height comes out as 100%: their own height, a responsive entry,
+// and the global options.
 import { gotoChart, watchErrors, assert, assertNoErrors } from '../lib/helpers.mjs';
 
 const CHART = '#issue565-chart';
 const PERCENT_CARD = '#issue565-percent-card';
+const FIXED_CHART = '#issue565-fixed-chart';
 
 export default async function (page, BASE) {
   const realErrors = watchErrors(page);
@@ -31,13 +34,12 @@ export default async function (page, BASE) {
   // without the fix: a browser without anchoring (Safari), and a viewport so short that the anchor
   // node is inside the chart, which is destroyed.
   const viewport = page.viewportSize();
-  const rounds = [
-    { anchor: 'auto', height: viewport.height },
-    { anchor: 'none', height: viewport.height },
-    { anchor: 'auto', height: 300 },
-  ];
-  let renders = 1;
-  for (const { anchor, height } of rounds) {
+  const renders = { [CHART]: 1, [FIXED_CHART]: 1 };
+  await page.locator('#issue565-fixed-rendered', { hasText: '1' }).waitFor({ timeout: 20000 });
+
+  // Renders the chart in `sel` again with the page scrolled to its end, and checks the scroll
+  // position never moves and the container is left with the chart's own min-height.
+  const scrollRound = async (sel, button, counter, anchor, height, label) => {
     await page.setViewportSize({ width: viewport.width, height });
     await page.evaluate(a => { document.documentElement.style.overflowAnchor = a; }, anchor);
 
@@ -64,21 +66,22 @@ export default async function (page, BASE) {
         scrollY: window.scrollY,
         minHeight: container.style.getPropertyValue('min-height'),
       };
-    }, CHART);
+    }, sel);
 
-    await page.click('#issue565-render');
-    renders++;
+    // A click through the DOM: page.click would first scroll a button out of view into view.
+    await page.evaluate(b => document.querySelector(b).click(), button);
+    renders[sel]++;
 
     // The new chart has rendered (a different svg, OnRendered raised again) and the hold is released.
-    await page.waitForFunction(([sel, count]) => {
+    await page.waitForFunction(([sel, counter, count]) => {
       const svg = document.querySelector(sel + ' .apexcharts-canvas svg');
       const container = svg && svg.closest('.apexcharts-canvas').parentElement;
       const held = window.blazor_apexchart.heldContainers;
       return !!svg && !svg.hasAttribute('data-issue565-old')
-        && document.getElementById('issue565-rendered').textContent.trim() === String(count)
+        && document.querySelector(counter).textContent.trim() === String(count)
         && container.style.getPropertyValue('height') === ''
         && (held === undefined || held.size === 0);
-    }, [CHART, renders], { timeout: 20000 });
+    }, [sel, counter, renders[sel]], { timeout: 20000 });
 
     const after = await page.evaluate(sel => {
       const seen = window.__issue565;
@@ -90,43 +93,95 @@ export default async function (page, BASE) {
         max: seen.max,
         minHeight: container.style.getPropertyValue('min-height'),
       };
-    }, CHART);
+    }, sel);
 
+    const tag = `[${label}, overflow-anchor: ${anchor}, viewport height ${height}]`;
     assert(after.min === before.scrollY && after.max === before.scrollY && after.scrollY === before.scrollY,
-      `[overflow-anchor: ${anchor}, viewport height ${height}] scroll position should stay at ${before.scrollY} while the chart re-renders, saw ${JSON.stringify(after)}`);
+      `${tag} scroll position should stay at ${before.scrollY} while the chart re-renders, saw ${JSON.stringify(after)}`);
 
     // The new chart sets the same min-height the first one did, and the hold leaves nothing behind.
     assert(after.minHeight === before.minHeight,
-      `[overflow-anchor: ${anchor}, viewport height ${height}] container min-height should be the chart's own ${before.minHeight}, got ${after.minHeight}`);
+      `${tag} container min-height should be the chart's own ${before.minHeight}, got ${after.minHeight}`);
+  };
+
+  const rounds = [
+    { anchor: 'auto', height: viewport.height },
+    { anchor: 'none', height: viewport.height },
+    { anchor: 'auto', height: 300 },
+  ];
+  for (const { anchor, height } of rounds) {
+    await scrollRound(CHART, '#issue565-render', '#issue565-rendered', anchor, height, 'donut');
   }
+
+  // A chart whose height is in pixels, with a responsive entry in pixels too, is still held: the
+  // checks for a percentage height below must not turn the hold off for it.
+  await scrollRound(FIXED_CHART, '#issue565-fixed-render', '#issue565-fixed-rendered', 'none', viewport.height, 'fixed height');
   await page.setViewportSize(viewport);
 
   // 2. A chart with a height of 100% keeps its height over renders. apexcharts.js works that height
   // out from the parent of the chart's container, here a card sized by its content (a min-height of
   // 300px and a 30px heading). A container held at its old height would make the card taller while
   // the new chart measures it, and the chart would grow by the heading on every render.
-  const percentHeight = () => page.evaluate(sel => {
+  // Renders the chart in `card` again four times (RenderAsync) and returns the height of each svg,
+  // led by the height of the chart there before them unless `skipFirst`.
+  const svgHeight = card => page.evaluate(sel => {
     const svg = document.querySelector(sel + ' .apexcharts-canvas svg');
     return svg ? Number(svg.getAttribute('height')) : null;
-  }, PERCENT_CARD);
+  }, card);
 
-  const percentHeights = [await percentHeight()];
-  for (let render = 2; render <= 4; render++) {
-    await page.evaluate(sel => {
-      document.querySelector(sel + ' .apexcharts-canvas svg').setAttribute('data-issue565-old', '');
-    }, PERCENT_CARD);
-    await page.click('#issue565-percent-render');
-    await page.waitForFunction(([sel, count]) => {
-      const svg = document.querySelector(sel + ' .apexcharts-canvas svg');
-      return !!svg && !svg.hasAttribute('data-issue565-old')
-        && document.getElementById('issue565-percent-rendered').textContent.trim() === String(count)
-        && (window.blazor_apexchart.heldContainers === undefined || window.blazor_apexchart.heldContainers.size === 0);
-    }, [PERCENT_CARD, render], { timeout: 20000 });
-    percentHeights.push(await percentHeight());
-  }
+  const heightsOverRenders = async (card, button, counter, skipFirst) => {
+    let count = Number(await page.locator(counter).textContent());
+    const heights = skipFirst ? [] : [await svgHeight(card)];
+    for (let render = 1; render <= 4; render++) {
+      await page.evaluate(sel => {
+        document.querySelector(sel + ' .apexcharts-canvas svg').setAttribute('data-issue565-old', '');
+      }, card);
+      await page.click(button);
+      count++;
+      await page.waitForFunction(([sel, counter, count]) => {
+        const svg = document.querySelector(sel + ' .apexcharts-canvas svg');
+        return !!svg && !svg.hasAttribute('data-issue565-old')
+          && document.querySelector(counter).textContent.trim() === String(count)
+          && (window.blazor_apexchart.heldContainers === undefined || window.blazor_apexchart.heldContainers.size === 0);
+      }, [card, counter, count], { timeout: 20000 });
+      heights.push(await svgHeight(card));
+    }
+    return heights;
+  };
 
+  const percentHeights = await heightsOverRenders(PERCENT_CARD, '#issue565-percent-render', '#issue565-percent-rendered', false);
   assert(percentHeights[0] > 0 && percentHeights.every(h => h === percentHeights[0]),
     `a chart with a height of 100% should keep its height over renders, got ${JSON.stringify(percentHeights)}`);
+
+  // The same 100% reached through a responsive entry that overrides the chart's own height of 350.
+  await page.locator('#issue565-responsive-rendered', { hasText: '1' }).waitFor({ timeout: 20000 });
+  const responsiveHeights = await heightsOverRenders('#issue565-responsive-card', '#issue565-responsive-render', '#issue565-responsive-rendered', false);
+  assert(responsiveHeights[0] > 0 && responsiveHeights[0] !== 350 && responsiveHeights.every(h => h === responsiveHeights[0]),
+    `a chart with a responsive height of 100% should keep its height over renders, got ${JSON.stringify(responsiveHeights)}`);
+
+  // The same 100% reached through the global options, for a chart with no height of its own. The
+  // chart rendered before the global height was set, so only the renders after it count. The
+  // global options are put back afterwards, as the rest of the page was rendered with them.
+  await page.locator('#issue565-global-rendered', { hasText: '1' }).waitFor({ timeout: 20000 });
+  const autoHeight = await svgHeight('#issue565-global-card');
+  await page.evaluate(() => {
+    window.__issue565Apex = window.Apex;
+    window.blazor_apexchart.setGlobalOptions(JSON.stringify({ chart: { height: '100%' } }));
+  });
+  try {
+    const globalHeights = await heightsOverRenders('#issue565-global-card', '#issue565-global-render', '#issue565-global-rendered', true);
+    assert(globalHeights[0] > 0 && globalHeights[0] !== autoHeight && globalHeights.every(h => h === globalHeights[0]),
+      `a chart with a global height of 100% should keep its height over renders, got ${JSON.stringify(globalHeights)}`);
+
+    // A chart with a height of its own in pixels is still held while a global height of 100% is set.
+    await scrollRound(FIXED_CHART, '#issue565-fixed-render', '#issue565-fixed-rendered', 'none', viewport.height, 'fixed height, global height of 100%');
+    await page.setViewportSize(viewport);
+  } finally {
+    await page.evaluate(() => {
+      window.__issue565Apex._chartInstances = window.Apex._chartInstances;
+      window.Apex = window.__issue565Apex;
+    });
+  }
 
   // 3. A re-render that fails releases the hold and is handled as before: apexcharts.js handles its
   // own render promise, so a failed render raises no unhandled rejection. Drives the real

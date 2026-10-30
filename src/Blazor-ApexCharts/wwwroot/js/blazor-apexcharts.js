@@ -202,21 +202,57 @@ window.blazor_apexchart = {
     heldContainers: new Map(),
 
     // The height to hold a container at while its chart is rebuilt, or 0 for no hold: when the
-    // container is empty (a first render), or when the chart height is a percentage. apexcharts.js
+    // container is empty (a first render), or when the chart's height may be a percentage. apexcharts.js
     // works a percentage height out from the container's parent, and a held container would make
     // that parent as tall as the old chart, so the new chart would come out taller each time.
-    containerHeightToHold(container, options) {
+    // chart: the chart about to be destroyed, if any.
+    containerHeightToHold(container, options, chart) {
         if (!container || container.childElementCount === 0) {
             return 0;
         }
 
-        // The unit as apexcharts.js reads it (Core.setSVGDimensions)
-        var height = options && options.chart ? options.chart.height : undefined;
-        if (height !== undefined && height !== null && String(height).split(/[0-9]+/g).pop() === '%') {
+        if (this.mayHavePercentHeight(options, chart)) {
             return 0;
         }
 
         return container.offsetHeight;
+    },
+
+    // True when a percentage height can reach the chart rendered from `options`, or reached the chart
+    // it replaces. Every other height apexcharts.js reads (Core.setSVGDimensions) leaves the parent
+    // out: 'auto', or no height, comes from the chart's width, and any other unit is read as a number
+    // of pixels.
+    // A percentage can come from:
+    // - the chart's own height or, when it has none, the global options (setGlobalOptions, read by
+    //   apexcharts.js as window.Apex), as apexcharts.js merges them
+    // - any responsive entry of the chart or of the global options. The entry that applies depends on
+    //   the window width when the new chart renders, so any entry with a percentage counts.
+    // - the height apexcharts.js resolved for the chart being replaced, after the global options and
+    //   the responsive entry it applied, which also covers a percentage set on that chart in a way
+    //   not read here
+    mayHavePercentHeight(options, chart) {
+        // The unit as apexcharts.js reads it (Core.setSVGDimensions)
+        var isPercent = height => height !== undefined && height !== null
+            && String(height).split(/[0-9]+/g).pop() === '%';
+        var chartHeight = opts => opts && opts.chart ? opts.chart.height : undefined;
+        var responsiveHeights = opts => opts && Array.isArray(opts.responsive)
+            ? opts.responsive.map(entry => chartHeight(entry ? entry.options : undefined))
+            : [];
+
+        // apexcharts.js lays the chart's options over the global ones, so a height key in the chart's
+        // own options wins even when its value is empty
+        var global = typeof window !== 'undefined' && window.Apex ? window.Apex : {};
+        var ownChart = options && options.chart;
+        var height = ownChart && Object.prototype.hasOwnProperty.call(ownChart, 'height')
+            ? ownChart.height
+            : chartHeight(global);
+        var heights = [height].concat(responsiveHeights(options), responsiveHeights(global));
+
+        if (chart && chart.w && chart.w.config) {
+            heights.push(chartHeight(chart.w.config));
+        }
+
+        return heights.some(isPercent);
     },
 
     // Destroying a chart empties its container, and apexcharts.js resets the min-height it gave it.
@@ -1119,7 +1155,7 @@ window.blazor_apexchart = {
 
         //Always destroy chart if it exists. Keep the container at its height until the new chart has
         //rendered, so the page does not shrink under the scroll position (issue 565).
-        var heldHeight = this.containerHeightToHold(container, options);
+        var heldHeight = this.containerHeightToHold(container, options, this.findChart(options.chart.id));
         this.destroyChart(options.chart.id, true);
         this.holdContainerHeight(options.chart.id, container, heldHeight);
         this.dotNetRefs.set(options.chart.id, dotNetObject)
