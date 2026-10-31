@@ -1,0 +1,125 @@
+@page "/issues/509"
+
+@using System.Globalization
+
+@*
+    Repro for issue #509: a real-time line chart loses its line when events arrive quickly.
+    "Quickly" means two events inside the same second, so two points share the same h:mm:ss X
+    string. The "Burst" button appends points the way a singleton service raising events does:
+    overlapping AppendDataAsync calls, three per second of timestamp.
+
+    The first chart uses string X values (category axis), as in the report. The second uses the
+    same timestamps as DateTime X values on a datetime axis, which is the recommended setup for
+    real-time data. tests/e2e/specs/issue-509-realtime-lines-vanish.mjs reads both charts.
+*@
+
+<h3>Issue 509: real-time line chart with same-second events</h3>
+
+<button id="issue509-burst" class="btn btn-primary" @onclick="BurstAsync">Burst</button>
+<span id="issue509-status" class="ms-2">@status</span>
+
+<div id="issue509-category">
+    <ApexChart @ref=categoryChart TItem="Checkin"
+               Title="String X (h:mm:ss)"
+               Options=categoryOptions>
+        <ApexPointSeries TItem="Checkin"
+                         Items="categoryItems"
+                         Name="Checkins"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Timestamp.ToString("h:mm:ss", CultureInfo.InvariantCulture))"
+                         YValue="@(e => e.Value)"
+                         OrderBy="e => e.X" />
+    </ApexChart>
+</div>
+
+<div id="issue509-datetime">
+    <ApexChart @ref=datetimeChart TItem="Checkin"
+               Title="DateTime X"
+               XAxisType="XAxisType.Datetime"
+               Options=datetimeOptions>
+        <ApexPointSeries TItem="Checkin"
+                         Items="datetimeItems"
+                         Name="Checkins"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Timestamp)"
+                         YValue="@(e => e.Value)"
+                         OrderBy="e => e.X" />
+    </ApexChart>
+</div>
+
+@code {
+    private const int BurstSize = 12;
+    private static readonly DateTime Start = new DateTime(2024, 1, 1, 10, 0, 0);
+
+    private ApexChart<Checkin> categoryChart;
+    private ApexChart<Checkin> datetimeChart;
+    private ApexChartOptions<Checkin> categoryOptions;
+    private ApexChartOptions<Checkin> datetimeOptions;
+    private List<Checkin> categoryItems;
+    private List<Checkin> datetimeItems;
+    private string status = "idle";
+
+    public class Checkin
+    {
+        public DateTime Timestamp { get; set; }
+        public int Value { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        categoryItems = InitialItems();
+        datetimeItems = InitialItems();
+        categoryOptions = BuildOptions("issue509-category-chart", 10);
+        datetimeOptions = BuildOptions("issue509-datetime-chart", 10000);
+    }
+
+    private static List<Checkin> InitialItems()
+    {
+        return Enumerable.Range(1, 3)
+            .Select(i => new Checkin { Timestamp = Start.AddSeconds(i - 4), Value = 10 + i * 5 })
+            .ToList();
+    }
+
+    private static ApexChartOptions<Checkin> BuildOptions(string id, double range)
+    {
+        return new ApexChartOptions<Checkin>
+        {
+            Chart = new Chart
+            {
+                Id = id,
+                Type = ChartType.Line,
+                Height = 300,
+                Animations = new Animations
+                {
+                    Enabled = true,
+                    Easing = Easing.Linear,
+                    DynamicAnimation = new DynamicAnimation { Speed = 950 }
+                },
+                Toolbar = new Toolbar { Show = false },
+                Zoom = new Zoom { Enabled = false }
+            },
+            Yaxis = new List<YAxis> { new YAxis { TickAmount = 10, Min = 0, Max = 50 } },
+            Xaxis = new XAxis { Range = range },
+            Stroke = new Stroke { Curve = Curve.Straight }
+        };
+    }
+
+    // Raises BurstSize events, three per second of timestamp, without waiting for the previous
+    // append to finish, the way handlers of a singleton service's event overlap.
+    private async Task BurstAsync()
+    {
+        status = "running";
+        var pending = new List<Task>();
+
+        for (var i = 0; i < BurstSize; i++)
+        {
+            var point = new Checkin { Timestamp = Start.AddSeconds(i / 3), Value = 5 + (i * 7) % 40 };
+            pending.Add(categoryChart.AppendDataAsync(new[] { point }));
+            pending.Add(datetimeChart.AppendDataAsync(new[] { point }));
+            await Task.Delay(30);
+        }
+
+        await Task.WhenAll(pending);
+        status = $"done {BurstSize}";
+    }
+}

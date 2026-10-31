@@ -9,23 +9,7 @@ export function get_apexcharts() {
 window.blazor_apexchart = {
 
     getDotNetObjectReference(index, w) {
-        var chartId = null;
-
-        if (w !== undefined && w.config !== undefined) {
-            chartId = w.config.chart.id;
-        }
-
-        if (w !== undefined && w.w !== undefined && w.w.config !== undefined) {
-            chartId = w.w.config.chart.id;
-        }
-
-        if (index !== undefined && index.w !== undefined && index.w.config !== undefined) {
-            chartId = index.w.config.chart.id;
-        }
-
-        if (index !== undefined && index.config !== undefined) {
-            chartId = index.config.chart.id;
-        }
+        var chartId = this.getChartId(index, w);
 
         if (chartId != null) {
             return this.dotNetRefs.get(chartId);
@@ -34,37 +18,151 @@ window.blazor_apexchart = {
     },
 
     getXAxisLabel(value, index, w) {
-
-        if (window.wasmBinaryFile === undefined && window.WebAssembly === undefined) {
-            console.warn("XAxis labels is only supported in Blazor WASM");
-            return value;
-        }
-
-        var dotNetRef = this.getDotNetObjectReference(index, w);
-        if (dotNetRef != null) {
-            return dotNetRef.invokeMethod('JSGetFormattedXAxisValue', value);
-        }
-
-        return value;
+        return this.invokeSyncFormatter('FormatXAxisLabel', 'JSGetFormattedXAxisValue', value, index, w);
     },
 
     getYAxisLabel(value, index, w) {
+        return this.invokeSyncFormatter('FormatYAxisLabel', 'JSGetFormattedYAxisValue', value, index, w);
+    },
 
-        if (window.wasmBinaryFile === undefined && window.WebAssembly === undefined) {
-            console.warn("YAxis labels is only supported in Blazor WASM");
+    // Chart ids whose .NET side reported that JS cannot call .NET synchronously (Blazor Server,
+    // InteractiveAuto before the WebAssembly runtime is cached, or a BlazorWebView host such as
+    // .NET MAUI). Set by renderChart.
+    noSyncInterop: new Set(),
+
+    // Callback names already warned about, by chart id, so a chart warns once per callback rather
+    // than once per label or per re-render. destroyChart drops a chart's entry when it is disposed.
+    syncWarnings: new Map(),
+
+    warnSyncOnce(chartId, names) {
+        var warned = this.syncWarnings.get(chartId);
+        if (warned === undefined) {
+            warned = new Set();
+            this.syncWarnings.set(chartId, warned);
+        }
+        var callbacks = names.filter(function (name) { return !warned.has(name); });
+        if (callbacks.length === 0) {
+            return;
+        }
+        callbacks.forEach(function (name) { warned.add(name); });
+
+        var hasFormatter = callbacks.some(function (name) { return name.indexOf('Format') === 0; });
+        var advice = hasFormatter
+            ? 'For axis labels use a JavaScript formatter string (Labels.Formatter) instead. '
+            : '';
+
+        console.warn('Blazor-ApexCharts: chart "' + chartId + '" skipped ' + callbacks.join(', ')
+            + ' because this host cannot call .NET synchronously (Blazor Server, InteractiveAuto before the WebAssembly runtime is cached, '
+            + 'or a BlazorWebView host such as .NET MAUI). '
+            + advice
+            + 'In a Blazor web app, rendering this chart with InteractiveWebAssembly runs these callbacks. '
+            + 'See https://apexcharts.github.io/Blazor-ApexCharts/' + (hasFormatter ? 'features/formatters' : 'events/before-zoom'));
+    },
+
+    // True for the error Blazor throws when the host has no synchronous JS to .NET dispatcher.
+    isNoSyncDispatcherError(error) {
+        var message = error && error.message ? String(error.message) : String(error);
+        return message.indexOf('does not support synchronous calls') >= 0;
+    },
+
+    // Calls a synchronous .NET callback for a chart with exactly the given arguments, so a .NET method
+    // that takes one parameter always receives one (an undefined value is sent as null).
+    // Returns { ok: true, result } on success and { ok: false } when the host cannot call .NET
+    // synchronously, so callers fall back to the chart's default behavior instead of throwing out of
+    // the chart render. Any other error, such as an exception thrown by the user's callback, is rethrown.
+    invokeSync(chartId, dotNetRef, callback, method, args) {
+        if (dotNetRef == null) {
+            return { ok: false };
+        }
+
+        if (this.noSyncInterop.has(chartId)) {
+            this.warnSyncOnce(chartId, [callback]);
+            return { ok: false };
+        }
+
+        try {
+            var result = dotNetRef.invokeMethod.apply(dotNetRef, [method].concat(args));
+            return { ok: true, result: result };
+        } catch (error) {
+            if (!this.isNoSyncDispatcherError(error)) {
+                throw error;
+            }
+            this.warnSyncOnce(chartId, [callback]);
+            return { ok: false };
+        }
+    },
+
+    // The shared path of the .NET label formatters. extraArgs are sent to .NET after the value.
+    // Returns the raw value when the chart has no .NET reference or the host cannot call .NET
+    // synchronously; an exception thrown by the user's formatter is rethrown (see invokeSync).
+    invokeSyncFormatter(callback, method, value, index, w, extraArgs) {
+        var dotNetRef = this.getDotNetObjectReference(index, w);
+        if (dotNetRef == null) {
             return value;
         }
 
-        var dotNetRef = this.getDotNetObjectReference(index, w);
-        if (dotNetRef != null) {
-            return dotNetRef.invokeMethod('JSGetFormattedYAxisValue', value);
-        }
-
-        return value;
-
+        var chartId = this.getChartId(index, w);
+        var call = this.invokeSync(chartId, dotNetRef, callback, method, [value].concat(extraArgs || []));
+        return call.ok ? call.result : value;
     },
 
-    findChart(id) {
+    // The chart id from the arguments the chart passes to a formatter. The (index, w) shape varies
+    // by formatter, so the most specific source wins.
+    getChartId(index, w) {
+        if (index != null && index.config !== undefined) { return index.config.chart.id; }
+        if (index != null && index.w !== undefined && index.w.config !== undefined) { return index.w.config.chart.id; }
+        if (w != null && w.w !== undefined && w.w.config !== undefined) { return w.w.config.chart.id; }
+        if (w != null && w.config !== undefined) { return w.config.chart.id; }
+        return null;
+    },
+
+    // Formatter for FormatYAxisLabelForAxis. axisIndex is written into each y-axis
+    // formatter by the .NET side, since apexcharts.js does not pass it.
+    getYAxisLabelForAxis(value, index, w, axisIndex) {
+        return this.invokeSyncFormatter('FormatYAxisLabelForAxis', 'JSGetFormattedYAxisValueForAxis', value, index, w,
+            [this.getYAxisIndexForValue(index, axisIndex)]);
+    },
+
+    // A y-axis formatter is called for axis labels with the tick index as the second
+    // argument, and for tooltip values with { seriesIndex, dataPointIndex, w }. A tooltip
+    // looks the formatter up by series index (falling back to the first axis), so the
+    // index written into it is the wrong axis whenever series and axes are not one to
+    // one. For a value of a series, use the axis apexcharts.js plotted that series on.
+    getYAxisIndexForValue(index, axisIndex) {
+        if (index === null || typeof index !== 'object') {
+            return axisIndex;
+        }
+
+        // dataPointIndex is -1 when apexcharts.js measures the labels of the axis at seriesIndex.
+        if (typeof index.seriesIndex !== 'number' || typeof index.dataPointIndex !== 'number' || index.dataPointIndex < 0) {
+            return axisIndex;
+        }
+
+        var chart = index.w !== undefined ? index.w : index;
+        var globals = chart.globals;
+        // Horizontal bars format their category labels with the first y-axis formatter.
+        if (globals === undefined || !globals.axisCharts || globals.isBarHorizontal) {
+            return axisIndex;
+        }
+
+        var map = globals.seriesYAxisReverseMap;
+        if (!Array.isArray(map) || typeof map[index.seriesIndex] !== 'number') {
+            return axisIndex;
+        }
+
+        return map[index.seriesIndex];
+    },
+
+    // method: the calling method's name, given by calls that do nothing while a brush chart waits
+    // for its targets, so the skipped call is logged in debug mode
+    findChart(id, method) {
+        if (method !== undefined) {
+            var pending = this.pendingBrushCharts.get(id);
+            if (pending !== undefined && pending.options.debug == true) {
+                console.log('Chart ' + id + ' waits for brush targets, ' + method + ' is skipped');
+            }
+        }
+
         if (Apex._chartInstances === undefined) {
             return undefined;
         }
@@ -72,14 +170,163 @@ window.blazor_apexchart = {
 
     },
 
-    destroyChart(id) {
+    // rerender: true when renderChart replaces the chart under the same id, which keeps the record
+    // of sync interop warnings so a re-render does not warn again.
+    destroyChart(id, rerender) {
+        // First, so the formatters stop calling .NET for this chart (they look the reference up
+        // here) even when chart.destroy() below throws. The event handlers and the zoom callbacks
+        // hold the reference renderChart was given, so only a successful chart.destroy() stops them.
+        this.dotNetRefs.delete(id);
+        this.noSyncInterop.delete(id);
+        if (rerender !== true) {
+            this.syncWarnings.delete(id);
+        }
+
+        this.restoreTooltipSource(id);
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             chart.destroy();
         }
 
-        this.dotNetRefs.delete(id);
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending !== undefined) {
+            clearTimeout(pending.warnTimer);
+            this.pendingBrushCharts.delete(id);
+        }
 
+        this.releaseContainerHeight(id);
+    },
+
+    // Containers held at their height while their chart is rebuilt (issue 565), by chart id
+    heldContainers: new Map(),
+
+    // The height to hold a container at while its chart is rebuilt, or 0 for no hold: when the
+    // container is empty (a first render), or when the chart's height may be a percentage. apexcharts.js
+    // works a percentage height out from the container's parent, and a held container would make
+    // that parent as tall as the old chart, so the new chart would come out taller each time.
+    // chart: the chart about to be destroyed, if any.
+    containerHeightToHold(container, options, chart) {
+        if (!container || container.childElementCount === 0) {
+            return 0;
+        }
+
+        if (this.mayHavePercentHeight(options, chart)) {
+            return 0;
+        }
+
+        return container.offsetHeight;
+    },
+
+    // True when a percentage height can reach the chart rendered from `options`, or reached the chart
+    // it replaces. Every other height apexcharts.js reads (Core.setSVGDimensions) leaves the parent
+    // out: 'auto', or no height, comes from the chart's width, and any other unit is read as a number
+    // of pixels.
+    // A percentage can come from:
+    // - the chart's own height or, when it has none, the global options (setGlobalOptions, read by
+    //   apexcharts.js as window.Apex), as apexcharts.js merges them
+    // - any responsive entry of the chart or, when it has no responsive key of its own, of the global
+    //   options. apexcharts.js lays the chart's options over the global ones and replaces an array
+    //   whole, so a chart's own responsive list leaves every global entry out. The entry that
+    //   applies depends on the window width when the new chart renders, so any entry with a
+    //   percentage in the list that reaches the chart counts.
+    // - the height apexcharts.js resolved for the chart being replaced, after the global options and
+    //   the responsive entry it applied, which also covers a percentage set on that chart in a way
+    //   not read here
+    mayHavePercentHeight(options, chart) {
+        // The unit as apexcharts.js reads it (Core.setSVGDimensions)
+        var isPercent = height => height !== undefined && height !== null
+            && String(height).split(/[0-9]+/g).pop() === '%';
+        var chartHeight = opts => opts && opts.chart ? opts.chart.height : undefined;
+        var responsiveHeights = opts => opts && Array.isArray(opts.responsive)
+            ? opts.responsive.map(entry => chartHeight(entry ? entry.options : undefined))
+            : [];
+
+        // apexcharts.js lays the chart's options over the global ones, so a height key or a responsive
+        // key in the chart's own options wins even when its value is empty
+        var global = typeof window !== 'undefined' && window.Apex ? window.Apex : {};
+        var hasOwn = (opts, key) => !!opts && Object.prototype.hasOwnProperty.call(opts, key);
+        var ownChart = options && options.chart;
+        var height = hasOwn(ownChart, 'height') ? ownChart.height : chartHeight(global);
+        var responsive = hasOwn(options, 'responsive') ? options : global;
+        var heights = [height].concat(responsiveHeights(responsive));
+
+        if (chart && chart.w && chart.w.config) {
+            heights.push(chartHeight(chart.w.config));
+        }
+
+        return heights.some(isPercent);
+    },
+
+    // Destroying a chart empties its container, and apexcharts.js resets the min-height it gave it.
+    // Until the new chart has rendered, the container is shorter than before (empty, or sized by a
+    // min-height the new chart is still working out), the page gets shorter and the browser moves the
+    // scroll position. Pin the old height through the CSSOM, which a style-src without
+    // 'unsafe-inline' allows. It is a height, not a min-height, because apexcharts.js writes the
+    // container's min-height while it renders: a taller new chart still grows the container through
+    // that min-height, and nothing is left behind once the hold is released.
+    holdContainerHeight(id, container, height) {
+        if (!(height > 0)) {
+            return;
+        }
+
+        var style = container.style;
+        var hold = {
+            container: container,
+            value: height + 'px',
+            previous: style.getPropertyValue('height'),
+            previousPriority: style.getPropertyPriority('height')
+        };
+
+        style.setProperty('height', hold.value, 'important');
+
+        // The measured height includes padding and borders; a content-box container adds them again
+        var extra = container.offsetHeight - height;
+        if (extra > 0 && extra < height) {
+            hold.value = (height - extra) + 'px';
+            style.setProperty('height', hold.value, 'important');
+        }
+
+        this.heldContainers.set(id, hold);
+    },
+
+    // Ends the hold for a chart. With `hold`, only when that hold is still the current one.
+    releaseContainerHeight(id, hold) {
+        var current = this.heldContainers.get(id);
+        if (current === undefined || (hold !== undefined && hold !== current)) {
+            return;
+        }
+
+        this.heldContainers.delete(id);
+
+        // Leave a height that someone else has set since
+        var style = current.container.style;
+        if (style.getPropertyValue('height') !== current.value) {
+            return;
+        }
+
+        if (current.previous) {
+            style.setProperty('height', current.previous, current.previousPriority);
+        } else {
+            style.removeProperty('height');
+        }
+    },
+
+    // A brush chart waiting for its targets has no chart instance yet (issue 420). A call that
+    // changes it is kept and made once the chart has rendered, in the order the calls came in.
+    // Returns false when the chart is not waiting.
+    deferBrushChartCall(id, method, args) {
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending === undefined) {
+            return false;
+        }
+
+        pending.calls.push({ method: method, args: Array.prototype.slice.call(args) });
+
+        if (pending.options.debug == true) {
+            console.log('Chart ' + id + ' waits for brush targets, ' + method + ' runs once it renders');
+        }
+        return true;
     },
 
     LogMethodCall(chart, method, data) {
@@ -174,74 +421,75 @@ window.blazor_apexchart = {
     // ===== v6 premium feature methods =====
 
     undo(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'undo');
         if (chart !== undefined) { chart.history.undo(); }
     },
 
     redo(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'redo');
         if (chart !== undefined) { chart.history.redo(); }
     },
 
     jumpHistory(id, historyId) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'jumpHistory');
         if (chart !== undefined) { chart.history.jump(historyId); }
     },
 
     startMeasure(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'startMeasure');
         if (chart !== undefined) { chart.startMeasure(); }
     },
 
     stopMeasure(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'stopMeasure');
         if (chart !== undefined) { chart.stopMeasure(); }
     },
 
     clearMeasures(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'clearMeasures');
         if (chart !== undefined) { chart.clearMeasures(); }
     },
 
     refreshTokens(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'refreshTokens');
         if (chart !== undefined) { chart.refreshTokens(); }
     },
 
     getActiveRenderer(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'getActiveRenderer');
         return chart !== undefined ? chart.getActiveRenderer() : null;
     },
 
     capturePerspective(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'capturePerspective');
         return chart !== undefined ? JSON.stringify(chart.perspectives.capture()) : null;
     },
 
     applyPerspective(id, token, animate) {
+        if (this.deferBrushChartCall(id, 'applyPerspective', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) { chart.perspectives.apply(JSON.parse(token), { animate: animate }); }
     },
 
     perspectiveToUrl(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'perspectiveToUrl');
         return chart !== undefined ? chart.perspectives.toURL() : null;
     },
 
     savePerspective(id, name) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'savePerspective');
         if (chart !== undefined) { chart.perspectives.save(name); }
     },
 
     listPerspectives(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'listPerspectives');
         return chart !== undefined ? JSON.stringify(chart.perspectives.list()) : null;
     },
 
     // Restore a perspective encoded in the current page URL (#apex=<token>). Returns true if a
     // token was present and applied, so a shared link reopens the exact captured view.
     applyPerspectiveFromUrl(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'applyPerspectiveFromUrl');
         if (chart === undefined) { return false; }
         var token = ApexCharts.perspectives.fromURL(window.location.href);
         if (!token) { return false; }
@@ -266,27 +514,53 @@ window.blazor_apexchart = {
     },
 
     storyboardBind(id, options) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'storyboardBind');
         return chart !== undefined ? chart.storyboard.bind(this.parseOptions(options)) : null;
     },
 
     storyboardGoTo(id, beat, animate) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'storyboardGoTo');
         if (chart !== undefined) { chart.storyboard.goTo(beat, { animate: animate }); }
     },
 
     storyboardCurrent(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'storyboardCurrent');
         return chart !== undefined ? JSON.stringify(chart.storyboard.current()) : null;
     },
 
     storyboardUnbind(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'storyboardUnbind');
         if (chart !== undefined) { chart.storyboard.unbind(); }
     },
 
     updateOptions(id, options, redrawPaths, animate, updateSyncedCharts, zoom) {
         var options = this.parseOptions(options);
+
+        // A brush chart waiting for its targets renders with these options instead. The component
+        // always sends all its options, so they replace the waiting ones; the events wired up in
+        // renderChart are kept.
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending !== undefined) {
+            options.chart = options.chart || {};
+            options.chart.events = pending.options.chart.events;
+            if (options.tooltip != undefined && options.tooltip.customTooltip == true && pending.options.tooltip != undefined) {
+                options.tooltip.custom = pending.options.tooltip.custom;
+            }
+            pending.options = options;
+
+            if (zoom !== null && zoom !== undefined) {
+                this.deferBrushChartCall(id, 'zoomX', [id, zoom.start, zoom.end]);
+            }
+
+            if (options.debug == true) {
+                console.log('Chart ' + id + ' waits for brush targets, updateOptions applies when it renders');
+            }
+
+            // The new options may name targets that have rendered already
+            this.renderReadyBrushCharts();
+            return;
+        }
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "updateOptions", options);
@@ -301,6 +575,20 @@ window.blazor_apexchart = {
 
     appendData(id, data) {
         var newData = JSON.parse(data);
+
+        // A brush chart waiting for its targets renders with the data appended, by series index
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending !== undefined && Array.isArray(newData) && Array.isArray(pending.options.series)) {
+            newData.forEach((append, index) => {
+                var series = pending.options.series[index];
+                if (series != null && Array.isArray(series.data) && append != null && Array.isArray(append.data)) {
+                    series.data = series.data.concat(append.data);
+                }
+            });
+            return;
+        }
+        if (this.deferBrushChartCall(id, 'appendData', arguments)) { return; }
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "appendDate", newData);
@@ -309,6 +597,7 @@ window.blazor_apexchart = {
     },
 
     toggleDataPointSelection(id, seriesIndex, dataPointIndex) {
+        if (this.deferBrushChartCall(id, 'toggleDataPointSelection', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "toggleDataPointSelection [" + seriesIndex + '] [' + dataPointIndex + ']');
@@ -322,6 +611,7 @@ window.blazor_apexchart = {
     },
 
     zoomX(id, start, end) {
+        if (this.deferBrushChartCall(id, 'zoomX', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'zoomX ' + start + ", " + end);
@@ -330,6 +620,7 @@ window.blazor_apexchart = {
     },
 
     resetSeries(id, shouldUpdateChart, shouldResetZoom) {
+        if (this.deferBrushChartCall(id, 'resetSeries', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'resetSeries ' + shouldUpdateChart + ", " + shouldResetZoom);
@@ -338,6 +629,7 @@ window.blazor_apexchart = {
     },
 
     setLocale(id, name) {
+        if (this.deferBrushChartCall(id, 'setLocale', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'setLocale ' + name);
@@ -348,17 +640,19 @@ window.blazor_apexchart = {
 
     dataUri(id, options) {
         var opt = JSON.parse(options);
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'dataUri');
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'dataUri', options);
             return chart.dataURI(opt);
         }
 
-        return '';
+        // No chart: not rendered yet (a brush chart waiting for its targets) or destroyed.
+        // GetDataUriAsync returns an empty string for null.
+        return null;
     },
 
    async getSvgStringAsync(id) {
-        var chart = this.findChart(id);
+        var chart = this.findChart(id, 'getSvgStringAsync');
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'getSvgString');
             const svgString = await chart.getSvgString();
@@ -369,6 +663,14 @@ window.blazor_apexchart = {
 
     appendSeries(id, series, animate, overwriteInitialSeries) {
         var data = JSON.parse(series);
+
+        // A brush chart waiting for its targets renders with the series added
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending !== undefined) {
+            pending.options.series = (Array.isArray(pending.options.series) ? pending.options.series : []).concat([data]);
+            return;
+        }
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'appendSeries', series);
@@ -378,6 +680,14 @@ window.blazor_apexchart = {
 
     updateSeries(id, series, animate) {
         var data = JSON.parse(series);
+
+        // A brush chart waiting for its targets renders with these series instead
+        var pending = this.pendingBrushCharts.get(id);
+        if (pending !== undefined) {
+            pending.options.series = data;
+            return;
+        }
+
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'updateSeries', series);
@@ -386,6 +696,7 @@ window.blazor_apexchart = {
     },
 
     addPointAnnotation(id, annotation, pushToMemory) {
+        if (this.deferBrushChartCall(id, 'addPointAnnotation', arguments)) { return; }
         var data = JSON.parse(annotation);
         var chart = this.findChart(id);
         if (chart !== undefined) {
@@ -395,6 +706,7 @@ window.blazor_apexchart = {
     },
 
     addXaxisAnnotation(id, annotation, pushToMemory) {
+        if (this.deferBrushChartCall(id, 'addXaxisAnnotation', arguments)) { return; }
         var data = JSON.parse(annotation);
         var chart = this.findChart(id);
         if (chart !== undefined) {
@@ -404,6 +716,7 @@ window.blazor_apexchart = {
     },
 
     addYaxisAnnotation(id, annotation, pushToMemory) {
+        if (this.deferBrushChartCall(id, 'addYaxisAnnotation', arguments)) { return; }
         var data = JSON.parse(annotation);
         var chart = this.findChart(id);
         if (chart !== undefined) {
@@ -413,6 +726,7 @@ window.blazor_apexchart = {
     },
 
     clearAnnotations(id) {
+        if (this.deferBrushChartCall(id, 'clearAnnotations', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'clearAnnotations');
@@ -421,6 +735,7 @@ window.blazor_apexchart = {
     },
 
     removeAnnotation(chartid, id) {
+        if (this.deferBrushChartCall(chartid, 'removeAnnotation', arguments)) { return; }
         var chart = this.findChart(chartid);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'removeAnnotation', id);
@@ -429,6 +744,7 @@ window.blazor_apexchart = {
     },
 
     toggleSeries(id, seriesName) {
+        if (this.deferBrushChartCall(id, 'toggleSeries', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'toggleSeries', seriesName);
@@ -437,6 +753,7 @@ window.blazor_apexchart = {
     },
 
     showSeries(id, seriesName) {
+        if (this.deferBrushChartCall(id, 'showSeries', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'showSeries', seriesName);
@@ -445,6 +762,7 @@ window.blazor_apexchart = {
     },
 
     hideSeries(id, seriesName) {
+        if (this.deferBrushChartCall(id, 'hideSeries', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'hideSeries', seriesName);
@@ -453,6 +771,7 @@ window.blazor_apexchart = {
     },
 
     highlightSeries(id, seriesName) {
+        if (this.deferBrushChartCall(id, 'highlightSeries', arguments)) { return; }
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, 'highlightSeries', seriesName);
@@ -460,18 +779,68 @@ window.blazor_apexchart = {
         }
     },
 
-    copyTooltipContent(chartId) {
+    // The Razor tooltip renders into a <span id="tooltip_home_{id}" hidden> next to the chart. A page rule such
+    // as ".card span { display: inline-block }" beats the [hidden] rule of the browser, so pin display:none
+    // on the element. A CSSOM write, unlike a style attribute in the markup, is allowed by a style-src
+    // without 'unsafe-inline', and !important on the element beats any page rule.
+    hideTooltipSource(chartId) {
+        var home = document.getElementById("tooltip_home_" + chartId);
 
-        var sourceId = "tooltip_source_" + chartId;
-        var targetId = "tooltip_target_" + chartId;
+        if (home !== null && home.hasAttribute("hidden")) {
+            home.style.setProperty("display", "none", "important");
+        }
+    },
 
-        var sourceElement = document.getElementById(sourceId);
-        var targetElement = document.getElementById(targetId);
+    // The live element Blazor renders the .NET tooltip into, per chart id. It is moved into the
+    // apexcharts tooltip rather than copied, so Blazor event handlers (@onclick etc.) keep working.
+    // Once moved it can no longer be found through its home: apexcharts clones the element returned
+    // from tooltip.custom, so a copy with the same id appears while the live one sits detached.
+    tooltipSources: new Map(),
 
-        if (sourceElement && targetElement) {
-            targetElement.innerHTML = sourceElement.innerHTML;
+    getTooltipSource(chartId) {
+        var home = document.getElementById("tooltip_home_" + chartId);
+        if (home === null) {
+            this.tooltipSources.delete(chartId);
+            return null;
         }
 
+        // While the live element is still in its hidden home it is the home's only child.
+        var source = home.firstElementChild;
+        if (source !== null) {
+            this.tooltipSources.set(chartId, source);
+            return source;
+        }
+
+        return this.tooltipSources.get(chartId) || null;
+    },
+
+    copyTooltipContent(chartId) {
+
+        var targetElement = document.getElementById("tooltip_target_" + chartId);
+        var sourceElement = this.getTooltipSource(chartId);
+
+        this.hideTooltipSource(chartId);
+
+        if (sourceElement && targetElement && sourceElement.parentNode !== targetElement) {
+            // Lay the content out as direct children of the tooltip, as the old innerHTML copy did, also
+            // under a page rule that sets display on every span. Set through the CSSOM, which a Content
+            // Security Policy does not block; the copies apexcharts clones from it are exempt as well.
+            sourceElement.style.setProperty("display", "contents", "important");
+            // Replaces the clone apexcharts inserted, so the page never holds two elements with this id.
+            targetElement.replaceChildren(sourceElement);
+        }
+
+    },
+
+    restoreTooltipSource(chartId) {
+        var home = document.getElementById("tooltip_home_" + chartId);
+        var source = this.tooltipSources.get(chartId);
+
+        if (home !== null && source && source.parentNode !== home) {
+            home.appendChild(source);
+        }
+
+        this.tooltipSources.delete(chartId);
     },
 
     dotNetRefs: new Map(),
@@ -509,6 +878,11 @@ window.blazor_apexchart = {
 
                 dotNetObject.invokeMethodAsync('RazorTooltip', selection);
 
+                // apexcharts shows a clone of el, which has no Blazor event handlers. Swap the live
+                // element back in as soon as the clone is in place; the .NET render then updates it.
+                var chartId = w.globals.chartID;
+                queueMicrotask(function () { window.blazor_apexchart.copyTooltipContent(chartId); });
+
                 return el;
 
 
@@ -537,13 +911,29 @@ window.blazor_apexchart = {
             }
         };
 
+        // On pie, donut and polar area charts a legend click also selects the slice, and apexcharts.js then
+        // calls dataPointSelection with a null event, as it does for toggleDataPointSelection. Its legendClick
+        // callback runs synchronously just before that, so the callback records which slice the click is about
+        // to select. Only a null-event selection of that slice is reported as a legend selection, once.
+        var pendingLegendIndex = null;
+
         if (events.hasDataPointSelection === true) {
             options.chart.events.dataPointSelection = function (event, chartContext, config) {
                 var selection = {
                     dataPointIndex: config.dataPointIndex,
                     seriesIndex: config.seriesIndex,
-                    selectedDataPoints: config.selectedDataPoints
+                    selectedDataPoints: config.selectedDataPoints,
+                    source: 'dataPoint'
                 };
+
+                if (!event) {
+                    if (pendingLegendIndex !== null && pendingLegendIndex === config.dataPointIndex) {
+                        selection.source = 'legend';
+                        pendingLegendIndex = null;
+                    } else {
+                        selection.source = 'method';
+                    }
+                }
 
                 dotNetObject.invokeMethodAsync('JSDataPointSelected', selection);
             }
@@ -572,14 +962,24 @@ window.blazor_apexchart = {
             }
         };
 
-        if (events.hasLegendClick === true) {
+        if (events.hasLegendClick === true || events.hasDataPointSelection === true) {
             options.chart.events.legendClick = function (chartContext, seriesIndex, config) {
-                var legendClick = {
-                    seriesIndex: seriesIndex,
-                    collapsed: config.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1
-                };
+                pendingLegendIndex = null;
 
-                dotNetObject.invokeMethodAsync('JSLegendClicked', legendClick);
+                if (events.hasLegendClick === true) {
+                    var legendClick = {
+                        seriesIndex: seriesIndex,
+                        collapsed: config.globals.collapsedSeriesIndices.indexOf(seriesIndex) !== -1
+                    };
+
+                    dotNetObject.invokeMethodAsync('JSLegendClicked', legendClick);
+                }
+
+                // Set only after the .NET call: on Blazor WebAssembly an OnLegendClicked handler runs synchronously
+                // inside invokeMethodAsync up to its first real await, so a selection it makes in code happens
+                // before this line and is reported as 'method'. The microtask clears an index the legend never used.
+                pendingLegendIndex = seriesIndex;
+                Promise.resolve().then(function () { pendingLegendIndex = null; });
             }
         };
 
@@ -670,7 +1070,11 @@ window.blazor_apexchart = {
                 if (config.yaxis !== undefined || Array.isArray(config.yaxis))
                     config.yaxis = undefined;
 
-                var data = dotNetObject.invokeMethod('JSBeforeZoom', config);
+                var call = window.blazor_apexchart.invokeSync(options.chart.id, dotNetObject, 'OnBeforeZoom', 'JSBeforeZoom', [config]);
+                var data = call.result;
+                if (!call.ok || data == null) {
+                    return undefined; // keep the range the user selected
+                }
 
                 return {
                     xaxis: {
@@ -683,7 +1087,11 @@ window.blazor_apexchart = {
 
         if (events.hasBeforeResetZoom === true) {
             options.chart.events.beforeResetZoom = function (chartContext, opts) {
-                var data = dotNetObject.invokeMethod('JSBeforeResetZoom');
+                var call = window.blazor_apexchart.invokeSync(options.chart.id, dotNetObject, 'OnBeforeResetZoom', 'JSBeforeResetZoom', []);
+                var data = call.result;
+                if (!call.ok || data == null) {
+                    return undefined; // reset to the original range
+                }
 
                 return {
                     xaxis: {
@@ -748,16 +1156,188 @@ window.blazor_apexchart = {
             };
         };
 
-        //Always destroy chart if it exists
-        this.destroyChart(options.chart.id);
+        //Always destroy chart if it exists. Keep the container at its height until the new chart has
+        //rendered, so the page does not shrink under the scroll position (issue 565).
+        var heldHeight = this.containerHeightToHold(container, options, this.findChart(options.chart.id));
+        this.destroyChart(options.chart.id, true);
+        this.holdContainerHeight(options.chart.id, container, heldHeight);
         this.dotNetRefs.set(options.chart.id, dotNetObject)
+        this.hideTooltipSource(options.chart.id);
 
-        var chart = new ApexCharts(container, options);
-        chart.render();
+        if (events.syncInterop === false) {
+            this.noSyncInterop.add(options.chart.id);
+        }
+
+        if (Array.isArray(events.unsupportedSyncCallbacks) && events.unsupportedSyncCallbacks.length > 0) {
+            this.warnSyncOnce(options.chart.id, events.unsupportedSyncCallbacks);
+        }
+
+        // apexcharts.js looks up a brush chart's targets while the brush chart renders and fails if
+        // one is not there yet. Each chart renders on its own, so the order is not fixed: hold the
+        // brush chart back until all its targets have rendered (issue 420). Returns 'waiting' when the
+        // chart is held back; the component then raises OnRendered once it renders (JSRendered).
+        var missing = this.missingBrushTargets(options);
+        if (missing.length > 0) {
+            this.holdBrushChart(dotNetObject, container, options, missing);
+            this.releaseContainerHeight(options.chart.id); // no chart comes yet, so do not hold its place
+            return 'waiting';
+        }
+
+        this.createChart(container, options);
+        return 'rendered';
+    },
+
+    // Brush charts waiting for their targets, by chart id
+    pendingBrushCharts: new Map(),
+
+    // How long a brush chart waits before a console warning names the targets it still needs
+    brushTargetWarnDelay: 10000,
+
+    holdBrushChart(dotNetObject, container, options, missing) {
+        var id = options.chart.id;
+        var pending = { dotNetObject: dotNetObject, container: container, options: options, calls: [] };
+
+        // A target id with a typo leaves the brush chart empty for good, so say once what it waits for.
+        // A target that is meant to render later (behind a tab or a toggle) renders the brush chart then.
+        pending.warnTimer = setTimeout(() => {
+            if (this.pendingBrushCharts.get(id) === pending) {
+                console.warn('Brush chart ' + id + ' is not rendered yet: it waits for its target chart(s) '
+                    + this.missingBrushTargets(pending.options).join(', ') + ' to render. Check Chart.Brush.Target or Targets if they never will.');
+            }
+        }, this.brushTargetWarnDelay);
+
+        this.pendingBrushCharts.set(id, pending);
+
+        if (options.debug == true) {
+            console.log('Chart ' + id + ' waits for brush targets ' + missing.join(', '));
+        }
+    },
+
+    createChart(container, options) {
+        var id = options.chart.id;
+        var chart, rendering;
+        try {
+            chart = new ApexCharts(container, options);
+            rendering = chart.render();
+        } catch (error) {
+            this.releaseContainerHeight(id);
+            throw error;
+        }
+
+        // Release the held height once the chart has rendered, or failed to. This is a side branch:
+        // `rendering` stays the chart's own promise, and a failure is handled here as apexcharts.js
+        // handles it, so a failed render is no more reported than before.
+        var hold = this.heldContainers.get(id);
+        if (hold !== undefined) {
+            var release = () => this.releaseContainerHeight(id, hold);
+            Promise.resolve(rendering).then(release, release);
+        }
 
         if (options.debug == true) {
             console.log('Chart ' + options.chart.id + ' rendered');
         }
+
+        // This chart may be the last target a waiting brush chart needs
+        this.renderReadyBrushCharts();
+
+        return { chart: chart, rendering: rendering };
+    },
+
+    // Renders the waiting brush charts whose targets have all rendered
+    renderReadyBrushCharts() {
+        for (const [id, pending] of this.pendingBrushCharts) {
+            if (this.missingBrushTargets(pending.options).length > 0) {
+                continue;
+            }
+
+            this.pendingBrushCharts.delete(id);
+            clearTimeout(pending.warnTimer);
+
+            // This runs inside the render of the target chart that was the last one missing, so a
+            // brush chart that fails to render must not fail the target or the other waiting charts.
+            // The calls it kept are dropped and OnRendered does not fire for a chart that is not there.
+            const failed = error => {
+                pending.calls = [];
+                console.error('Brush chart ' + id + ' failed to render, the calls made while it waited for its targets are dropped', error);
+            };
+
+            let created;
+            try {
+                created = this.createChart(pending.container, pending.options);
+            } catch (error) {
+                failed(error);
+                continue;
+            }
+
+            // apexcharts.js registers the chart under its id at the start of render(), before it
+            // creates and mounts it. A render that fails before that point leaves nothing registered.
+            const registered = this.findChart(id) === created.chart;
+
+            // A render that fails after it registered the chart leaves that broken chart under the id,
+            // where findChart (and every call through it) would find it. Tear it down, and take it out
+            // of the registry even if destroy() fails on a chart that never mounted.
+            const discard = () => {
+                try {
+                    created.chart.destroy();
+                } catch (error) { }
+
+                const instances = Apex._chartInstances;
+                if (Array.isArray(instances)) {
+                    for (let i = instances.length - 1; i >= 0; i--) {
+                        if (instances[i].chart === created.chart) {
+                            instances.splice(i, 1);
+                        }
+                    }
+                }
+            };
+
+            // The chart may have been destroyed or rendered again before this render failed. Then the
+            // failure belongs to a chart that is gone: report nothing and leave the id's chart alone.
+            const failedRendering = error => {
+                if (this.findChart(id) !== (registered ? created.chart : undefined) || this.pendingBrushCharts.has(id)) {
+                    return;
+                }
+
+                if (registered) {
+                    discard();
+                }
+                failed(error);
+            };
+
+            // Once it has rendered, make the calls it received while it waited, then tell the
+            // component, which raises OnRendered
+            Promise.resolve(created.rendering).then(() => {
+                if (this.findChart(id) !== created.chart) {
+                    return;
+                }
+
+                pending.calls.forEach(call => {
+                    const callFailed = error => console.error('Chart ' + id + ': ' + call.method + ' failed', error);
+                    try {
+                        const result = this[call.method].apply(this, call.args);
+                        if (result != null && typeof result.then === 'function') {
+                            result.then(undefined, callFailed);
+                        }
+                    } catch (error) {
+                        callFailed(error);
+                    }
+                });
+
+                // The component may have been disposed in the meantime
+                pending.dotNetObject.invokeMethodAsync('JSRendered').catch(() => { });
+            }, failedRendering);
+        }
+    },
+
+    // The brush targets apexcharts.js will look up when this chart renders and that are not rendered yet
+    missingBrushTargets(options) {
+        var brush = options.chart.brush;
+        if (!brush || brush.enabled !== true || typeof options.chart.events.selection === 'function') {
+            return [];
+        }
+
+        var targets = Array.isArray(brush.targets) ? brush.targets : [brush.target];
+        return targets.filter(target => target != null && target !== options.chart.id && this.findChart(target) === undefined);
     },
 
     parseOptions(options) {

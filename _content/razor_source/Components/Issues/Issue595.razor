@@ -1,0 +1,105 @@
+﻿@page "/issues/595"
+
+@using ApexCharts
+
+<h3>Issue 595: a .NET formatter per Y axis</h3>
+
+<p>Axis 0 labels start with "A0:" and axis 1 labels start with "A1:".</p>
+
+<div id="issue595-chart">
+    <ApexChart TItem="Point"
+               Height="400"
+               Options="options"
+               FormatYAxisLabelForAxis="FormatAxis">
+
+        <ApexPointSeries TItem="Point"
+                         Items="Points"
+                         Name="Revenue"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Revenue)" />
+
+        <ApexPointSeries TItem="Point"
+                         Items="Points"
+                         Name="Margin"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Margin)" />
+    </ApexChart>
+</div>
+
+<p>
+    Tooltip values use the formatter of the axis their series is plotted on: axis 0 holds Alpha and Beta,
+    axis 1 holds Gamma. Alpha and Beta start with "A0:" and Gamma with "A1:".
+</p>
+
+<div id="issue595-tooltip-chart">
+    <ApexChart TItem="Point"
+               Height="400"
+               Options="tooltipOptions"
+               FormatYAxisLabelForAxis="FormatAxis">
+
+        <ApexPointSeries TItem="Point"
+                         Items="Points"
+                         Name="Alpha"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Revenue)" />
+
+        <ApexPointSeries TItem="Point"
+                         Items="Points"
+                         Name="Beta"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Revenue + 500)" />
+
+        <ApexPointSeries TItem="Point"
+                         Items="Points"
+                         Name="Gamma"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.X)"
+                         YValue="@(e => e.Margin)" />
+    </ApexChart>
+</div>
+
+@code {
+    private class Point
+    {
+        public string X { get; set; }
+        public decimal Revenue { get; set; }
+        public decimal Margin { get; set; }
+    }
+
+    private readonly List<Point> Points = new()
+    {
+        new Point { X = "Q1", Revenue = 1200, Margin = 12 },
+        new Point { X = "Q2", Revenue = 1800, Margin = 18 },
+        new Point { X = "Q3", Revenue = 1500, Margin = 25 },
+        new Point { X = "Q4", Revenue = 2100, Margin = 30 },
+    };
+
+    private readonly ApexChartOptions<Point> options = new()
+    {
+        Yaxis = new List<YAxis>
+        {
+            new YAxis { SeriesName = "Revenue" },
+            new YAxis { SeriesName = "Margin", Opposite = true }
+        }
+    };
+
+    // One axis holds two series, so series 1 (Beta) is on axis 0 and series 2 (Gamma) on axis 1.
+    private readonly ApexChartOptions<Point> tooltipOptions = new()
+    {
+        Yaxis = new List<YAxis>
+        {
+            new YAxis { SeriesName = new SeriesName("Alpha", "Beta") },
+            new YAxis { SeriesName = new SeriesName("Gamma"), Opposite = true }
+        },
+        Tooltip = new Tooltip { Shared = true, Intersect = false }
+    };
+
+    private string FormatAxis(decimal value, int axisIndex)
+    {
+        return $"A{axisIndex}:{value:0}";
+    }
+}

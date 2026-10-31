@@ -1,0 +1,66 @@
+@page "/issues/618"
+
+@*
+    Issue #618: a line chart with numeric X values (1..1600) and Xaxis.TickAmount = 40 exports
+    the axis tick labels (1, 40, 80, ...) as the categories of the first CSV rows.
+    The first chart is the reported setup. The second sets XAxisType.Numeric, the workaround,
+    and exports every X value. tests/e2e/specs/issue-618-csv-export-categories.mjs downloads
+    both CSV files through the toolbar menu.
+*@
+
+<h3>Issue 618: CSV export categories with numeric X values</h3>
+
+<div id="chart-default">
+    <h5>Default X axis type</h5>
+    <ApexChart TItem="Reading" Title="Default" Height="350" Options="defaultOptions">
+        <ApexPointSeries TItem="Reading"
+                         Items="readings"
+                         Name="Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="e => e.X"
+                         YValue="e => e.Y" />
+    </ApexChart>
+</div>
+
+<div id="chart-numeric">
+    <h5>XAxisType.Numeric</h5>
+    <ApexChart TItem="Reading" Title="Numeric" Height="350" Options="numericOptions" XAxisType="XAxisType.Numeric">
+        <ApexPointSeries TItem="Reading"
+                         Items="readings"
+                         Name="Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="e => e.X"
+                         YValue="e => e.Y" />
+    </ApexChart>
+</div>
+
+@code {
+    private class Reading
+    {
+        public int X { get; set; }
+        public decimal Y { get; set; }
+    }
+
+    private readonly List<Reading> readings = Enumerable.Range(1, 1600)
+        .Select(i => new Reading { X = i, Y = i % 97 })
+        .ToList();
+
+    private ApexChartOptions<Reading> defaultOptions = CreateOptions("issue-618-default");
+    private ApexChartOptions<Reading> numericOptions = CreateOptions("issue-618-numeric");
+
+    private static ApexChartOptions<Reading> CreateOptions(string fileName) => new()
+    {
+        Chart = new Chart
+        {
+            Animations = new Animations { Enabled = false },
+            Toolbar = new Toolbar
+            {
+                Export = new ExportOptions
+                {
+                    Csv = new ExportCSV { Filename = fileName, HeaderCategory = "XValue" }
+                }
+            }
+        },
+        Xaxis = new XAxis { TickAmount = 40 }
+    };
+}

@@ -38,7 +38,21 @@
                     </div>
                     <div>
                         <h4 class="alert-title">Only supported in Blazor WebAssembly!</h4>
-                        <div class="text-muted">Currently this is only supported in web assembly</div>
+                        <div class="text-muted">
+                            <p>
+                                <code>FormatYAxisLabel</code>, <code>FormatYAxisLabelForAxis</code> and <code>FormatXAxisLabel</code> are called synchronously while the chart draws its labels,
+                                and only WebAssembly supports synchronous calls from JavaScript to .NET.
+                            </p>
+                            <p>
+                                In Blazor Server, in <code>InteractiveAuto</code> on a first visit (it runs on a server circuit until the WebAssembly files are cached),
+                                and in BlazorWebView hosts such as .NET MAUI, the chart still renders: the axis keeps its default labels and a warning is written
+                                to the browser console once per chart.
+                            </p>
+                            <p class="mb-0">
+                                To format labels the same way on every host, use a JavaScript formatter (see <em>Use javascript</em> above).
+                                In a Blazor web app you can also render the page with <code>InteractiveWebAssembly</code>.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </Alert>
@@ -58,13 +72,68 @@
                     </div>
                     <div>
                         <h4 class="alert-title">Only supported in Blazor WebAssembly!</h4>
-                        <div class="text-muted">Currently this is only supported in web assembly</div>
+                        <div class="text-muted">
+                            <p>
+                                <code>FormatYAxisLabel</code>, <code>FormatYAxisLabelForAxis</code> and <code>FormatXAxisLabel</code> are called synchronously while the chart draws its labels,
+                                and only WebAssembly supports synchronous calls from JavaScript to .NET.
+                            </p>
+                            <p>
+                                In Blazor Server, in <code>InteractiveAuto</code> on a first visit (it runs on a server circuit until the WebAssembly files are cached),
+                                and in BlazorWebView hosts such as .NET MAUI, the chart still renders: the axis keeps its default labels and a warning is written
+                                to the browser console once per chart.
+                            </p>
+                            <p class="mb-0">
+                                To format labels the same way on every host, use a JavaScript formatter (see <em>Use javascript</em> above).
+                                In a Blazor web app you can also render the page with <code>InteractiveWebAssembly</code>.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </Alert>
         </Description>
         <Snippet>
             <UseDotNetXAxis />
+        </Snippet>
+    </CodeSnippet>
+
+    <CodeSnippet Title="Use DotNet per Y Axis" ClassName=@typeof(UseDotNetMultipleYAxis).ToString()>
+        <Description>
+            <Alert BackgroundColor=TablerColor.Danger>
+
+                <div class="d-flex">
+                    <div class="me-2">
+                        <Icon TextColor=TablerColor.Danger IconType=@Icons.Alert_triangle Size=40 />
+                    </div>
+                    <div>
+                        <h4 class="alert-title">Only supported in Blazor WebAssembly!</h4>
+                        <div class="text-muted">
+                            <p>
+                                <code>FormatYAxisLabel</code>, <code>FormatYAxisLabelForAxis</code> and <code>FormatXAxisLabel</code> are called synchronously while the chart draws its labels,
+                                and only WebAssembly supports synchronous calls from JavaScript to .NET.
+                            </p>
+                            <p>
+                                In Blazor Server, in <code>InteractiveAuto</code> on a first visit (it runs on a server circuit until the WebAssembly files are cached),
+                                and in BlazorWebView hosts such as .NET MAUI, the chart still renders: the axes keep their default labels and a warning is written
+                                to the browser console once per chart.
+                            </p>
+                            <p class="mb-0">
+                                To format labels the same way on every host, use a JavaScript formatter (see <em>Use javascript</em> above).
+                                In a Blazor web app you can also render the page with <code>InteractiveWebAssembly</code>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </Alert>
+            <p class="mt-2">
+                <code>FormatYAxisLabelForAxis</code> formats the labels of every Y axis and receives the index of the axis
+                (its position in <code>Options.Yaxis</code>), so each axis can be formatted differently.
+                <code>FormatYAxisLabel</code> only formats the first Y axis.
+                Unless <code>Tooltip.Y.Formatter</code> is set, tooltip values are formatted too, each with the index of the
+                axis its series is plotted on.
+            </p>
+        </Description>
+        <Snippet>
+            <UseDotNetMultipleYAxis />
         </Snippet>
     </CodeSnippet>
 

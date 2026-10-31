@@ -33,6 +33,16 @@
     </CodeSnippet>
 
     <CodeSnippet Title="Markers" ClassName=@typeof(MarkersDemo).ToString()>
+        <Description>
+            <p>
+                <code>Markers.Shape</code> takes one shape or a list. One shape, such as <code>Shape = MarkerShape.Square</code>,
+                applies to every series, and so does a list with a single entry: it is sent to the chart as that one shape.
+                A list with two or more entries assigns shapes by series index: the first shape goes to the first series,
+                the second to the second series, and so on. The list does not repeat, so a series past its last entry is drawn
+                with the default circle. To give only the first series a different shape, list two entries, such as
+                <code>Shape = [MarkerShape.Square, MarkerShape.Circle]</code>. The tooltip and legend markers follow the same shapes.
+            </p>
+        </Description>
         <Snippet>
             <MarkersDemo />
         </Snippet>

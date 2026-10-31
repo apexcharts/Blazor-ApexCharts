@@ -1,0 +1,84 @@
+@page "/issues/660"
+
+@*
+    Repro for issue #660: with three or more line series on a numeric x axis, hiding one series
+    through Series.Hide() left the shared tooltip listing a single series. Used by
+    tests/e2e/specs/issue-660-hidden-series-tooltip.mjs.
+*@
+
+<h3>Issue 660: shared tooltip after hiding a series</h3>
+
+<div style="max-width: 600px;">
+    <button id="issue660-add" class="m-3" @onclick="AddNewSeries">Add</button>
+    <button id="issue660-hide-first" class="m-3" @onclick="HideFirst">Hide first</button>
+    <button id="issue660-show-all" class="m-3" @onclick="ShowAll">Show all</button>
+
+    <div id="issue660-status">Series: @series.Count, hidden: @hidden</div>
+
+    <div id="issue660-chart">
+        <ApexChart @ref="chart" TItem="ChartItem"
+                   Title="Issue 660" XAxisType="XAxisType.Numeric" Options="options">
+            @foreach (var item in series)
+            {
+                <ApexPointSeries TItem="ChartItem"
+                                 Items="item.Items"
+                                 Name="@item.Name"
+                                 SeriesType="SeriesType.Line"
+                                 XValue="@(e => e.X)"
+                                 YValue="@(e => decimal.Round(Convert.ToDecimal(e.Y), 4))"
+                                 OrderByDescending="e => e.X" />
+            }
+        </ApexChart>
+    </div>
+</div>
+
+@code {
+    private ApexChart<ChartItem> chart;
+    private readonly List<ChartSeries> series = new() { new ChartSeries("Customer", GetItems()) };
+    private string hidden = "none";
+
+    private readonly ApexChartOptions<ChartItem> options = new()
+    {
+        Chart = new Chart
+        {
+            Toolbar = new Toolbar { Show = false },
+            Zoom = new Zoom { Enabled = false },
+            Animations = new Animations { Enabled = false }
+        },
+        Stroke = new Stroke { Curve = Curve.Smooth }
+    };
+
+    private async Task AddNewSeries()
+    {
+        series.Add(new ChartSeries("Customer_" + (series.Count + 1), GetItems()));
+        await chart.UpdateSeriesAsync(true);
+    }
+
+    private async Task HideFirst()
+    {
+        await chart.Series.First().Hide();
+
+        for (int i = 1; i < chart.Series.Count; i++)
+        {
+            await chart.Series[i].Show();
+        }
+
+        hidden = chart.Series.First().Name;
+    }
+
+    private async Task ShowAll()
+    {
+        foreach (var item in chart.Series)
+        {
+            await item.Show();
+        }
+
+        hidden = "none";
+    }
+
+    private static List<ChartItem> GetItems() => [new(1, 2), new(2, 2), new(3, 1), new(4, 1)];
+
+    private record ChartSeries(string Name, List<ChartItem> Items);
+
+    private record ChartItem(double? X, double? Y);
+}

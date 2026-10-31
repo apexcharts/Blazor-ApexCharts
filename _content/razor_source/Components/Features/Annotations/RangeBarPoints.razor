@@ -1,0 +1,38 @@
+﻿<DemoContainer>
+    <ApexChart TItem="Project"
+               Title="Milestones"
+               Options=options
+               XAxisType="XAxisType.Datetime">
+        <ApexRangeSeries TItem="Project"
+                         Items="projects"
+                         XValue="@(e => e.Name)"
+                         YMinValue="@(e =>e.StartDate.ToUnixTimeMilliseconds())"
+                         YMaxValue="@(e =>e.EndDate.ToUnixTimeMilliseconds())" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    private List<Project> projects = SampleData.GetProjects();
+    private ApexChartOptions<Project> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Project>
+            {
+                PlotOptions = new PlotOptions { Bar = new PlotOptionsBar { Horizontal = true } },
+
+                // On a horizontal range bar the categories run along the y-axis:
+                // X is the time (Unix milliseconds) and Y names the row
+                Annotations = new Annotations
+                {
+                    Points = projects.Select(e => new AnnotationsPoint
+                    {
+                        X = e.StartDate.AddDays((e.EndDate - e.StartDate).TotalDays / 2).ToUnixTimeMilliseconds(),
+                        Y = e.Name,
+                        Marker = new AnnotationMarker { Size = 6, FillColor = "#e53935", StrokeColor = "#fff" },
+                        Label = new Label { Text = "Midpoint", Style = new Style { Background = "#e53935", Color = "#fff" } }
+                    }).ToList()
+                }
+            };
+    }
+}
