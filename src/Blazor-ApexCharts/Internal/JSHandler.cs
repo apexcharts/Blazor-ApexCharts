@@ -53,6 +53,28 @@ namespace ApexCharts.Internal
         }
 
         /// <summary>
+        /// Callback from JavaScript to get a formatted value for the Y axis at <paramref name="axisIndex"/>
+        /// </summary>
+        /// <param name="value">Details from JavaScript</param>
+        /// <param name="axisIndex">Index of the Y axis in <see cref="ApexChartBaseOptions.Yaxis"/>: the axis the label belongs to, or for a tooltip value the axis its series is plotted on</param>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.FormatYAxisLabelForAxis"/>
+        /// </remarks>
+        [JSInvokable]
+        public string JSGetFormattedYAxisValueForAxis(JsonElement value, int axisIndex)
+        {
+            if (ChartReference.FormatYAxisLabelForAxis == null) { return JSGetFormattedYAxisValue(value); }
+            if (value.ValueKind == JsonValueKind.Null) { return ""; }
+
+            if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var decimalValue))
+            {
+                return ChartReference.FormatYAxisLabelForAxis.Invoke(decimalValue, axisIndex);
+            }
+
+            return value.ToString();
+        }
+
+        /// <summary>
         /// Callback from JavaScript to get a formatted X-axis value
         /// </summary>
         /// <param name="value">Details from JavaScript</param>
@@ -261,11 +283,27 @@ namespace ApexCharts.Internal
                     DataPoint = hoverData.DataPoint,
                     IsSelected = selectedDataPoints.SelectedDataPoints?.Any(e => e != null && e.Any(e => e != null && e.HasValue)) ?? false,
                     DataPointIndex = selectedDataPoints.DataPointIndex,
-                    SeriesIndex = selectedDataPoints.SeriesIndex
+                    SeriesIndex = selectedDataPoints.SeriesIndex,
+                    Source = GetSelectionSource(selectedDataPoints.Source)
                 };
 
                 ChartReference.OnDataPointSelection.InvokeAsync(selection);
             }
+        }
+
+        /// <summary>
+        /// Maps the source string sent by blazor-apexcharts.js to <see cref="DataPointSelectionSource"/>
+        /// </summary>
+        /// <param name="source">"dataPoint", "legend" or "method"</param>
+        /// <returns>The matching value, or <see cref="DataPointSelectionSource.DataPoint"/> when the source is missing or unknown</returns>
+        internal static DataPointSelectionSource GetSelectionSource(string source)
+        {
+            return source switch
+            {
+                "legend" => DataPointSelectionSource.Legend,
+                "method" => DataPointSelectionSource.Method,
+                _ => DataPointSelectionSource.DataPoint
+            };
         }
 
         /// <summary>
@@ -386,6 +424,18 @@ namespace ApexCharts.Internal
         public void JSMounted()
         {
             ChartReference.OnMounted.InvokeAsync();
+        }
+
+        /// <summary>
+        /// Callback from JavaScript when a brush chart that waited for its target charts has rendered
+        /// </summary>
+        /// <remarks>
+        /// Will execute <see cref="ApexChart{TItem}.OnRendered"/>
+        /// </remarks>
+        [JSInvokable]
+        public Task JSRendered()
+        {
+            return ChartReference.OnRendered.InvokeAsync();
         }
 
         /// <summary>

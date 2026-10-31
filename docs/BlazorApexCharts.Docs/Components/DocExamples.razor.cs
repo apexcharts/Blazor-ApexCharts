@@ -21,6 +21,7 @@ namespace BlazorApexCharts.Docs.Components
 
         public List<ICodeSnippet> CodeSnippets = new();
         private bool navigateToFragment = true;
+        private bool disposed;
 
 
         protected override void OnInitialized()
@@ -43,10 +44,23 @@ namespace BlazorApexCharts.Docs.Components
 
         }
 
+        // An event handler, so async void: whatever it throws goes to the circuit's error handler.
+        // A page closed during the delay must not, as scrolling to the example no longer matters then.
         private async void LocationChanged(object sender, LocationChangedEventArgs e)
         {
-            await TryNavigateToFragment(100);
-            navigateToFragment = false;
+            try
+            {
+                await TryNavigateToFragment(100);
+                navigateToFragment = false;
+            }
+            catch (JSDisconnectedException)
+            {
+                // The page was closed.
+            }
+            catch (TaskCanceledException)
+            {
+                // The browser did not answer in time (a dropped connection in Blazor Server).
+            }
         }
 
         private async Task TryNavigateToFragment(int delayMilliseconds)
@@ -61,6 +75,7 @@ namespace BlazorApexCharts.Docs.Components
             if (codeSnippet != null)
             {
                 await Task.Delay(delayMilliseconds);
+                if (disposed) { return; }
                 await NavigateTo(codeSnippet);
             }
         }
@@ -97,6 +112,7 @@ namespace BlazorApexCharts.Docs.Components
 
         public void Dispose()
         {
+            disposed = true;
             NavManager.LocationChanged -= LocationChanged;
         }
     }

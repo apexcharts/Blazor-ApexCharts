@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<OutputType>Exe</OutputType>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<RootNamespace>ApexCharts.Tests</RootNamespace>
+		<AssemblyName>Blazor-ApexCharts.Tests</AssemblyName>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="bunit" Version="2.13.3" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+		<PackageReference Include="xunit.v3.mtp-off" Version="4.0.2" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Blazor-ApexCharts\Blazor-ApexCharts.csproj" />
+	</ItemGroup>
+
+	<!--
+		The MAUI package needs the MAUI workload to build. Its chart service and DI extension have no other
+		MAUI dependency than FileSystem, so compile them into the tests (Maui/MauiStubs.cs stands in for it).
+	-->
+	<ItemGroup>
+		<Compile Include="..\..\src\Blazor-ApexCharts-MAUI\ChartService\ApexChartServiceMaui.cs" Link="Maui\Linked\ApexChartServiceMaui.cs" />
+		<Compile Include="..\..\src\Blazor-ApexCharts-MAUI\Extensions\ApexChartsMauiExtensions.cs" Link="Maui\Linked\ApexChartsMauiExtensions.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+		<Using Include="Bunit" />
+	</ItemGroup>
+
+</Project>

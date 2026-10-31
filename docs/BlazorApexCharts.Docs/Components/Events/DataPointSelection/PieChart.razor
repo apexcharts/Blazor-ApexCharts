@@ -1,6 +1,7 @@
 ﻿<DemoContainer>
     <ApexChart TItem="Order"
-               Title="Order Gross Value"  OnDataPointSelection="PointSelected">
+               Title="Order Gross Value"
+               OnDataPointSelection="PointSelected">
 
         <ApexPointSeries TItem="Order"
                          Items="Orders"
@@ -8,21 +9,32 @@
                          SeriesType="SeriesType.Pie"
                          XValue="@(e => e.Country)"
                          YAggregate="@(e => e.Sum(e => e.GrossValue))"
-                         OrderByDescending="e=>e.Y"
-                       />
+                         OrderByDescending="e=>e.Y" />
     </ApexChart>
 </DemoContainer>
 
+@if (message != null)
+{
+    <Alert BackgroundColor="TablerColor.Primary">
+        <h3>@message</h3>
+    </Alert>
+}
+
 @code {
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
+    private string message;
 
+    // On pie, donut and polar area charts a legend click also selects the slice,
+    // so this runs for both. Source tells a slice click from a legend click.
     private void PointSelected(SelectedData<Order> selectedData)
     {
+        var state = selectedData.IsSelected ? "selected" : "deselected";
 
-        var tt = selectedData;
-
+        message = selectedData.Source switch
+        {
+            DataPointSelectionSource.Legend => $"Legend click {state} {selectedData.DataPoint.X}",
+            DataPointSelectionSource.Method => $"Code {state} {selectedData.DataPoint.X}",
+            _ => $"Slice click {state} {selectedData.DataPoint.X}"
+        };
     }
-
-
-
-    }
+}

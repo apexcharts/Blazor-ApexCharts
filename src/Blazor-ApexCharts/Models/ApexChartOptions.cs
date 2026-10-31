@@ -376,7 +376,12 @@ namespace ApexCharts
         /// <summary>
         /// Y Value on which the annotation will be drawn
         /// </summary>
-        public double? Y { get; set; }
+        /// <remarks>
+        /// Accepts a number (12.5) for a value axis, or a string category (for example the row name
+        /// on a horizontal bar or rangeBar chart, where the categories run along the y-axis).
+        /// A string ending in px, such as "40px", is taken as a pixel offset from the top of the plot area.
+        /// </remarks>
+        public object Y { get; set; }
 
         /// <summary>
         /// When there are multiple y-axis, setting this options will put the point annotation for that particular y-axis' y value
@@ -491,6 +496,13 @@ namespace ApexCharts
         /// <summary>
         /// Where to place the label
         /// </summary>
+        /// <remarks>
+        /// An x-axis annotation (<see cref="AnnotationsXAxis"/>) reads <see cref="LabelPosition.Top"/> (the default),
+        /// <see cref="LabelPosition.Center"/> or <see cref="LabelPosition.Bottom"/>.
+        /// A y-axis annotation (<see cref="AnnotationsYAxis"/>) reads <see cref="LabelPosition.Left"/>,
+        /// <see cref="LabelPosition.Center"/> or <see cref="LabelPosition.Right"/> (the default).
+        /// A point annotation (<see cref="AnnotationsPoint"/>) ignores it.
+        /// </remarks>
         public LabelPosition? Position { get; set; }
 
         /// <inheritdoc cref="ApexCharts.Style" />
@@ -805,11 +817,18 @@ namespace ApexCharts
         /// <summary>
         /// Value on which the annotation will be drawn
         /// </summary>
+        /// <remarks>
+        /// On a datetime axis (<see cref="XAxisType.Datetime"/>) pass Unix milliseconds, for example
+        /// <c>date.ToUnixTimeMilliseconds()</c>, and plot the series the same way. A <see cref="System.DateTime"/>
+        /// value is sent as a string, which apexcharts.js places as a category label and loses when
+        /// the chart is zoomed so that the label is out of view.
+        /// </remarks>
         public object X { get; set; }
 
         /// <summary>
         /// If you provide this additional x2 value, a region will be drawn from x to x2.
         /// </summary>
+        /// <remarks>Use the same kind of value as <see cref="X"/>.</remarks>
         public object X2 { get; set; }
     }
 
@@ -864,7 +883,12 @@ namespace ApexCharts
         /// <summary>
         /// Sets the width for annotation line
         /// </summary>
-        public double? Width { get; set; }
+        /// <remarks>
+        /// Accepts a string with a CSS unit, either a share of the plot width ("50%", the default is "100%")
+        /// or pixels ("200px"). A number is taken as pixels and sent as a px string, so 200 and "200px" draw the same line.
+        /// </remarks>
+        [JsonConverter(typeof(CssLengthConverter))]
+        public object Width { get; set; }
 
         /// <summary>
         /// Value on which the annotation will be drawn
@@ -984,6 +1008,20 @@ namespace ApexCharts
 
         /// <inheritdoc cref="ApexCharts.ChartLocale" />
         public List<ChartLocale> Locales { get; set; }
+
+        /// <summary>
+        /// A Content Security Policy (CSP) nonce that ApexCharts copies onto the <c>&lt;style&gt;</c> elements it injects
+        /// (the shared <c>apexcharts-css</c> stylesheet and the legend styles). Set it when your page sends a CSP whose
+        /// <c>style-src</c> lists <c>'nonce-...'</c> instead of <c>'unsafe-inline'</c>, otherwise the browser blocks those
+        /// styles and the chart renders without them. Use the value from the CSP header the current page loaded with.
+        /// The stylesheet is shared by every chart on the page and is created by the first chart that renders, so that
+        /// chart must carry the nonce. A nonce generated per request belongs on each chart, or in options passed to the
+        /// scoped <see cref="IApexChartService.SetGlobalOptionsAsync(IApexChartBaseOptions, bool)"/> before the first
+        /// chart renders. <see cref="ApexChartsServiceOptions.GlobalOptions"/> is configured once at startup and shared
+        /// by every user, so use it only for a value that never changes.
+        /// Defaults to no nonce.
+        /// </summary>
+        public string Nonce { get; set; }
 
         /// <summary>
         /// Sets the left offset for the whole chart.
@@ -1655,11 +1693,43 @@ namespace ApexCharts
         /// <summary>
         /// Chart ID of the target chart to sync the brush chart and the target chart. If you have an array of multiple chart IDs, use <see cref="Targets"/> property instead.
         /// </summary>
+        /// <remarks>
+        /// The brush chart is drawn once every target chart has rendered, so the charts can be declared in any order
+        /// and a target can render later, for example behind a tab or a toggle. Until then the brush chart stays empty,
+        /// <see cref="ApexChart{TItem}.OnRendered"/> has not fired (use it, not the render call, to know when the brush chart exists),
+        /// and calls that change it, such as <see cref="ApexChart{TItem}.UpdateSeriesAsync(bool)"/>, <see cref="ApexChart{TItem}.UpdateOptionsAsync(bool, bool, bool, ZoomOptions)"/>,
+        /// <see cref="ApexChart{TItem}.AppendDataAsync(IEnumerable{TItem})"/>, the annotation methods or the series visibility methods, are applied when it renders.
+        /// Calls that read it return an empty result meanwhile, without an error: <see cref="ApexChart{TItem}.GetDataUriAsync(DataUriOptions)"/> and
+        /// <see cref="ApexChart{TItem}.GetSvgStringAsync"/> return an empty string, <see cref="ApexChart{TItem}.CapturePerspectiveAsync"/>,
+        /// <see cref="ApexChart{TItem}.PerspectiveToUrlAsync"/>, <see cref="ApexChart{TItem}.ListPerspectivesAsync"/>, <see cref="ApexChart{TItem}.StoryboardCurrentAsync"/>
+        /// and <see cref="ApexChart{TItem}.GetActiveRendererAsync"/> return null, <see cref="ApexChart{TItem}.ApplyPerspectiveFromUrlAsync"/> returns false and
+        /// <see cref="ApexChart{TItem}.StoryboardBindAsync(StoryboardOptions)"/> returns 0. The other history, measure, perspective and storyboard calls,
+        /// except <see cref="ApexChart{TItem}.ApplyPerspectiveAsync(string, bool)"/>, do nothing.
+        /// If the brush chart fails to render once its targets are there (its container was removed from the page, for example), the error and the
+        /// chart id are written to the browser console, the calls it kept are dropped and <see cref="ApexChart{TItem}.OnRendered"/> does not fire.
+        /// An id that matches no chart keeps the brush chart empty; after 10 seconds a warning naming the missing ids is written to the browser console.
+        /// </remarks>
         public string Target { get; set; }
 
         /// <summary>
         /// Chart IDs of the target charts to sync the brush chart and the target charts. If you have a single chart ID, use <see cref="Target"/> property instead.
         /// </summary>
+        /// <remarks>
+        /// The brush chart is drawn once every target chart has rendered, so the charts can be declared in any order
+        /// and a target can render later, for example behind a tab or a toggle. Until then the brush chart stays empty,
+        /// <see cref="ApexChart{TItem}.OnRendered"/> has not fired (use it, not the render call, to know when the brush chart exists),
+        /// and calls that change it, such as <see cref="ApexChart{TItem}.UpdateSeriesAsync(bool)"/>, <see cref="ApexChart{TItem}.UpdateOptionsAsync(bool, bool, bool, ZoomOptions)"/>,
+        /// <see cref="ApexChart{TItem}.AppendDataAsync(IEnumerable{TItem})"/>, the annotation methods or the series visibility methods, are applied when it renders.
+        /// Calls that read it return an empty result meanwhile, without an error: <see cref="ApexChart{TItem}.GetDataUriAsync(DataUriOptions)"/> and
+        /// <see cref="ApexChart{TItem}.GetSvgStringAsync"/> return an empty string, <see cref="ApexChart{TItem}.CapturePerspectiveAsync"/>,
+        /// <see cref="ApexChart{TItem}.PerspectiveToUrlAsync"/>, <see cref="ApexChart{TItem}.ListPerspectivesAsync"/>, <see cref="ApexChart{TItem}.StoryboardCurrentAsync"/>
+        /// and <see cref="ApexChart{TItem}.GetActiveRendererAsync"/> return null, <see cref="ApexChart{TItem}.ApplyPerspectiveFromUrlAsync"/> returns false and
+        /// <see cref="ApexChart{TItem}.StoryboardBindAsync(StoryboardOptions)"/> returns 0. The other history, measure, perspective and storyboard calls,
+        /// except <see cref="ApexChart{TItem}.ApplyPerspectiveAsync(string, bool)"/>, do nothing.
+        /// If the brush chart fails to render once its targets are there (its container was removed from the page, for example), the error and the
+        /// chart id are written to the browser console, the calls it kept are dropped and <see cref="ApexChart{TItem}.OnRendered"/> does not fire.
+        /// An id that matches no chart keeps the brush chart empty; after 10 seconds a warning naming the missing ids is written to the browser console.
+        /// </remarks>
         public List<string> Targets { get; set; }
     }
 
@@ -3037,8 +3107,9 @@ namespace ApexCharts
         public double? Radius { get; set; }
 
         /// <summary>
-        /// Shape of the marker.
+        /// Shape of the marker. A single shape, or a list with one entry, applies to every series. A list with two or more entries assigns shapes by series index.
         /// </summary>
+        /// <inheritdoc cref="ApexCharts.MarkerShapeSelections" path="/remarks"/>
         public MarkerShapeSelections Shape { get; set; }
 
         /// <summary>
@@ -5719,6 +5790,12 @@ namespace ApexCharts
         /// <summary>
         /// Categories are labels which are displayed on the x-axis.
         /// </summary>
+        /// <remarks>
+        /// On a category axis the points of every series are placed by position, not by their X value:
+        /// the first point of each series is drawn at the first category, the second at the second, and so on.
+        /// When a series skips a category, or lists its points in a different order, its points move onto the wrong labels.
+        /// To keep them aligned, give every series one point per category in category order, with a <c>null</c> Y value for an empty category.
+        /// </remarks>
         public object Categories { get; set; }
 
         /// <summary>
@@ -6782,12 +6859,34 @@ namespace ApexCharts
     };
 
     /// <summary>
-    /// A list of sides to place the labels for data point annotations
+    /// Where to place the label of an x-axis or y-axis annotation (see <see cref="Label.Position"/>)
     /// </summary>
     public enum LabelPosition
     {
+        /// <summary>
+        /// Left edge of the plot area. Applies to y-axis annotations.
+        /// </summary>
         Left,
-        Right
+
+        /// <summary>
+        /// Right edge of the plot area. Applies to y-axis annotations.
+        /// </summary>
+        Right,
+
+        /// <summary>
+        /// Top of the plot area. Applies to x-axis annotations.
+        /// </summary>
+        Top,
+
+        /// <summary>
+        /// Middle of the plot area. Applies to x-axis and y-axis annotations.
+        /// </summary>
+        Center,
+
+        /// <summary>
+        /// Bottom of the plot area. Applies to x-axis annotations.
+        /// </summary>
+        Bottom
     };
 
     /// <summary>

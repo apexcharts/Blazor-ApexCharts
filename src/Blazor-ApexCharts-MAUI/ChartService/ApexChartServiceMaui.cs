@@ -18,7 +18,9 @@ internal class ApexChartServiceMaui : IApexChartService
 		this.jSRuntime = jSRuntime;
 
 		PopulateBuiltInLocales();
-		globalOptions = serviceOptions.GlobalOptions;
+		// ApexChartsServiceOptions is a singleton shared by every scope.
+		// Work on a copy so that changing the global options here never reaches another scope.
+		globalOptions = OptionsCopier.DeepCopy(serviceOptions.GlobalOptions);
 
 		if (globalOptions != null)
 		{
@@ -256,7 +258,8 @@ internal class ApexChartServiceMaui : IApexChartService
 	/// <inheritdoc/>
 	public void UnRegisterChart(IApexChartBase apexChart)
 	{
-		charts.TryRemove(apexChart.ChartId, out _);
+		// Remove the entry only if it belongs to this chart, never another chart that uses the same id.
+		charts.TryRemove(new KeyValuePair<string, IApexChartBase>(apexChart.ChartId, apexChart));
 	}
 
 	/// <summary>

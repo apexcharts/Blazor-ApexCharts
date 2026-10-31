@@ -1,0 +1,49 @@
+@page "/issues/658"
+
+@* Repro for issue 658: a chart under a nonce-based CSP. The e2e spec serves this page with a
+   Content-Security-Policy header whose style-src allows only the nonce below. *@
+
+<h3>Issue 658: CSP nonce</h3>
+
+<div id="issue-658-chart">
+    <ApexChart TItem="Order"
+               Title="Gross value by country"
+               Options="options"
+               Height="350">
+
+        <ApexPointTooltip>
+            <div id="issue-658-tooltip">@context.DataPoint.X</div>
+        </ApexPointTooltip>
+
+        <ChildContent>
+            <ApexPointSeries TItem="Order"
+                             Items="orders"
+                             Name="Gross Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.GrossValue))" />
+
+            <ApexPointSeries TItem="Order"
+                             Items="orders"
+                             Name="Net Value"
+                             SeriesType="SeriesType.Bar"
+                             XValue="@(e => e.Country)"
+                             YAggregate="@(e => e.Sum(e => e.NetValue))" />
+        </ChildContent>
+    </ApexChart>
+</div>
+
+@code {
+    /// <summary>
+    /// The nonce the e2e spec puts in the page's CSP header.
+    /// </summary>
+    public const string CspNonce = "issue658e2enonce";
+
+    private List<Order> orders = SampleData.GetOrders();
+
+    private ApexChartOptions<Order> options = new()
+    {
+        Chart = new Chart { Nonce = CspNonce },
+        Legend = new Legend { Show = true }
+    };
+}

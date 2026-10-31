@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Category mapping repro (#473)</title>
+  <style>
+    body { font-family: sans-serif; margin: 16px; }
+    .chart { width: 900px; margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+  <!--
+    Minimal plain-JS repro for Blazor-ApexCharts issue #473.
+    Serve the repository root (python3 -m http.server 5310) and open
+    /tests/e2e/repros/category-mapping/index.html. Each chart is a category bar
+    chart whose series carry { x, y } points where x is a category name, but
+    the series do not all contain every category.
+    Expected: each bar sits above the category named by its x.
+    Observed: bars are placed by array index, so a series that skips a
+    category shifts left onto the wrong labels.
+  -->
+  <h3>A: xaxis.categories set, series skip some categories</h3>
+  <div id="chartA" class="chart"></div>
+  <h3>B: no xaxis.categories, second series has different x values</h3>
+  <div id="chartB" class="chart"></div>
+  <h3>C: same x values in both series but in a different order</h3>
+  <div id="chartC" class="chart"></div>
+  <pre id="result"></pre>
+  <script type="module">
+    import ApexCharts from '../../../../src/Blazor-ApexCharts/wwwroot/js/apexcharts.esm.js';
+
+    const hours = Array.from({ length: 6 }, (_, i) => `0${i}:00`);
+    const base = { chart: { type: 'bar', height: 260, animations: { enabled: false } }, dataLabels: { enabled: false } };
+
+    const configs = {
+      chartA: {
+        ...base,
+        xaxis: { categories: hours },
+        series: [
+          { name: 'Full', data: hours.map((h, i) => ({ x: h, y: i + 1 })) },
+          { name: 'Sparse', data: [{ x: '02:00', y: 5 }, { x: '04:00', y: 7 }] }
+        ]
+      },
+      chartB: {
+        ...base,
+        series: [
+          { name: 'S1', data: [{ x: '00:00', y: 1 }, { x: '01:00', y: 2 }, { x: '02:00', y: 3 }] },
+          { name: 'S2', data: [{ x: '01:00', y: 4 }, { x: '02:00', y: 5 }] }
+        ]
+      },
+      chartC: {
+        ...base,
+        series: [
+          { name: 'S1', data: [{ x: '00:00', y: 1 }, { x: '01:00', y: 2 }, { x: '02:00', y: 3 }] },
+          { name: 'S2', data: [{ x: '02:00', y: 6 }, { x: '00:00', y: 4 }, { x: '01:00', y: 5 }] }
+        ]
+      }
+    };
+
+    // For every bar, find the x-axis label nearest to the bar's centre and compare
+    // it with the x value of the data point the bar was drawn from.
+    function placements(id, cfg) {
+      const root = document.getElementById(id);
+      const labels = [...root.querySelectorAll('.apexcharts-xaxis-label')].map((t) => {
+        const r = t.getBoundingClientRect();
+        const tspan = t.querySelector('tspan');
+        return { text: (tspan || t).textContent.trim(), cx: r.left + r.width / 2 };
+      });
+      const out = [];
+      root.querySelectorAll('.apexcharts-series').forEach((g) => {
+        const si = Number(g.getAttribute('data:realIndex'));
+        g.querySelectorAll('path.apexcharts-bar-area').forEach((p) => {
+          const j = Number(p.getAttribute('j'));
+          const r = p.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const nearest = labels.reduce((a, b) => (Math.abs(b.cx - cx) < Math.abs(a.cx - cx) ? b : a));
+          const point = cfg.series[si].data[j];
+          out.push({ series: cfg.series[si].name, x: point.x, y: point.y, drawnUnder: nearest.text, ok: nearest.text === point.x });
+        });
+      });
+      return out;
+    }
+
+    const result = {};
+    for (const [id, cfg] of Object.entries(configs)) {
+      const chart = new ApexCharts(document.getElementById(id), cfg);
+      await chart.render();
+      result[id] = placements(id, cfg);
+    }
+    window.__result = result;
+    document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+  </script>
+</body>
+</html>

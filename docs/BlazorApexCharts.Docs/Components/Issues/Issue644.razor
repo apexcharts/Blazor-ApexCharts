@@ -1,0 +1,103 @@
+@page "/issues/644"
+
+@* Repro for #644: @onclick inside an ApexPointTooltip never fired, because the tooltip showed a copy of
+   the rendered markup instead of the live nodes Blazor attaches its handlers to. The CSS below lets the
+   pointer reach the tooltip and keeps it visible while hovered, which is what an interactive tooltip needs.
+   Its second rule takes the tooltip out of hit testing a moment after it is hidden, so it does not stay
+   over the plot as an invisible layer that blocks the bars (see Features/TooltipsDotNet/Interactive.razor). *@
+
+<style>
+    #issue644 .apexcharts-tooltip {
+        pointer-events: auto;
+    }
+
+        #issue644 .apexcharts-tooltip:not(.apexcharts-active):not(:hover) {
+            visibility: hidden;
+            transition: opacity .12s ease .3s, visibility 0s linear .42s;
+        }
+
+        #issue644 .apexcharts-tooltip:hover {
+            opacity: 1;
+        }
+</style>
+
+<h3>
+    Message: <span id="issue644-message">@Message</span>
+</h3>
+<p>Clicks: <span id="issue644-clicks">@Clicks</span></p>
+<p>
+    <button id="issue644-rerender" @onclick="RerenderAsync">Re-render chart</button>
+    <button id="issue644-update" @onclick="UpdateOptionsAsync">Update options</button>
+    <span id="issue644-redraws">Redraws: @Redraws</span>
+</p>
+
+<div id="issue644">
+    <ApexChart @ref="chart"
+               TItem="MyData"
+               Width="@("100%")"
+               Height="@("400px")"
+               Title="Sample Data">
+        <ApexPointTooltip>
+            <div style="padding: 1rem;">
+                <p id="issue644-tooltip-x">Category @context.DataPoint.X</p>
+                <button id="issue644-button" @onclick="() => ClickMe(context.DataPoint.X?.ToString())">Click me</button>
+            </div>
+        </ApexPointTooltip>
+        <ChildContent>
+            <ApexPointSeries TItem="MyData"
+                             Items="Data"
+                             Name="Net Profit"
+                             SeriesType="SeriesType.Bar"
+                             XValue="e => e.Category"
+                             YValue="e => e.NetProfit" />
+            <ApexPointSeries TItem="MyData"
+                             Items="Data"
+                             Name="Revenue"
+                             SeriesType="SeriesType.Bar"
+                             XValue="e => e.Category"
+                             YValue="e => e.Revenue" />
+        </ChildContent>
+    </ApexChart>
+</div>
+
+@code {
+    private List<MyData> Data { get; set; } = new();
+    private string Message = "Not clicked";
+    private int Clicks;
+    private int Redraws;
+    private ApexChart<MyData> chart;
+
+    protected override void OnInitialized()
+    {
+        Data.Add(new MyData { Category = "Jan", NetProfit = 12, Revenue = 33 });
+        Data.Add(new MyData { Category = "Feb", NetProfit = 43, Revenue = 42 });
+        Data.Add(new MyData { Category = "Mar", NetProfit = 112, Revenue = 23 });
+    }
+
+    private void ClickMe(string category)
+    {
+        Clicks++;
+        Message = $"Clicked {category}";
+    }
+
+    // Destroys and re-creates the chart, which also throws away the apexcharts tooltip element.
+    private async Task RerenderAsync()
+    {
+        await chart.RenderAsync();
+        Redraws++;
+    }
+
+    // Redraws the chart through apexcharts, which rebuilds its tooltip element.
+    private async Task UpdateOptionsAsync()
+    {
+        await chart.UpdateOptionsAsync(true, false, false);
+        Redraws++;
+    }
+
+    public class MyData
+    {
+        public string Category { get; set; }
+        public decimal NetProfit { get; set; }
+        public decimal Revenue { get; set; }
+    }
+}

@@ -1,4 +1,3 @@
-@implements IDisposable
 @inject IJSRuntime JS
 @using Microsoft.JSInterop
 @*
@@ -285,10 +284,8 @@
         return c;
     }
 
-    public void Dispose()
-    {
-        try { _ = chart?.StoryboardUnbindAsync(); } catch { /* disposing */ }
-    }
+    // No Dispose: disposing the chart destroys it, and destroying a chart unbinds its storyboard.
+    // A fire-and-forget StoryboardUnbindAsync here would race that teardown for nothing.
 
     private record Month(string Name, int Value);
 }

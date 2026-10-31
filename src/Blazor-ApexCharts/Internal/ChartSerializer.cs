@@ -34,6 +34,7 @@ namespace ApexCharts.Internal
             serializerOptions.Converters.Add(new ValueOrListConverter<Curve>());
             serializerOptions.Converters.Add(new ValueOrListConverter<FillPatternStyle>());
             serializerOptions.Converters.Add(new ValueOrListConverter<FillType>());
+            serializerOptions.Converters.Add(new ValueOrListConverter<MarkerShape>());
             serializerOptions.Converters.Add(new ColorStopsConverter());
 
             return serializerOptions;

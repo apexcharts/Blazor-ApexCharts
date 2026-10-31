@@ -1,0 +1,104 @@
+@page "/issues/557"
+
+@using ApexCharts
+
+<h3>Issue 557: X range annotation after zooming inside it</h3>
+
+<p>
+    Both charts plot one day in 10 minute steps with an X range annotation from 00:00 to 12:00.
+    The first passes Unix milliseconds on a datetime axis, which is the supported setup.
+    The second passes <code>DateTime</code> values with no axis type, as the issue did. They are sent as
+    strings, so the axis becomes a category axis, and apexcharts.js places a category annotation by
+    looking up a rendered axis label. Zooming inside the range removes those labels and the fill collapses.
+</p>
+
+<div id="issue557-datetime">
+    <button id="issue557-zoom-datetime" class="btn btn-primary btn-sm" @onclick="ZoomDatetime">Zoom 02:00 to 06:00</button>
+    <ApexChart @ref="datetimeChart" TItem="Reading" Title="Datetime axis, Unix milliseconds" Height="320" Options="datetimeOptions">
+        <ApexPointSeries TItem="Reading"
+                         Items="readings"
+                         Name="Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Time.ToUnixTimeMilliseconds())"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</div>
+
+<div id="issue557-category">
+    <button id="issue557-zoom-category" class="btn btn-secondary btn-sm" @onclick="ZoomCategory">Zoom 02:00 to 06:00</button>
+    <ApexChart @ref="categoryChart" TItem="Reading" Title="DateTime values, no axis type" Height="320" Options="categoryOptions">
+        <ApexPointSeries TItem="Reading"
+                         Items="readings"
+                         Name="Value"
+                         SeriesType="SeriesType.Line"
+                         XValue="@(e => e.Time)"
+                         YValue="@(e => e.Value)" />
+    </ApexChart>
+</div>
+
+@code {
+    private static readonly DateTime Day = new(2024, 12, 19, 0, 0, 0, DateTimeKind.Utc);
+
+    private ApexChart<Reading> datetimeChart;
+    private ApexChart<Reading> categoryChart;
+    private ApexChartOptions<Reading> datetimeOptions;
+    private ApexChartOptions<Reading> categoryOptions;
+    private readonly List<Reading> readings = new();
+
+    protected override void OnInitialized()
+    {
+        for (var i = 0; i < 24 * 6; i++)
+        {
+            readings.Add(new Reading { Time = Day.AddMinutes(10 * i), Value = 50 + (i * 7 % 40) });
+        }
+
+        datetimeOptions = new ApexChartOptions<Reading>
+        {
+            Chart = new Chart { Animations = new Animations { Enabled = false } },
+            Xaxis = new XAxis { Type = XAxisType.Datetime },
+            Annotations = new Annotations
+            {
+                Xaxis = new List<AnnotationsXAxis>
+                {
+                    new AnnotationsXAxis
+                    {
+                        Id = "issue557-range",
+                        X = Day.ToUnixTimeMilliseconds(),
+                        X2 = Day.AddHours(12).ToUnixTimeMilliseconds(),
+                        FillColor = "#fcba03"
+                    }
+                }
+            }
+        };
+
+        categoryOptions = new ApexChartOptions<Reading>
+        {
+            Chart = new Chart { Animations = new Animations { Enabled = false } },
+            Annotations = new Annotations
+            {
+                Xaxis = new List<AnnotationsXAxis>
+                {
+                    new AnnotationsXAxis
+                    {
+                        Id = "issue557-range",
+                        X = Day,
+                        X2 = Day.AddHours(12),
+                        FillColor = "#fcba03"
+                    }
+                }
+            }
+        };
+    }
+
+    private Task ZoomDatetime() =>
+        datetimeChart.ZoomXAsync(Day.AddHours(2).ToUnixTimeMilliseconds(), Day.AddHours(6).ToUnixTimeMilliseconds());
+
+    // A category axis zooms by 1-based point index: 02:00 is point 13 and 06:00 is point 37.
+    private Task ZoomCategory() => categoryChart.ZoomXAsync(13, 37);
+
+    private class Reading
+    {
+        public DateTime Time { get; set; }
+        public decimal Value { get; set; }
+    }
+}

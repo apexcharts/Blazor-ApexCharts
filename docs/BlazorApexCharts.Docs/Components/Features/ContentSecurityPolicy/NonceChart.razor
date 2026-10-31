@@ -1,0 +1,29 @@
+<DemoContainer>
+    <ApexChart TItem="Order"
+               Title="Order Gross Value"
+               Options="options">
+
+        <ApexPointSeries TItem="Order"
+                         Items="orders"
+                         Name="Gross Value"
+                         SeriesType="SeriesType.Bar"
+                         XValue="@(e => e.Country)"
+                         YAggregate="@(e => e.Sum(e => e.GrossValue))" />
+    </ApexChart>
+</DemoContainer>
+
+@code {
+    // In a real app this comes from the server, which also puts it in the CSP header of the response.
+    [Parameter] public string Nonce { get; set; } = "r4nd0m";
+
+    private List<Order> orders = SampleData.GetOrders();
+    private ApexChartOptions<Order> options;
+
+    protected override void OnInitialized()
+    {
+        options = new ApexChartOptions<Order>
+        {
+            Chart = new Chart { Nonce = Nonce }
+        };
+    }
+}

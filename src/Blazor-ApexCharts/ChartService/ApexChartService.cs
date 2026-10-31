@@ -33,7 +33,9 @@ public class ApexChartService : IApexChartService
        
         httpClient.BaseAddress = new Uri(navManager.BaseUri + "_content/Blazor-ApexCharts/");
         PopulateBuiltInLocales();
-        globalOptions = serviceOptions.GlobalOptions;
+        // ApexChartsServiceOptions is a singleton shared by every scope (every Blazor Server circuit).
+        // Work on a copy so that changing the global options here never reaches other users.
+        globalOptions = OptionsCopier.DeepCopy(serviceOptions.GlobalOptions);
 
         if (globalOptions != null)
         {
@@ -275,7 +277,8 @@ public class ApexChartService : IApexChartService
     /// <param name="apexChart"></param>
     public void UnRegisterChart(IApexChartBase apexChart)
     {
-        charts.TryRemove(apexChart.ChartId, out _);
+        // Remove the entry only if it belongs to this chart, never another chart that uses the same id.
+        charts.TryRemove(new KeyValuePair<string, IApexChartBase>(apexChart.ChartId, apexChart));
     }
 
 

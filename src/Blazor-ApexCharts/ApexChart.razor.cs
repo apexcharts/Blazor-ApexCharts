@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace ApexCharts
     /// Main component to create an Apex chart in Blazor
     /// </summary>
     /// <typeparam name="TItem">The data type of the items to display in the chart</typeparam>
-    public partial class ApexChart<TItem> : IApexChartBase, IDisposable where TItem : class
+    public partial class ApexChart<TItem> : IApexChartBase, IDisposable, IAsyncDisposable where TItem : class
     {
         /// <summary>
         /// None generic version of the options object
@@ -248,6 +249,12 @@ namespace ApexCharts
 
         /// <summary>
         /// This function, if defined, runs just before zooming in/out of the chart allowing you to set a custom range for zooming in/out.
+        /// Returning null keeps the range the user selected.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
+        /// .NET MAUI cannot call .NET synchronously. There the function is not called, the chart zooms to the selected range
+        /// and a warning is written to the browser console once per chart (earlier versions threw a <see cref="NotSupportedException"/>
+        /// when the chart rendered).
         /// </summary>
         /// <remarks>
         /// Links:
@@ -258,6 +265,12 @@ namespace ApexCharts
 
         /// <summary>
         /// This function, if defined, runs just before the user hits the HOME button on the toolbar to reset the chart to it’s original state. The function allows you to set a custom axes range for the initial view of the chart.
+        /// Returning null resets to the original range.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
+        /// .NET MAUI cannot call .NET synchronously. There the function is not called, the reset uses the original range
+        /// and a warning is written to the browser console once per chart (earlier versions threw a <see cref="NotSupportedException"/>
+        /// when the chart rendered).
         /// </summary>
         /// <remarks>
         /// Links:
@@ -279,6 +292,11 @@ namespace ApexCharts
         /// <summary>
         /// Fires when <see cref="RenderAsync"/> completes
         /// </summary>
+        /// <remarks>
+        /// A brush chart (<see cref="Chart.Brush"/>) is drawn only once every chart it targets has rendered.
+        /// When a target has not rendered yet, <see cref="RenderAsync"/> completes without drawing the brush
+        /// chart, and this event fires later, when the brush chart has rendered.
+        /// </remarks>
         [Parameter] public EventCallback OnRendered { get; set; }
 
         /// <summary>
@@ -387,7 +405,13 @@ namespace ApexCharts
 
 
         /// <summary>
-        /// A custom function to execute for generating Y-axis labels. Only supported in Blazor WebAssembly!
+        /// A custom function to execute for generating Y-axis labels.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
+        /// .NET MAUI cannot call .NET synchronously. There the function is not called, the axis keeps its default label formatting
+        /// and a warning is written to the browser console once per chart.
+        /// For labels that format the same in every render mode, use a JavaScript formatter string instead
+        /// (<c>Labels.Formatter</c> on the axis options).
         /// </summary>
         /// <remarks>
         /// Links:
@@ -397,7 +421,37 @@ namespace ApexCharts
         [Parameter] public Func<decimal, string> FormatYAxisLabel { get; set; }
 
         /// <summary>
-        /// A custom function to execute for generating X-axis labels. Only supported in Blazor WebAssembly!
+        /// A custom function to execute for generating Y-axis labels on every Y axis, called with the value and
+        /// the index of the Y axis the label belongs to.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
+        /// .NET MAUI cannot call .NET synchronously. There the function is not called, the axes keep their default label formatting
+        /// and a warning is written to the browser console once per chart.
+        /// </summary>
+        /// <remarks>
+        /// The axis index is the position of the axis in <see cref="ApexChartBaseOptions.Yaxis"/> (0 for the first axis),
+        /// whichever series the axis is bound to through <see cref="YAxis.SeriesName"/>. When no Y axis is configured, a single
+        /// axis with index 0 is added. The formatter replaces any <see cref="YAxisLabels.Formatter"/> set on the Y axes, and
+        /// it takes precedence over <see cref="FormatYAxisLabel"/>, which only formats the first Y axis.
+        /// <para/>
+        /// Unless <see cref="TooltipY.Formatter"/> is set, the formatter also formats the values in the tooltip. A tooltip
+        /// value is passed the index of the Y axis its series is plotted on, so it is formatted like the labels of that
+        /// axis, also when one axis holds several series or the series are not in the same order as the axes.
+        /// <para/>
+        /// Links:
+        ///
+        /// <see href="https://apexcharts.github.io/Blazor-ApexCharts/features/formatters">Blazor Example</see>
+        /// </remarks>
+        [Parameter] public Func<decimal, int, string> FormatYAxisLabelForAxis { get; set; }
+
+        /// <summary>
+        /// A custom function to execute for generating X-axis labels.
+        /// Needs synchronous JavaScript to .NET interop, so it only runs on the WebAssembly runtime. Blazor Server, the
+        /// server circuit InteractiveAuto uses before the WebAssembly runtime is cached, and BlazorWebView hosts such as
+        /// .NET MAUI cannot call .NET synchronously. There the function is not called, the axis keeps its default label formatting
+        /// and a warning is written to the browser console once per chart.
+        /// For labels that format the same in every render mode, use a JavaScript formatter string instead
+        /// (<c>Labels.Formatter</c> on the axis options).
         /// </summary>
         /// <remarks>
         /// Links:
@@ -424,6 +478,8 @@ namespace ApexCharts
         private ElementReference ChartContainer { get; set; }
         private List<IApexSeries<TItem>> apexSeries = new();
         private bool isReady;
+        private bool isDisposed;
+        private bool isUnregistered;
         private bool forceRender = true;
         private string chartId;
         private HoverData<TItem> tooltipData;
@@ -466,7 +522,16 @@ namespace ApexCharts
         {
             if (firstRender && isReady == false)
             {
-                blazor_apexchart = await JSLoader.LoadAsync(jsRuntime, Options?.Blazor?.JavascriptPath);
+                var module = await JSLoader.LoadAsync(jsRuntime, Options?.Blazor?.JavascriptPath);
+
+                // Disposed while the module was loading: release it instead of rendering a chart nothing will destroy.
+                if (isDisposed)
+                {
+                    await ReleaseJsAsync(module, null);
+                    return;
+                }
+
+                blazor_apexchart = module;
                 isReady = true;
                 JSHandler = new JSHandler<TItem>(this);
 
@@ -533,11 +598,26 @@ namespace ApexCharts
             {
                 return await blazor_apexchart.InvokeAsync<TValue>(identifier, args);
             }
-            catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+            catch (Exception ex) when (IsIgnorableCallFailure(ex))
             {
                 return default;
             }
         }
+
+        /// <summary>
+        /// True for a failed chart call nobody can act on: the browser is gone, or the chart was disposed
+        /// while the call was in flight and the failure is one teardown causes (the call timed out, was
+        /// cancelled, or reached JavaScript after <c>destroyChart</c>).
+        /// </summary>
+        /// <remarks>
+        /// A timer or a background feed that calls <see cref="AppendDataAsync"/> or
+        /// <see cref="UpdateSeriesAsync"/> cannot tell the chart was disposed between starting the call
+        /// and its failure, so the chart ignores that failure itself. While the chart is alive only
+        /// <see cref="JSInteropErrors.IsBrowserGone"/> is ignored: a timeout or a JavaScript error then
+        /// reports a real problem and reaches the caller.
+        /// </remarks>
+        private bool IsIgnorableCallFailure(Exception ex) =>
+            JSInteropErrors.IsBrowserGone(ex) || (isDisposed && JSInteropErrors.IsExpectedDuringTeardown(ex));
 
         private async ValueTask InvokeVoidJsAsync(string identifier, params object[] args)
         {
@@ -554,7 +634,7 @@ namespace ApexCharts
                     await blazor_apexchart.InvokeVoidAsync(identifier, args);
                 }
             }
-            catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+            catch (Exception ex) when (IsIgnorableCallFailure(ex))
             { }
         }
 
@@ -930,6 +1010,10 @@ namespace ApexCharts
         /// The dataURI() method is used to get base64 dataURI. Then this dataURI can be used to generate PDF using jsPDF
         /// </summary>
         /// <param name="dataUriOptions">The options object accepts scale or width property which allows to adjust the size of the exported graphic. scale/width both accepts a number.</param>
+        /// <returns>
+        /// The base64 data URI of the chart image, or an empty string when there is no chart in the browser to read:
+        /// it has not rendered yet (a brush chart waiting for its targets, see <see cref="Brush.Target"/>) or it has been disposed.
+        /// </returns>
         /// <remarks>
         /// Links:
         /// 
@@ -940,7 +1024,7 @@ namespace ApexCharts
         {
             var json = Serialize(dataUriOptions);
             var result = await InvokeJsAsync<DataUriResult>("blazor_apexchart.dataUri", Options.Chart.Id, json);
-            return result.ImgURI;
+            return result?.ImgURI ?? string.Empty;
         }
 
         /// <summary>
@@ -1232,11 +1316,11 @@ namespace ApexCharts
         /// Bind prose sections to saved chart views for scroll-driven storytelling (ApexCharts v6.0). Requires the storyboard feature.
         /// </summary>
         /// <param name="options">Beats configuration.</param>
-        /// <returns>The number of bound beats.</returns>
+        /// <returns>The number of bound beats, or 0 when there is no chart in the browser to bind (not rendered yet, or disposed).</returns>
         public virtual async Task<int> StoryboardBindAsync(StoryboardOptions options)
         {
             var json = Serialize(options);
-            return await InvokeJsAsync<int>("blazor_apexchart.storyboardBind", Options.Chart.Id, json);
+            return await InvokeJsAsync<int?>("blazor_apexchart.storyboardBind", Options.Chart.Id, json) ?? 0;
         }
 
         /// <summary>
@@ -1307,7 +1391,6 @@ namespace ApexCharts
                 Options.Blazor.JavascriptPath ??= chartService.GlobalOptions.Blazor.JavascriptPath;
             }
 
-            CheckChart();
             SetSeries();
             SetSeriesColors();
             SetSeriesStroke();
@@ -1323,18 +1406,29 @@ namespace ApexCharts
 
         }
 
-        private void CheckChart()
-        {
-            var jsInProcess = jsRuntime is IJSInProcessRuntime;
-            if (OnBeforeZoom != null && !jsInProcess)
-            {
-                throw new NotSupportedException("Event 'OnBeforeZoom' is not suported in blazor server");
-            }
+        /// <summary>
+        /// True when JavaScript can call .NET synchronously, which the .NET label formatters and the
+        /// before zoom callbacks need. Only the in-process (WebAssembly) runtime can. Blazor Server,
+        /// the server phase of InteractiveAuto and BlazorWebView hosts (.NET MAUI) cannot, and calling
+        /// <c>invokeMethod</c> there throws inside the chart render. Without it the chart still renders:
+        /// those callbacks are skipped and the script warns once per chart.
+        /// </summary>
+        private bool SyncInteropAvailable => jsRuntime is IJSInProcessRuntime;
 
-            if (OnBeforeResetZoom != null && !jsInProcess)
-            {
-                throw new NotSupportedException("Event 'OnBeforeResetZoom' is not suported in blazor server");
-            }
+        /// <summary>
+        /// Names of the synchronous .NET callbacks set on this chart that cannot run on the current runtime.
+        /// </summary>
+        private string[] UnsupportedSyncCallbacks()
+        {
+            if (SyncInteropAvailable) { return Array.Empty<string>(); }
+
+            var names = new List<string>();
+            if (FormatYAxisLabel != null) { names.Add(nameof(FormatYAxisLabel)); }
+            if (FormatYAxisLabelForAxis != null) { names.Add(nameof(FormatYAxisLabelForAxis)); }
+            if (FormatXAxisLabel != null) { names.Add(nameof(FormatXAxisLabel)); }
+            if (OnBeforeZoom != null) { names.Add(nameof(OnBeforeZoom)); }
+            if (OnBeforeResetZoom != null) { names.Add(nameof(OnBeforeResetZoom)); }
+            return names.ToArray();
         }
 
         private void SetAnnotationPointEvents()
@@ -1433,10 +1527,16 @@ namespace ApexCharts
             }
 
             await Task.Yield();
+
+            // Disposed during the yield (a RenderAsync call, then the page navigates away): nothing to draw, and no OnRendered.
+            if (isDisposed) { return; }
             forceRender = false;
             PrepareChart();
 
-            await InvokeVoidJsAsync("blazor_apexchart.renderChart", JSHandler.ObjectReference, ChartContainer, JsonSerializer.Serialize(Options, ChartSerializer.GetOptions<TItem>()), new JSEvents()
+            // The script holds a brush chart back until its target charts have rendered and then returns
+            // "waiting"; it calls JSHandler.JSRendered once the chart renders (issue 420). A string, not a
+            // bool, so a copy of the script that returns nothing (JavascriptPath, a cached file) still works.
+            var renderState = await InvokeJsAsync<string>("blazor_apexchart.renderChart", JSHandler.ObjectReference, ChartContainer, JsonSerializer.Serialize(Options, ChartSerializer.GetOptions<TItem>()), new JSEvents()
             {
                 HasDataPointSelection = OnDataPointSelection.HasDelegate,
                 HasDataPointEnter = OnDataPointEnter.HasDelegate || ApexPointTooltip != null,
@@ -1454,8 +1554,10 @@ namespace ApexCharts
                 HasMouseLeave = OnMouseLeave.HasDelegate,
                 HasMouseMove = OnMouseMove.HasDelegate,
                 HasClick = OnClick.HasDelegate,
-                HasBeforeZoom = OnBeforeZoom != null,
-                HasBeforeResetZoom = OnBeforeResetZoom != null,
+                HasBeforeZoom = OnBeforeZoom != null && SyncInteropAvailable,
+                HasBeforeResetZoom = OnBeforeResetZoom != null && SyncInteropAvailable,
+                SyncInterop = SyncInteropAvailable,
+                UnsupportedSyncCallbacks = UnsupportedSyncCallbacks(),
                 HasScrolled = OnScrolled.HasDelegate,
                 HasAnnotationCreated = OnAnnotationCreated.HasDelegate,
                 HasAnnotationDragged = OnAnnotationDragged.HasDelegate,
@@ -1466,11 +1568,20 @@ namespace ApexCharts
                 HasBeatChange = OnBeatChange.HasDelegate
             });
 
-            await OnRendered.InvokeAsync();
+            // Disposed while renderChart was in flight: a failure it then met was ignored, so the chart
+            // may never have drawn, and OnRendered is not raised for a chart that is gone.
+            if (renderState != "waiting" && !isDisposed)
+            {
+                await OnRendered.InvokeAsync();
+            }
         }
 
         private void SetDotNetFormatters()
         {
+            // The .NET formatters are called synchronously from the chart's label pass. Without
+            // synchronous interop the axis keeps its default formatting instead of failing the render.
+            if (!SyncInteropAvailable) { return; }
+
             if (FormatYAxisLabel != null)
             {
                 if (Options.Yaxis == null) { Options.Yaxis = new List<YAxis>(); }
@@ -1483,6 +1594,27 @@ namespace ApexCharts
                 yAxis.Labels.Formatter = @"function (value, index, w) {
                                           return window.blazor_apexchart.getYAxisLabel(value, index, w);
                                          }";
+            }
+
+            if (FormatYAxisLabelForAxis != null)
+            {
+                if (Options.Yaxis == null) { Options.Yaxis = new List<YAxis>(); }
+                if (!Options.Yaxis.Any()) { Options.Yaxis.Add(new YAxis()); }
+
+                // apexcharts.js does not pass the axis index to a y-axis label formatter, so each
+                // axis gets its own formatter with its index written into it. For tooltip values,
+                // getYAxisLabelForAxis replaces it with the axis the series is plotted on.
+                for (var axisIndex = 0; axisIndex < Options.Yaxis.Count; axisIndex++)
+                {
+                    var yAxis = Options.Yaxis[axisIndex];
+                    if (yAxis == null) { continue; }
+
+                    yAxis.Labels ??= new YAxisLabels();
+
+                    yAxis.Labels.Formatter = @"function (value, index, w) {
+                                          return window.blazor_apexchart.getYAxisLabelForAxis(value, index, w, " + axisIndex.ToString(System.Globalization.CultureInfo.InvariantCulture) + @");
+                                         }";
+                }
             }
 
             if (FormatXAxisLabel != null)
@@ -1567,25 +1699,157 @@ namespace ApexCharts
             }
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Destroys the chart in the browser, waits for that to finish, then releases the JavaScript
+        /// module reference and the .NET object reference the chart events call back into.
+        /// </summary>
+        /// <remarks>
+        /// Blazor calls this when the component is removed. Failures caused by the browser side being
+        /// gone (a closed or refreshed page, a lost circuit) are ignored, so disposing never throws
+        /// for them. <see cref="Dispose()"/> is still called afterwards, so an override of it keeps running,
+        /// and it is called even when <see cref="DisposeAsyncCore"/> throws, before that exception reaches the caller.
+        /// </remarks>
+        public async ValueTask DisposeAsync()
+        {
+            try
+            {
+                await DisposeAsyncCore();
+            }
+            finally
+            {
+                Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Releases the browser side of the chart: awaits <c>destroyChart</c>, then disposes the
+        /// JavaScript module reference and the .NET object reference the chart events call back into.
+        /// Override it to add asynchronous cleanup and call the base implementation.
+        /// </summary>
+        /// <returns>A task that completes when the browser side has been released.</returns>
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
+            isDisposed = true;
+            UnRegister();
+
+            var module = blazor_apexchart;
+            blazor_apexchart = null;
+
+            // Taken here rather than left to Dispose(), so a Dispose() call made while destroyChart is
+            // still pending finds nothing to release and cannot release the reference early.
+            var handler = JSHandler;
+            JSHandler = null;
+
+            try
+            {
+                await ReleaseJsAsync(module, isReady ? Options?.Chart?.Id : null);
+            }
+            finally
+            {
+                handler?.Dispose();
+            }
+        }
+
+        private void UnRegister()
+        {
+            // Only once: DisposeAsync calls Dispose() after awaiting the browser, and by then a new chart
+            // with the same id may have registered. A second call would remove that chart's entry.
+            if (isUnregistered) { return; }
+            isUnregistered = true;
+
+            chartService?.UnRegisterChart(this);
+        }
+
+        /// <summary>
+        /// Releases the chart. Prefer <see cref="DisposeAsync"/>, which Blazor uses: when this is
+        /// called directly, the browser side is released in the background and any failure there is ignored.
+        /// </summary>
         public virtual void Dispose()
         {
             GC.SuppressFinalize(this);
+            isDisposed = true;
 
-            chartService?.UnRegisterChart(this);
+            UnRegister();
 
-            if (Options.Chart?.Id != null && isReady && blazor_apexchart != null)
+            var module = blazor_apexchart;
+            blazor_apexchart = null;
+
+            // Taken once, so a second Dispose() cannot release it while the first is still destroying the chart.
+            var handler = JSHandler;
+            JSHandler = null;
+
+            if (module != null)
+            {
+                // Released only after destroyChart. Where JS calls .NET asynchronously (Blazor Server,
+                // a BlazorWebView host such as .NET MAUI) destroyChart is a round trip, and until it
+                // lands the chart's event handlers (mouse move, data point enter, animation end and the
+                // like) still call .NET through this reference. Released first, each of those calls
+                // fails in the browser with a rejected promise.
+                _ = ReleaseJsInBackgroundAsync(module, isReady ? Options?.Chart?.Id : null, handler);
+            }
+            else
+            {
+                handler?.Dispose();
+            }
+        }
+
+        private static async Task ReleaseJsInBackgroundAsync(IJSObjectReference module, string chartId, JSHandler<TItem> handler)
+        {
+            // Nothing awaits this task, so an exception left in it would only reach
+            // TaskScheduler.UnobservedTaskException. Keep every failure inside.
+            try
+            {
+                await ReleaseJsAsync(module, chartId);
+            }
+            catch (Exception)
+            { }
+            finally
+            {
+                handler?.Dispose();
+            }
+        }
+
+        private static async Task ReleaseJsAsync(IJSObjectReference module, string chartId)
+        {
+            if (module == null) { return; }
+
+            ExceptionDispatchInfo destroyFailure = null;
+            if (chartId != null)
             {
                 try
                 {
-                    InvokeAsync(async () => { await InvokeVoidJsAsync("blazor_apexchart.destroyChart", Options.Chart.Id); });
-                    InvokeAsync(async () => { await blazor_apexchart.DisposeAsync(); });
+                    if (module is IJSInProcessObjectReference inProcessModule)
+                    {
+                        inProcessModule.InvokeVoid("blazor_apexchart.destroyChart", chartId);
+                    }
+                    else
+                    {
+                        await module.InvokeVoidAsync("blazor_apexchart.destroyChart", chartId);
+                    }
                 }
-                catch (Exception ex) when (ex is ObjectDisposedException || ex is JSDisconnectedException)
+                catch (Exception ex) when (JSInteropErrors.IsExpectedDuringTeardown(ex))
                 { }
-
+                catch (Exception ex)
+                {
+                    // Reported once the module reference has been released, so the reference is not
+                    // leaked by a destroyChart failure that teardown does not expect.
+                    destroyFailure = ExceptionDispatchInfo.Capture(ex);
+                }
             }
-            JSHandler?.Dispose();
+
+            try
+            {
+                await module.DisposeAsync();
+            }
+            catch (Exception ex) when (JSInteropErrors.IsExpectedDuringTeardown(ex))
+            { }
+            catch (Exception) when (destroyFailure != null)
+            {
+                // destroyChart failed first, and that is the failure the caller gets: a second one from
+                // releasing the reference would otherwise replace it.
+            }
+
+            destroyFailure?.Throw();
         }
 
         internal void UpdateTooltipData(HoverData<TItem> tooltipData)

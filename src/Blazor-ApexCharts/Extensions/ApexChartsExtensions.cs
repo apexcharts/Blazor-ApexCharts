@@ -16,6 +16,12 @@ public static class ApexChartsExtensions
     /// <summary>
     /// Add Apexcharts service to the DI container
     /// </summary>
+    /// <remarks>
+    /// <see cref="ApexChartsServiceOptions"/> is registered as a singleton and holds the startup defaults.
+    /// <see cref="IApexChartService"/> is scoped, and each instance works on its own copy of
+    /// <see cref="ApexChartsServiceOptions.GlobalOptions"/>, so on Blazor Server a change made through
+    /// the chart service (a theme, a locale) stays with the circuit that made it.
+    /// </remarks>
     /// <param name="services"></param>
     /// <param name="serviceOptions"></param>
     /// <returns></returns>
@@ -42,6 +48,16 @@ public class ApexChartsServiceOptions
     /// <summary>
     /// Set the global options
     /// </summary>
+    /// <remarks>
+    /// These are the startup defaults. Every <see cref="IApexChartService"/> instance (one per DI scope,
+    /// that is one per Blazor Server circuit) starts from its own deep copy of them, so change the global
+    /// options at runtime through <see cref="IApexChartService.GlobalOptions"/> or
+    /// <see cref="IApexChartService.SetGlobalOptionsAsync(IApexChartBaseOptions, bool)"/>. Changing this
+    /// object after startup only affects chart services created afterwards, never one that already exists
+    /// (earlier versions shared this object with every chart service). Every option object is copied,
+    /// including your own subclasses of the option classes; delegates and objects of other types placed in
+    /// the options are shared.
+    /// </remarks>
     public IApexChartBaseOptions GlobalOptions { get; set; }
 
     /// <summary>

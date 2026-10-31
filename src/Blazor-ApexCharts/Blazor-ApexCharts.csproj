@@ -37,6 +37,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Blazor-ApexCharts.Tests" />
+		<!-- The MAUI chart service copies the global options with Internal/OptionsCopier. -->
+		<InternalsVisibleTo Include="Blazor-ApexCharts-MAUI" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="..\..\LICENSE">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
