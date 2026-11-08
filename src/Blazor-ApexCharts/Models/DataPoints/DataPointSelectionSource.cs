@@ -4,9 +4,8 @@ namespace ApexCharts
     /// What caused a data point selection reported through <see cref="SelectedData{TItem}.Source"/>
     /// </summary>
     /// <remarks>
-    /// On pie, donut and polar area charts, clicking a legend item also selects the matching slice, so
-    /// <see cref="ApexChart{TItem}.OnDataPointSelection"/> runs for both a slice click and a legend click.
-    /// Use this value to tell them apart.
+    /// Tells a selection the user made on the chart from one made in code. A legend click does not select:
+    /// on pie, donut and polar area charts it hides or shows the slice, as it hides a series on other charts.
     /// </remarks>
     public enum DataPointSelectionSource
     {
@@ -16,8 +15,9 @@ namespace ApexCharts
         DataPoint,
 
         /// <summary>
-        /// The user clicked a legend item, or pressed Enter or Space on it, and the chart selected the matching slice.
-        /// Only pie, donut and polar area charts select a data point from the legend.
+        /// The chart selected a slice from a legend click. apexcharts.js 6.6 and earlier did this on pie, donut and
+        /// polar area charts; the bundled 8.x core hides or shows the slice instead, so this value is not reported
+        /// unless an older core is loaded through <see cref="ApexChartsBlazorOptions.JavascriptPath"/>.
         /// </summary>
         Legend,
 

@@ -2192,11 +2192,9 @@ namespace ApexCharts
         public ZoomedArea ZoomedArea { get; set; }
 
         /// <summary>
-        /// Allow use of the mouse wheel to perform zoom. Default is true.
+        /// Allow use of the mouse wheel to perform zoom. When not set, the wheel zooms only with Ctrl or Cmd held
+        /// (or a trackpad pinch), so the page scrolls past the chart. True zooms on every wheel, false never.
         /// </summary>
-        /// <remarks>
-        /// Not currently documented in the apexchart-js documentation.
-        /// </remarks>
         public bool? AllowMouseWheelZoom { get; set; }
 
         /// <summary>
@@ -2328,7 +2326,8 @@ namespace ApexCharts
 
     /// <summary>
     /// Bar-chart-race option (ApexCharts v6.4). When enabled, value labels ride to their bar's new position as bars
-    /// re-rank during a reorder update. Applies to bar and column charts; off by default.
+    /// re-rank during a reorder update. Applies to bar and column charts; on by default since
+    /// ApexCharts v7.8 (set <c>Enabled = false</c> to snap).
     /// </summary>
     public class DataLabelsAnimate
     {

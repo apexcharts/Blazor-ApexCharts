@@ -24,8 +24,8 @@
     private List<Order> Orders { get; set; } = SampleData.GetOrders();
     private string message;
 
-    // On pie, donut and polar area charts a legend click also selects the slice,
-    // so this runs for both. Source tells a slice click from a legend click.
+    // Runs for a slice click and for a selection made in code; Source tells them apart.
+    // A legend click hides or shows the slice and does not select it.
     private void PointSelected(SelectedData<Order> selectedData)
     {
         var state = selectedData.IsSelected ? "selected" : "deselected";
