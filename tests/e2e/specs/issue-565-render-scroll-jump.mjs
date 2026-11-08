@@ -335,7 +335,9 @@ export default async function (page, BASE) {
 
   // 3. A re-render that fails releases the hold and is handled as before: apexcharts.js handles its
   // own render promise, so a failed render raises no unhandled rejection. Drives the real
-  // renderChart with a chart type apexcharts.js cannot draw.
+  // renderChart and makes the re-render's mount reject once, as a failure inside apexcharts.js
+  // would. (An unknown chart type no longer works for this: since apexcharts.js 7.9 the
+  // constructor throws for it, before any render promise exists.)
   await page.evaluate(() => {
     const el = document.createElement('div');
     el.id = 'issue565-failing';
@@ -355,7 +357,17 @@ export default async function (page, BASE) {
     const el = document.getElementById('issue565-failing');
     const unhandledBefore = window.__issue565Unhandled.length;
 
-    lib.renderChart({ invokeMethodAsync: () => Promise.resolve() }, el, window.__issue565Options('issue565-no-such-type'), {});
+    const AC = window.ApexCharts;
+    const mount = AC.prototype.mount;
+    let failNext = true;
+    AC.prototype.mount = function (graphData) {
+      if (failNext && this.w.config.chart.id === 'issue565-failing') {
+        failNext = false;
+        return Promise.reject(new Error('issue565 mount'));
+      }
+      return mount.call(this, graphData);
+    };
+    lib.renderChart({ invokeMethodAsync: () => Promise.resolve() }, el, window.__issue565Options('line'), {});
     const heldWhileRendering = lib.heldContainers.has('issue565-failing');
 
     // The hold is released once the render has failed
@@ -364,6 +376,9 @@ export default async function (page, BASE) {
       check();
     });
 
+    AC.prototype.mount = mount;
+    const mountFailed = !failNext;
+
     // A rejection nobody handles is reported in a task queued at the end of the microtask checkpoint
     // in which it was rejected; let those tasks run before counting.
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -371,6 +386,7 @@ export default async function (page, BASE) {
 
     const result = {
       heldWhileRendering,
+      mountFailed,
       height: el.style.getPropertyValue('height'),
       unhandled: window.__issue565Unhandled.slice(unhandledBefore),
     };
@@ -379,7 +395,7 @@ export default async function (page, BASE) {
     return result;
   });
 
-  assert(failing.heldWhileRendering,
+  assert(failing.heldWhileRendering && failing.mountFailed,
     `the failing re-render should hold its container (else this check proves nothing), got ${JSON.stringify(failing)}`);
   assert(failing.height === '' && failing.unhandled.length === 0,
     `a failed re-render should release its container and raise no unhandled rejection, got ${JSON.stringify(failing)}`);
