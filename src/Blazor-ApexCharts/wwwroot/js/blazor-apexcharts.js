@@ -186,6 +186,9 @@ window.blazor_apexchart = {
 
         var chart = this.findChart(id);
         if (chart !== undefined) {
+            // Marks the chart as gone on purpose: a brush chart render that fails after this is stale
+            // and not reported (renderReadyBrushCharts), even though the id is no longer registered.
+            chart.blazorDestroyed = true;
             chart.destroy();
         }
 
@@ -580,8 +583,9 @@ window.blazor_apexchart = {
 
         var chart = this.findChart(id);
         if (chart !== undefined) {
-            this.LogMethodCall(chart, "updateOptions", options);
+            // Before the log, so the call that switches debug on is logged and the one that switches it off is not
             chart.blazorDebug = options.debug === true;
+            this.LogMethodCall(chart, "updateOptions", options);
             chart.updateOptions(this.withoutDebug(options), redrawPaths, animate, updateSyncedCharts);
 
             if (zoom !== null) {
@@ -929,10 +933,11 @@ window.blazor_apexchart = {
             }
         };
 
-        // On pie, donut and polar area charts a legend click also selects the slice, and apexcharts.js then
-        // calls dataPointSelection with a null event, as it does for toggleDataPointSelection. Its legendClick
-        // callback runs synchronously just before that, so the callback records which slice the click is about
-        // to select. Only a null-event selection of that slice is reported as a legend selection, once.
+        // A null-event selection is a selection made in code (toggleDataPointSelection), reported as 'method'.
+        // Up to apexcharts.js 6.6 a legend click on a pie, donut or polar area chart also selected the slice that
+        // way, right after the legendClick callback, which records the index so that selection is reported as
+        // 'legend'. Since 6.7 a legend click hides or shows the slice and selects nothing, so with the bundled
+        // core the index is only ever cleared; the check stays for a page that loads an older core.
         var pendingLegendIndex = null;
 
         if (events.hasDataPointSelection === true) {
@@ -1324,8 +1329,13 @@ window.blazor_apexchart = {
 
             // The chart may have been destroyed or rendered again before this render failed. Then the
             // failure belongs to a chart that is gone: report nothing and leave the id's chart alone.
+            // An empty registry alone does not mean that: since apexcharts.js 8.1 a failed render takes
+            // its own chart out of the registry, so only destroyChart's mark says the chart was disposed.
             const failedRendering = error => {
-                if (this.findChart(id) !== (registered ? created.chart : undefined) || this.pendingBrushCharts.has(id)) {
+                const current = this.findChart(id);
+                if (created.chart.blazorDestroyed === true
+                    || (current !== undefined && current !== created.chart)
+                    || this.pendingBrushCharts.has(id)) {
                     return;
                 }
 

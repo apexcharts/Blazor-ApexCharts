@@ -135,6 +135,10 @@ export default async function (page, BASE) {
 
   // F: a brush chart whose render fails after apexcharts.js registered it (here its mount rejects) is
   // logged and taken out of the registry, so a lookup by its id no longer finds the broken chart.
+  // No public option makes render() fail after it registered the chart, so the failure is injected
+  // through ApexCharts.prototype.mount, an internal that render() still calls in apexcharts.js 8.8.
+  // Since 8.1 the failed render takes the chart out of the registry itself; F guards that the
+  // wrapper still logs it then, and does not mistake it for a chart destroyed on purpose (H).
   // G: a brush chart whose render fails only after it was destroyed and rendered again: the late
   // failure belongs to the chart that is gone, so nothing is logged and the new chart stays.
   // H: as G, but the chart is destroyed and not rendered again: nothing is logged for it either.
