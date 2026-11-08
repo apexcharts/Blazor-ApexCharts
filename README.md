@@ -177,7 +177,9 @@ The Ignite UI tokens (`--ig-*`) are the lowest-ranked layer above the built-in d
 
 To turn it off for one chart, set `Theme = new Theme { DesignSystem = false }`; the `--apx-*` tokens still apply. `Tokens = false` stops every token read (`--apx-*` and `--ig-*`). Without the add-on the `--ig-*` tokens are ignored, with no error.
 
-The chart reads its theme on every render. After a change that does not render, such as swapping the Ignite UI stylesheet for its dark variant, call `RefreshTokensAsync()` on the chart. A font that comes from a token (`--ig-font-family` is usually a web font, and the Ignite UI theme sheets do not load it) is waited for: the chart reads the tokens again once it has loaded, so the labels are measured with it.
+The chart reads its theme on every render. After a change that does not render, such as swapping the Ignite UI stylesheet for its dark variant, call `RefreshTokensAsync()` on the chart.
+
+The theme names its font but does not load it (`--ig-font-family` is usually a web font, and the Ignite UI theme sheets carry no `@font-face` for it), so include the font's stylesheet on the page, in `index.html` or `App.razor`, as the Ignite UI setup already asks. The font applies only once that stylesheet has loaded it; the chart waits for it and re-measures, so the labels are measured with it.
 
 ## Acknowledgments
 Credits to [@thirstyape](https://github.com/thirstyape) for making production release possible.
