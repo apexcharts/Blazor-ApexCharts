@@ -20,6 +20,21 @@ export default async function (page, BASE) {
   await page.locator('#issue565-rendered', { hasText: '1' }).waitFor({ timeout: 20000 });
   await page.locator('#issue565-percent-rendered', { hasText: '1' }).waitFor({ timeout: 20000 });
 
+  // 0. Left alone, the charts with a height of 100% settle. Their card is sized by its content, so a
+  // chart that sizes itself from the card with the old chart still in it grows by the card's heading
+  // on every redraw, and its own growth resizes the card again. Everything below waits for the page
+  // to settle, so say what is wrong here instead of timing out there.
+  const idleHeights = await page.evaluate(async () => {
+    const cards = ['issue565-percent-card', 'issue565-responsive-card'];
+    const read = () => cards.map(id => document.querySelector(`#${id} .apexcharts-canvas svg`)?.getAttribute('height'));
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const first = read();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return { cards, first, second: read() };
+  });
+  assert(JSON.stringify(idleHeights.first) === JSON.stringify(idleHeights.second),
+    `a chart with a height of 100% in a card sized by its content keeps growing with nothing changing on the page: ${JSON.stringify(idleHeights)}`);
+
   // Count the promise rejections nobody handles, for the whole spec.
   await page.evaluate(() => {
     window.__issue565Unhandled = [];
@@ -40,13 +55,14 @@ export default async function (page, BASE) {
   await page.locator('#issue565-fixed-rendered', { hasText: '1' }).waitFor({ timeout: 20000 });
 
   // Sets the viewport height and, when that changes the size, waits for the redraws it starts.
-  // apexcharts.js answers a window resize by redrawing every chart 150ms later (_windowResize), and
-  // a chart can redraw again when the redraw resizes its container's parent. While the 100% charts
-  // redraw the page is briefly shorter, which moves a scroll position at the page end, so a round
-  // has to start after them. Each chart is marked before the resize; the wait ends once every
-  // chart that redraws on a window resize has done so (resized again), finished (animationEnded),
-  // and has no redraw queued, for two frames in a row, as a parent resize is reported after the
-  // frame's animation callbacks.
+  // apexcharts.js answers a window resize by redrawing, 150ms later, the charts whose size it changes
+  // (since 8.x a chart whose drawing box stays the same is not redrawn at all), and a chart can redraw
+  // again when the redraw resizes its container's parent. While the 100% charts redraw the page is
+  // briefly shorter, which moves a scroll position at the page end, so a round has to start after
+  // them. Which charts redraw is the library's call, so the wait reads only the page: it ends once no
+  // chart has changed in the DOM (a new chart, an attribute or a style, an animation frame included)
+  // for QUIET_MS, well past the 150ms the library waits before it redraws.
+  const QUIET_MS = 600;
   const setViewportHeight = async height => {
     const current = page.viewportSize();
     if (current.width === viewport.width && current.height === height) {
@@ -54,37 +70,30 @@ export default async function (page, BASE) {
     }
 
     await page.evaluate(() => {
-      for (const { chart } of window.Apex._chartInstances || []) {
-        chart.w.globals.resized = false;
-        if (!chart.__issue565Watched) {
-          chart.__issue565Watched = true;
-          const windowResize = chart._windowResize;
-          chart._windowResize = function () {
-            this.__issue565Queued = true;
-            return windowResize.apply(this, arguments);
-          };
-          const update = chart.update;
-          chart.update = function () {
-            this.__issue565Queued = false;
-            return update.apply(this, arguments);
-          };
+      const state = { last: performance.now() };
+      window.__issue565Quiet = state;
+      // A change inside a chart, or to the container a chart is drawn in (its min-height, a new chart)
+      const inChart = node => !!node && node.nodeType === 1
+        && (node.closest('.apexcharts-canvas') !== null || node.querySelector(':scope > .apexcharts-canvas') !== null);
+      state.observer = new MutationObserver(records => {
+        if (records.some(r => inChart(r.target)
+          || [...r.addedNodes, ...r.removedNodes].some(n => n.nodeType === 1 && n.classList.contains('apexcharts-canvas')))) {
+          state.last = performance.now();
         }
-      }
+      });
+      state.observer.observe(document.body, { subtree: true, childList: true, attributes: true });
     });
 
     await page.setViewportSize({ width: viewport.width, height });
 
-    // Checked once a frame
-    await page.evaluate(() => { window.__issue565Quiet = 0; });
-    await page.waitForFunction(() => {
-      const settled = (window.Apex._chartInstances || []).every(({ chart }) => {
-        const g = chart.w.globals;
-        return !chart.w.config.chart.redrawOnWindowResize
-          || (g.resized && g.animationEnded && !chart.__issue565Queued);
-      });
-      window.__issue565Quiet = settled ? window.__issue565Quiet + 1 : 0;
-      return window.__issue565Quiet >= 2;
-    }, null, { polling: 'raf', timeout: 20000 });
+    await page.waitForFunction(quiet => {
+      const state = window.__issue565Quiet;
+      if (performance.now() - state.last < quiet) {
+        return false;
+      }
+      state.observer.disconnect();
+      return true;
+    }, QUIET_MS, { polling: 'raf', timeout: 20000 });
   };
 
   // Renders the chart in `sel` again with the page scrolled to its end, and checks the scroll
