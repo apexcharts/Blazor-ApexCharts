@@ -1,4 +1,4 @@
-﻿import ApexCharts from './apexcharts.esm.js?ver=6.5.0'
+﻿import ApexCharts from './apexcharts.esm.js?ver=8.8.1'
 
 // export function for Blazor to point to the window.blazor_apexchart. To be compatible with the most JS Interop calls the window will be return.
 export function get_apexcharts() {
@@ -186,6 +186,9 @@ window.blazor_apexchart = {
 
         var chart = this.findChart(id);
         if (chart !== undefined) {
+            // Marks the chart as gone on purpose: a brush chart render that fails after this is stale
+            // and not reported (renderReadyBrushCharts), even though the id is no longer registered.
+            chart.blazorDestroyed = true;
             chart.destroy();
         }
 
@@ -331,7 +334,7 @@ window.blazor_apexchart = {
 
     LogMethodCall(chart, method, data) {
         if (chart !== undefined) {
-            if (chart.opts.debug === true) {
+            if (chart.blazorDebug === true) {
                 console.log('------');
                 console.log('Method:' + method);
                 console.log("Chart Id: " + chart.opts.chart.id)
@@ -369,6 +372,23 @@ window.blazor_apexchart = {
             console.error('failed to set apexcharts license:', error);
             return false;
         }
+    },
+
+    // Loads the ApexCharts Ignite UI add-on (a script-tag build) once. It registers on the
+    // window.ApexCharts set here, so charts read the page's --ig-* tokens from their first render.
+    // Resolves to false (and logs) when it cannot load, so a missing add-on never blocks a chart.
+    loadIgniteUI() {
+        if (!this._igniteUILoad) {
+            window.ApexCharts = ApexCharts;
+            this._igniteUILoad = import('./features/ignite-ui.js?ver=8.8.1').then(
+                () => true,
+                (error) => {
+                    console.error('failed to load the ApexCharts Ignite UI add-on:', error);
+                    return false;
+                }
+            );
+        }
+        return this._igniteUILoad;
     },
 
     // ===== v6 crossfilter engine (link filter mode) =====
@@ -563,8 +583,10 @@ window.blazor_apexchart = {
 
         var chart = this.findChart(id);
         if (chart !== undefined) {
+            // Before the log, so the call that switches debug on is logged and the one that switches it off is not
+            chart.blazorDebug = options.debug === true;
             this.LogMethodCall(chart, "updateOptions", options);
-            chart.updateOptions(options, redrawPaths, animate, updateSyncedCharts);
+            chart.updateOptions(this.withoutDebug(options), redrawPaths, animate, updateSyncedCharts);
 
             if (zoom !== null) {
                 chart.zoomX(zoom.start, zoom.end);
@@ -911,10 +933,11 @@ window.blazor_apexchart = {
             }
         };
 
-        // On pie, donut and polar area charts a legend click also selects the slice, and apexcharts.js then
-        // calls dataPointSelection with a null event, as it does for toggleDataPointSelection. Its legendClick
-        // callback runs synchronously just before that, so the callback records which slice the click is about
-        // to select. Only a null-event selection of that slice is reported as a legend selection, once.
+        // A null-event selection is a selection made in code (toggleDataPointSelection), reported as 'method'.
+        // Up to apexcharts.js 6.6 a legend click on a pie, donut or polar area chart also selected the slice that
+        // way, right after the legendClick callback, which records the index so that selection is reported as
+        // 'legend'. Since 6.7 a legend click hides or shows the slice and selects nothing, so with the bundled
+        // core the index is only ever cleared; the check stays for a page that loads an older core.
         var pendingLegendIndex = null;
 
         if (events.hasDataPointSelection === true) {
@@ -1213,11 +1236,24 @@ window.blazor_apexchart = {
         }
     },
 
+    // `debug` is a wrapper-only key. ApexCharts.js 8 validates the top-level options and warns
+    // about keys it does not know, so the chart gets a copy without it and the flag lives on
+    // the chart instance (blazorDebug).
+    withoutDebug(options) {
+        if (options === null || options === undefined || !('debug' in options)) {
+            return options;
+        }
+        var copy = Object.assign({}, options);
+        delete copy.debug;
+        return copy;
+    },
+
     createChart(container, options) {
         var id = options.chart.id;
         var chart, rendering;
         try {
-            chart = new ApexCharts(container, options);
+            chart = new ApexCharts(container, this.withoutDebug(options));
+            chart.blazorDebug = options.debug === true;
             rendering = chart.render();
         } catch (error) {
             this.releaseContainerHeight(id);
@@ -1293,8 +1329,13 @@ window.blazor_apexchart = {
 
             // The chart may have been destroyed or rendered again before this render failed. Then the
             // failure belongs to a chart that is gone: report nothing and leave the id's chart alone.
+            // An empty registry alone does not mean that: since apexcharts.js 8.1 a failed render takes
+            // its own chart out of the registry, so only destroyChart's mark says the chart was disposed.
             const failedRendering = error => {
-                if (this.findChart(id) !== (registered ? created.chart : undefined) || this.pendingBrushCharts.has(id)) {
+                const current = this.findChart(id);
+                if (created.chart.blazorDestroyed === true
+                    || (current !== undefined && current !== created.chart)
+                    || this.pendingBrushCharts.has(id)) {
                     return;
                 }
 

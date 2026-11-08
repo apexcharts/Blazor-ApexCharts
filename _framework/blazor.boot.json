@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "BlazorApexCharts.Docs.Wasm",
   "resources": {
-    "hash": "sha256-MGodjXb3oPVaq/krw3KrbL3xhcqwIx0KzDwb1asc7sM=",
+    "hash": "sha256-jSuuZA9IXydGBuyW2JbrpZbAoczRhddZIqDoRqWnPVo=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-1DK+nm58uZjvv7U2c/UlUp1zFjeBZnqXHFHBX/W1igo="
     },
@@ -45,7 +45,7 @@
       "System.ComponentModel.Primitives.wasm": "sha256-cYz8s924z9WJ5pa+ZKQ00hP6DUemFkPdg/CV5VpXg50=",
       "System.ComponentModel.TypeConverter.wasm": "sha256-i3RJM9hkrMFqVkYweM+/g7cDtwstm2m8ZRSdDM6tOlo=",
       "System.ComponentModel.wasm": "sha256-zc3bxyRIb62mkyA4uQk1YoEjYJi0ceu6valC6T7MJT4=",
-      "System.Console.wasm": "sha256-BXgk0LXOU89ijfYr8k5kQul4wYDTUjUuaEv5wQTdr9A=",
+      "System.Console.wasm": "sha256-NgkzcwV7pvyyyzKQhUi3EFzQTzQqe87V08PWYTaxjHU=",
       "System.Diagnostics.DiagnosticSource.wasm": "sha256-h6LP9s7LYYTRhrbwK+wxpEzepEC30i2npAk33qU35WU=",
       "System.Linq.Expressions.wasm": "sha256-GDeOKrDjUKkgxNchiI6W8sukLlWsMamQlmHkhB1gRNY=",
       "System.Linq.Queryable.wasm": "sha256-JNxNTtmAG73yVLzM4AXlpK3avRkaJWg2gpR7xEGy6iM=",
@@ -71,9 +71,9 @@
       "System.wasm": "sha256-Qn4+fnaxYta+ZDrPpGuLEzp1NrXF8cdG2BVS4LK0OIc=",
       "netstandard.wasm": "sha256-g51t34vqwpp2IQy3lplndNI9VhshfEdd1AEiBbPC2u0=",
       "System.Private.CoreLib.wasm": "sha256-RGXYg7WWV9i0zcSspoBDkRMGen1HtI60gJU0Q2k39sk=",
-      "Blazor-ApexCharts.wasm": "sha256-Fh+KXLFHGsmmINPfkDxZiOv5voAu/pBkOprYP4aGmi4=",
-      "BlazorApexCharts.Docs.wasm": "sha256-UyduKVqPJ27/8JAOYCofqleHIWYaT6eYGtCtv+W9Ksw=",
-      "BlazorApexCharts.Docs.Wasm.wasm": "sha256-CcE5UBQXEMsZjrAbHC/52nepNTFuF9UwhnAhRqiroRk="
+      "Blazor-ApexCharts.wasm": "sha256-cq1wRc1j9geZc7cyB3dXIdwsdtfrlNSpF8CHMhmi1j8=",
+      "BlazorApexCharts.Docs.wasm": "sha256-Kqfv0187qUofOZqYbLmc7/a2OtPpBnsDqkhwsU2YeZ4=",
+      "BlazorApexCharts.Docs.Wasm.wasm": "sha256-z8ZMLH0rqs3a5Pc95A1wWongh5I+mgMOrPEt/Uu80f0="
     }
   },
   "cacheBootResources": true,

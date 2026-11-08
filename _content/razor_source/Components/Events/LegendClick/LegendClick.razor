@@ -3,8 +3,8 @@
 <DocExamples Title="Legend Clicked">
 
     <Description>
-        Click on Legend to trigger a event. On pie, donut and polar area charts the click also selects the slice,
-        so <code>OnDataPointSelection</code> runs too, with <code>SelectedData.Source</code> set to <code>DataPointSelectionSource.Legend</code>.
+        Click on Legend to trigger a event. On pie, donut and polar area charts the click hides or shows the slice,
+        as it hides a series on other charts, and does not select it, so <code>OnDataPointSelection</code> does not run.
     </Description>
 
     <ChildContent>

@@ -4,8 +4,8 @@
 
     <Description>
         <p>
-            Click on a datapoint to trigger the event. On pie, donut and polar area charts a legend click also selects the slice,
-            and <code>SelectedData.Source</code> tells the two apart.
+            Click on a datapoint to trigger the event. <code>SelectedData.Source</code> tells a click from a selection made in code.
+            A legend click does not select: on pie, donut and polar area charts it hides or shows the slice.
         </p>
         <p>
             On line, area and radar charts the click has to land on a marker, so when <code>OnDataPointSelection</code> or <code>OnDataPointEnter</code> is set
