@@ -1,5 +1,36 @@
 # Release notes
 
+## v8.0.0
+
+Bundles ApexCharts.js 8.8.0 (was 6.5.0). The core moves up two major versions, some of its defaults change what a
+click or a scroll does, and the bundled files change shape, so this is a major release. Existing C# code compiles
+unchanged.
+
+### ⚠️ Behaviour changes to check when upgrading
+
+- A legend click on a pie, donut or polar area chart hides or shows that slice instead of selecting it.
+  `OnLegendClicked` still runs; `OnDataPointSelection` does not, so `DataPointSelectionSource.Legend` is no longer
+  reported. To select from the legend, call `ToggleDataPointSelectionAsync` in `OnLegendClicked`.
+- The mouse wheel zooms only with Ctrl or Cmd held (or a trackpad pinch); a plain wheel scrolls the page and shows a
+  hint. `Zoom.AllowMouseWheelZoom = true` brings back the old wheel.
+- A series hidden from the legend stays hidden when the chart updates.
+- Data labels that collide across series are moved apart, and bar data labels slide to their new place on an update
+  (`DataLabels.Animate.Enabled = false` to snap).
+- `--apx-font-family` on the page sets the chart font unless `Chart.FontFamily` is set.
+- A `Chart.ForeColor`, grid colour or axis colour you set now wins over the `--apx-fore` and `--apx-grid` tokens,
+  even when it equals the default.
+- If you set `JavascriptPath`, copy `js/apexcharts.full.min.js` next to your script as well as `js/apexcharts.esm.js`,
+  which is now a small module that loads it, plus `js/features/ignite-ui.js` for Ignite UI.
+
+### ✨ New
+
+- Ignite UI theming, opt-in: `AddApexCharts(o => o.IgniteUI = true)` (also `AddApexChartsMaui`) loads the add-on, and
+  charts take their palette, text, gridlines, tooltip, font and light or dark variant from the page's Ignite UI theme.
+  Free, no license key. `Theme.DesignSystem = false` turns it off for one chart. See the README.
+- `--apx-*` tokens: `--apx-font-family` sets the chart font and `--apx-radius-factor` scales the built-in corner radii.
+  `Theme.Tokens = false` stops one chart reading any token (`--apx-*` and `--ig-*`).
+- Basque (`eu`) locale; the bundled locales gain the newer toolbar and accessibility strings.
+
 ## v7.1.0
 
 ### ⚠️ Property type changes
