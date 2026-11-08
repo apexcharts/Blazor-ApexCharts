@@ -2,7 +2,7 @@
 
 ## v8.0.0
 
-Bundles ApexCharts.js 8.8.0 (was 6.5.0). The core moves up two major versions, some of its defaults change what a
+Bundles ApexCharts.js 8.8.1 (was 6.5.0). The core moves up two major versions, some of its defaults change what a
 click or a scroll does, and the bundled files change shape, so this is a major release. Existing C# code compiles
 unchanged.
 

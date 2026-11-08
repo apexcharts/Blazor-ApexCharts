@@ -155,7 +155,7 @@ await ChartService.SetLicenseAsync("APEX-your-license-key");
 Without any key, `AddApexCharts()` still works; premium features simply render watermarked.
 
 ## Ignite UI Theming
-From Blazor-ApexCharts 8.0.0 (which bundles ApexCharts.js 8.8.0), charts can follow the Ignite UI theme on the page: the series palette, text, gridlines, the tooltip, the font, light or dark. It is an add-on, it is free, and it needs no license key. Turn it on in the chart service:
+From Blazor-ApexCharts 8.0.0 (which bundles ApexCharts.js 8.8.1), charts can follow the Ignite UI theme on the page: the series palette, text, gridlines, the tooltip, the font, light or dark. It is an add-on, it is free, and it needs no license key. Turn it on in the chart service:
 ```razor
 services.AddApexCharts(e =>
 {

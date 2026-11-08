@@ -1,4 +1,4 @@
-﻿import ApexCharts from './apexcharts.esm.js?ver=8.8.0'
+﻿import ApexCharts from './apexcharts.esm.js?ver=8.8.1'
 
 // export function for Blazor to point to the window.blazor_apexchart. To be compatible with the most JS Interop calls the window will be return.
 export function get_apexcharts() {
@@ -380,7 +380,7 @@ window.blazor_apexchart = {
     loadIgniteUI() {
         if (!this._igniteUILoad) {
             window.ApexCharts = ApexCharts;
-            this._igniteUILoad = import('./features/ignite-ui.js?ver=8.8.0').then(
+            this._igniteUILoad = import('./features/ignite-ui.js?ver=8.8.1').then(
                 () => true,
                 (error) => {
                     console.error('failed to load the ApexCharts Ignite UI add-on:', error);
