@@ -1,4 +1,4 @@
-﻿import ApexCharts from './apexcharts.esm.js?ver=6.5.0'
+﻿import ApexCharts from './apexcharts.esm.js?ver=8.8.0'
 
 // export function for Blazor to point to the window.blazor_apexchart. To be compatible with the most JS Interop calls the window will be return.
 export function get_apexcharts() {
@@ -331,7 +331,7 @@ window.blazor_apexchart = {
 
     LogMethodCall(chart, method, data) {
         if (chart !== undefined) {
-            if (chart.opts.debug === true) {
+            if (chart.blazorDebug === true) {
                 console.log('------');
                 console.log('Method:' + method);
                 console.log("Chart Id: " + chart.opts.chart.id)
@@ -377,7 +377,7 @@ window.blazor_apexchart = {
     loadIgniteUI() {
         if (!this._igniteUILoad) {
             window.ApexCharts = ApexCharts;
-            this._igniteUILoad = import('./features/ignite-ui.js?ver=6.5.0').then(
+            this._igniteUILoad = import('./features/ignite-ui.js?ver=8.8.0').then(
                 () => true,
                 (error) => {
                     console.error('failed to load the ApexCharts Ignite UI add-on:', error);
@@ -581,7 +581,8 @@ window.blazor_apexchart = {
         var chart = this.findChart(id);
         if (chart !== undefined) {
             this.LogMethodCall(chart, "updateOptions", options);
-            chart.updateOptions(options, redrawPaths, animate, updateSyncedCharts);
+            chart.blazorDebug = options.debug === true;
+            chart.updateOptions(this.withoutDebug(options), redrawPaths, animate, updateSyncedCharts);
 
             if (zoom !== null) {
                 chart.zoomX(zoom.start, zoom.end);
@@ -1230,11 +1231,24 @@ window.blazor_apexchart = {
         }
     },
 
+    // `debug` is a wrapper-only key. ApexCharts.js 8 validates the top-level options and warns
+    // about keys it does not know, so the chart gets a copy without it and the flag lives on
+    // the chart instance (blazorDebug).
+    withoutDebug(options) {
+        if (options === null || options === undefined || !('debug' in options)) {
+            return options;
+        }
+        var copy = Object.assign({}, options);
+        delete copy.debug;
+        return copy;
+    },
+
     createChart(container, options) {
         var id = options.chart.id;
         var chart, rendering;
         try {
-            chart = new ApexCharts(container, options);
+            chart = new ApexCharts(container, this.withoutDebug(options));
+            chart.blazorDebug = options.debug === true;
             rendering = chart.render();
         } catch (error) {
             this.releaseContainerHeight(id);

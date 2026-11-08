@@ -74,6 +74,7 @@ internal class ApexChartServiceMaui : IApexChartService
 		locales.Add("en", new LocaleResource { Name = "en", Language = "English" });
 		locales.Add("es", new LocaleResource { Name = "es", Language = "Spanish" });
 		locales.Add("et", new LocaleResource { Name = "et", Language = "Estonian" });
+		locales.Add("eu", new LocaleResource { Name = "eu", Language = "Basque" });
 		locales.Add("fa", new LocaleResource { Name = "fa", Language = "Persian" });
 		locales.Add("fi", new LocaleResource { Name = "fi", Language = "Finnish" });
 		locales.Add("fr", new LocaleResource { Name = "fr", Language = "French" });

@@ -51,13 +51,25 @@
       "exportToSVG": "Descargar SVG",
       "exportToPNG": "Descargar PNG",
       "exportToCSV": "Descargar CSV",
-      "menu": "Menu",
+      "menu": "Menú",
       "selection": "Seleccionar",
       "selectionZoom": "Seleccionar Zoom",
       "zoomIn": "Aumentar",
-      "zoomOut": "Disminuír",
+      "zoomOut": "Diminuír",
       "pan": "Navegación",
-      "reset": "Reiniciar Zoom"
+      "reset": "Reiniciar Zoom",
+      "measure": "Medir",
+      "wheelZoomHint": "Use {key} + desprazamento para facer zoom"
+    },
+    "a11y": {
+      "legendItem": "{name}, {state}. Prema Intro ou Espazo para alternar.",
+      "visible": "visible",
+      "hidden": "oculta",
+      "zoomedIn": "Ampliado",
+      "zoomedOut": "Reducido",
+      "zoomReset": "Zoom restablecido",
+      "pannedLeft": "Desprazado á esquerda",
+      "pannedRight": "Desprazado á dereita"
     }
   }
 }
