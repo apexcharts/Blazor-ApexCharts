@@ -38,6 +38,12 @@ jobs:
     needs: [ prepare ]
     name: Create Release
     runs-on: windows-2022
+    # NuGet trusted publishing: the nuget.org policy names this environment,
+    # and id-token lets the run exchange its OIDC token for a short-lived key.
+    environment: nuget-publishing
+    permissions:
+      contents: read
+      id-token: write
     timeout-minutes: 15
     steps:
     - name: Checkout code
@@ -60,7 +66,14 @@ jobs:
       working-directory: ./src/Blazor-ApexCharts-MAUI
       run: dotnet pack -c Release -p:Version=${{ needs.prepare.outputs.Version }} -p:AssemblyVersion=${{ needs.prepare.outputs.Version }}
 
+    - name: NuGet login (OIDC -> short-lived API key)
+      if: ${{ needs.prepare.outputs.Deploy == 'true' }}
+      uses: NuGet/login@v1
+      id: login
+      with:
+        user: junedchhipa
+
     - name: Dotnet Nuget Push
       if: ${{ needs.prepare.outputs.Deploy == 'true' }}
       working-directory: ./src/Blazor-ApexCharts-MAUI/bin/Release
-      run: dotnet nuget push Blazor-ApexCharts-MAUI.*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push Blazor-ApexCharts-MAUI.*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate

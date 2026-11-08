@@ -6,13 +6,18 @@ on:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 # The GitHub release step needs write access; the repo default token is read-only.
+# id-token lets NuGet trusted publishing exchange the run's OIDC token for a
+# short-lived API key, so the repository keeps no NuGet secret.
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   build:
     name: Create Release
     runs-on: Ubuntu-22.04
+    # The nuget.org trusted publishing policy names this environment.
+    environment: nuget-publishing
     timeout-minutes: 10
     steps:
     - name: Checkout code
@@ -30,9 +35,15 @@ jobs:
       working-directory: ./src/Blazor-ApexCharts
       run: dotnet pack -c Release -p:Version=${GITHUB_REF##*/v}
 
+    - name: NuGet login (OIDC -> short-lived API key)
+      uses: NuGet/login@v1
+      id: login
+      with:
+        user: junedchhipa
+
     - name: Dotnet Nuget Push
       working-directory: ./src/Blazor-ApexCharts/bin/Release
-      run: dotnet nuget push Blazor-ApexCharts.*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push Blazor-ApexCharts.*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate
       continue-on-error: false
 
     - name: Create GitHub Release
