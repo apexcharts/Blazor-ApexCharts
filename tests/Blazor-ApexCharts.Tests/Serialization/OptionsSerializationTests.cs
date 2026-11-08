@@ -64,4 +64,26 @@ public class OptionsSerializationTests
 
         Assert.Equal("Inter", json.Get("chart.fontFamily")?.GetString());
     }
+
+    [Fact]
+    public void Theme_token_switches_serialize_to_the_core_names()
+    {
+        var options = new ApexChartOptions<Sale> { Theme = new Theme { Tokens = false, DesignSystem = false } };
+
+        var json = ChartJson.ToElement<Sale>(options);
+
+        Assert.False(json.Get("theme.tokens")?.GetBoolean());
+        Assert.False(json.Get("theme.designSystem")?.GetBoolean());
+    }
+
+    [Fact]
+    public void Theme_token_switches_are_omitted_when_unset()
+    {
+        var options = new ApexChartOptions<Sale> { Theme = new Theme { Mode = Mode.Dark } };
+
+        var json = ChartJson.ToElement<Sale>(options);
+
+        Assert.Null(json.Get("theme.tokens"));
+        Assert.Null(json.Get("theme.designSystem"));
+    }
 }

@@ -5401,6 +5401,23 @@ namespace ApexCharts
         /// via <c>ApexCharts.registerTheme(name, def)</c>.
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Set to <see langword="false"/> to stop the chart reading the <c>--apx-*</c> family tokens (and, with
+        /// the Ignite UI add-on loaded, the page's design system). Options you set and a named theme still apply.
+        /// Default: <see langword="true"/>. Call <see cref="ApexChart{TItem}.RefreshTokensAsync"/> to pick up a
+        /// CSS change that does not itself trigger a render.
+        /// </summary>
+        public bool? Tokens { get; set; }
+
+        /// <summary>
+        /// Set to <see langword="false"/> to stop the chart reading the page's design system (the Ignite UI
+        /// <c>--ig-*</c> tokens, including its light or dark variant). The <c>--apx-*</c> tokens still apply.
+        /// Has an effect only while the Ignite UI add-on is loaded (see
+        /// <see cref="ApexChartsServiceOptions.IgniteUI"/>). Default: <see langword="true"/>. Requires
+        /// ApexCharts.js 8.8.0 or later.
+        /// </summary>
+        public bool? DesignSystem { get; set; }
     }
 
     /// <summary>

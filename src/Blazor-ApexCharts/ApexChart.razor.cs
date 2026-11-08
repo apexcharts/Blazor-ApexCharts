@@ -538,6 +538,7 @@ namespace ApexCharts
                 if (chartService != null)
                 {
                     await chartService.InitializeLicenseAsync();
+                    await chartService.InitializeIgniteUIAsync();
                     await chartService.GlobalOptionsInitializedAsync();
                 }
 

@@ -69,4 +69,14 @@ public class ApexChartsServiceOptions
     /// A per-chart key can also be set via <see cref="Chart.License"/>.
     /// </summary>
     public string LicenseKey { get; set; }
+
+    /// <summary>
+    /// Loads the ApexCharts Ignite UI add-on (<c>_content/Blazor-ApexCharts/js/features/ignite-ui.js</c>)
+    /// once, before the first chart renders, so charts follow the Ignite UI theme on the page (its
+    /// <c>--ig-*</c> tokens) as the lowest-ranked layer above the built-in defaults: an option you set,
+    /// the chart's own CSS variables, an <c>--apx-*</c> token and a named theme or palette still win.
+    /// The add-on is free and needs no license key. <see cref="Theme.DesignSystem"/> =
+    /// <see langword="false"/> turns it off for one chart. Requires ApexCharts.js 8.8.0 or later.
+    /// </summary>
+    public bool IgniteUI { get; set; }
 }

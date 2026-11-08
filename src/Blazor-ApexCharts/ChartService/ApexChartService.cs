@@ -46,6 +46,8 @@ public class ApexChartService : IApexChartService
             globalOptions ??= new ApexChartBaseOptions();
         }
 
+        igniteUIInitialized = !serviceOptions.IgniteUI;
+
         licenseKey = serviceOptions.LicenseKey;
         if (!string.IsNullOrWhiteSpace(licenseKey))
         {
@@ -62,6 +64,7 @@ public class ApexChartService : IApexChartService
 
     private bool globalOptionsInitialized = true;
     private bool licenseInitialized = true;
+    private bool igniteUIInitialized = true;
 
 
     ///  <inheritdoc/>
@@ -147,6 +150,7 @@ public class ApexChartService : IApexChartService
     {
         await JSLoader.LoadAsync(jSRuntime, javascriptPath);
         await InitializeLicenseAsync();
+        await InitializeIgniteUIAsync();
         await GlobalOptionsInitializedAsync();
     }
 
@@ -210,6 +214,34 @@ public class ApexChartService : IApexChartService
         if (string.IsNullOrWhiteSpace(id) || handler == null) { return; }
         var jSObjectReference = await JSLoader.LoadAsync(jSRuntime, globalOptions?.Blazor?.JavascriptPath);
         await jSObjectReference.InvokeVoidAsync("blazor_apexchart.onCrossfilterChange", id, handler);
+    }
+
+    private readonly SemaphoreSlim _igniteUISemaphore = new(1, 1);
+    ///  <inheritdoc/>
+    public async Task InitializeIgniteUIAsync()
+    {
+        if (igniteUIInitialized) { return; }
+
+        await _igniteUISemaphore.WaitAsync();
+        try
+        {
+            if (!igniteUIInitialized)
+            {
+                var jSObjectReference = await JSLoader.LoadAsync(jSRuntime, globalOptions?.Blazor?.JavascriptPath);
+                await jSObjectReference.InvokeAsync<bool>("blazor_apexchart.loadIgniteUI");
+                igniteUIInitialized = true;
+            }
+        }
+        catch (JSException ex)
+        {
+            // A missing add-on, or a custom JavascriptPath script without the loader, never blocks a chart.
+            igniteUIInitialized = true;
+            Console.WriteLine($"Blazor-ApexCharts: the Ignite UI add-on was not loaded: {ex.Message}");
+        }
+        finally
+        {
+            _igniteUISemaphore.Release();
+        }
     }
 
     private readonly SemaphoreSlim _licenseSemaphore = new(1, 1);

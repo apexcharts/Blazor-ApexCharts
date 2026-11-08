@@ -94,6 +94,13 @@ namespace ApexCharts
         Task InitializeLicenseAsync();
 
         /// <summary>
+        /// Loads the Ignite UI add-on once, before any chart renders, when
+        /// <see cref="ApexChartsServiceOptions.IgniteUI"/> is set. Internal usage (called by the chart
+        /// component on first render).
+        /// </summary>
+        Task InitializeIgniteUIAsync() => Task.CompletedTask;
+
+        /// <summary>
         /// Registers a shared record set with the crossfilter engine via <c>ApexCharts.crossfilter</c> (ApexCharts v6
         /// premium <c>link</c> feature). Charts that declare <see cref="ChartLink.Id"/> matching <paramref name="id"/>
         /// with a <see cref="ChartLink.Dimension"/> aggregate over these records; clicking a mark filters every linked

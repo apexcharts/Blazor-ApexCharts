@@ -371,6 +371,23 @@ window.blazor_apexchart = {
         }
     },
 
+    // Loads the ApexCharts Ignite UI add-on (a script-tag build) once. It registers on the
+    // window.ApexCharts set here, so charts read the page's --ig-* tokens from their first render.
+    // Resolves to false (and logs) when it cannot load, so a missing add-on never blocks a chart.
+    loadIgniteUI() {
+        if (!this._igniteUILoad) {
+            window.ApexCharts = ApexCharts;
+            this._igniteUILoad = import('./features/ignite-ui.js?ver=6.5.0').then(
+                () => true,
+                (error) => {
+                    console.error('failed to load the ApexCharts Ignite UI add-on:', error);
+                    return false;
+                }
+            );
+        }
+        return this._igniteUILoad;
+    },
+
     // ===== v6 crossfilter engine (link filter mode) =====
 
     registerCrossfilter(id, records) {

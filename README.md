@@ -154,6 +154,31 @@ await ChartService.SetLicenseAsync("APEX-your-license-key");
 
 Without any key, `AddApexCharts()` still works; premium features simply render watermarked.
 
+## Ignite UI Theming
+From the next Blazor-ApexCharts release (the one that bundles ApexCharts.js 8.8.0), charts can follow the Ignite UI theme on the page: the series palette, text, gridlines, the tooltip, the font, light or dark. It is an add-on, it is free, and it needs no license key. Turn it on in the chart service:
+```razor
+services.AddApexCharts(e =>
+{
+    e.IgniteUI = true;
+});
+```
+The service then loads `_content/Blazor-ApexCharts/js/features/ignite-ui.js` once, before the first chart renders. For .NET MAUI use `AddApexChartsMaui(...)` with the same option. Use this option rather than a script tag: the add-on registers on the ApexCharts instance the component loads, which a tag in `index.html` would not see.
+
+The Ignite UI tokens (`--ig-*`) are the lowest-ranked layer above the built-in defaults. Anything above them wins:
+
+| Rank | Source |
+| ---- | ------ |
+| 1 | An option you set in `ApexChartOptions` |
+| 2 | The chart's own CSS variables |
+| 3 | An `--apx-*` family token |
+| 4 | A named theme (`Theme.Name`) or palette (`Theme.Palette`) |
+| 5 | The Ignite UI theme (`--ig-*`), with the add-on loaded |
+| 6 | The built-in defaults |
+
+To turn it off for one chart, set `Theme = new Theme { DesignSystem = false }`; the `--apx-*` tokens still apply. `Tokens = false` stops every token read (`--apx-*` and `--ig-*`). Without the add-on the `--ig-*` tokens are ignored, with no error.
+
+The chart reads its theme on every render. After a change that does not render, such as swapping the Ignite UI stylesheet for its dark variant, call `RefreshTokensAsync()` on the chart. A font that comes from a token (`--ig-font-family` is usually a web font, and the Ignite UI theme sheets do not load it) is waited for: the chart reads the tokens again once it has loaded, so the labels are measured with it.
+
 ## Acknowledgments
 Credits to [@thirstyape](https://github.com/thirstyape) for making production release possible.
 
