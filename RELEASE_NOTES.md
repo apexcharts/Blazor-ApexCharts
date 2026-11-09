@@ -3,8 +3,17 @@
 ## v8.0.0
 
 Bundles ApexCharts.js 8.8.1 (was 6.5.0). The core moves up two major versions, some of its defaults change what a
-click or a scroll does, and the bundled files change shape, so this is a major release. Existing C# code compiles
-unchanged.
+click or a scroll does, and the bundled files change shape, so this is a major release. Two properties changed type
+(see C# changes below): code that assigns them still compiles, code that reads them back as `double?` does not.
+
+### C# changes
+
+- `AnnotationsPoint.Y` changed from `double?` to `object`, so a point annotation can name a category row on a
+  horizontal bar or rangeBar chart. Assigning a number still compiles; reading it back needs a conversion, for example
+  `point.Y is string ? 0 : Convert.ToDouble(point.Y)`.
+- `AnnotationsYAxis.Width` changed from `double?` to `object` and is sent as a CSS length such as `"50%"` or
+  `"200px"` (a number broke the chart, #611). Code that reads it as `double?` needs the same change.
+- A library compiled against 7.x needs a rebuild.
 
 ### ⚠️ Behaviour changes to check when upgrading
 
@@ -26,7 +35,7 @@ unchanged.
 
 - Ignite UI theming, opt-in: `AddApexCharts(o => o.IgniteUI = true)` (also `AddApexChartsMaui`) loads the add-on, and
   charts take their palette, text, gridlines, tooltip, font and light or dark variant from the page's Ignite UI theme.
-  Free, no license key. `Theme.DesignSystem = false` turns it off for one chart. See the README.
+  No extra license key. `Theme.DesignSystem = false` turns it off for one chart. See the README.
 - `--apx-*` tokens: `--apx-font-family` sets the chart font and `--apx-radius-factor` scales the built-in corner radii.
   `Theme.Tokens = false` stops one chart reading any token (`--apx-*` and `--ig-*`).
 - Basque (`eu`) locale; the bundled locales gain the newer toolbar and accessibility strings.
