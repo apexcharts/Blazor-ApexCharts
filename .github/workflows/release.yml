@@ -1,40 +1,188 @@
+# Builds both NuGet packages and publishes them only after both have built.
+#
+#   Tag push (v8.0.1)         pack both, push core, push MAUI, create the GitHub release
+#   Manual run, deploy off    pack both and attach them to the run as artifacts (dry run)
+#   Manual run, deploy on     same as a tag push; use it to re-publish when a tag run failed
+#                             and the fix is in a newer copy of this workflow
+#
+# Order matters: Blazor-ApexCharts-MAUI references Blazor-ApexCharts through a ProjectReference,
+# so its package depends on Blazor-ApexCharts at the same version. Nothing is pushed unless both
+# packs succeed, and core is always pushed first.
+
+name: Release
+run-name: Release ${{ inputs.version || github.ref_name }}${{ github.event_name == 'workflow_dispatch' && !inputs.deploy && ' (dry run)' || '' }}
+
 on:
   push:
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-name: Create Release
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to build, e.g. 8.0.1 or 8.1.0-beta.1
+        required: true
+        type: string
+      deploy:
+        description: Publish to NuGet and create the GitHub release (off = dry run)
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
 jobs:
-  build:
-    name: Create Release
-    runs-on: Ubuntu-22.04
-    timeout-minutes: 10
+  prepare:
+    name: Resolve version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+      deploy: ${{ steps.resolve.outputs.deploy }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Resolve version and deploy flag
+        id: resolve
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_DEPLOY: ${{ inputs.deploy }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            version="${INPUT_VERSION#v}"
+            deploy="$INPUT_DEPLOY"
+          else
+            version="${GITHUB_REF_NAME#v}"
+            deploy=true
+          fi
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: |
-          8.0.x
-          9.0.x
-          10.0.x
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::'$version' is not a valid version. Expected MAJOR.MINOR.PATCH with an optional -suffix."
+            exit 1
+          fi
 
-    - name: Dotnet Pack 
-      working-directory: ./src/Blazor-ApexCharts
-      run: dotnet pack -c Release -p:Version=${GITHUB_REF##*/v}
+          if [[ "$deploy" == "true" && "$GITHUB_REF" != "refs/tags/v$version" ]]; then
+            echo "::warning::Publishing $version from $GITHUB_REF_NAME, not from tag v$version."
+          fi
 
-    - name: Dotnet Nuget Push   
-      working-directory: ./src/Blazor-ApexCharts/bin/Release
-      run: dotnet nuget push Blazor-ApexCharts.*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
-      continue-on-error: false
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "deploy=$deploy" >> "$GITHUB_OUTPUT"
+          echo "Version: $version, deploy: $deploy"
 
-    - name: Create Release
-      uses: actions/create-release@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: true
+  pack-core:
+    name: Pack Blazor-ApexCharts
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Pack
+        run: dotnet pack src/Blazor-ApexCharts/Blazor-ApexCharts.csproj -c Release -p:Version="$VERSION" -o packages
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nupkg-core
+          path: packages/
+          if-no-files-found: error
+
+  pack-maui:
+    name: Pack Blazor-ApexCharts-MAUI
+    needs: prepare
+    runs-on: windows-2022
+    timeout-minutes: 20
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # The highest installed SDK runs the build. SDK 10 with its MAUI workload builds the
+      # net9 MAUI targets, which matches the ".NET Core MAUI" CI workflow.
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            9.0.x
+            10.0.x
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui
+
+      # AssemblyVersion is derived from Version by the SDK (8.1.0-beta.1 becomes 8.1.0.0),
+      # so it is not passed explicitly.
+      - name: Pack
+        run: dotnet pack src/Blazor-ApexCharts-MAUI/Blazor-ApexCharts-MAUI.csproj -c Release -p:Version="$VERSION" -o packages
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nupkg-maui
+          path: packages/
+          if-no-files-found: error
+
+  # Runs no repository code: it only pushes the packages built above, so the NuGet key and the
+  # write token are never exposed to a build.
+  publish:
+    name: Publish
+    needs: [prepare, pack-core, pack-maui]
+    if: needs.prepare.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: nupkg-*
+          merge-multiple: true
+          path: packages
+
+      # --skip-duplicate makes a re-run safe after a partial failure.
+      - name: Push Blazor-ApexCharts
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: >
+          dotnet nuget push "packages/Blazor-ApexCharts.$VERSION.nupkg"
+          --source https://api.nuget.org/v3/index.json --api-key "$NUGET_API_KEY" --skip-duplicate
+
+      - name: Push Blazor-ApexCharts-MAUI
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: >
+          dotnet nuget push "packages/Blazor-ApexCharts-MAUI.$VERSION.nupkg"
+          --source https://api.nuget.org/v3/index.json --api-key "$NUGET_API_KEY" --skip-duplicate
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          tag="v$VERSION"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists, leaving it as is."
+          elif ! gh api "repos/$GH_REPO/git/ref/tags/$tag" >/dev/null 2>&1; then
+            echo "::warning::Packages are published, but tag $tag does not exist, so no GitHub release was created."
+          else
+            flags=(--verify-tag --title "$tag" --generate-notes)
+            if [[ "$VERSION" == *-* ]]; then
+              flags+=(--prerelease)
+            fi
+            gh release create "$tag" "${flags[@]}"
+          fi
