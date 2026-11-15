@@ -1,0 +1,54 @@
+@using ApexCharts.Tests.TestHelpers
+@using Microsoft.AspNetCore.Components.Web
+
+@* The "Updating a chart with new data" example from README.md, plus the variants it is compared with. *@
+
+<button id="reassign" @onclick="ReloadByReassigning">Reassign</button>
+<button id="reassign-render" @onclick="ReloadByReassigningAndRendering">Reassign and render</button>
+<button id="in-place" @onclick="ReloadInPlace">In place</button>
+
+<ApexChart TItem="Sale" Title="Revenue" @ref="chart">
+    <ApexPointSeries TItem="Sale" Items="sales" Name="Revenue"
+                     SeriesType="SeriesType.Line"
+                     XValue="e => e.Month"
+                     YValue="e => e.Amount" />
+</ApexChart>
+
+@code {
+    private List<Sale> sales = SampleData.Sales();
+    private ApexChart<Sale> chart = default!;
+
+    /// <summary>The months the reload returns, none of which are in the initial data.</summary>
+    public static readonly string[] FreshMonths = ["Apr", "May", "Jun"];
+
+    // Stands in for a load that really waits, such as an HTTP request.
+    private static async Task<List<Sale>> LoadSalesAsync()
+    {
+        await Task.Delay(10);
+        return FreshMonths.Select((m, i) => new Sale { Month = m, Amount = 100 * (i + 1) }).ToList();
+    }
+
+    // Assigns a new list, then updates.
+    private async Task ReloadByReassigning()
+    {
+        sales = await LoadSalesAsync();
+        await chart.UpdateSeriesAsync(animate: true);
+    }
+
+    // Assigns a new list, renders so the series receives it, then updates.
+    private async Task ReloadByReassigningAndRendering()
+    {
+        sales = await LoadSalesAsync();
+        StateHasChanged();
+        await chart.UpdateSeriesAsync(animate: true);
+    }
+
+    // Refills the list the series already holds, then updates.
+    private async Task ReloadInPlace()
+    {
+        var fresh = await LoadSalesAsync();
+        sales.Clear();
+        sales.AddRange(fresh);
+        await chart.UpdateSeriesAsync(animate: true);
+    }
+}
