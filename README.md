@@ -1,8 +1,6 @@
-
-
-![.NET Core](https://github.com/joadan/Blazor-ApexCharts/workflows/.NET%20Core/badge.svg?branch=master)
-
-
+[![.NET Core](https://github.com/apexcharts/Blazor-ApexCharts/workflows/.NET%20Core/badge.svg?branch=master)](https://github.com/apexcharts/Blazor-ApexCharts/actions)
+[![NuGet](https://img.shields.io/nuget/v/Blazor-ApexCharts.svg)](https://www.nuget.org/packages/Blazor-ApexCharts/)
+[![Downloads](https://img.shields.io/nuget/dt/Blazor-ApexCharts.svg)](https://www.nuget.org/packages/Blazor-ApexCharts/)
 
 # Blazor-ApexCharts
 A blazor wrapper for [ApexCharts.js](https://apexcharts.com/)
@@ -66,10 +64,20 @@ Add a reference to `Blazor-ApexCharts` in your `_Imports.razor`
 @using ApexCharts
 ```
 
-### .NET 8
-If you are on .NET 8 you need to set the rendermode to Interactive.
+### Set an interactive render mode
 
-*Interactive Server, Interactive WebAssembly or Interactive Auto*
+**If your chart renders as blank space with nothing in the browser console, this is why.**
+
+From .NET 8, Blazor Web Apps render statically by default, and a component that needs
+JavaScript interop has to opt into interactivity. Set the render mode on the page or the
+component:
+
+```razor
+@rendermode InteractiveServer
+```
+
+`InteractiveWebAssembly` and `InteractiveAuto` work equally well. There is no error
+message for this, which is what makes it cost people an afternoon.
 
 
 ### Your first chart
@@ -111,15 +119,131 @@ If you are on .NET 8 you need to set the rendermode to Interactive.
 ```
 
 
+### Choosing a chart type
+
+For most chart types, change the `SeriesType` enum on the series and nothing else. It
+covers twelve values: `Area`, `Bar`, `Donut`, `Heatmap`, `Line`, `Pie`, `PolarArea`,
+`Radar`, `RadialBar`, `Scatter`, `Treemap` and `RangeArea`.
+
+Pie, donut, polar area and radial bar are single dimensional, so they normally pair
+`SeriesType` with `YAggregate` instead of `YValue`, collapsing many rows into one value
+per category:
+
+```razor
+<ApexChart TItem="Order" Title="Gross value by country">
+    <ApexPointSeries TItem="Order"
+                     Items="orders"
+                     Name="Gross Value"
+                     SeriesType="SeriesType.Donut"
+                     XValue="@(e => e.Country)"
+                     YAggregate="@(e => e.Sum(e => e.GrossValue))"
+                     OrderByDescending="e => e.Y"
+                     ShowDataLabels />
+</ApexChart>
+```
+
+Funnel and pyramid charts are drawn from a bar series: keep `SeriesType.Bar` and set the
+chart type in the options. `PlotOptions.Funnel` sets the shape of the stages.
+
+```razor
+<ApexChart TItem="Stage" Title="Hiring pipeline" Options="options">
+    <ApexPointSeries TItem="Stage"
+                     Items="stages"
+                     Name="Candidates"
+                     SeriesType="SeriesType.Bar"
+                     XValue="e => e.Name"
+                     YValue="e => e.Count"
+                     OrderByDescending="e => e.Y" />
+</ApexChart>
+
+@code {
+    private ApexChartOptions<Stage> options = new()
+    {
+        Chart = new Chart { Type = ChartType.Funnel }, // or ChartType.Pyramid
+        PlotOptions = new PlotOptions
+        {
+            Funnel = new PlotOptionsFunnel { Shape = FunnelShape.Trapezoid }
+        }
+    };
+}
+```
+
+Chart types that need a different data shape have their **own series component** rather
+than a `SeriesType` value:
+
+| Component | For |
+|---|---|
+| `ApexBubbleSeries` | Bubble charts (x, y and a size dimension) |
+| `ApexCandleSeries` | Candlestick / OHLC |
+| `ApexBoxPlotSeries` | Box and whisker |
+| `ApexRangeSeries` | Range bars |
+| `ApexRangeAreaSeries` | Range areas |
+| `ApexViolinSeries` | Violin plots |
+| `ApexGauge` | A standalone gauge component |
+
+### Updating a chart with new data
+
+Changing the bound data does not redraw the chart on its own. Hold a reference with
+`@ref` and call `UpdateSeriesAsync` after the data changes. This is the main surprise for
+anyone arriving from React or Vue, and the upside is that you control exactly when a
+redraw happens and whether it animates.
+
+```razor
+<button @onclick="Reload">Reload</button>
+
+<ApexChart TItem="Sale" Title="Revenue" @ref="chart">
+    <ApexPointSeries TItem="Sale" Items="sales" Name="Revenue"
+                     SeriesType="SeriesType.Line"
+                     XValue="e => e.Month"
+                     YValue="e => e.Revenue" />
+</ApexChart>
+
+@code {
+    private List<Sale> sales = new();
+    private ApexChart<Sale> chart;
+
+    private async Task Reload()
+    {
+        sales = await LoadSalesAsync();
+        StateHasChanged(); // hand the new list to the series before the chart reads it
+        await chart.UpdateSeriesAsync(animate: true);
+    }
+}
+```
+
+Keep the `StateHasChanged()` call when you assign a new list. Without it the chart redraws
+the previous data: the first `await` in the handler renders the page while the old list is
+still bound, and the new list only reaches the series after the handler has finished.
+Refilling the list the series already holds (`sales.Clear(); sales.AddRange(newSales);`)
+also works, and needs no `StateHasChanged()`.
+
+The two update methods are:
+
+```csharp
+Task UpdateSeriesAsync(bool animate = true);
+Task UpdateOptionsAsync(bool redrawPaths, bool animate, bool updateSyncedCharts,
+                        ZoomOptions zoom = null);
+```
+
+`UpdateOptionsAsync` has no one-argument form: its first three parameters are required.
+
+
 ### Chart Options
 Apex Chart options are available in the `ApexChartOptions` class that can be passed to the chart. More info in Apex documentation [ApexCharts Docs](https://apexcharts.com/docs/options/).
 
 **The chart options cannot be shared.  Each chart instance must have its own ApexChartOptions instance**
 
 ## Premium Features & Licensing
-ApexCharts 6.0 introduced a set of premium interaction modules: history (undo/redo), perspectives (shareable view state), link (crossfilter / linked views), ink (draggable annotations), measure (delta ruler), contextMenu (point actions) and storyboard (scroll-driven views). All chart types and every other option remain free and are never gated.
+The Blazor-ApexCharts wrapper is MIT licensed. The ApexCharts.js library it bundles and loads for you has its own dual license, which applies to any app that uses this package:
 
-The premium modules work fully in **trial mode**, but a chart that uses one shows an unobtrusive `APEXCHARTS` watermark until a valid license key is applied. The key format is shared across the ApexCharts family (apexgantt, apextree, apexsankey) and is validated offline (no network call).
+- **Community License (free)** for individuals, non-profits, educators and organizations whose annual revenue, operating budget or funding is under $2 million USD.
+- **Commercial License (paid)** for organizations at or above $2 million USD.
+
+The [ApexCharts.js license](https://github.com/apexcharts/apexcharts.js/blob/main/LICENSE.md) has the full terms, including when the OEM license applies, and [apexcharts.com/pricing](https://apexcharts.com/pricing/) lists the plans.
+
+ApexCharts 6.0 introduced a set of premium interaction modules: history (undo/redo), perspectives (shareable view state), link (crossfilter / linked views), ink (draggable annotations), measure (delta ruler), contextMenu (point actions) and storyboard (scroll-driven views). These are part of the Premium plan. Every other chart type and option works without a license key and never shows a watermark. The key only controls the watermark; the revenue threshold above applies either way.
+
+The premium modules work fully in **trial mode**, but a chart that uses one shows an unobtrusive `APEXCHARTS` watermark until a valid license key is applied. One license key works across every Apex product (apexcharts, apexgantt, apextree, apexsankey and the rest), and it is validated offline (no network call).
 
 Apply a key one of three ways:
 
